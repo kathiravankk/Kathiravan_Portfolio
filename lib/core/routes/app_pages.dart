@@ -55,7 +55,7 @@ class AppPages {
       bindings: [LoginBinding()],
     ),
     appPage(
-      name: Routes.resumeReportPage,
+      name: Routes.resumeReportPage,bindings: [LoginBinding()],
       page: () => ResumeReportPage(
         resumePath: Get.arguments['resumePath'],
         analysisData: Get.arguments['analysisData'],

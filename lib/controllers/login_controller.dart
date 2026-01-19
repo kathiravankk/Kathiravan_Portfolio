@@ -1,672 +1,8 @@
-// // // // // // // import 'dart:async'; // Timer-ku idhu dhaan correct
-// // // // // // // import 'dart:convert';
-// // // // // // // import 'package:flutter/material.dart';
-// // // // // // // import 'package:get/get.dart';
-// // // // // // // import 'package:http/http.dart' as http;
-// // // // // // //
-// // // // // // // import '../provider/login_provider.dart';
-// // // // // // // import '../screens/home_Screen.dart';
-// // // // // // //
-// // // // // // // class LoginController extends GetxController {
-// // // // // // //   // Observables for Text Tracking
-// // // // // // //   final mobileCtrlStr = ''.obs;
-// // // // // // //   final otpCtrlStr = ''.obs;
-// // // // // // //
-// // // // // // //   // UI State
-// // // // // // //   final isLoading = false.obs;
-// // // // // // //   final otpSent = false.obs;
-// // // // // // //
-// // // // // // //   // Timer
-// // // // // // //   final seconds = 30.obs;
-// // // // // // //   final canResend = false.obs;
-// // // // // // //   Timer? _timer;
-// // // // // // //
-// // // // // // //   // 🔹 VALIDATIONS (Inge .value use pannuvadhub GetX-ku puriyum)
-// // // // // // //   bool get isMobileValid => mobileCtrlStr.value.length == 10;
-// // // // // // //   bool get isOtpValid => otpCtrlStr.value.length == 4;
-// // // // // // //
-// // // // // // //   // 🔹 SEND OTP API
-// // // // // // //   Future<void> sendOtp() async {
-// // // // // // //     if (!isMobileValid) return;
-// // // // // // //
-// // // // // // //     isLoading.value = true;
-// // // // // // //
-// // // // // // //     final success = await LoginService.sendOtp(mobileCtrlStr.value);
-// // // // // // //
-// // // // // // //     isLoading.value = false;
-// // // // // // //
-// // // // // // //     if (success) {
-// // // // // // //       otpSent.value = true;
-// // // // // // //       startTimer();
-// // // // // // //       Get.snackbar("Success", "OTP sent successfully");
-// // // // // // //     } else {
-// // // // // // //       Get.snackbar("Error", "Failed to send OTP");
-// // // // // // //     }
-// // // // // // //   }
-// // // // // // //
-// // // // // // //   // 🔹 TIMER LOGIC (Clean way)
-// // // // // // //   void startTimer() {
-// // // // // // //     canResend.value = false;
-// // // // // // //     seconds.value = 30;
-// // // // // // //     _timer?.cancel();
-// // // // // // //     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-// // // // // // //       if (seconds.value == 0) {
-// // // // // // //         canResend.value = true;
-// // // // // // //         t.cancel();
-// // // // // // //       } else {
-// // // // // // //         seconds.value--;
-// // // // // // //       }
-// // // // // // //     });
-// // // // // // //   }
-// // // // // // //
-// // // // // // //   @override
-// // // // // // //   void onClose() {
-// // // // // // //     _timer?.cancel();
-// // // // // // //     super.onClose();
-// // // // // // //   }
-// // // // // // //
-// // // // // // //
-// // // // // // //
-// // // // // // //   ///verify
-// // // // // // //   final otpCtrl = TextEditingController();
-// // // // // // //
-// // // // // // //   final isOtpValidRx = false.obs;
-// // // // // // //   final isVerifying = false.obs;
-// // // // // // //
-// // // // // // //   void onOtpChanged(String value) {
-// // // // // // //     isOtpValidRx.value = value.length == 4;
-// // // // // // //   }
-// // // // // // //
-// // // // // // //   Future<void> verifyOtp(String mobile) async {
-// // // // // // //     if (!isOtpValidRx.value) return;
-// // // // // // //
-// // // // // // //     isVerifying.value = true;
-// // // // // // //
-// // // // // // //     await Future.delayed(const Duration(seconds: 1)); // API simulation
-// // // // // // //
-// // // // // // //     isVerifying.value = false;
-// // // // // // //     Get.offAll(() => HomeScreen());
-// // // // // // //   }
-// // // // // // //
-// // // // // // //
-// // // // // // // }
-// // // // // // import 'dart:async';
-// // // // // // import 'package:flutter/material.dart';
-// // // // // // import 'package:get/get.dart';
-// // // // // // import '../provider/login_provider.dart';
-// // // // // // import '../screens/home_Screen.dart';
-// // // // // //
-// // // // // // class LoginController extends GetxController {
-// // // // // //   // Text values
-// // // // // //   final mobileCtrlStr = ''.obs;
-// // // // // //   final otpCtrlStr = ''.obs;
-// // // // // //
-// // // // // //   // UI State
-// // // // // //   final isLoading = false.obs;
-// // // // // //   final otpSent = false.obs;
-// // // // // //   final isVerifying = false.obs;
-// // // // // //
-// // // // // //   // Timer
-// // // // // //   final seconds = 30.obs;
-// // // // // //   final canResend = false.obs;
-// // // // // //   Timer? _timer;
-// // // // // //
-// // // // // //   // ✅ REACTIVE VALIDATIONS
-// // // // // //   bool get isMobileValid => mobileCtrlStr.value.length == 10;
-// // // // // //
-// // // // // //   // ✅ OTP validation-um reactive-ah irukanum
-// // // // // //   bool get isOtpValid => otpCtrlStr.value.length == 4;
-// // // // // //
-// // // // // //   // 📤 SEND OTP
-// // // // // //   Future<void> sendOtp() async {
-// // // // // //     if (!isMobileValid) return;
-// // // // // //
-// // // // // //     isLoading.value = true;
-// // // // // //     final success = await LoginService.sendOtp(mobileCtrlStr.value);
-// // // // // //     isLoading.value = false;
-// // // // // //
-// // // // // //     if (success) {
-// // // // // //       otpSent.value = true;
-// // // // // //       startTimer();
-// // // // // //       Get.snackbar("Success", "OTP sent successfully");
-// // // // // //     } else {
-// // // // // //       Get.snackbar("Error", "Failed to send OTP");
-// // // // // //     }
-// // // // // //   }
-// // // // // //
-// // // // // //   // ✅ VERIFY OTP
-// // // // // //   Future<void> verifyOtp() async {
-// // // // // //     if (!isOtpValid) return;
-// // // // // //
-// // // // // //     isVerifying.value = true;
-// // // // // //
-// // // // // //     final result = await LoginService.verifyOtp(
-// // // // // //       mobile: mobileCtrlStr.value,
-// // // // // //       otp: otpCtrlStr.value,
-// // // // // //     );
-// // // // // //
-// // // // // //     isVerifying.value = false;
-// // // // // //
-// // // // // //     if (result['statusCode'] == 200 ) {
-// // // // // //       Get.snackbar("Success", "Login successful");
-// // // // // //       Get.offAll(() => const HomeScreen());
-// // // // // //     } else {
-// // // // // //       Get.snackbar(
-// // // // // //         "Error",
-// // // // // //         result['body']['message'] ?? "Invalid OTP",
-// // // // // //         backgroundColor: Colors.red,
-// // // // // //         colorText: Colors.white,
-// // // // // //       );
-// // // // // //     }
-// // // // // //   }
-// // // // // //
-// // // // // //   // ⏱️ TIMER
-// // // // // //   void startTimer() {
-// // // // // //     canResend.value = false;
-// // // // // //     seconds.value = 30;
-// // // // // //     _timer?.cancel();
-// // // // // //     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-// // // // // //       if (seconds.value == 0) {
-// // // // // //         canResend.value = true;
-// // // // // //         t.cancel();
-// // // // // //       } else {
-// // // // // //         seconds.value--;
-// // // // // //       }
-// // // // // //     });
-// // // // // //   }
-// // // // // //
-// // // // // //   @override
-// // // // // //   void onClose() {
-// // // // // //     _timer?.cancel();
-// // // // // //     super.onClose();
-// // // // // //   }
-// // // // // // }
-// // // // // import 'dart:async';
-// // // // // import 'package:flutter/material.dart';
-// // // // // import 'package:get/get.dart';
-// // // // // import '../provider/login_provider.dart';
-// // // // // import '../screens/home_Screen.dart';
-// // // // //
-// // // // // class LoginController extends GetxController {
-// // // // //   // Text values
-// // // // //   final mobileCtrlStr = ''.obs;
-// // // // //   final otpCtrlStr = ''.obs;
-// // // // //
-// // // // //   // UI State
-// // // // //   final isLoading = false.obs;
-// // // // //   final otpSent = false.obs;
-// // // // //   final isVerifying = false.obs;
-// // // // //
-// // // // //   // Timer
-// // // // //   final seconds = 30.obs;
-// // // // //   final canResend = false.obs;
-// // // // //   Timer? _timer;
-// // // // //
-// // // // //   // ✅ REACTIVE VALIDATIONS
-// // // // //   bool get isMobileValid => mobileCtrlStr.value.length == 10;
-// // // // //
-// // // // //   // ✅ OTP validation-um reactive-ah irukanum
-// // // // //   bool get isOtpValid => otpCtrlStr.value.length == 4;
-// // // // //
-// // // // //   // 📤 SEND OTP
-// // // // //   Future<void> sendOtp() async {
-// // // // //     if (!isMobileValid) return;
-// // // // //
-// // // // //     isLoading.value = true;
-// // // // //     final success = await LoginService.sendOtp(mobileCtrlStr.value);
-// // // // //     isLoading.value = false;
-// // // // //
-// // // // //     if (success) {
-// // // // //       otpSent.value = true;
-// // // // //       startTimer();
-// // // // //       Get.snackbar("Success", "OTP sent successfully");
-// // // // //     } else {
-// // // // //       Get.snackbar("Error", "Failed to send OTP");
-// // // // //     }
-// // // // //   }
-// // // // //
-// // // // //   // ✅ VERIFY OTP
-// // // // //   Future<void> verifyOtp() async {
-// // // // //     if (!isOtpValid) return;
-// // // // //
-// // // // //     isVerifying.value = true;
-// // // // //
-// // // // //     final result = await LoginService.verifyOtp(
-// // // // //       mobile: mobileCtrlStr.value,
-// // // // //       otp: otpCtrlStr.value,
-// // // // //     );
-// // // // //
-// // // // //     isVerifying.value = false;
-// // // // //
-// // // // //     if (result['statusCode'] == 200 ) {
-// // // // //       result['body']['message'] ;
-// // // // //       Get.snackbar("Success", "Login successful");
-// // // // //       Get.offAll(() => const HomeScreen());
-// // // // //     } else {
-// // // // //       Get.snackbar(
-// // // // //         "Error",
-// // // // //         result['body']['message'] ?? "Invalid OTP",
-// // // // //         backgroundColor: Colors.red,
-// // // // //         colorText: Colors.white,
-// // // // //       );
-// // // // //     }
-// // // // //   }
-// // // // //
-// // // // //   // ⏱️ TIMER
-// // // // //   void startTimer() {
-// // // // //     canResend.value = false;
-// // // // //     seconds.value = 30;
-// // // // //     _timer?.cancel();
-// // // // //     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-// // // // //       if (seconds.value == 0) {
-// // // // //         canResend.value = true;
-// // // // //         t.cancel();
-// // // // //       } else {
-// // // // //         seconds.value--;
-// // // // //       }
-// // // // //     });
-// // // // //   }
-// // // // //
-// // // // //   @override
-// // // // //   void onClose() {
-// // // // //     _timer?.cancel();
-// // // // //     super.onClose();
-// // // // //   }
-// // // // // }
-// // // // import 'dart:async'; // Timer-ku idhu dhaan correct
-// // // // import 'dart:convert';
-// // // // import 'package:flutter/material.dart';
-// // // // import 'package:get/get.dart';
-// // // // import 'package:http/http.dart' as http;
-// // // //
-// // // // import '../provider/login_provider.dart';
-// // // // import '../screens/home_Screen.dart';
-// // // //
-// // // // class LoginController extends GetxController {
-// // // //   // Observables for Text Tracking
-// // // //   final mobileCtrlStr = ''.obs;
-// // // //   final otpCtrlStr = ''.obs;
-// // // //
-// // // //   // UI State
-// // // //   final isLoading = false.obs;
-// // // //   final otpSent = false.obs;
-// // // //
-// // // //   // Timer
-// // // //   final seconds = 30.obs;
-// // // //   final canResend = false.obs;
-// // // //   Timer? _timer;
-// // // //
-// // // //   // 🔹 VALIDATIONS (Inge .value use pannuvadhub GetX-ku puriyum)
-// // // //   bool get isMobileValid => mobileCtrlStr.value.length == 10;
-// // // //   bool get isOtpValid => otpCtrlStr.value.length == 4;
-// // // //
-// // // //   // 🔹 SEND OTP API
-// // // //   Future<void> sendOtp() async {
-// // // //     if (!isMobileValid) return;
-// // // //
-// // // //     isLoading.value = true;
-// // // //
-// // // //     final success = await LoginService.sendOtp(mobileCtrlStr.value);
-// // // //
-// // // //     isLoading.value = false;
-// // // //
-// // // //     if (success) {
-// // // //       otpSent.value = true;
-// // // //       startTimer();
-// // // //       Get.snackbar("Success", "OTP sent successfully");
-// // // //     } else {
-// // // //       Get.snackbar("Error", "Failed to send OTP");
-// // // //     }
-// // // //   }
-// // // //
-// // // //   // 🔹 TIMER LOGIC (Clean way)
-// // // //   void startTimer() {
-// // // //     canResend.value = false;
-// // // //     seconds.value = 30;
-// // // //     _timer?.cancel();
-// // // //     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-// // // //       if (seconds.value == 0) {
-// // // //         canResend.value = true;
-// // // //         t.cancel();
-// // // //       } else {
-// // // //         seconds.value--;
-// // // //       }
-// // // //     });
-// // // //   }
-// // // //
-// // // //   @override
-// // // //   void onClose() {
-// // // //     _timer?.cancel();
-// // // //     super.onClose();
-// // // //   }
-// // // //
-// // // //   ///verify
-// // // //   final otpCtrl = TextEditingController();
-// // // //
-// // // //   final isOtpValidRx = false.obs;
-// // // //   final isVerifying = false.obs;
-// // // //
-// // // //   void onOtpChanged(String value) {
-// // // //     isOtpValidRx.value = value.length == 4;
-// // // //   }
-// // // //
-// // // //   Future<void> verifyOtp(String mobile) async {
-// // // //     if (!isOtpValidRx.value) return;
-// // // //
-// // // //     isVerifying.value = true;
-// // // //
-// // // //     await Future.delayed(const Duration(seconds: 1)); // API simulation
-// // // //
-// // // //     isVerifying.value = false;
-// // // //     Get.offAll(() => HomeScreen());
-// // // //   }
-// // // //
-// // // // }
-// // // import 'dart:async';
-// // // import 'package:flutter/material.dart';
-// // // import 'package:get/get.dart';
-// // // import '../provider/login_provider.dart';
-// // // import '../screens/home_Screen.dart';
-// // //
-// // // class LoginController extends GetxController {
-// // //   // Text values
-// // //   final mobileCtrlStr = ''.obs;
-// // //   final otpCtrlStr = ''.obs;
-// // //
-// // //   // UI State
-// // //   final isLoading = false.obs;
-// // //   final otpSent = false.obs;
-// // //   final isVerifying = false.obs;
-// // //
-// // //   // Timer
-// // //   final seconds = 30.obs;
-// // //   final canResend = false.obs;
-// // //   Timer? _timer;
-// // //
-// // //   // ✅ REACTIVE VALIDATIONS
-// // //   bool get isMobileValid => mobileCtrlStr.value.length == 10;
-// // //
-// // //   // ✅ OTP validation-um reactive-ah irukanum
-// // //   bool get isOtpValid => otpCtrlStr.value.length == 4;
-// // //
-// // //   // 📤 SEND OTP
-// // //   Future<void> sendOtp() async {
-// // //     if (!isMobileValid) return;
-// // //
-// // //     isLoading.value = true;
-// // //     final success = await LoginService.sendOtp(mobileCtrlStr.value);
-// // //     isLoading.value = false;
-// // //
-// // //     if (success) {
-// // //       otpSent.value = true;
-// // //       startTimer();
-// // //       Get.snackbar("Success", "OTP sent successfully");
-// // //     } else {
-// // //       Get.snackbar("Error", "Failed to send OTP");
-// // //     }
-// // //   }
-// // //
-// // //   // ✅ VERIFY OTP
-// // //   Future<void> verifyOtp() async {
-// // //     if (!isOtpValid) return;
-// // //
-// // //     isVerifying.value = true;
-// // //
-// // //     final result = await LoginService.verifyOtp(
-// // //       mobile: mobileCtrlStr.value,
-// // //       otp: otpCtrlStr.value,
-// // //     );
-// // //
-// // //     isVerifying.value = false;
-// // //
-// // //     if (result['statusCode'] == 200 ) {
-// // //       result['body']['message'] ;
-// // //       Get.snackbar("Success", "Login successful");
-// // //       Get.offAll(() => const HomeScreen());
-// // //     } else {
-// // //       Get.snackbar(
-// // //         "Error",
-// // //         result['body']['message'] ?? "Invalid OTP",
-// // //         backgroundColor: Colors.red,
-// // //         colorText: Colors.white,
-// // //       );
-// // //     }
-// // //   }
-// // //
-// // //   // ⏱️ TIMER
-// // //   void startTimer() {
-// // //     canResend.value = false;
-// // //     seconds.value = 30;
-// // //     _timer?.cancel();
-// // //     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-// // //       if (seconds.value == 0) {
-// // //         canResend.value = true;
-// // //         t.cancel();
-// // //       } else {
-// // //         seconds.value--;
-// // //       }
-// // //     });
-// // //   }
-// // //
-// // //   @override
-// // //   void onClose() {
-// // //     _timer?.cancel();
-// // //     super.onClose();
-// // //   }
-// // // }
-// // import 'dart:async';
-// // import 'dart:convert';
-// // import 'package:flutter/material.dart';
-// // import 'package:get/get.dart';
-// // import 'package:http/http.dart' as http;
-// // import '../core/const_file/api_constants.dart';
-// // import '../provider/login_provider.dart';
-// // import '../view/screens/goto_intern_homepage.dart';
-// //
-// // class LoginController extends GetxController {
-// //
-// //   // Text values
-// //   final mobileCtrlStr = ''.obs;
-// //   final otpCtrlStr = ''.obs;
-// //
-// //   // UI State
-// //   final isLoading = false.obs;
-// //   final otpSent = false.obs;
-// //   final isVerifying = false.obs;
-// //
-// //   // Timer
-// //   final seconds = 30.obs;
-// //   final canResend = false.obs;
-// //   Timer? _timer;
-// //
-// //   // ✅ VALIDATIONS
-// //   bool get isMobileValid => mobileCtrlStr.value.length == 10;
-// //   bool get isOtpValid => otpCtrlStr.value.length == 4;
-// //
-// //   // 📤 SEND OTP - ✅ FIXED
-// //   Future<void> sendOtp() async {
-// //     if (!isMobileValid) {
-// //       Get.snackbar(
-// //         "Invalid",
-// //         "Please enter a valid 10-digit mobile number",
-// //       );
-// //       return;
-// //     }
-// //
-// //     isLoading.value = true;
-// //
-// //     try {
-// //       final result = await LoginService.sendOtp(mobileCtrlStr.value);
-// //
-// //       print("Send OTP Result: $result"); // Debug
-// //
-// //       if (result['success'] == true) {  // ✅ 'success' key use pannunga
-// //         otpSent.value = true;  // ✅ இது தான் missing இருந்துச்சு!
-// //         startTimer();
-// //
-// //         Get.snackbar(
-// //           "Success",
-// //           result['message'] ?? "OTP sent successfully",
-// //           backgroundColor: Colors.green,
-// //           colorText: Colors.white,
-// //         );
-// //       } else {
-// //         Get.snackbar(
-// //           "Failed",
-// //           result['message'] ?? "Failed to send OTP",
-// //           backgroundColor: Colors.red,
-// //           colorText: Colors.white,
-// //         );
-// //       }
-// //     } catch (e) {
-// //       print("Send OTP Error: $e"); // Debug
-// //       Get.snackbar(
-// //         "Error",
-// //         "Network error. Please try again",
-// //         backgroundColor: Colors.red,
-// //         colorText: Colors.white,
-// //       );
-// //     } finally {
-// //       isLoading.value = false;
-// //     }
-// //   }
-// //
-// //   // ✅ VERIFY OTP
-// //   Future<void> verifyOtp() async {
-// //     if (!isOtpValid) {
-// //       Get.snackbar("Invalid", "Please enter 4-digit OTP");
-// //       return;
-// //     }
-// //
-// //     isVerifying.value = true;
-// //
-// //     try {
-// //       final result = await LoginService.verifyOtp(
-// //         mobile: mobileCtrlStr.value,
-// //         otp: otpCtrlStr.value,
-// //       );
-// //
-// //       print("Verify OTP Result: $result"); // Debug
-// //
-// //       if (result['success'] == true) {  // ✅ 'success' key use pannunga
-// //         Get.snackbar(
-// //           "Success",
-// //           "Login successful",
-// //           backgroundColor: Colors.green,
-// //           colorText: Colors.white,
-// //         );
-// //         Get.offAll(() => const InternshipHomePage());
-// //       } else {
-// //         String errorMsg = result['body']?['message'] ?? "Invalid OTP";
-// //
-// //         Get.snackbar(
-// //           "Error",
-// //           errorMsg,
-// //           backgroundColor: Colors.red,
-// //           colorText: Colors.white,
-// //         );
-// //       }
-// //     } catch (e) {
-// //       print("Verify OTP Error: $e"); // Debug
-// //       Get.snackbar(
-// //         "Error",
-// //         "Verification failed",
-// //         backgroundColor: Colors.red,
-// //         colorText: Colors.white,
-// //       );
-// //     } finally {
-// //       isVerifying.value = false;
-// //     }
-// //   }
-// //
-// //   // ⏱️ TIMER
-// //   void startTimer() {
-// //     canResend.value = false;
-// //     seconds.value = 30;
-// //     _timer?.cancel();
-// //
-// //     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
-// //       if (seconds.value == 0) {
-// //         canResend.value = true;
-// //         t.cancel();
-// //       } else {
-// //         seconds.value--;
-// //       }
-// //     });
-// //   }
-// //
-// //   @override
-// //   void onClose() {
-// //     _timer?.cancel();
-// //     super.onClose();
-// //   }
-// //
-// //   static Future<Map<String, dynamic>> sendEmailOtp(String email) async {
-// //     try {
-// //       final response = await http.post(
-// //         Uri.parse(ApiConstants.requestMailOtp),
-// //         headers: {"Content-Type": "application/json"},
-// //         body: jsonEncode({"email": email}),
-// //       );
-// //
-// //       final data = jsonDecode(response.body);
-// //       bool isSuccess = response.statusCode == 200;
-// //
-// //       return {
-// //         "success": isSuccess,
-// //         "message": data['message'] ?? (isSuccess ? "OTP sent successfully" : "Failed to send OTP"),
-// //         "data": data,
-// //         "statusCode": response.statusCode,
-// //       };
-// //     } catch (e) {
-// //       print("SendEmailOTP Error: $e");
-// //       return {
-// //         "success": false,
-// //         "message": "Network error. Please try again",
-// //         "data": null,
-// //         "statusCode": 500,
-// //       };
-// //     }
-// //   }
-// //
-// //   /// ✅ VERIFY EMAIL OTP
-// //   static Future<Map<String, dynamic>> verifyEmailOtp({
-// //     required String email,
-// //     required String otp,
-// //   }) async {
-// //     try {
-// //       final response = await http.post(
-// //         Uri.parse(ApiConstants.verifyMailOtp),
-// //         headers: {"Content-Type": "application/json"},
-// //         body: jsonEncode({
-// //           "email": email,
-// //           "otp": otp,
-// //         }),
-// //       );
-// //
-// //       final data = jsonDecode(response.body);
-// //
-// //       return {
-// //         "statusCode": response.statusCode,
-// //         "success": response.statusCode == 200,
-// //         "body": data,
-// //         "message": data['message'] ?? "Email verified successfully",
-// //       };
-// //     } catch (e) {
-// //       print("VerifyEmailOTP Error: $e");
-// //       return {
-// //         "statusCode": 500,
-// //         "success": false,
-// //         "body": {"status": false, "message": "Network error"},
-// //         "message": "Network error. Please try again",
-// //       };
-// //     }
-// //   }
-// // }
+//
 // import 'dart:async';
-// import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:internsharks/models/common_post_model.dart';
+// import '../core/const_file/api_error_handling.dart';
 // import '../provider/login_provider.dart';
 //
 // class LoginController extends GetxController {
@@ -674,51 +10,46 @@
 //
 //   LoginController(this.loginProvider);
 //
+//   int getResponseCode() => loginProvider!.responseStatus;
+//
 //   // ---------------- INPUT ----------------
 //   final mobile = ''.obs;
 //   final email = ''.obs;
 //   final otp = ''.obs;
 //
-// ///loading
+//   // ---------------- LOADING STATES ----------------
 //   final _loginLoading = false.obs;
 //
 //   bool get loginLoading => _loginLoading.value;
 //
-//   set loginLoading(bool value) => _loginLoading.value = value;
-//
-//   //Verify loading
+//   set loginLoading(bool v) => _loginLoading.value = v;
 //
 //   final _verifyLoading = false.obs;
 //
 //   bool get verifyLoading => _verifyLoading.value;
 //
-//   set verifyLoading(bool value) => _verifyLoading.value = value;
+//   set verifyLoading(bool v) => _verifyLoading.value = v;
 //
 //   final _mailLoginLoading = false.obs;
 //
-//   bool get mailLoading => _mailLoginLoading.value;
+//   bool get mailLoginLoading => _mailLoginLoading.value;
 //
-//   set mailLoginLoading(bool value) => _mailLoginLoading.value = value;
-//
-//   //Verify loading
+//   set mailLoginLoading(bool v) => _mailLoginLoading.value = v;
 //
 //   final _mailVerifyLoading = false.obs;
 //
 //   bool get mailVerifyLoading => _mailVerifyLoading.value;
 //
-//   set mailVerifyLoading(bool value) => _mailVerifyLoading.value = value;
+//   set mailVerifyLoading(bool v) => _mailVerifyLoading.value = v;
 //
-//   //Set Model
+//   // ---------------- MODEL ----------------
 //   final _commonPostModel = CommonPostModel().obs;
 //
 //   CommonPostModel get commonPostModel => _commonPostModel.value;
 //
-//   set commonPostModel(CommonPostModel value) => _commonPostModel.value = value;
+//   set commonPostModel(CommonPostModel v) => _commonPostModel.value = v;
 //
-//   final _isLoading = false.obs;
-//   bool get isLoading => _isLoading.value;
-//   set isLoading(bool v) => _isLoading.value = v;
-//
+//   // ---------------- OTP STATE ----------------
 //   final _otpSent = false.obs;
 //
 //   bool get otpSent => _otpSent.value;
@@ -730,119 +61,157 @@
 //   final canResend = false.obs;
 //   Timer? _timer;
 //
-//   // ---------------- VALIDATION ----------------
-//   bool get isMobileValid => mobile.value.length == 10;
-//
-//   bool get isEmailValid => email.value.contains("@");
-//
-//   bool get isOtpValid => otp.value.length == 4;
-//
-//   // ================= MOBILE OTP =================
-//
+//   // ================= SEND MOBILE OTP =================
 //   Future<void> sendMobileOtp() async {
-//     // if (!isMobileValid) {
-//     //   Get.snackbar("Invalid", "Enter valid mobile number");
-//     //   return;
-//     // }
-//
 //     loginLoading = true;
 //     try {
-//       commonPostModel = await loginProvider!.sendMobileOtp(mobile.value);
+//       commonPostModel =
+//       await loginProvider!.sendMobileOtp(mobile.value);
 //
-//       // if (res['success']) {
-//       //   otpSent = true;
-//       //   startTimer();
-//       //   Get.snackbar("Success", res['body']['message'] ?? "OTP sent");
-//       // } else {
-//       //   Get.snackbar("Failed", res['body']['message'] ?? "OTP failed");
-//       // }
-//       loginLoading = false;
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
+//
+//       /// ✅ IMPORTANT
+//       otpSent = true;        // 🔥 THIS LINE
+//       startTimer();          // optional
+//
 //     } catch (error) {
-//       loginLoading = false;
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
 //       rethrow;
+//     } finally {
+//       loginLoading = false;
 //     }
 //   }
 //
-//   Future<void> verifyMobileOtp(String mobile,String otp) async {
-//     // if (!isOtpValid) {
-//     //   Get.snackbar("Invalid", "Enter valid OTP");
-//     //   return;
-//     // }
+//   // Future<void> sendMobileOtp() async {
+//   //   loginLoading = true;
+//   //   try {
+//   //     commonPostModel = await loginProvider!.sendMobileOtp(mobile.value);
+//   //     ApiErrorHandler.handleApiError(
+//   //       responseCode: getResponseCode(),
+//   //       message: commonPostModel.message ?? "Something went wrong",
+//   //     );
+//   //     //
+//   //     // final code = commonPostModel.statusCode ?? 500;
+//   //     // final msg = commonPostModel.message ?? "OTP failed";
+//   //     //
+//   //     // if (code == 200 || code == 201) {
+//   //     //   otpSent = true;
+//   //     //   startTimer();
+//   //     // } else {
+//   //     //   ApiErrorHandler.handleApiError(responseCode: code, message: msg);
+//   //     // }
+//   //   } catch (error) {
+//   //     ApiErrorHandler.handleApiError(
+//   //       responseCode: getResponseCode(),
+//   //       message: commonPostModel.message ?? "Something went wrong",
+//   //     );
+//   //     loginLoading = false;
+//   //     rethrow;
+//   //   } finally {
+//   //     loginLoading = false;
+//   //   }
+//   // }
 //
+//   // ================= VERIFY MOBILE OTP =================
+//   Future<void> verifyMobileOtp({required String mobile, required String otp}) async {
 //     verifyLoading = true;
 //     try {
-//       commonPostModel = await loginProvider!.verifyMobileOtp(mobile: mobile, otp: otp);
-//       // final res = await loginProvider!.verifyMobileOtp(
-//       //   mobile: mobile.value,
-//       //   otp: otp.value,
-//       // );
+//       commonPostModel = await loginProvider!.verifyMobileOtp(
+//         mobile: mobile,
+//         otp: otp,
+//       );
+//       commonPostModel = await loginProvider!.verifyMobileOtp( mobile: mobile, otp: otp);
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
+//
 //       //
-//       // if (res['success']) {
-//       //   Get.snackbar("Success", "Mobile verified");
-//       // } else {
-//       //   Get.snackbar("Error", res['body']['message'] ?? "Invalid OTP");
+//       // final code = commonPostModel.statusCode ?? 500;
+//       // final msg = commonPostModel.message ?? "Invalid OTP";
+//       //
+//       // if (code != 200) {
+//       //   ApiErrorHandler.handleApiError(
+//       //     responseCode: code,
+//       //     message: msg,
+//       //   );
 //       // }
-//       verifyLoading = false;
 //     } catch (error) {
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
 //       verifyLoading = false;
 //       rethrow;
+//     } finally {
+//       verifyLoading = false;
 //     }
 //   }
 //
-//   // ================= EMAIL OTP =================
-//
+//   // ================= SEND EMAIL OTP =================
 //   Future<void> sendEmailOtp(String email) async {
-//     // if (!isEmailValid) {
-//     //   Get.snackbar("Invalid", "Enter valid email");
-//     //   return;
-//     // }
-//
 //     mailLoginLoading = true;
 //     try {
 //       commonPostModel = await loginProvider!.sendEmailOtp(email);
-//
-//       // final res = await loginProvider!.sendEmailOtp(email.value);
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
+//       // commonPostModel = await loginProvider!.sendEmailOtp(email);
 //       //
-//       // if (res['success']) {
+//       // final code = commonPostModel.statusCode ?? 500;
+//       // final msg = commonPostModel.message ?? "OTP failed";
+//       //
+//       // if (code == 200 || code == 201) {
 //       //   otpSent = true;
 //       //   startTimer();
-//       //   Get.snackbar("Success", res['body']['message'] ?? "OTP sent");
 //       // } else {
-//       //   Get.snackbar("Failed", res['body']['message'] ?? "OTP failed");
+//       //   ApiErrorHandler.handleApiError(responseCode: code, message: msg);
 //       // }
-//       mailLoginLoading = false;
-//     }
-//     catch (error) {
+//     } catch (error) {
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
 //       mailLoginLoading = false;
 //       rethrow;
+//     } finally {
+//       mailLoginLoading = false;
 //     }
 //   }
 //
-//   Future<void> verifyEmailOtp(String? otpValue, String? email) async {
-//     // if (!isOtpValid) {
-//     //   Get.snackbar("Invalid", "Enter valid OTP");
-//     //   return;
-//     // }
-//
+//   // ================= VERIFY EMAIL OTP =================
+//   Future<void> verifyEmailOtp( String otpValue, String email) async {
 //     mailVerifyLoading = true;
 //     try {
-//
-//       commonPostModel = await loginProvider!.verifyEmailOtp(email!, otpValue!);
-//       // final res = await loginProvider!.verifyEmailOtp(
-//       //   email: email!,
-//       //   otp: otpValue!,
-//       // );
+//       commonPostModel = await loginProvider!.verifyEmailOtp(otpValue,email);
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
+//       // commonPostModel = await loginProvider!.verifyEmailOtp(email, otpValue);
 //       //
-//       // if (res['success']) {
-//       //   Get.snackbar("Success", "Email verified");
-//       // } else {
-//       //   Get.snackbar("Error", res['body']['message'] ?? "Invalid OTP");
+//       // final code = commonPostModel.statusCode ?? 500;
+//       // final msg = commonPostModel.message ?? "Invalid OTP";
+//       //
+//       // if (code != 200) {
+//       //   ApiErrorHandler.handleApiError(responseCode: code, message: msg);
 //       // }
-//       mailVerifyLoading = false;
-//     }
-//     catch (error) {
+//     } catch (error) {
+//       ApiErrorHandler.handleApiError(
+//         responseCode: getResponseCode(),
+//         message: commonPostModel.message ?? "Something went wrong",
+//       );
 //       mailVerifyLoading = false;
 //       rethrow;
+//     } finally {
+//       mailVerifyLoading = false;
 //     }
 //   }
 //
@@ -868,6 +237,7 @@
 //     super.onClose();
 //   }
 // }
+
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:internsharks/models/common_post_model.dart';
@@ -879,14 +249,15 @@ class LoginController extends GetxController {
 
   LoginController(this.loginProvider);
 
+  // ================= RESPONSE =================
   int getResponseCode() => loginProvider!.responseStatus;
 
-  // ---------------- INPUT ----------------
+  // ================= INPUT =================
   final mobile = ''.obs;
   final email = ''.obs;
-  final otp = ''.obs;
+  final otp = ''.obs;  final usertype = ''.obs;
 
-  // ---------------- LOADING STATES ----------------
+  // ================= LOADING STATES =================
   final _loginLoading = false.obs;
 
   bool get loginLoading => _loginLoading.value;
@@ -898,6 +269,18 @@ class LoginController extends GetxController {
   bool get verifyLoading => _verifyLoading.value;
 
   set verifyLoading(bool v) => _verifyLoading.value = v;
+
+  final _registerLoading = false.obs;
+
+  bool get registerLoading => _registerLoading.value;
+
+  set registerLoading(bool v) => _registerLoading.value = v;
+
+  final _registerVerifyLoading = false.obs;
+
+  bool get registerVerifyLoading => _registerVerifyLoading.value;
+
+  set registerVerifyLoading(bool v) => _registerVerifyLoading.value = v;
 
   final _mailLoginLoading = false.obs;
 
@@ -911,154 +294,378 @@ class LoginController extends GetxController {
 
   set mailVerifyLoading(bool v) => _mailVerifyLoading.value = v;
 
-  // ---------------- MODEL ----------------
+  // ================= MODEL =================
   final _commonPostModel = CommonPostModel().obs;
 
   CommonPostModel get commonPostModel => _commonPostModel.value;
 
   set commonPostModel(CommonPostModel v) => _commonPostModel.value = v;
 
-  // ---------------- OTP STATE ----------------
+  // ================= OTP STATE =================
+
   final _otpSent = false.obs;
 
   bool get otpSent => _otpSent.value;
 
   set otpSent(bool v) => _otpSent.value = v;
+/// register
+  final _mobileOtpSent = false.obs;
 
-  // ---------------- TIMER ----------------
+  bool get mobileOtpSent => _mobileOtpSent.value;
+
+  set mobileOtpSent(bool v) => _mobileOtpSent.value = v;
+
+  /// mail
+  final _emailOtpSent = false.obs;
+
+  bool get emailOtpSent => _emailOtpSent.value;
+
+  set emailOtpSent(bool v) => _emailOtpSent.value = v;
+
+  final _otpVerified = false.obs;
+
+  bool get otpVerified => _otpVerified.value;
+
+  set otpVerified(bool v) => _otpVerified.value = v;
+
+  // ================= TIMER =================
   final seconds = 30.obs;
   final canResend = false.obs;
   Timer? _timer;
 
-  // ================= SEND MOBILE OTP =================
+  // =====================================================
+  // ================= SEND MOBILE OTP ===================
+  // =====================================================
+  // Future<void> sendMobileOtp() async {
+  //   registerLoading = true;
+  //   otpSent = false;
+  //
+  //   try {
+  //     commonPostModel = await loginProvider!.sendMobileOtp(mobile.value);
+  //
+  //     if ((getResponseCode() == 200|| getResponseCode() == 201)&& commonPostModel.success == true) {
+  //       otpSent = true; // ✅ OTP FIELD OPEN
+  //       startTimer();
+  //     } else {
+  //       otpSent = false;
+  //       ApiErrorHandler.handleApiError(
+  //         responseCode: getResponseCode(),
+  //         message: commonPostModel.message ?? "Mobile not registered",
+  //       );
+  //     }
+  //   } catch (e) {
+  //     otpSent = false;
+  //     ApiErrorHandler.handleApiError(
+  //       responseCode: getResponseCode(),
+  //       message: "Something went wrong",
+  //     );
+  //   } finally {
+  //     registerLoading = false;
+  //   }
+  // }
   Future<void> sendMobileOtp() async {
-    loginLoading = true;
+    registerLoading = true;
+    otpSent = false; // 🔴 ALWAYS RESET
+
     try {
       commonPostModel = await loginProvider!.sendMobileOtp(mobile.value);
+
+      final message = (commonPostModel.message ?? "").toLowerCase();
+
+      /// ✅ OTP ACTUALLY SENT
+      if ((getResponseCode() == 200 || getResponseCode() == 201) &&
+          message.contains("otp sent")) {
+        otpSent = true; // 🔓 OTP FIELD OPEN
+        startTimer();
+      }
+      /// ❌ MOBILE ALREADY REGISTERED / OTP NOT SENT
+      else {
+        otpSent = false; // 🔒 OTP FIELD CLOSED
+        ApiErrorHandler.handleApiError(
+          responseCode: getResponseCode(),
+          message: commonPostModel.message ?? "Mobile already registered",
+        );
+      }
+    } catch (e) {
+      otpSent = false;
       ApiErrorHandler.handleApiError(
         responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
+        message: "Something went wrong",
       );
-      //
-      // final code = commonPostModel.statusCode ?? 500;
-      // final msg = commonPostModel.message ?? "OTP failed";
-      //
-      // if (code == 200 || code == 201) {
-      //   otpSent = true;
-      //   startTimer();
-      // } else {
-      //   ApiErrorHandler.handleApiError(responseCode: code, message: msg);
-      // }
-    } catch (error) {
-      ApiErrorHandler.handleApiError(
-        responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
-      );
-      loginLoading = false;
-      rethrow;
     } finally {
-      loginLoading = false;
+      registerLoading = false;
     }
   }
 
+  // =====================================================
   // ================= VERIFY MOBILE OTP =================
-  Future<void> verifyMobileOtp(String mobile, String otp) async {
-    verifyLoading = true;
+  // =====================================================
+  Future<void> verifyMobileOtp({
+    required String mobile,
+    required String otp,
+  }) async {
+    registerVerifyLoading = true;
+    otpVerified = false;
+
     try {
       commonPostModel = await loginProvider!.verifyMobileOtp(
         mobile: mobile,
         otp: otp,
       );
-      commonPostModel = await loginProvider!.verifyMobileOtp( mobile: mobile, otp: otp);
+
+      if ((getResponseCode() == 200 || getResponseCode() == 201) &&
+          commonPostModel.success == true) {
+        otpVerified = true; // ✅ OTP VERIFIED
+      } else {
+        otpVerified = false;
+        ApiErrorHandler.handleApiError(
+          responseCode: getResponseCode(),
+          message: commonPostModel.message ?? "Invalid OTP",
+        );
+      }
+    } catch (e) {
+      otpVerified = false;
       ApiErrorHandler.handleApiError(
         responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
+        message: "Something went wrong",
+      );
+    } finally {
+      registerVerifyLoading = false;
+    }
+  }
+
+  // Future<void> loginSendMobileOtp() async {
+  //   loginLoading = true;
+  //   otpSent = false;
+  //
+  //   try {
+  //     commonPostModel = await loginProvider!.loginSendMobileOtp(mobile.value);
+  //
+  //     if (getResponseCode() == 200 && commonPostModel.success == true) {
+  //       otpSent = true; // ✅ OTP FIELD OPEN
+  //       startTimer();
+  //     } else {
+  //       otpSent = false;
+  //       ApiErrorHandler.handleApiError(
+  //         responseCode: getResponseCode(),
+  //         message: commonPostModel.message ?? "Mobile not registered",
+  //       );
+  //     }
+  //   } catch (e) {
+  //     otpSent = false;
+  //     ApiErrorHandler.handleApiError(
+  //       responseCode: getResponseCode(),
+  //       message: "Something went wrong",
+  //     );
+  //   } finally {
+  //     loginLoading = false;
+  //   }
+  // }
+  Future<void> loginSendMobileOtp() async {
+    loginLoading = true;
+    mobileOtpSent = false;
+
+    try {
+      commonPostModel = await loginProvider!.loginSendMobileOtp(mobile.value);
+
+      if ((getResponseCode() == 200 || getResponseCode() == 201) &&
+          commonPostModel.success == true) {
+        mobileOtpSent = true; // 🔥 OTP FIELD OPEN
+        startTimer();
+      } else {
+        otpSent = false;
+        ApiErrorHandler.handleApiError(
+          responseCode: getResponseCode(),
+          message: commonPostModel.message ?? "Mobile not registered",
+        );
+      }
+    } catch (e) {
+      otpSent = false;
+      ApiErrorHandler.handleApiError(
+        responseCode: getResponseCode(),
+        message: "Something went wrong",
+      );
+    } finally {
+      loginLoading = false;
+    }
+  }
+
+  // =====================================================
+  // ================= VERIFY MOBILE OTP =================
+  // =====================================================
+  Future<void> loginVerifyMobileOtp({
+    required String mobile,
+    required String otp,
+  }) async {
+    verifyLoading = true;
+    otpVerified = false;
+
+    try {
+      commonPostModel = await loginProvider!.loginVerifyMobileOtp(
+        mobile: mobile,
+        otp: otp,
       );
 
-      //
-      // final code = commonPostModel.statusCode ?? 500;
-      // final msg = commonPostModel.message ?? "Invalid OTP";
-      //
-      // if (code != 200) {
-      //   ApiErrorHandler.handleApiError(
-      //     responseCode: code,
-      //     message: msg,
-      //   );
-      // }
-    } catch (error) {
+      if (getResponseCode() == 200 && commonPostModel.success == true) {
+        otpVerified = true; // ✅ OTP VERIFIED
+      } else {
+        otpVerified = false;
+        ApiErrorHandler.handleApiError(
+          responseCode: getResponseCode(),
+          message: commonPostModel.message ?? "Invalid OTP",
+        );
+      }
+    } catch (e) {
+      otpVerified = false;
       ApiErrorHandler.handleApiError(
         responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
+        message: "Something went wrong",
       );
-      verifyLoading = false;
-      rethrow;
     } finally {
       verifyLoading = false;
     }
   }
 
-  // ================= SEND EMAIL OTP =================
+  // =====================================================
+  // ================= SEND EMAIL OTP ====================
+  // =====================================================
+  // Future<void> sendEmailOtp(String email) async {
+  //   mailLoginLoading = true;
+  //
+  //   try {
+  //     commonPostModel = await loginProvider!.sendEmailOtp(email);
+  //
+  //     if ((getResponseCode() == 200|| getResponseCode() == 201) && commonPostModel.success == true) {
+  //       otpSent = true;
+  //       startTimer();
+  //     } else {
+  //       ApiErrorHandler.handleApiError(
+  //         responseCode: getResponseCode(),
+  //         message: commonPostModel.message ?? "OTP failed",
+  //       );
+  //     }
+  //   } catch (e) {
+  //     ApiErrorHandler.handleApiError(
+  //       responseCode: getResponseCode(),
+  //       message: "Something went wrong",
+  //     );
+  //   } finally {
+  //     mailLoginLoading = false;
+  //   }
+  // }
   Future<void> sendEmailOtp(String email) async {
-    mailLoginLoading = true;
+    registerLoading = true;
+    emailOtpSent = false; // 🔒 Always reset OTP state
+
     try {
+      // API call
       commonPostModel = await loginProvider!.sendEmailOtp(email);
+
+      final int statusCode = getResponseCode();
+      final String message =
+      (commonPostModel.message ?? "").toLowerCase();
+
+      /// ✅ OTP SENT → EMAIL NOT REGISTERED
+      if ((statusCode == 200 || statusCode == 201) &&
+          message.contains("otp")) {
+
+        emailOtpSent = true; // 🔓 OPEN OTP FIELD
+        startTimer();
+      }
+
+      /// ❌ EMAIL ALREADY REGISTERED / OTHER API ERRORS
+      else {
+        emailOtpSent = false; // 🔒 KEEP OTP FIELD CLOSED
+
+        ApiErrorHandler.handleApiError(
+          responseCode: statusCode,
+          message: commonPostModel.message ??
+              "User already registered with this email",
+        );
+      }
+    } catch (e) {
+      // Network / unexpected error
+      emailOtpSent = false;
+
       ApiErrorHandler.handleApiError(
         responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
+        message: "Something went wrong. Please try again",
       );
-      // commonPostModel = await loginProvider!.sendEmailOtp(email);
-      //
-      // final code = commonPostModel.statusCode ?? 500;
-      // final msg = commonPostModel.message ?? "OTP failed";
-      //
-      // if (code == 200 || code == 201) {
-      //   otpSent = true;
-      //   startTimer();
-      // } else {
-      //   ApiErrorHandler.handleApiError(responseCode: code, message: msg);
-      // }
-    } catch (error) {
-      ApiErrorHandler.handleApiError(
-        responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
-      );
-      mailLoginLoading = false;
-      rethrow;
     } finally {
-      mailLoginLoading = false;
+      registerLoading = false;
     }
   }
 
-  // ================= VERIFY EMAIL OTP =================
-  Future<void> verifyEmailOtp(String otpValue, String email) async {
+  // Future<void> sendEmailOtp(String email) async {
+  //   registerLoading = true;
+  //   emailOtpSent = false; // 🔴 always reset
+  //
+  //   try {
+  //     commonPostModel =
+  //     await loginProvider!.sendEmailOtp(email);
+  //
+  //     final message =
+  //     (commonPostModel.message ?? "").toLowerCase();
+  //
+  //     /// ✅ OTP SENT → EMAIL NOT REGISTERED
+  //     if ((getResponseCode() == 200 || getResponseCode() == 201) &&
+  //         message.contains("otp sent")) {
+  //
+  //       emailOtpSent = true;   // 🔓 OPEN OTP FIELD
+  //       startTimer();
+  //     }
+  //
+  //     /// ❌ EMAIL ALREADY REGISTERED
+  //     else {
+  //       emailOtpSent = false;  // 🔒 DO NOT OPEN OTP FIELD
+  //       ApiErrorHandler.handleApiError(
+  //         responseCode: getResponseCode(),
+  //         message:
+  //         commonPostModel.message ?? "Email already registered",
+  //       );
+  //     }
+  //   } catch (e) {
+  //     emailOtpSent = false;
+  //     ApiErrorHandler.handleApiError(
+  //       responseCode: getResponseCode(),
+  //       message: "Something went wrong",
+  //     );
+  //   } finally {
+  //     registerLoading = false;
+  //   }
+  // }
+
+
+  // =====================================================
+  // ================= VERIFY EMAIL OTP ==================
+  // =====================================================
+  Future<void> verifyEmailOtp(String otpValue, String email,String usertype) async {
     mailVerifyLoading = true;
+
     try {
-      commonPostModel = await loginProvider!.verifyEmailOtp(otpValue,email);
+      commonPostModel = await loginProvider!.verifyEmailOtp(otpValue, email,usertype);
+
+      if (getResponseCode() == 200 && commonPostModel.success == true) {
+        otpVerified = true;
+      } else {
+        ApiErrorHandler.handleApiError(
+          responseCode: getResponseCode(),
+          message: commonPostModel.message ?? "Invalid OTP",
+        );
+      }
+    } catch (e) {
       ApiErrorHandler.handleApiError(
         responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
+        message: "Something went wrong",
       );
-      // commonPostModel = await loginProvider!.verifyEmailOtp(email, otpValue);
-      //
-      // final code = commonPostModel.statusCode ?? 500;
-      // final msg = commonPostModel.message ?? "Invalid OTP";
-      //
-      // if (code != 200) {
-      //   ApiErrorHandler.handleApiError(responseCode: code, message: msg);
-      // }
-    } catch (error) {
-      ApiErrorHandler.handleApiError(
-        responseCode: getResponseCode(),
-        message: commonPostModel.message ?? "Something went wrong",
-      );
-      mailVerifyLoading = false;
-      rethrow;
     } finally {
       mailVerifyLoading = false;
     }
   }
 
-  // ---------------- TIMER ----------------
+  // =====================================================
+  // ================= TIMER LOGIC =======================
+  // =====================================================
   void startTimer() {
     canResend.value = false;
     seconds.value = 30;

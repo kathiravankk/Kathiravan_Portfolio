@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:internsharks/core/const_file/app_button.dart';
 import 'package:internsharks/core/const_file/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isCompleted: widget.activeStep > 1,
                 icon: _getStepIcon(1, widget.activeStep),
                 onTap: () {
-                  if (widget.activeStep == 1) {Get.toNamed(Routes.uploadResumePage);
+                  if (widget.activeStep == 1) {Get.toNamed(Routes.resumeReportPage);
 
                   }
                 },
@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (currentActiveStep == 1) {
         // Active - Upload icon
         return Image.asset(
-          "lib/asset/images/icons/upload icon.png",
+          "asset/images/icons/upload icon.png",
           height: 28,
           width: 28,
           color: Colors.white,
@@ -175,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (currentActiveStep == 2) {
         // Active - show image icon
         return Image.asset(
-          "lib/asset/images/icons/upload icon.png",
+          "asset/images/icons/upload icon.png",
           height: 28,
           width: 28,
           color: Colors.white,

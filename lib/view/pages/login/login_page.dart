@@ -605,6 +605,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../controllers/login_controller.dart';
 import '../../../core/const_file/app_button.dart';
@@ -686,114 +687,100 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 25),
 
               /// ---------------- OTP / BUTTON SECTION ----------------
-              Obx(() {
-                /// ⏳ LOADING
-                if (loginC.loginLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.appYellow,
-                    ),
-                  );
-                }
+          Obx(() {
+            // ⏳ Loader
+            if (loginC.loginLoading) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.appYellow,
+                ),
+              );
+            }
 
-                /// 📤 SEND OTP
-                if (!loginC.otpSent) {
-                  return AppButton.AppContainerButton(
-                    onTap:
-                        loginC.mobile.value.isNotEmpty &&
-                            loginC.mobile.value.length == 10
-                        ? () async {
-                            await loginC.sendMobileOtp();
-                          }
-                        : null,
-                    bgColor:
-                        loginC.mobile.value.isNotEmpty &&
-                            loginC.mobile.value.length == 10
-                        ? AppColors.appBlue
-                        : Colors.grey.shade800,
-                    borderRadius: 30,
-                    text: "Send OTP",
+            // 🔐 OTP FIELD (OTP SENT TRUE)
+            if (loginC.otpSent == true) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "OTP",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+
+                  inputFormField(
+                    hint: "Enter your OTP",
+                    controller: otpField,
+                    maxLength: 4,
+                    onChanged: (val) {
+                      loginC.otp.value = val;
+                    },
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(),
+                      loginC.canResend.value
+                          ? TextButton(
+                        onPressed: () => loginC.loginSendMobileOtp(),
+                        child: const Text(
+                          "Resend OTP",
+                          style: TextStyle(color: AppColors.appYellow),
+                        ),
+                      )
+                          : Text(
+                        "Resend OTP in ${loginC.seconds.value}s",
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  AppButton.AppContainerButton(
+                    onTap: loginC.verifyLoading
+                        ? null
+                        : () async {
+                      await verifyOtpFunc();
+                    },
+                    bgColor: loginC.verifyLoading
+                        ? Colors.grey.shade800
+                        : AppColors.appBlue,
+                    borderRadius: 45,
+                    borderColor: Colors.white24,
+                    borderWidth: 1,
+                    text: loginC.verifyLoading
+                        ? "Verifying..."
+                        : "Verify & Continue",
                     verticalPadding: 12,
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  );
-                }
+                    textStyle: AppTextStyles.white22bold,
+                  ),
+                ],
+              );
+            }
 
-                /// 🔐 OTP SECTION
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "OTP",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    const SizedBox(height: 8),
-
-                    inputFormField(
-                      hint: "Enter your OTP",
-                      controller: otpField,
-                      maxLength: 4,
-                      onChanged: (val) {
-                        loginC.otp.value = val;
-                      },
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    /// 🔁 RESEND OTP (REACTIVE)
-                    Obx(
-                      () => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(),
-                          loginC.canResend.value
-                              ? TextButton(
-                                  onPressed: () => loginC.sendMobileOtp(),
-                                  child: const Text(
-                                    "Resend OTP",
-                                    style: TextStyle(
-                                      color: AppColors.appYellow,
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  "Resend OTP in ${loginC.seconds.value}s",
-                                  style: const TextStyle(color: Colors.white70),
-                                ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    /// ✅ VERIFY BUTTON (CLEAN BOOL LOGIC)
-                    Obx(
-                      () => AppButton.AppContainerButton(
-                        onTap: () async {
-                          await loginC.verifyMobileOtp(
-                            mobileField.text,
-                            otpField.text,
-                          );
-                          // 👈 context pass pannurom
-                        },
-
-                        bgColor: Colors.grey.shade800,
-                        borderRadius: 45,
-                        borderColor: Colors.white24,
-                        borderWidth: 1,
-                        text: loginC.verifyLoading
-                            ? "Verifying..."
-                            : "Verify & Continue",
-                        verticalPadding: 12,
-                        textStyle: AppTextStyles.white22bold,
-                      ),
-                    ),
-                  ],
-                );
-              }),
+            // 📤 SEND OTP BUTTON (OTP NOT SENT)
+            return AppButton.AppContainerButton(
+              onTap: loginC.mobile.value.length == 10
+                  ? () => loginC.loginSendMobileOtp()
+                  : null,
+              bgColor: loginC.mobile.value.length == 10
+                  ? AppColors.appBlue
+                  : Colors.grey.shade800,
+              borderRadius: 30,
+              text: "Send OTP",
+              verticalPadding: 12,
+              textStyle: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            );
+          })
+,
 
               const SizedBox(height: 30),
 
@@ -826,14 +813,25 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<void> verifyOtpFunc() async {
+    await loginC.loginVerifyMobileOtp(mobile: mobileField.text, otp: otpField.text);
+    if (loginC.getResponseCode() == 200) {
+      Get.offAllNamed(Routes.internshipHomePage);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+    }
+  }
+
   /// ---------------- INPUT FIELD HELPER ----------------
-  Widget inputFormField({
+  Widget inputFormField(
+      {
     String? prefix,
     required String hint,
     required TextEditingController controller,
     required Function(String) onChanged,
     int maxLength = 10,
-  }) {
+  }
+  ) {
     return TextField(
       controller: controller,
       onChanged: onChanged,

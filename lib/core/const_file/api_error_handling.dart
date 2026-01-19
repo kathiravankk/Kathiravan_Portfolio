@@ -6,18 +6,21 @@ import '../routes/app_pages.dart';
 import 'customsnackbar.dart';
 
 class ApiErrorHandler {
-
   /// 🌐 COMMON API ERROR HANDLER
   static void handleApiError({
     required int responseCode,
     required String message,
   }) {
     switch (responseCode) {
+      case 200:
+        CustomSnackBar.showSnackBarMessage(message: message, isError: false);
+        break;
+
+      case 201:
+        CustomSnackBar.showSnackBarMessage(message: message, isError: false);
+        break;
       case 400:
-        CustomSnackBar.showSnackBarMessage(
-          message: message,
-          isError: true,
-        );
+        CustomSnackBar.showSnackBarMessage(message: message, isError: true);
         break;
 
       case 401:
@@ -36,10 +39,7 @@ class ApiErrorHandler {
         break;
 
       case 404:
-        CustomSnackBar.showSnackBarMessage(
-          message: message,
-          isError: true,
-        );
+        CustomSnackBar.showSnackBarMessage(message: message, isError: true);
         break;
 
       case 500:
@@ -66,19 +66,15 @@ class ApiErrorHandler {
     }
   }
 
-  static void showToast({
-    required String message,
-    bool isError = false,
-  }) {
+  static void showToast({required String message, bool isError = false}) {
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 3,
-      textColor: isError ? Colors.red: Colors.green,
+      textColor: isError ? Colors.red : Colors.green,
       fontSize: 14,
       backgroundColor: isError ? Colors.white : Colors.white,
     );
   }
 }
-
