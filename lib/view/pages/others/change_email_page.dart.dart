@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 
 class ChangeEmailPage extends StatefulWidget {
-  const ChangeEmailPage({Key? key}) : super(key: key);
+  const ChangeEmailPage({super.key});
 
   @override
   State<ChangeEmailPage> createState() => _ChangeEmailPageState();
@@ -29,7 +29,7 @@ class _ChangeEmailPageState extends State<ChangeEmailPage> {
       body: Container( padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),

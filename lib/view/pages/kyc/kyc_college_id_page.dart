@@ -1,17 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_button.dart' show AppButton;
 import 'package:internsharks/core/const_file/asset_image.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-
 import 'kyc_aadhar_id_page.dart';
 
 class KycCollegeIdPage extends StatefulWidget {

@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:internsharks/const_file/app_colors.dart';
 // import 'package:internsharks/const_file/app_text_style.dart';
-// import 'package:internsharks/pages/upload_resume/resume_completed_page.dart';
+// import 'package:internsharks/page/upload_resume/resume_completed_page.dart';
 //
 // class Message {
 //   final String text;

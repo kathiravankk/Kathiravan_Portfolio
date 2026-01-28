@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-import 'package:internsharks/main.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
-import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 
-import 'account_settings_page.dart';
-import 'appPreferences_age.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -28,7 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),
@@ -77,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           icon: Icons.person_outline,
                           title: "Account Settings",
                           onTap: () {
-                            Get.toNamed(Routes.accountSettingsPage);
+                            Get.toNamed(AppRoutes.accountSettingsPage);
                           },
                         ),
                         _divider(),
@@ -112,7 +106,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         _settingsTile(
                           icon: Icons.settings_outlined,
                           title: "App Preferences",
-                          onTap: () {Get.toNamed(Routes.appPreferencesPage);
+                          onTap: () {Get.toNamed(AppRoutes.appPreferencesPage);
 
                           },
                         ),

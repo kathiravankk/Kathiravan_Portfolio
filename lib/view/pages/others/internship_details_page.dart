@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:internsharks/core/const_file/app_button.dart';import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/core/const_file/app_button.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-
-import '../../../controllers/login_controller.dart';
-import '../../../core/const_file/app_button.dart';
-import '../../../core/const_file/app_colors.dart';
-import '../../../core/const_file/app_text_style.dart';
-import '../../../core/routes/app_pages.dart';
-
-
 import '../kyc/job_apply_successfull.dart';
-import '../kyc/successful_page.dart';
 
 class InternshipDetailsPage extends StatefulWidget {
-  const InternshipDetailsPage({Key? key}) : super(key: key);
+  const InternshipDetailsPage({super.key});
 
   @override
   State<InternshipDetailsPage> createState() => _InternshipDetailsPageState();
@@ -33,7 +24,7 @@ class _InternshipDetailsPageState extends State<InternshipDetailsPage> {
         padding: const EdgeInsets.all(16),
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),
@@ -255,7 +246,7 @@ class _InternshipDetailsPageState extends State<InternshipDetailsPage> {
               children: [
                 Image(
                   width: 40,
-                  image: AssetImage("lib/asset/images/Ellipse 9.png"),
+                  image: AssetImage("lib/assets/images/Ellipse 9.png"),
                 ),
                 SizedBox(width: 10),
                 Text(
@@ -344,7 +335,7 @@ class _InternshipDetailsPageState extends State<InternshipDetailsPage> {
               children: [
                 Image(
                   width: 40,
-                  image: AssetImage("lib/asset/images/Ellipse 9.png"),
+                  image: AssetImage("lib/assets/images/Ellipse 9.png"),
                 ),
                 SizedBox(width: 10),
                 Text(
@@ -592,7 +583,7 @@ class _InternshipDetailsPageState extends State<InternshipDetailsPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(child: Text(name[0]), backgroundColor: Colors.white12),
+          CircleAvatar(backgroundColor: Colors.white12, child: Text(name[0])),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -670,7 +661,7 @@ Widget reviewCard({required String name, required String message}) {
                     const CircleAvatar(
                       radius: 14,
                       backgroundImage: AssetImage(
-                        "lib/asset/images/profile_icon.png",
+                        "lib/assets/images/profile_icon.png",
                       ),
                     ),
                     const SizedBox(width: 8),

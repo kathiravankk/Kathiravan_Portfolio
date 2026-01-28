@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
+
+
 class MyApplicationPage extends StatefulWidget {
   const MyApplicationPage({super.key});
 
@@ -16,14 +18,14 @@ class _MyApplicationPageState extends State<MyApplicationPage> {
   /// ----------------- JOB DATA (FULL LIST) -----------------
   List<Map<String, dynamic>> jobs = [
     {
-      "logo": "lib/asset/images/Ellipse 9.png",
+      "logo": "lib/assets/images/Ellipse 9.png",
       "title": "Team Leader",
       "company": "Infosys",
       "status": "Pending",
       "color": AppColors.appYellow,
     },
     {
-      "logo": "lib/asset/images/Ellipse 9.png",
+      "logo": "lib/assets/images/Ellipse 9.png",
       "title": "Product Design Intern",
       "company": "Innovate inc",
       "status": "Reviewed",
@@ -48,7 +50,7 @@ class _MyApplicationPageState extends State<MyApplicationPage> {
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),

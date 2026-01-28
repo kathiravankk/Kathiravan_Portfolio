@@ -1,24 +1,18 @@
-import 'package:flutter/material.dart';import 'package:internsharks/core/const_file/app_colors.dart';
-import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';import '../../../controllers/login_controller.dart';
-import '../../../core/const_file/app_button.dart';
-import '../../../core/const_file/app_colors.dart';
-import '../../../core/const_file/app_text_style.dart';
-import '../../../core/routes/app_pages.dart';
+import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import '../pages/others/117.dart';
 import '../pages/others/account_settings_page.dart';
 import '../pages/others/applies_page.dart';
 import 'goto_intern_homepage.dart';
-import 'home_Screen.dart';
 
-class Bottom_screen extends StatefulWidget {
-  const Bottom_screen({super.key});
+class BottomScreen extends StatefulWidget {
+  const BottomScreen({super.key});
 
   @override
-  State<Bottom_screen> createState() => _Bottom_screenState();
+  State<BottomScreen> createState() => _BottomScreenState();
 }
 
-class _Bottom_screenState extends State<Bottom_screen> {
+class _BottomScreenState extends State<BottomScreen> {
   int _selectedIndex = 0;
 
   late List<Widget> _pages;

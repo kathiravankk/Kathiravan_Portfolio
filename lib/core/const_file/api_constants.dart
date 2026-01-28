@@ -21,7 +21,8 @@ class ApiConstants {
   // Specific Endpoints
   static String
   analyzeResume =
-      "https://internsharks.tcsapec.com/api/resume-extraction";  static String
+      "https://internsharks.tcsapec.com/api/resume-extraction";
+  static String
   registerStudent=
       "$baseUrl/student/new-student-register";
 

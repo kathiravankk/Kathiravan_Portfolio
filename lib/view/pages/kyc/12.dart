@@ -379,7 +379,7 @@
 // import 'dart:io';
 //
 // import 'package:internsharks/const_file/asset_image.dart';
-// import 'package:internsharks/pages/upload_selfie/upload_selfie_page.dart';
+// import 'package:internsharks/page/upload_selfie/upload_selfie_page.dart';
 // import 'package:internsharks/screens/home_Screen.dart';
 //
 // class KYCVerificationPage extends StatefulWidget {

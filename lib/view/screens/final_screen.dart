@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'home_Screen.dart';
@@ -13,10 +13,10 @@ class FinalScreen extends StatefulWidget {
 }
 
 class _FinalScreenState extends State<FinalScreen> {
-  @override
   void _handleShare() {
     Share.share('Check out my resume - Anantha Krishnan\nFull Stack Developer');
   }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -230,6 +230,5 @@ class _FinalScreenState extends State<FinalScreen> {
         ),
       ),
     );
-    ;
   }
 }

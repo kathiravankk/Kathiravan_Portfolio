@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:internsharks/app/data/models/resume_response.dart';
 import 'package:internsharks/core/const_file/api_constants.dart';
-import '../models/resume_response.dart'; // Model import matum podhum
 
 class ResumeApiService {
   static Future<ResumeResponse?> analyzeResume(String filePath) async {
@@ -19,7 +20,7 @@ class ResumeApiService {
       }
       return null;
     } catch (e) {
-      print("API Error: $e");
+      debugPrint("API Error: $e");
       return null;
     }
   }

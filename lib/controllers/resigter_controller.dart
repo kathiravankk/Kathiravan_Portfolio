@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/data/models/extracted_data_model.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/controllers/resume_controller.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-import '../models/extracted_data_model.dart';
+
 
 class RegisterFlowController extends GetxController {
   // RxMap<String, dynamic> resumeData = <String, dynamic>{}.obs;
@@ -31,7 +32,7 @@ class RegisterFlowController extends GetxController {
       );
 
       if (success) {
-        Get.offAllNamed(Routes.resumeReportPage);
+        Get.offAllNamed(AppRoutes.resumeReportPage);
       } else {
         Get.snackbar(
           "Registration Failed",

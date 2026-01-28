@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
-import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 
 class SuccessfulPage extends StatefulWidget {
   const SuccessfulPage({super.key});
@@ -20,7 +18,7 @@ class _SuccessfulPageState extends State<SuccessfulPage> {
 
     // 🔥 AUTO NAVIGATE TO HOME AFTER 3 SECONDS
     Future.delayed(const Duration(seconds: 1), () {Get.toNamed(
-      Routes.homeScreen,
+      AppRoutes.homeScreen,
       arguments: {'activeStep': 4},
     );
 
@@ -39,12 +37,12 @@ class _SuccessfulPageState extends State<SuccessfulPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Success GIF
-            Container(
+            SizedBox(
               width: 200,
               height: 150,
               child: ClipOval(
                 child: Image.asset(
-                  'lib/asset/images/icons/verified.gif',
+                  'lib/assets/images/icons/verified.gif',
                   fit: BoxFit.cover,
                 ),
               ),

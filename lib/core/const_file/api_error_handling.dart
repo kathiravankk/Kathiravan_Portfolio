@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-
-import '../routes/app_pages.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'customsnackbar.dart';
 
 class ApiErrorHandler {
@@ -28,7 +27,7 @@ class ApiErrorHandler {
           message: "Session expired, please login again",
           isError: true,
         );
-        Get.offAllNamed(Routes.loginPage);
+        Get.offAllNamed(AppRoutes.loginScreen);
         break;
 
       case 403:

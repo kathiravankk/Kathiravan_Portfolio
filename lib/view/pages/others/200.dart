@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 class ManageLinkedAccountsPage extends StatefulWidget {
-  const ManageLinkedAccountsPage({Key? key}) : super(key: key);
+  const ManageLinkedAccountsPage({super.key});
 
   @override
   State<ManageLinkedAccountsPage> createState() => _ManageLinkedAccountsPageState();
@@ -15,17 +13,17 @@ class _ManageLinkedAccountsPageState extends State<ManageLinkedAccountsPage> {
     LinkedAccount(
       name: 'Google',
       isLinked: true,
-      icon: 'lib/asset/images/google_icon.png', // Add your Google icon
+      icon: 'lib/assets/images/google_icon.png', // Add your Google icon
     ),
     LinkedAccount(
       name: 'LinkedIn',
       isLinked: true,
-      icon: 'lib/asset/images/linkedin_icon.png', // Add your LinkedIn icon
+      icon: 'lib/assets/images/linkedin_icon.png', // Add your LinkedIn icon
     ),
     LinkedAccount(
       name: 'GitHub',
       isLinked: false,
-      icon: 'lib/asset/images/github_icon.png', // Add your GitHub icon
+      icon: 'lib/assets/images/github_icon.png', // Add your GitHub icon
     ),
   ];
 
@@ -37,7 +35,7 @@ class _ManageLinkedAccountsPageState extends State<ManageLinkedAccountsPage> {
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),

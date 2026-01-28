@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';import 'package:internsharks/core/const_file/app_colors.dart';
-import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
+import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 
 
 
@@ -38,12 +37,14 @@ class _JobApplySuccesfullState extends State<JobApplySuccesfull> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Success GIF
-            Container(
+
+
+            SizedBox(
               width: 200,
               height: 150,
               child: ClipOval(
                 child: Image.asset(
-                  'lib/asset/images/icons/verified.gif',
+                  'lib/assets/images/icons/verified.gif',
                   fit: BoxFit.cover,
                 ),
               ),

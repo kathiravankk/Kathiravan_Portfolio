@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+
+class AppColors {
+  static const Color appColor = Color(0xFF000000);
+  static const Color appBgColor = Color.fromRGBO(28, 25, 21, 1);
+  static const Color appBgColor_2 = Color.fromRGBO(24, 20, 16, 1);
+  static const Color secondaryColor = Color.fromRGBO(255, 212, 77, 1);
+  static const Color primaryColor = Color.fromRGBO(1, 205, 205, 1);
+  static const Color lightColorText = Color.fromRGBO(204, 204, 204, 1);
+  static const Color disableButtonColor = Color.fromRGBO(104, 104, 104, 1);
+  static const Color contBorderColor = Color.fromRGBO(198, 195, 195, 0.19);
+  static const Color blackGradient1 = Color.fromRGBO(31, 38, 38, 1);
+  static const Color blackGradient2 = Color.fromRGBO(31, 37, 37, 1);
+  static const Color fieldBgColor = Color.fromRGBO(28, 33, 33, 1);
+  static const Color fieldBorderColor = Color.fromRGBO(253, 253, 253, 0.3);
+  static const Color whiteColor = Colors.white;
+  static const Color blackColor = Colors.black;
+  static const Color greyColor = Colors.grey;
+  static const Color transparentColor = Colors.transparent;
+  static const Color failBgColor = Color.fromRGBO(254, 226, 226,1);
+  static const Color failTextColor = Color.fromRGBO(220, 38, 38,1);
+  static const Color sucTextColor = Color.fromRGBO(22, 163, 74,1);
+  static const Color sucBgColor = Color.fromRGBO(220, 252, 231,1);
+  static const Color gradientColor1 = Color.fromRGBO(24, 20, 16, 1);
+  static const Color gradientColor2 = Color.fromRGBO(1, 205, 205, 0);
+  static const Color lightTextColor = Color.fromRGBO(255, 255, 255, 0.23);
+  static const Color gradientColor3 = Color(0xff161e16);
+static const Color iconBgColor = Color(0xFF123B34);
+static const Color iconContColor = Color(0xFF192226);
+static final Color disableFieldColor = Colors.green.withValues(alpha: 0.2);
+
+
+  static const Color secColor = Color(0xFF181818);
+  static const Color thirdColor = Color(0xFF1c2121);
+  static const Color appBlue = Color(0xFF01cdcd);
+  static const Color appYellow = Color(0xFFffde5f);
+
+}

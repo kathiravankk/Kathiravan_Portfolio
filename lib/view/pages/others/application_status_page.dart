@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-import 'internship_details_page.dart';
 
 class ApplicationStatusPage extends StatefulWidget {
   const ApplicationStatusPage({super.key});
@@ -23,7 +22,7 @@ class _ApplicationStatusPageState extends State<ApplicationStatusPage> {
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),
@@ -354,7 +353,7 @@ class _ApplicationStatusPageState extends State<ApplicationStatusPage> {
                 ),
                 child: Image(
                   width: 40,
-                  image: AssetImage("lib/asset/images/Ellipse 9.png"),
+                  image: AssetImage("lib/assets/images/Ellipse 9.png"),
                 ),
               ),
             ],
@@ -494,7 +493,7 @@ class _ApplicationStatusPageState extends State<ApplicationStatusPage> {
               InkWell(
                 onTap: () {
                   Get.toNamed(
-                    Routes.internshipDetailsPage,
+                    AppRoutes.internshipDetailsPage,
 
                   );
 

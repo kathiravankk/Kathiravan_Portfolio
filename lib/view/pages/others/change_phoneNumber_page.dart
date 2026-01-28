@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 class ChangePhoneNumberPage extends StatefulWidget {
-  const ChangePhoneNumberPage({Key? key}) : super(key: key);
+  const ChangePhoneNumberPage({super.key});
 
   @override
   State<ChangePhoneNumberPage> createState() => _ChangePhoneNumberPageState();
@@ -28,7 +28,7 @@ class _ChangePhoneNumberPageState extends State<ChangePhoneNumberPage> {
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),
