@@ -293,7 +293,7 @@ class _RegisterResumeReportScreenState
   Widget buildBulletBlock({
     required String title,
     String? subtitle,
-    required List<String> points,
+    required String points,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -318,8 +318,7 @@ class _RegisterResumeReportScreenState
                 weight: FontWeight.w700,
               ),
             ),
-          ...points.map(
-            (e) => Row(
+           Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -332,7 +331,7 @@ class _RegisterResumeReportScreenState
                 ),
                 Expanded(
                   child: Text(
-                    e,
+                    points,
                     style: AppStyles.customTextStyle(
                       size: 12,
                       lineSpace: 1.3,
@@ -343,7 +342,6 @@ class _RegisterResumeReportScreenState
                 ),
               ],
             ),
-          ),
         ],
       ),
     );
@@ -531,6 +529,8 @@ class _RegisterResumeReportScreenState
     );
   }
 
+
+
   Future<void> updateResumeFunc() async {
     await registerController.updateResumeData(
       updateData: registerController.resumeAnalyzeModel.extractedData!,
@@ -541,7 +541,13 @@ class _RegisterResumeReportScreenState
         message: "Resume Updated Successfully!",
         isError: false,
       );
-      //AppFunctions.navigateScreen(context, screenName);
+      AppFunctions.navigateScreen(
+        context,
+        AppRoutes.resumeTemplateSelectionScreen,
+        arguments: {
+          "resumeData": registerController.extractedResumeModel
+        }
+      );
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),

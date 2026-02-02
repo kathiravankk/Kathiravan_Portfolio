@@ -55,6 +55,7 @@ dependencies:
   fluttertoast: ^9.0.0
   pdfx: ^2.9.2
   crop_image: ^1.0.17
+  webview_flutter: ^4.13.1
 
 
 
@@ -85,6 +86,8 @@ flutter:
   assets:
     - assets/images/
     - assets/images/icons/
+    - assets/images/html_templates/
+    - assets/images/templates_thumbnail/
 
 
   # An image assets can refer to one or more resolution-specific "variants", see

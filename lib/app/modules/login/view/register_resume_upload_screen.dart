@@ -156,6 +156,7 @@ class _RegisterResumeUploadScreenState
                     InkWell(
                       onTap: () async {
                         await pickFile();
+                        //AppFunctions.navigateScreen(context, AppRoutes.stepUpdateScreen, arguments: {"activeStep": 3});
                       },
                       child: Container(
                         width: 322,

@@ -72,7 +72,7 @@ class Sections {
 
   factory Sections.fromJson(Map<String, dynamic> json) {
     return Sections(
-      profileSummary: SectionDetail.fromJson(json['profile-summary']),
+      profileSummary: SectionDetail.fromJson(json['profile_summary']),
       projects: SectionDetail.fromJson(json['projects']),
       internships: SectionDetail.fromJson(json['internships']),
       experience: SectionDetail.fromJson(json['experience']),
@@ -133,6 +133,8 @@ class ExtractedResumeDataModel {
   List<String>? updatedProfileSummary;
   List<String>? updatedProjects;
   List<String>? updatedInternships;
+  String? templateNumber;
+  String? studentId;
 
   ExtractedResumeDataModel({
     this.personalInfo,
@@ -164,6 +166,8 @@ class ExtractedResumeDataModel {
     this.updatedProjects,
     this.workShops,
     this.degree,
+    this.studentId,
+    this.templateNumber,
   });
 
   ExtractedResumeDataModel.fromJson(Map<String, dynamic> json) {
@@ -220,6 +224,8 @@ class ExtractedResumeDataModel {
     );
     updatedProjects = List<String>.from(json['updatedProjects'] ?? []);
     updatedInternships = List<String>.from(json['updateInternships'] ?? []);
+    templateNumber = json['templateNumber'] ?? "";
+    studentId = json['studentId'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -257,9 +263,10 @@ class ExtractedResumeDataModel {
       "updatedProfileSummary": updatedProfileSummary ?? [],
       "updatedProjects": updatedProjects ?? [],
       "updateInternships": updatedInternships ?? [],
+      "studentId": studentId ?? "",
+      "templateNumber": templateNumber ?? "",
     };
   }
-
 }
 
 class PersonalInfo {
@@ -298,34 +305,29 @@ class PersonalInfo {
       "github": github ?? "",
     };
   }
-
 }
 
 class Project {
   String? title;
-  List<String>? description;
+  dynamic description;
 
   Project({this.title, this.description});
 
   Project.fromJson(Map<String, dynamic> json) {
     title = json['title'] ?? "";
-    description = List<String>.from(json['description'] ?? []);
+    description = json['description'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      "title": title ?? "",
-      "description": description ?? [],
-    };
+    return {"title": title ?? "", "description": description ?? []};
   }
-
 }
 
 class Experience {
   String? company;
   String? role;
   String? duration;
-  List<String>? description;
+  dynamic description;
 
   Experience({this.company, this.role, this.duration, this.description});
 
@@ -333,7 +335,7 @@ class Experience {
     company = json['company'] ?? "";
     role = json['role'] ?? "";
     duration = json['duration'] ?? "";
-    description = List<String>.from(json['description'] ?? []);
+    description = json['description'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -341,17 +343,16 @@ class Experience {
       "company": company ?? "",
       "role": role ?? "",
       "duration": duration ?? "",
-      "description": description ?? [],
+      "description": description ?? "",
     };
   }
-
 }
 
 class Internship {
   String? company;
   String? role;
   String? duration;
-  List<String>? description;
+  dynamic description;
 
   Internship({this.company, this.role, this.duration, this.description});
 
@@ -359,7 +360,7 @@ class Internship {
     company = json['company'] ?? "";
     role = json['role'] ?? "";
     duration = json['duration'] ?? "";
-    description = List<String>.from(json['description'] ?? []);
+    description = json['description'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -367,10 +368,9 @@ class Internship {
       "company": company ?? "",
       "role": role ?? "",
       "duration": duration ?? "",
-      "description": description ?? [],
+      "description": description ?? "",
     };
   }
-
 }
 
 class Training {
@@ -396,5 +396,4 @@ class Training {
       "description": description ?? [],
     };
   }
-
 }

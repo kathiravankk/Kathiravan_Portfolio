@@ -73,6 +73,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                   size: 18,
                   weight: FontWeight.w700,
                   color: AppColors.secondaryColor,
+                  lineSpace: 1.3
                 ),
               ),
 
@@ -263,7 +264,7 @@ class _StepCardWidgetState extends State<StepCardWidget> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 15),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(35),
+            borderRadius: BorderRadius.circular(25),
             color: shouldHighlight
                 ? AppColors.fieldBgColor
                 : AppColors.appBgColor.withValues(alpha: 0.5),

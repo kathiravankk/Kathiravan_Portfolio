@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/common_post_model.dart';
+import 'package:internsharks/app/data/models/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/profile_update_model.dart';
 import 'package:internsharks/app/data/models/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/resume_extract_model.dart';
@@ -282,6 +283,8 @@ class RegisterProvider {
     required Map<String, dynamic> updateData,
   }) async {
     try {
+      Map<String, dynamic> header = await AppApiHeader.formDataHeader();
+
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
       );
@@ -292,7 +295,7 @@ class RegisterProvider {
           .put(
             AppApiUrls.updateStudentRegisterData,
             data: formData,
-            options: Options(headers: await AppApiHeader.formDataHeader()),
+            options: Options(headers: header),
           )
           .timeout(const Duration(seconds: 60));
 
@@ -301,6 +304,37 @@ class RegisterProvider {
     } on DioException catch (error) {
       responseStatus = error.response?.statusCode ?? 0;
       return ProfileUpdateModel.fromJson(error.response?.data);
+    }
+  }
+
+
+  // KYC VERIFICATION
+
+  Future<KycUpdateModel> kycVerification({
+    required Map<String, dynamic> kycData,
+  }) async {
+    try {
+      Map<String, dynamic> header = await AppApiHeader.formDataHeader();
+
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      // Convert Map to FormData
+      final formData = FormData.fromMap(kycData);
+
+      Response response = await client!
+          .post(
+        AppApiUrls.verifyKycData,
+        data: formData,
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return KycUpdateModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return KycUpdateModel.fromJson(error.response?.data);
     }
   }
 }

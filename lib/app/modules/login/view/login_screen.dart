@@ -5,6 +5,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/modules/login/controllers/login_controller.dart';
+import 'package:internsharks/app/modules/login/view/resume_template_selection_screen.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/core/const_file/app_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     onPressed: () => sendOtpFunc(
                                       mobileNumber: mobileController.text,
                                     ),
-                                    child:  Text(
+                                    child: Text(
                                       "Resend OTP",
                                       style: AppStyles.customTextStyle(
                                         size: 16,
@@ -121,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         color: AppColors.primaryColor,
                                         isUnderlined: true,
                                         underlineColor: AppColors.primaryColor,
-                                        fontFamily: "Roboto"
+                                        fontFamily: "Roboto",
                                       ),
                                     ),
                                   )
@@ -131,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       size: 16,
                                       weight: FontWeight.w500,
                                       color: AppColors.primaryColor,
-                                        fontFamily: "Roboto"
+                                      fontFamily: "Roboto",
                                     ),
                                   ),
                           ],
@@ -211,6 +212,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 AppRoutes.registerResumeUploadScreen,
                               );
+
+                              // AppFunctions.navigateScreen(
+                              //   context,
+                              //   AppRoutes.resumeTemplateSelectionScreen,
+                              // );
                             },
                         ),
                       ],

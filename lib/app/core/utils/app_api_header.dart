@@ -7,8 +7,9 @@ class AppApiHeader {
 
     return {
       //if (token != null && token.isNotEmpty)
-        //"Authorization": "Bearer $token",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzlmNDU0OTA4NjlhMDgwM2MzMGJlNyIsImlhdCI6MTc2OTYwMDA4NCwiZXhwIjoxNzcyMTkyMDg0fQ.OTSXYFh5a3h9I1c6u7HuW3GA2WcL5N_GOpzJqLdiysM",
+      //"Authorization": "Bearer $token",
+      "Authorization":
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5N2IyZmNlMDFkYjFiMTFmMzQyM2JhMyIsImlhdCI6MTc2OTY4MDg0NiwiZXhwIjoxNzcyMjcyODQ2fQ.ABB3sCdN06eyIzvrR7diy7iBIlvCQnFVHB6DB9myaV4",
       "timezone": "Asia/Kolkata",
       "Content-Type": "application/json;charset=utf-8",
     };
@@ -21,7 +22,8 @@ class AppApiHeader {
     return {
       //if (token != null && token.isNotEmpty)
       //"Authorization": "Bearer $token",
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzlmNDU0OTA4NjlhMDgwM2MzMGJlNyIsImlhdCI6MTc2OTYwMDA4NCwiZXhwIjoxNzcyMTkyMDg0fQ.OTSXYFh5a3h9I1c6u7HuW3GA2WcL5N_GOpzJqLdiysM",
+      "Authorization":
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5N2IyZmNlMDFkYjFiMTFmMzQyM2JhMyIsImlhdCI6MTc2OTY4MDg0NiwiZXhwIjoxNzcyMjcyODQ2fQ.ABB3sCdN06eyIzvrR7diy7iBIlvCQnFVHB6DB9myaV4",
       "timezone": "Asia/Kolkata",
       "Content-Type": "multipart/form-data",
     };

@@ -97,15 +97,16 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (token != null && token.isNotEmpty) {
       if (isVerified) {
-        Get.offAllNamed(AppRoutes.homeScreen);
+        Get.offAllNamed(AppRoutes.dashBoardScreen);
       } else {
-        Get.offAllNamed(AppRoutes.homeScreen);   // Need to replace the verification screen
+        Get.offAllNamed(
+          AppRoutes.dashBoardScreen,
+        ); // Need to replace the verification screen
       }
     } else {
       Get.offAllNamed(AppRoutes.loginScreen);
     }
   }
-
 
   @override
   void dispose() {

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/common_post_model.dart';
+import 'package:internsharks/app/data/models/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/profile_update_model.dart';
 import 'package:internsharks/app/data/models/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/resume_extract_model.dart';
@@ -361,13 +362,45 @@ class RegisterController extends GetxController {
 
   Future<void> updateStudentProfileData({required Map<String, dynamic> updateData}) async {
     try {
-      updateResumeLoading = true;
+      updateProfileLoading = true;
       updateProfileModel = await registerProvider!.putUpdateProfile(
         updateData: updateData,
       );
-      updateResumeLoading = false;
+      updateProfileLoading = false;
     } catch (err) {
-      updateResumeLoading = false;
+      updateProfileLoading = false;
+      rethrow;
+    }
+  }
+
+  // KYC VERIFICATION
+
+  // Loading
+
+  final _kycVerificationLoading = false.obs;
+
+  bool get kycVerificationLoading => _kycVerificationLoading.value;
+
+  set kycVerificationLoading(bool value) => _kycVerificationLoading.value = value;
+
+  //Model
+
+  final _kycUpdateModel = KycUpdateModel().obs;
+
+  KycUpdateModel get kycUpdateModel => _kycUpdateModel.value;
+
+  set kycUpdateModel(KycUpdateModel value) =>
+      _kycUpdateModel.value = value;
+
+  Future<void> verifyKycData({required Map<String, dynamic> kycData}) async {
+    try {
+      kycVerificationLoading = true;
+      kycUpdateModel = await registerProvider!.kycVerification(
+        kycData: kycData,
+      );
+      kycVerificationLoading = false;
+    } catch (err) {
+      kycVerificationLoading = false;
       rethrow;
     }
   }

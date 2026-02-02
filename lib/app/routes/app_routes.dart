@@ -11,6 +11,8 @@ class AppRoutes {
   static const kycVerificationScreen = '/kycVerificationScreen';
   static const stepUpdateScreen = '/stepUpdateScreen';
   static const dashBoardScreen = '/dashBoardScreen';
+  static const resumeTemplateSelectionScreen = '/resumeTemplateSelectionScreen';
+  static const resumeTemplateViewScreen = '/resumeTemplateViewScreen';
 
 
 

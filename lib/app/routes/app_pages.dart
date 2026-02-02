@@ -6,7 +6,9 @@ import 'package:internsharks/app/modules/login/view/kyc_verification_screen.dart
 import 'package:internsharks/app/modules/login/view/login_screen.dart';
 import 'package:internsharks/app/modules/login/view/register_profile_upload_screen.dart';
 import 'package:internsharks/app/modules/login/view/register_resume_report_screen.dart';
+import 'package:internsharks/app/modules/login/view/resume_template_selection_screen.dart';
 import 'package:internsharks/app/modules/login/view/register_resume_upload_screen.dart';
+import 'package:internsharks/app/modules/login/view/resume_template_view_screen.dart';
 import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
 import 'package:internsharks/binding/auth_binding.dart';
@@ -86,6 +88,15 @@ class AppPages {
       name: AppRoutes.registerSelfiePreviewScreen,
       page: () => RegisterSelfiePreviewScreen(),
       bindings: [RegisterBindings()],
+    ),
+    appPage(
+      name: AppRoutes.resumeTemplateSelectionScreen,
+      page: () => ResumeTemplateSelectionScreen(),
+      bindings: [RegisterBindings()],
+    ),
+    appPage(
+      name: AppRoutes.resumeTemplateViewScreen,
+      page: () => ResumeTemplateViewScreen(),
     ),
     appPage(
       name: AppRoutes.kycVerificationScreen,

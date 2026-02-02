@@ -18,6 +18,7 @@ class AppApiUrls {
   static const String getStudentProfile = "${baseUrl}student/getById";
   static const String analyzeResumeScore = "${baseUrl}analyze-resume-score";
   static const String updateResumeData = "${baseUrl}enhance-resume";
+  static const String verifyKycData = "${baseUrl}verify-kyc";
 
 
 

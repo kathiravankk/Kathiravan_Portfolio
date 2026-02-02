@@ -88,37 +88,37 @@ class _RegisterSelfiePreviewScreenState
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 30,
-            children: [
-              Text(
-                "its an cool look! your creativity brings this \n moment to life. Let’s add the final \ntouches to unique one",
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  color: AppColors.whiteColor,
-                  size: 16,
-                  lineSpace: 1.4,
-                  weight: FontWeight.w400,
-                ),
-              ),
-              Container(
-                width: 240,
-                height: 240,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: FileImage(File(imagePath)),
+      body: Obx(
+        () => Padding(
+          padding: const EdgeInsets.all(15),
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 30,
+              children: [
+                Text(
+                  "its an cool look! your creativity brings this \n moment to life. Let’s add the final \ntouches to unique one",
+                  textAlign: TextAlign.center,
+                  style: AppStyles.customTextStyle(
+                    color: AppColors.whiteColor,
+                    size: 16,
+                    lineSpace: 1.4,
+                    weight: FontWeight.w400,
                   ),
                 ),
-              ),
-              Spacer(),
-              Obx(
-                () => CustomButtonWidget(
+                Container(
+                  width: 240,
+                  height: 240,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: FileImage(File(imagePath)),
+                    ),
+                  ),
+                ),
+                Spacer(),
+                CustomButtonWidget(
                   width: 300,
                   height: 45,
                   isLoading: registerController.updateProfileLoading,
@@ -127,9 +127,9 @@ class _RegisterSelfiePreviewScreenState
                   },
                   buttonText: "Upload",
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class AppFunctions {
@@ -41,12 +43,10 @@ class AppFunctions {
     );
   }
 
-
   static void apiErrorHandling(int responseCode, String message) {
     if (responseCode == 400) {
       showToast(message: message, isError: true);
-    }
-    else if (responseCode == 400) {
+    } else if (responseCode == 400) {
       showToast(message: message, isError: true);
     } else if (responseCode == 401) {
       showToast(message: "Session expired, Please login again!", isError: true);
@@ -114,15 +114,13 @@ class AppFunctions {
     }
   }
 
-
-
   static String _scoreText(
-      double score, {
-        required String excellent,
-        required String good,
-        required String average,
-        required String poor,
-      }) {
+    double score, {
+    required String excellent,
+    required String good,
+    required String average,
+    required String poor,
+  }) {
     if (score >= 8.5) {
       return excellent;
     } else if (score >= 6.5) {
@@ -134,5 +132,87 @@ class AppFunctions {
     }
   }
 
+  static Future<void> showAppAlert({
+    BuildContext? context,
+    String? title,
+    required String content,
+    String cancelText = 'Cancel',
+    VoidCallback? onCancel,
+    String? confirmText,
+    VoidCallback? onConfirm,
+    bool isDestructive = false,
+    bool barrierDismissible = false,
+  }) async {
+    return showCupertinoDialog(
 
+      context: context!,
+      barrierDismissible: barrierDismissible,
+      builder: (_) {
+        return CupertinoAlertDialog(
+          title: title != null
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    title,
+                    style: AppStyles.customTextStyle(
+                      size: 16,
+                      weight: FontWeight.w600,
+                      color: AppColors.primaryColor,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : null,
+          content: Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Text(
+              content,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                weight: FontWeight.w600,
+                color: AppColors.primaryColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () {
+                Get.back();
+                onCancel?.call();
+              },
+              child: Text(
+                cancelText,
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  weight: FontWeight.w600,
+                  color: AppColors.failTextColor,
+                ),
+              ),
+            ),
+
+            if (confirmText != null)
+              CupertinoDialogAction(
+                isDestructiveAction: isDestructive,
+                onPressed: () {
+                  Get.back();
+                  onConfirm?.call();
+                },
+                child: Text(
+                  confirmText,
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: isDestructive
+                        ? AppColors.failTextColor
+                        : AppColors.primaryColor,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
 }
