@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
@@ -235,14 +237,15 @@ void showLogoutPopup(BuildContext context) {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-
-              /// Clear all screens & go to splash
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => SplashScreen()),
-                    (route) => false,
-              );
+              AppFunctions.logOutFunc(context);
+              // Navigator.pop(context);
+              //
+              // /// Clear all screens & go to splash
+              // Navigator.pushAndRemoveUntil(
+              //   context,
+              //   MaterialPageRoute(builder: (_) => SplashScreen()),
+              //       (route) => false,
+              // );
             },
             child: const Text(
               "Logout",

@@ -12,6 +12,7 @@ class CustomButtonWidget extends StatelessWidget {
   final bool disable;
   final bool isLoading;
   final Color bgColor;
+  final TextStyle? buttonTextStyle;
 
   const CustomButtonWidget({
     super.key,
@@ -23,6 +24,7 @@ class CustomButtonWidget extends StatelessWidget {
     this.disable = false,
     this.isLoading = false,
     this.bgColor = AppColors.primaryColor,
+    this.buttonTextStyle,
   });
 
   @override
@@ -42,8 +44,7 @@ class CustomButtonWidget extends StatelessWidget {
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
               side: BorderSide(width: 1, color: AppColors.primaryColor),
-              borderRadius: BorderRadius.all(Radius.circular(25)
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(25)),
             ),
           ),
         ),
@@ -60,12 +61,14 @@ class CustomButtonWidget extends StatelessWidget {
                   SizedBox(width: buttonIcon != null ? 5 : 0),
                   Text(
                     buttonText,
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                      fontFamily: "Roboto"
-                    ),
+                    style:
+                        buttonTextStyle ??
+                        AppStyles.customTextStyle(
+                          size: 16,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w500,
+                          fontFamily: "Roboto",
+                        ),
                   ),
                 ],
               ),

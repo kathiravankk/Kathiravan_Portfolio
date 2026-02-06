@@ -40,13 +40,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   Future<void> setInitialData() async {
     nameController.text =
         registerController.resumeExtractModel.resumeData!.personalInfo!.name ??
-        "";
+            "";
     emailController.text =
         registerController.resumeExtractModel.resumeData!.personalInfo!.email ??
-        "";
+            "";
     mobileController.text =
         registerController.resumeExtractModel.resumeData!.personalInfo!.phone ??
-        "";
+            "";
   }
 
   @override
@@ -158,12 +158,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         };
                       }
 
-                      return CustomButtonWidget(
-                        disable: seconds > 0,
-                        width: 140,
-                        buttonText: text,
-                        isLoading: registerController.sendMobileOtpLoading,
-                        buttonFunction: onTap,
+                      return Expanded(
+                        child: CustomButtonWidget(
+                          disable: seconds > 0,
+                          buttonText: text,
+                          isLoading: registerController.sendMobileOtpLoading,
+                          buttonFunction: onTap,
+                        ),
                       );
                     }),
                   ],
@@ -192,11 +193,11 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         disable: registerController.isMobileVerified.value,
                         isLoading: registerController.verifyMobileOtpLoading,
                         buttonFunction:
-                            registerController.isMobileVerified.value
+                        registerController.isMobileVerified.value
                             ? () {}
                             : () async {
-                                await verifyMobileOtp();
-                              },
+                          await verifyMobileOtp();
+                        },
                       ),
                     ],
                   );
@@ -234,12 +235,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         };
                       }
 
-                      return CustomButtonWidget(
-                        disable: seconds > 0,
-                        width: 140,
-                        buttonText: text,
-                        isLoading: registerController.sendEmailOtpLoading,
-                        buttonFunction: onTap,
+                      return Expanded(
+                        child: CustomButtonWidget(
+                          disable: seconds > 0,
+                          buttonText: text,
+                          isLoading: registerController.sendEmailOtpLoading,
+                          buttonFunction: onTap,
+                        ),
                       );
                     }),
                   ],
@@ -270,8 +272,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         buttonFunction: registerController.isEmailVerified.value
                             ? () {}
                             : () async {
-                                await verifyEmailOtp();
-                              },
+                          await verifyEmailOtp();
+                        },
                       ),
                     ],
                   );
@@ -280,29 +282,29 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                 Obx(() {
                   final enabled =
                       registerController.isMobileVerified.value &&
-                      registerController.isEmailVerified.value;
+                          registerController.isEmailVerified.value;
 
                   return Center(
                     child: CustomButtonWidget(
                       width: 320,
                       buttonText: "Save & Continue",
-                      //disable: !enabled,
+                      disable: !enabled,
                       isLoading: registerController.studentRegisterLoading,
-                      // buttonFunction: enabled
-                      //     ? () async {
-                      //         await studentRegisterFunc();
-                      //       }
-                      //     : () {},
-                      buttonFunction: () async {
-                        //await studentRegisterFunc();
-
-                        //registerController.getStudentProfile(studentId: "6976f0340c772f260cf0528a");
-                        //registerController.checkResumeScore(resumeUrl: "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf");
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.registerResumeReportScreen,
-                        );
-                      },
+                      buttonFunction: enabled
+                          ? () async {
+                        await studentRegisterFunc();
+                      }
+                          : () {},
+                      // buttonFunction: () async {
+                      //   //await studentRegisterFunc();
+                      //
+                      //   //registerController.getStudentProfile(studentId: "6976f0340c772f260cf0528a");
+                      //   //registerController.checkResumeScore(resumeUrl: "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf");
+                      //   AppFunctions.navigateScreen(
+                      //     context,
+                      //     AppRoutes.registerResumeReportScreen,
+                      //   );
+                      // },
                     ),
                   );
                 }),
@@ -319,136 +321,136 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     final resumePath = await ResumeStorageService.getResumePath();
     Map<String, dynamic> registerData = {
       "studmobileno":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .phone ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .personalInfo!
+          .phone ??
           "",
 
       "studemail":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .email ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .personalInfo!
+          .email ??
           "",
 
       "studname":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .name ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .personalInfo!
+          .name ??
           "",
 
       "studgender":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .gender ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .personalInfo!
+          .gender ??
           "",
 
       "studdob": "",
 
       "studentaddress":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .location ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .personalInfo!
+          .location ??
           "",
 
       "studentdegree":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!
-              .first
-              .degree ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .college!
+          .first
+          .degree ??
           "",
 
       "studentfieldofstudy":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!
-              .first
-              .department ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .college!
+          .first
+          .department ??
           "",
 
       "studentcollegename":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!
-              .first
-              .institution ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .college!
+          .first
+          .institution ??
           "",
 
       "studcollegestartyear":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!
-              .first
-              .startYear
-              ?.toString() ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .college!
+          .first
+          .startYear
+          ?.toString() ??
           "",
 
       "studcollegelocation": "",
 
       "studhighschollname":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .higherSecondary
-              .institution ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .school!
+          .higherSecondary
+          .institution ??
           "",
 
       "studhighschoolpercentage":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .higherSecondary
-              .percentage
-              ?.toString() ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .school!
+          .higherSecondary
+          .percentage
+          ?.toString() ??
           "",
 
       "studentsecondaryschoolname":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .secondary
-              .institution ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .school!
+          .secondary
+          .institution ??
           "",
 
       "studentsecondaryschoolpercentage":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .secondary
-              .percentage
-              ?.toString() ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .education!
+          .school!
+          .secondary
+          .percentage
+          ?.toString() ??
           "",
 
       "projects": jsonEncode(
         registerController.resumeExtractModel.resumeData!.projects
-                ?.map((e) => e.toJson())
-                .toList() ??
+            ?.map((e) => e.toJson())
+            .toList() ??
             [],
       ),
 
@@ -491,8 +493,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
       "experience": jsonEncode(
         registerController.resumeExtractModel.resumeData!.experience
-                ?.map((e) => e.toJson())
-                .toList() ??
+            ?.map((e) => e.toJson())
+            .toList() ??
             [],
       ),
 
@@ -516,19 +518,19 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       ),
 
       "linkedIn":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .linkedIn ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .personalInfo!
+          .linkedIn ??
           "",
 
       "github":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .github ??
+      registerController
+          .resumeExtractModel
+          .resumeData!
+          .personalInfo!
+          .github ??
           "",
 
       "portfolio_website": "",
@@ -536,7 +538,9 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       "student_banner": "",
       "studentresume": await MultipartFile.fromFile(
         resumePath!,
-        filename: resumePath.split('/').last,
+        filename: resumePath
+            .split('/')
+            .last,
         contentType: MediaType(
           "application",
           "pdf", // or doc/docx based on file
@@ -550,17 +554,18 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
         registerController.getResponseCode() == 201) {
       AppFunctions.showToast(
         message:
-            registerController.studentRegisterModel.message ??
+        registerController.studentRegisterModel.message ??
             "Student registered successfully!",
         isError: false,
       );
       final prefs = await SharedPreferences.getInstance();
-
+      LocalStorageService.saveStudent(
+          token: registerController.studentRegisterModel.studentToken!,
+          student: registerController.studentRegisterModel.registerData!);
       await prefs.setString(
         LocalStorageService.studentNameKey,
         registerController.studentRegisterModel.registerData!.studentName ?? "",
       );
-
       AppFunctions.navigateScreen(
         context,
         AppRoutes.registerResumeReportScreen,
@@ -579,7 +584,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+        registerController.commonPostModel.message ??
             "OTP sent to your mobile!",
         isError: false,
       );
@@ -600,7 +605,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+        registerController.commonPostModel.message ??
             "OTP verified successfully!",
         isError: false,
       );
@@ -618,7 +623,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+        registerController.commonPostModel.message ??
             "OTP sent to your Email!",
         isError: false,
       );
@@ -639,7 +644,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+        registerController.commonPostModel.message ??
             "OTP verified successfully!",
         isError: false,
       );

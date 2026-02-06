@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/common_post_model.dart';
+import 'package:internsharks/app/data/models/student_register_model.dart';
 import 'package:internsharks/app/data/providers/login_provider.dart';
 
 class LoginController extends GetxController {
@@ -90,13 +91,22 @@ class LoginController extends GetxController {
 
   set loginVerifyLoading(bool value) => _loginVerifyLoading.value = value;
 
+  //Model
+
+  final _studentRegisterModel = StudentRegisterModel().obs;
+
+  StudentRegisterModel get studentRegisterModel => _studentRegisterModel.value;
+
+  set studentRegisterModel(StudentRegisterModel value) =>
+      _studentRegisterModel.value = value;
+
   Future<void> verifyLoginOtp({
     required String mobileNumber,
     required String otpNumber,
   }) async {
     try {
       loginVerifyLoading = true;
-      commonPostModel = await loginProvider!.loginVerifyOtp(
+      studentRegisterModel = await loginProvider!.loginVerifyOtp(
         mobileNumber: mobileNumber,
         otpNumber: otpNumber,
       );

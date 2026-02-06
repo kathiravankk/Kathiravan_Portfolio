@@ -13,6 +13,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 
 import '../../../../core/const_file/app_text_style.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
+import '../../../data/repositories/local_storage_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -212,11 +213,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 AppRoutes.registerResumeUploadScreen,
                               );
-
-                              // AppFunctions.navigateScreen(
-                              //   context,
-                              //   AppRoutes.resumeTemplateSelectionScreen,
-                              // );
                             },
                         ),
                       ],
@@ -264,25 +260,36 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
+        await prefs.setString(
+          LocalStorageService.studentNameKey,
+          loginController.studentRegisterModel.registerData!.studentName ?? "",
+        );
+        LocalStorageService.saveStudent(
+          token: loginController.studentRegisterModel.studentToken!,
+          student: loginController.studentRegisterModel.registerData!,
+        );
         AppFunctions.showToast(
           message:
-              loginController.commonPostModel.message ??
+              loginController.studentRegisterModel.message ??
               "OTP verified successfully!",
           isError: false,
         );
-        Get.offAllNamed(AppRoutes.internshipHomePage);
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
+        final token = await LocalStorageService.getToken();
+        print(token);
+        Get.offAllNamed(AppRoutes.dashBoardScreen);
       } else {
         AppFunctions.apiErrorHandling(
           loginController.getResponseCode(),
-          loginController.commonPostModel.message ?? "Something went wrong!",
+          loginController.studentRegisterModel.message ??
+              "Something went wrong!",
         );
       }
     } catch (error) {
       AppFunctions.apiErrorHandling(
         loginController.getResponseCode(),
-        loginController.commonPostModel.message ?? "Something went wrong!",
+        loginController.studentRegisterModel.message ?? "Something went wrong!",
       );
     }
   }

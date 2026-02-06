@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
+import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -25,7 +26,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         body: CustomNavBar(
           screens: [
             InternsHomeScreen(),
-            InternsHomeScreen(),
+            MyAppliesScreen(),
             InternsHomeScreen(),
             InternsHomeScreen(),
           ],
@@ -34,7 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-   Future<bool> showExitAlert(BuildContext context) async {
+  Future<bool> showExitAlert(BuildContext context) async {
     bool result = false;
     await showCupertinoDialog(
       context: context,
@@ -67,5 +68,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return result;
   }
 }
-
-

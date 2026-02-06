@@ -13,6 +13,11 @@ class AppRoutes {
   static const dashBoardScreen = '/dashBoardScreen';
   static const resumeTemplateSelectionScreen = '/resumeTemplateSelectionScreen';
   static const resumeTemplateViewScreen = '/resumeTemplateViewScreen';
+  static const trendyCategoryScreen = '/trendyCategoryScreen';
+  static const categoryWiseInternshipScreen = '/categoryWiseInternshipScreen';
+  static const internshipDetailScreen = '/internshipDetailScreen';
+  static const recommentedInternshipScreen = '/recommentedInternshipScreen';
+  static const applicationStatusScreen = '/applicationStatusScreen';
 
 
 

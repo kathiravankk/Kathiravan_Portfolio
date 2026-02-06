@@ -8,6 +8,23 @@ class AssetImages {
   static const String verifiedIcon = "assets/images/verified_icon.png";
   static const String verificationIcon = "assets/images/verification_icon.png";
   static const String alertImage = "assets/images/alert_img.png";
+  static const String homeScreenBannerImg = "assets/images/home_screen_banner.jpg";
+
+  //Category Images
+  static const String salesForceImg = "assets/images/sales_force_img.png";
+  static const String customerServiceImg = "assets/images/customer_service_img.png";
+  static const String marketingImg = "assets/images/marketing_image.png";
+  static const String softwareImg = "assets/images/software_img.png";
+  static const String designImg = "assets/images/design_img.png";
+  static const String financeImg = "assets/images/finance_img.png";
+  static const String aiEngineeringImg = "assets/images/ai_engineering_img.png";
+  static const String bpoImg = "assets/images/bpo_img.png";
+  static const String healthCareImg = "assets/images/healthcare_img.png";
+  static const String tourismServiceImg = "assets/images/tourism_service.png";
+  static const String miningImg = "assets/images/mining_img.png";
+  static const String logisticImg = "assets/images/logistic_img.png";
+
+
 
   // RESUME THUMBNAIL
   static const String resumeThumbnail1 = "assets/images/templates_thumbnail/resume_thumbnail_1.png";

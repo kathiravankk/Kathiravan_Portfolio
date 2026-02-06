@@ -7,11 +7,11 @@ class StudentRegisterModel {
 
   StudentRegisterModel.fromJson(Map<String, dynamic> json) {
     message = json['message'] ?? "";
-    registerData =
-    json['student'] != null ? RegisterData.fromJson(json['student']) : null;
+    registerData = json['student'] != null
+        ? RegisterData.fromJson(json['student'])
+        : null;
     studentToken = json['studtoken'] ?? "";
   }
-
 }
 
 class RegisterData {
@@ -21,12 +21,13 @@ class RegisterData {
   bool? isVerified;
   String? studentCreditId;
 
-  RegisterData(
-      {this.id,
-        this.studentName,
-        this.studentMobileNo,
-        this.isVerified,
-        this.studentCreditId});
+  RegisterData({
+    this.id,
+    this.studentName,
+    this.studentMobileNo,
+    this.isVerified,
+    this.studentCreditId,
+  });
 
   RegisterData.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? "";
@@ -34,5 +35,15 @@ class RegisterData {
     studentMobileNo = json['studmobileno'] ?? "";
     isVerified = json['isVerified'] ?? false;
     studentCreditId = json['studentCreditId'] ?? "";
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'studname': studentName,
+      'isVerified': isVerified,
+      'studentCreditId': studentCreditId,
+      'studmobileno': studentMobileNo,
+    };
   }
 }

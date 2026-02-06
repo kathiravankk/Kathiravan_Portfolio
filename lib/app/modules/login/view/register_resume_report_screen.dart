@@ -40,14 +40,14 @@ class _RegisterResumeReportScreenState
 
   Future<void> getResumeScore() async {
     // networkResumePath = await ResumeStorageService.getNetworkResume();
-    await registerController.checkResumeScore(
-      resumeUrl:
-          "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
-    );
     // await registerController.checkResumeScore(
     //   resumeUrl:
-    //   networkResume!,
+    //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
     // );
+    await registerController.checkResumeScore(
+      resumeUrl:
+      networkResumePath!,
+    );
   }
 
   @override
@@ -102,7 +102,8 @@ class _RegisterResumeReportScreenState
       ),
       clipBehavior: Clip.hardEdge,
       child: SfPdfViewer.network(
-        "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
+        //"https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
+        networkResumePath!,
         canShowScrollHead: false,
         canShowScrollStatus: false,
         enableDoubleTapZooming: false,

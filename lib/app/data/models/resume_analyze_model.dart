@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:internsharks/app/data/models/education_model.dart';
 
 class ResumeAnalysisModel {
@@ -135,6 +137,7 @@ class ExtractedResumeDataModel {
   List<String>? updatedInternships;
   String? templateNumber;
   String? studentId;
+  String? message;
 
   ExtractedResumeDataModel({
     this.personalInfo,
@@ -168,6 +171,7 @@ class ExtractedResumeDataModel {
     this.degree,
     this.studentId,
     this.templateNumber,
+    this.message,
   });
 
   ExtractedResumeDataModel.fromJson(Map<String, dynamic> json) {
@@ -226,6 +230,7 @@ class ExtractedResumeDataModel {
     updatedInternships = List<String>.from(json['updateInternships'] ?? []);
     templateNumber = json['templateNumber'] ?? "";
     studentId = json['studentId'] ?? "";
+    message = json['message'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -265,8 +270,54 @@ class ExtractedResumeDataModel {
       "updateInternships": updatedInternships ?? [],
       "studentId": studentId ?? "",
       "templateNumber": templateNumber ?? "",
+      "message": message ?? "",
     };
   }
+
+  Map<String, dynamic> toFormDataJson() {
+    return {
+      "personal_info": jsonEncode(personalInfo?.toJson()),
+
+      "profile_summary": jsonEncode(profileSummary),
+
+      "skills": jsonEncode(skills ?? []),
+      "projects": jsonEncode(projects?.map((e) => e.toJson()).toList() ?? []),
+      "experience": jsonEncode(experience?.map((e) => e.toJson()).toList() ?? []),
+      "internships": jsonEncode(internships?.map((e) => e.toJson()).toList() ?? []),
+      "trainings": jsonEncode(trainings?.map((e) => e.toJson()).toList() ?? []),
+
+      "workshops": jsonEncode(workShops ?? []),
+      "publications": jsonEncode(publications ?? []),
+      "parents": jsonEncode(parents ?? []),
+      "achievements": jsonEncode(achievements ?? []),
+      "leadership": jsonEncode(leaderships ?? []),
+      "volunteer_experience": jsonEncode(volunteerExperience ?? []),
+      "languages": jsonEncode(languages ?? []),
+      "areas_of_interest": jsonEncode(areasOfInterest ?? []),
+      "hobbies": jsonEncode(hobbies ?? []),
+      "paper_presentations": jsonEncode(paperPresentations ?? []),
+      "industrial_visits": jsonEncode(industrialVisits ?? []),
+      "certifications": jsonEncode(certifications ?? []),
+
+      "education": jsonEncode(educationData?.toJson()),
+      "secondary": jsonEncode(secondary?.toJson()),
+      "higher_secondary": jsonEncode(higherSecondary?.toJson()),
+
+      "college": jsonEncode(colleges?.map((e) => e.toJson()).toList() ?? []),
+      "institution": jsonEncode(institution?.map((e) => e.toJson()).toList() ?? []),
+      "degree": jsonEncode(degree?.map((e) => e.toJson()).toList() ?? []),
+
+      "updatedExperience": jsonEncode(updatedExperience ?? []),
+      "updatedProfileSummary": jsonEncode(updatedProfileSummary ?? []),
+      "updatedProjects": jsonEncode(updatedProjects ?? []),
+      "updateInternships": jsonEncode(updatedInternships ?? []),
+
+      "studentId": studentId ?? "",
+      "templateNumber": templateNumber ?? "",
+      "message": message ?? "",
+    };
+  }
+
 }
 
 class PersonalInfo {

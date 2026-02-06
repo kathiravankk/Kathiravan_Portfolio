@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/common_post_model.dart';
+import 'package:internsharks/app/data/models/student_register_model.dart';
 
 class LoginProvider {
   final Dio? client;
@@ -51,13 +52,13 @@ class LoginProvider {
           .post(AppApiUrls.verifyLoginOtp, data: {"mobile": mobileNumber, "otp": otpNumber})
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return StudentRegisterModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonPostModel.fromJson(error.response!.data);
+        return StudentRegisterModel.fromJson(error.response!.data);
       } else {
-        return CommonPostModel.fromJson(error.response!.data);
+        return StudentRegisterModel.fromJson(error.response!.data);
       }
     }
   }

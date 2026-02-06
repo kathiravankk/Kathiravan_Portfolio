@@ -7,9 +7,11 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterSelfiePreviewScreen extends StatefulWidget {
   const RegisterSelfiePreviewScreen({super.key});
@@ -136,7 +138,13 @@ class _RegisterSelfiePreviewScreenState
     );
   }
 
+  //String? studentId = "";
+
   Future<void> uploadProfile() async {
+    // final prefs = await SharedPreferences.getInstance();
+    // studentId = prefs.getString('student_id');
+    final studentId = await LocalStorageService.getStudentId();
+
     final file = File(imagePath);
 
     if (!file.existsSync()) {
@@ -152,7 +160,8 @@ class _RegisterSelfiePreviewScreenState
 
     Map<String, dynamic> updateData = {
       "studprofile": multipartFile,
-      "stuid": "6979f45490869a0803c30be7",
+      //"stuid": "6979f45490869a0803c30be7",
+      "stuid": studentId,
     };
 
     await registerController.updateStudentProfileData(updateData: updateData);

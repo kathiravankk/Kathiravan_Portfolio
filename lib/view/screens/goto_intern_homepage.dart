@@ -181,9 +181,9 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
   // Banner Carousel
   Widget _buildBannerCarousel() {
     List<String> images = [
-      "lib/assets/images/banner 1.jpg",
-      "lib/assets/images/banner 1.jpg",
-      "lib/assets/images/banner 1.jpg",
+      "lib/assets/images/home_screen_banner.jpg",
+      "lib/assets/images/home_screen_banner.jpg",
+      "lib/assets/images/home_screen_banner.jpg",
     ];
 
     return Column(

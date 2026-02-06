@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import '../../../../core/const_file/asset_image.dart';
+import '../../../data/repositories/local_storage_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -91,20 +92,20 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkLoginStatus() async {
     final prefs = await SharedPreferences.getInstance();
+    // final token = prefs.getString('stud_token');
+    final token = await LocalStorageService.getToken();
 
-    final token = prefs.getString('stud_token');
     final isVerified = prefs.getBool('student_verified') ?? false;
 
     if (token != null && token.isNotEmpty) {
       if (isVerified) {
         Get.offAllNamed(AppRoutes.dashBoardScreen);
       } else {
-        Get.offAllNamed(
-          AppRoutes.dashBoardScreen,
-        ); // Need to replace the verification screen
+        Get.offAllNamed(AppRoutes.dashBoardScreen);
       }
     } else {
       Get.offAllNamed(AppRoutes.loginScreen);
+      //Get.offAllNamed(AppRoutes.dashBoardScreen);
     }
   }
 

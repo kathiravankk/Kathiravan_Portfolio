@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/resume_details_view_screen.dart';
 import 'package:internsharks/app/data/models/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/resume_template_model.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,7 +57,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
             CustomButtonWidget(
               width: 130,
               height: 35,
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateResumeTemplateLoading,
               buttonFunction: () async {
                 await updateResumeFunc();
               },
@@ -75,20 +76,31 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   }
 
   Future<void> updateResumeFunc() async {
-    final prefs = await SharedPreferences.getInstance();
-    final studentId = prefs.getString('student_id');
+    // final prefs = await SharedPreferences.getInstance();
+    // final studentId = prefs.getString('student_id');
+    final studentId = await LocalStorageService.getStudentId();
+
     resumeData!.templateNumber = templateData!.id.toString();
-    //resumeData!.studentId = studentId;
-    resumeData!.studentId = "6979f45490869a0803c30be7";
-    await registerController.updateStudentProfileData(
-      updateData: resumeData as Map<String, dynamic>,
-    );
+    resumeData!.studentId = studentId;
+    //resumeData!.studentId = "69804fe251caac65dd42e798";
+    await registerController.updateResumeProfileData(updateData: resumeData);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message: "Resume updated successfully!",
+        isError: false,
+      );
       AppFunctions.navigateScreen(
         context,
         AppRoutes.stepUpdateScreen,
         arguments: {"activeStep": 2},
+      );
+    } else {
+      AppFunctions.showToast(
+        message:
+            registerController.updateProfileModel.message ??
+            "Something went wrong!,Please try again later!",
+        isError: true,
       );
     }
   }

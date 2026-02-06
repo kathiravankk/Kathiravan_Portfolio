@@ -12,6 +12,7 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/core/const_file/asset_image.dart';
@@ -262,9 +263,12 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
   }
 
   Future<void> updateKYC() async {
-    final prefs = await SharedPreferences.getInstance();
-    final studentName = prefs.getString('student_name');
-    final studentId = prefs.getString('student_id');
+    //final prefs = await SharedPreferences.getInstance();
+    //final studentName = prefs.getString('student_name');
+    final studentName = await LocalStorageService.getStudentName();
+
+    // final studentId = prefs.getString('student_id');
+    final studentId = await LocalStorageService.getStudentId();
     if (!collegeIdImg!.existsSync() || !aadhaarImg!.existsSync()) {
       AppFunctions.showToast(message: "Both images are required!");
       return;
@@ -285,8 +289,8 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     Map<String, dynamic> kycData = {
       "college_id": collegeIdFile,
       "aadhaar": aadhaarFile,
-      "name": "THENMOZHI. D",
-      //"name": studentName,
+      //"name": "THENMOZHI. D",
+      "name": studentName,
     };
     await registerController.verifyKycData(kycData: kycData);
 
@@ -295,10 +299,10 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
       Map<String, dynamic> updateProfileData = {
         "studentAdhar": collegeIdImg!.path,
         "studentId": aadhaarImg!.path,
-        "stuid": "6979f45490869a0803c30be7",
-        //"stuid": studentId,
-        "studname": "THENMOZHI. D",
-        //"studname": studentName,
+        //"stuid": "6979f45490869a0803c30be7",
+        "stuid": studentId,
+        //"studname": "THENMOZHI. D",
+        "studname": studentName,
         "isVerified":
             (registerController.kycUpdateModel.name != "invalid" &&
                 registerController.kycUpdateModel.aadhaar != "invalid")

@@ -56,6 +56,9 @@ dependencies:
   pdfx: ^2.9.2
   crop_image: ^1.0.17
   webview_flutter: ^4.13.1
+  step_progress: ^2.5.2
+  intl: ^0.20.2
+  url_launcher: ^6.3.2
 
 
 

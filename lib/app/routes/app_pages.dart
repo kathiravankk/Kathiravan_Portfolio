@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'package:get/get.dart';
+import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
+import 'package:internsharks/app/modules/home/view/category_wise_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/dashboard_screen.dart';
+import 'package:internsharks/app/modules/home/view/internship_detail_screen.dart';
+import 'package:internsharks/app/modules/home/view/recommented_internship_screen.dart';
+import 'package:internsharks/app/modules/home/view/trendy_category_screen.dart';
 import 'package:internsharks/app/modules/login/bindings/login_bindings.dart';
 import 'package:internsharks/app/modules/login/view/kyc_verification_screen.dart';
 import 'package:internsharks/app/modules/login/view/login_screen.dart';
@@ -20,7 +25,7 @@ import '../../view/pages/others/117.dart';
 import '../../view/pages/others/200.dart';
 import '../../view/pages/others/account_settings_page.dart';
 import '../../view/pages/others/appPreferences_age.dart';
-import '../../view/pages/others/application_status_page.dart';
+import '../modules/home/view/application_status_screen.dart';
 import '../../view/pages/others/change_email_page.dart.dart';
 import '../../view/pages/others/change_phoneNumber_page.dart';
 import '../../view/pages/others/internship_details_page.dart';
@@ -104,7 +109,36 @@ class AppPages {
       bindings: [RegisterBindings()],
     ),
     appPage(name: AppRoutes.stepUpdateScreen, page: () => StepUpdateScreen()),
-    appPage(name: AppRoutes.dashBoardScreen, page: () => DashboardScreen()),
+    appPage(
+      name: AppRoutes.dashBoardScreen,
+      page: () => DashboardScreen(),
+      bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.trendyCategoryScreen,
+      page: () => TrendyCategoryScreen(),
+      bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.categoryWiseInternshipScreen,
+      page: () => CategoryWiseInternshipScreen(),
+      bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.internshipDetailScreen,
+      page: () => InternshipDetailScreen(),
+      bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.recommentedInternshipScreen,
+      page: () => RecommentedInternshipScreen(),
+      bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.applicationStatusScreen,
+      page: () => ApplicationStatusScreen(),
+      bindings: [DashboardBindings()],
+    ),
 
     // OTHER SCREEN
     appPage(
@@ -155,7 +189,7 @@ class AppPages {
     appPage(name: AppRoutes.registerPage, page: () => RegisterPage()),
     appPage(
       name: AppRoutes.applicationStatusPage,
-      page: () => ApplicationStatusPage(),
+      page: () => ApplicationStatusScreen(),
     ),
     appPage(
       name: AppRoutes.accountSettingsPage,

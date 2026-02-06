@@ -45,6 +45,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
               ),
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: BottomNavigationBar(
+
                 elevation: 0,
                 currentIndex: value,
                 type: BottomNavigationBarType.fixed,

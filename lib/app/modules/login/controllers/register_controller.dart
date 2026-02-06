@@ -373,6 +373,31 @@ class RegisterController extends GetxController {
     }
   }
 
+  // RESUME & PROFILE UPDATE
+
+  // Loading
+
+  final _updateResumeTemplateLoading = false.obs;
+
+  bool get updateResumeTemplateLoading => _updateResumeTemplateLoading.value;
+
+  set updateResumeTemplateLoading(bool value) => _updateResumeTemplateLoading.value = value;
+
+
+
+  Future<void> updateResumeProfileData({required ExtractedResumeDataModel? updateData}) async {
+    try {
+      updateResumeTemplateLoading = true;
+      updateProfileModel = await registerProvider!.putUpdateResume(
+        updateData: updateData,
+      );
+      updateResumeTemplateLoading = false;
+    } catch (err) {
+      updateResumeTemplateLoading = false;
+      rethrow;
+    }
+  }
+
   // KYC VERIFICATION
 
   // Loading

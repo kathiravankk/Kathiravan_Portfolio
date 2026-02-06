@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/student_register_model.dart';
+
 class LocalStorageService {
   static const _tokenKey = 'stud_token';
   static const _studentKey = 'student_data';
@@ -11,20 +13,32 @@ class LocalStorageService {
   /// Save student data after registration
   static Future<void> saveStudent({
     required String token,
-    required Map<String, dynamic> student,
+    required RegisterData student,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-
     await prefs.setString(_tokenKey, token);
-    await prefs.setString(_studentKey, jsonEncode(student));
-    await prefs.setString(_studentIdKey, student['id'] ?? '');
-    await prefs.setBool(_isVerifiedKey, student['isVerified'] ?? false);
+    await prefs.setString(_studentKey, jsonEncode(student.toJson()));
+    await prefs.setString(_studentIdKey, student.id ?? '');
+    await prefs.setBool(_isVerifiedKey, student.isVerified ?? false);
+    await prefs.setString(studentNameKey, student.studentName ?? "");
   }
 
   /// Get token anywhere in app
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_tokenKey);
+  }
+
+  ///Get student id
+  static Future<String?> getStudentId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_studentIdKey);
+  }
+
+  ///Get student name
+  static Future<String?> getStudentName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(studentNameKey);
   }
 
   /// Get full student data
@@ -42,7 +56,7 @@ class LocalStorageService {
   }
 
   /// Clear on logout
-  static Future<void> clear() async {
+  static Future<void> clearUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }

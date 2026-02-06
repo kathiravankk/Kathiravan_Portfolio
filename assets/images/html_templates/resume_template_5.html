@@ -109,6 +109,10 @@
             margin-bottom: 25px;
         }
 
+        .resume-section.hidden {
+            display: none;
+        }
+
         .resume-section h5 {
             font-size: 18px;
             font-weight: bold;
@@ -128,7 +132,10 @@
         }
 
         /* Experience Items */
-        .experience-item {
+        .experience-item,
+        .internship-item,
+        .training-item,
+        .presentation-item {
             margin-bottom: 20px;
         }
 
@@ -184,6 +191,13 @@
             font-size: 14px;
             white-space: nowrap;
             margin-left: 20px;
+        }
+
+        /* Certifications */
+        .cert-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
         }
 
         /* Lists */
@@ -319,271 +333,519 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header Section -->
-        <div class="header-section">
-            <h1 class="resume-name">Emily Rodriguez</h1>
-            <p class="resume-title">Product Manager | UX Strategist</p>
-        </div>
+<div class="container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1 id="fullName" class="resume-name">Emily Rodriguez</h1>
+        <p id="jobTitle" class="resume-title">Product Manager | UX Strategist</p>
+    </div>
 
-        <!-- Contact Strip -->
-        <div class="contact-strip">
+    <!-- Contact Strip -->
+    <div class="contact-strip">
             <span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
                 </svg>
-                +1 (555) 789-0123
+                <span id="phone">+1 (555) 789-0123</span>
             </span>
-            <span>
+        <span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
                 </svg>
-                Austin, TX
+                <span id="location">Austin, TX</span>
             </span>
-            <span>
+        <span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/>
                 </svg>
-                emily.rodriguez@email.com
+                <span id="email">emily.rodriguez@email.com</span>
             </span>
-            <a href="https://linkedin.com/in/emilyrodriguez" target="_blank" class="contact-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/>
-                </svg>
-                LinkedIn
-            </a>
-            <a href="https://github.com/emilyrodriguez" target="_blank" class="contact-link">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
-                    <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
-                </svg>
-                GitHub
-            </a>
-        </div>
-
-        <!-- Content Section -->
-        <div class="resume-content">
-            <!-- Left Column -->
-            <div class="column">
-                <!-- Profile Summary -->
-                <section class="resume-section">
-                    <h5>Profile Summary</h5>
-                    <p>
-                        Strategic Product Manager with 7+ years of experience leading cross-functional teams to deliver 
-                        innovative digital products. Expert in user research, agile methodologies, and data-driven 
-                        decision making. Proven track record of increasing user engagement by 40% and driving revenue 
-                        growth through product optimization and strategic feature development.
-                    </p>
-                </section>
-
-                <!-- Experience Section -->
-                <section class="resume-section">
-                    <h5>Experience</h5>
-
-                    <div class="experience-item">
-                        <strong>Senior Product Manager</strong>
-                        <div class="company">TechVision Solutions</div>
-                        <div class="text-muted small">March 2021 - Present</div>
-                        <p class="mb-0">
-                            Lead product strategy for SaaS platform serving 200K+ users. Increased user retention by 
-                            45% through feature prioritization and UX improvements. Manage roadmap, conduct user research, 
-                            and collaborate with engineering teams to deliver quarterly releases.
-                        </p>
-                    </div>
-
-                    <div class="experience-item">
-                        <strong>Product Manager</strong>
-                        <div class="company">Digital Innovations Inc.</div>
-                        <div class="text-muted small">June 2018 - February 2021</div>
-                        <p class="mb-0">
-                            Launched 3 major product features that generated $2M in additional revenue. Implemented 
-                            data analytics framework to track KPIs and inform product decisions. Facilitated stakeholder 
-                            meetings and presented product vision to C-level executives.
-                        </p>
-                    </div>
-
-                    <div class="experience-item">
-                        <strong>Associate Product Manager</strong>
-                        <div class="company">StartUp Ventures</div>
-                        <div class="text-muted small">January 2017 - May 2018</div>
-                        <p class="mb-0">
-                            Supported product development for mobile application with 50K+ downloads. Conducted A/B 
-                            testing and user interviews to validate feature concepts. Coordinated with design and 
-                            development teams to ensure timely product delivery.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- Skills Section -->
-                <section class="resume-section">
-                    <h5>Skills</h5>
-                    <div class="skills-grid">
-                        <div class="skill-item">• Product Strategy</div>
-                        <div class="skill-item">• User Research</div>
-                        <div class="skill-item">• Agile/Scrum</div>
-                        <div class="skill-item">• Data Analysis</div>
-                        <div class="skill-item">• Roadmap Planning</div>
-                        <div class="skill-item">• UX Design</div>
-                        <div class="skill-item">• SQL & Analytics</div>
-                        <div class="skill-item">• Stakeholder Management</div>
-                        <div class="skill-item">• A/B Testing</div>
-                        <div class="skill-item">• Wireframing</div>
-                        <div class="skill-item">• JIRA & Confluence</div>
-                        <div class="skill-item">• Google Analytics</div>
-                    </div>
-                </section>
-
-                <!-- Projects Section -->
-                <section class="resume-section">
-                    <h5>Projects</h5>
-
-                    <div class="experience-item">
-                        <strong>Mobile App Redesign Initiative</strong>
-                        <p class="mb-0">
-                            Led complete redesign of flagship mobile app based on user feedback and usability testing. 
-                            Resulted in 35% increase in daily active users and 4.8 star rating on app stores.
-                        </p>
-                    </div>
-
-                    <div class="experience-item">
-                        <strong>AI-Powered Recommendation Engine</strong>
-                        <p class="mb-0">
-                            Collaborated with data science team to implement machine learning recommendation system. 
-                            Improved content discovery and increased user session time by 28%.
-                        </p>
-                    </div>
-                </section>
-            </div>
-
-            <!-- Right Column -->
-            <div class="column">
-                <!-- Education Section -->
-                <section class="resume-section">
-                    <h5>Education</h5>
-
-                    <div class="education-item">
-                        <div class="education-content">
-                            <strong>MBA in Technology Management</strong>
-                            <div class="company">University of Texas at Austin</div>
-                            <div class="small text-muted">GPA: 3.8/4.0</div>
-                        </div>
-                        <div class="education-date">
-                            2015 – 2017
-                        </div>
-                    </div>
-
-                    <div class="education-item">
-                        <div class="education-content">
-                            <strong>B.S. in Computer Science</strong>
-                            <div class="company">Texas A&M University</div>
-                            <div class="small text-muted">Magna Cum Laude</div>
-                        </div>
-                        <div class="education-date">
-                            2011 – 2015
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Certifications Section -->
-                <section class="resume-section">
-                    <h5>Certifications</h5>
-                    <ul class="mb-0">
-                        <li>Certified Scrum Product Owner (CSPO) – Scrum Alliance (2023)</li>
-                        <li>Product Management Certificate – General Assembly (2020)</li>
-                        <li>Google Analytics Individual Qualification – Google (2022)</li>
-                    </ul>
-                </section>
-
-                <!-- Paper Presentations Section -->
-                <section class="resume-section">
-                    <h5>Paper Presentations</h5>
-
-                    <div class="experience-item">
-                        <strong>The Future of Product Management in AI Era</strong>
-                        <p class="mb-1">ProductCon Conference | 2024</p>
-                        <p class="mb-0">
-                            Presented insights on integrating AI capabilities into product development workflows. 
-                            Session attended by 500+ product professionals.
-                        </p>
-                    </div>
-
-                    <div class="experience-item">
-                        <strong>Data-Driven Decision Making for PMs</strong>
-                        <p class="mb-1">Tech Leadership Summit | 2023</p>
-                        <p class="mb-0">
-                            Shared framework for using analytics to inform product strategy and prioritization.
-                        </p>
-                    </div>
-                </section>
-
-                <!-- Languages Section -->
-                <section class="resume-section">
-                    <h5>Languages</h5>
-                    <div class="mb-1">
-                        <p class="mb-1">• English (Native)</p>
-                    </div>
-                    <div class="mb-1">
-                        <p class="mb-1">• Spanish (Fluent)</p>
-                    </div>
-                    <div class="mb-1">
-                        <p class="mb-1">• French (Intermediate)</p>
-                    </div>
-                </section>
-
-                <!-- Achievements Section -->
-                <section class="resume-section">
-                    <h5>Achievements</h5>
-                    <ul class="mb-0">
-                        <li>Product Excellence Award - TechVision Solutions (2023)</li>
-                        <li>40 Under 40 Product Leaders - Product School (2022)</li>
-                        <li>Innovation Award for Mobile App Redesign (2021)</li>
-                        <li>Published 5 articles on product management best practices</li>
-                    </ul>
-                </section>
-            </div>
-        </div>
+        <a id="linkedinContact" href="https://linkedin.com/in/emilyrodriguez" target="_blank" class="contact-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/>
+            </svg>
+            LinkedIn
+        </a>
+        <a id="githubContact" href="https://github.com/emilyrodriguez" target="_blank" class="contact-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+                <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+            </svg>
+            GitHub
+        </a>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="action-buttons no-print">
-        <button class="btn btn-dark" onclick="window.print()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 384 512">
-                <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 224H88c30.9 0 56 25.1 56 56s-25.1 56-56 56H80v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm24 80c13.3 0 24-10.7 24-24s-10.7-24-24-24H80v48h8zm72-64c0-8.8 7.2-16 16-16h24c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48H176c-8.8 0-16-7.2-16-16V240zm32 112h8c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16h-8v96zm96-112c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V240z"/>
-            </svg>
-            Download PDF
-        </button>
-        <button class="btn btn-outline" onclick="shareResume()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512">
-                <path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2v64H176C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96h96v64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"/>
-            </svg>
-            Share
-        </button>
-    </div>
+    <!-- Content Section -->
+    <div class="resume-content">
+        <!-- Left Column -->
+        <div class="column">
+            <!-- Profile Summary -->
+            <section id="summarySection" class="resume-section">
+                <h5>Profile Summary</h5>
+                <p id="profileSummary">
+                    Strategic professional with experience in delivering innovative solutions.
+                </p>
+            </section>
 
-    <script>
-        function shareResume() {
-            const url = window.location.href;
-            const title = "Emily Rodriguez - Resume";
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: title,
-                    text: "Check out my professional resume!",
-                    url: url
-                }).catch((error) => {
-                    copyToClipboard(url);
-                });
+            <!-- Experience Section -->
+            <section id="experienceSection" class="resume-section">
+                <h5>Experience</h5>
+                <div id="experienceList"></div>
+            </section>
+
+            <!-- Internships Section -->
+            <section id="internshipsSection" class="resume-section hidden">
+                <h5>Internships</h5>
+                <div id="internshipsList"></div>
+            </section>
+
+            <!-- Training Section -->
+            <section id="trainingsSection" class="resume-section hidden">
+                <h5>Training</h5>
+                <div id="trainingsList"></div>
+            </section>
+
+            <!-- Skills Section -->
+            <section id="skillsSection" class="resume-section">
+                <h5>Skills</h5>
+                <div id="skillsGrid" class="skills-grid"></div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projectsSection" class="resume-section">
+                <h5>Projects</h5>
+                <div id="projectsList"></div>
+            </section>
+        </div>
+
+        <!-- Right Column -->
+        <div class="column">
+            <!-- Education Section -->
+            <section id="educationSection" class="resume-section">
+                <h5>Education</h5>
+                <div id="educationList"></div>
+            </section>
+
+            <!-- Certifications Section -->
+            <section id="certificationsSection" class="resume-section hidden">
+                <h5>Certifications</h5>
+                <div id="certificationsList"></div>
+            </section>
+
+            <!-- Paper Presentations Section -->
+            <section id="presentationsSection" class="resume-section hidden">
+                <h5>Paper Presentations</h5>
+                <div id="presentationsList"></div>
+            </section>
+
+            <!-- Languages Section -->
+            <section id="languagesSection" class="resume-section hidden">
+                <h5>Languages</h5>
+                <div id="languagesList"></div>
+            </section>
+
+            <!-- Areas of Interest Section -->
+            <section id="interestsSection" class="resume-section hidden">
+                <h5>Areas of Interest</h5>
+                <p id="interestsText" class="mb-0"></p>
+            </section>
+
+            <!-- Hobbies Section -->
+            <section id="hobbiesSection" class="resume-section hidden">
+                <h5>Hobbies</h5>
+                <p id="hobbiesText" class="mb-0"></p>
+            </section>
+
+            <!-- Achievements Section -->
+            <section id="achievementsSection" class="resume-section hidden">
+                <h5>Achievements</h5>
+                <ul id="achievementsList" class="mb-0"></ul>
+            </section>
+
+            <!-- Leadership Section -->
+            <section id="leadershipSection" class="resume-section hidden">
+                <h5>Leadership</h5>
+                <ul id="leadershipList" class="mb-0"></ul>
+            </section>
+
+            <!-- Volunteer Experience Section -->
+            <section id="volunteerSection" class="resume-section hidden">
+                <h5>Volunteer Experience</h5>
+                <ul id="volunteerList" class="mb-0"></ul>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="action-buttons no-print">
+    <button class="btn btn-dark" onclick="window.print()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 384 512">
+            <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 224H88c30.9 0 56 25.1 56 56s-25.1 56-56 56H80v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm24 80c13.3 0 24-10.7 24-24s-10.7-24-24-24H80v48h8zm72-64c0-8.8 7.2-16 16-16h24c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48H176c-8.8 0-16-7.2-16-16V240zm32 112h8c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16h-8v96zm96-112c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V240z"/>
+        </svg>
+        Download PDF
+    </button>
+    <button class="btn btn-outline" onclick="shareResume()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512">
+            <path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2v64H176C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96h96v64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"/>
+        </svg>
+        Share
+    </button>
+</div>
+
+<script>
+    function renderResume(data) {
+        console.log('Received data:', data);
+
+        // Personal Info
+        if (data.personal_info) {
+            const pi = data.personal_info;
+            if (pi.full_name) document.getElementById('fullName').textContent = pi.full_name;
+            if (pi.email) document.getElementById('email').textContent = pi.email;
+            if (pi.phone_number) document.getElementById('phone').textContent = pi.phone_number;
+            if (pi.address) document.getElementById('location').textContent = pi.address;
+            if (pi.job_title) document.getElementById('jobTitle').textContent = pi.job_title;
+
+            if (pi.linkedin) {
+                document.getElementById('linkedinContact').href = pi.linkedin;
+                document.getElementById('linkedinContact').style.display = 'flex';
             } else {
-                copyToClipboard(url);
+                document.getElementById('linkedinContact').style.display = 'none';
+            }
+
+            if (pi.github) {
+                document.getElementById('githubContact').href = pi.github;
+                document.getElementById('githubContact').style.display = 'flex';
+            } else {
+                document.getElementById('githubContact').style.display = 'none';
             }
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Link copied to clipboard! You can now share: ' + text);
-            }).catch((err) => {
-                console.error('Failed to copy:', err);
+        // Profile Summary
+        if (data.profile_summary) {
+            document.getElementById('profileSummary').textContent = data.profile_summary;
+        } else if (data.updatedProfileSummary && data.updatedProfileSummary.length > 0) {
+            document.getElementById('profileSummary').textContent = data.updatedProfileSummary.join(' ');
+        }
+
+        // Skills
+        if (data.skills && data.skills.length > 0) {
+            const skillsGrid = document.getElementById('skillsGrid');
+            skillsGrid.innerHTML = '';
+            data.skills.forEach(skill => {
+                const skillDiv = document.createElement('div');
+                skillDiv.className = 'skill-item';
+                skillDiv.textContent = '• ' + skill;
+                skillsGrid.appendChild(skillDiv);
             });
         }
-    </script>
+
+        // Experience
+        if (data.experience && data.experience.length > 0) {
+            const expList = document.getElementById('experienceList');
+            expList.innerHTML = '';
+
+            data.experience.forEach(exp => {
+                const expDiv = document.createElement('div');
+                expDiv.className = 'experience-item';
+                expDiv.innerHTML = `
+                    <strong>${exp.job_title || exp.position || 'Position'}</strong>
+                    <div class="company">${exp.company || exp.organization || 'Company'}</div>
+                    <div class="text-muted small">${formatDateRange(exp.start_date, exp.end_date)}</div>
+                    ${exp.description ? `
+                        <p class="mb-0">
+                            ${Array.isArray(exp.description)
+                                ? exp.description.join(' ')
+                                : exp.description}
+                        </p>
+                    ` : ''}
+                `;
+                expList.appendChild(expDiv);
+            });
+        } else if (data.updatedExperience && data.updatedExperience.length > 0) {
+            const expList = document.getElementById('experienceList');
+            expList.innerHTML = '<p class="mb-0">' + data.updatedExperience.join('. ') + '</p>';
+        }
+
+        // Internships
+        if (data.internships && data.internships.length > 0) {
+            document.getElementById('internshipsSection').classList.remove('hidden');
+            const internList = document.getElementById('internshipsList');
+            internList.innerHTML = '';
+
+            data.internships.forEach(intern => {
+                const internDiv = document.createElement('div');
+                internDiv.className = 'internship-item';
+                internDiv.innerHTML = `
+                    <strong>${intern.role || intern.position || 'Intern'}</strong>
+                    <div class="company">${intern.company || intern.organization || 'Company'}</div>
+                    <div class="text-muted small">${formatDateRange(intern.start_date, intern.end_date)}</div>
+                    ${intern.description ? `
+                        <p class="mb-0">
+                            ${Array.isArray(intern.description)
+                                ? intern.description.join(' ')
+                                : intern.description}
+                        </p>
+                    ` : ''}
+                `;
+                internList.appendChild(internDiv);
+            });
+        }
+
+        // Trainings
+        if (data.trainings && data.trainings.length > 0) {
+            document.getElementById('trainingsSection').classList.remove('hidden');
+            const trainList = document.getElementById('trainingsList');
+            trainList.innerHTML = '';
+
+            data.trainings.forEach(train => {
+                const trainDiv = document.createElement('div');
+                trainDiv.className = 'training-item';
+                trainDiv.innerHTML = `
+                    <strong>${train.title || train.course_name || 'Training'}</strong>
+                    <div class="company">${train.organization || train.provider || ''}</div>
+                    <div class="text-muted small">${train.year || formatDateRange(train.start_date, train.end_date)}</div>
+                    ${train.description ? `<p class="mb-0">${train.description}</p>` : ''}
+                `;
+                trainList.appendChild(trainDiv);
+            });
+        }
+
+        // Projects
+        if (data.projects && data.projects.length > 0) {
+            const projList = document.getElementById('projectsList');
+            projList.innerHTML = '';
+
+            data.projects.forEach(proj => {
+                const projDiv = document.createElement('div');
+                projDiv.className = 'experience-item';
+                projDiv.innerHTML = `
+                    <strong>${proj.title || proj.project_name || 'Project'}</strong>
+                    ${proj.technologies ? `<div class="text-muted small">Technologies: ${Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}</div>` : ''}
+                    ${proj.description ? `
+                        <p class="mb-0">
+                            ${Array.isArray(proj.description)
+                                ? proj.description.join(' ')
+                                : proj.description}
+                        </p>
+                    ` : ''}
+                `;
+                projList.appendChild(projDiv);
+            });
+        } else if (data.updatedProjects && data.updatedProjects.length > 0) {
+            const projList = document.getElementById('projectsList');
+            projList.innerHTML = '<p class="mb-0">' + data.updatedProjects.join('. ') + '</p>';
+        }
+
+        // Education
+        const eduList = document.getElementById('educationList');
+        eduList.innerHTML = '';
+
+        const colleges = data.colleges || data.institution || data.degree || [];
+        if (colleges.length > 0) {
+            colleges.forEach(college => {
+                const eduDiv = document.createElement('div');
+                eduDiv.className = 'education-item';
+                eduDiv.innerHTML = `
+                    <div class="education-content">
+                        <strong>${college.degree || college.course || 'Degree'}</strong>
+                        <div class="company">${college.institution || college.college_name || 'Institution'}</div>
+                        ${college.percentage || college.cgpa || college.gpa ? `
+                            <div class="small text-muted">
+                                ${college.percentage ? 'Percentage: ' + college.percentage : ''}
+                                ${college.cgpa ? 'CGPA: ' + college.cgpa : ''}
+                                ${college.gpa ? 'GPA: ' + college.gpa : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="education-date">
+                        ${formatDateRange(college.start_date, college.end_date) || college.year || ''}
+                    </div>
+                `;
+                eduList.appendChild(eduDiv);
+            });
+        }
+
+        if (data.higher_secondary) {
+            const hs = data.higher_secondary;
+            const hsDiv = document.createElement('div');
+            hsDiv.className = 'education-item';
+            hsDiv.innerHTML = `
+                <div class="education-content">
+                    <strong>Higher Secondary ${hs.board ? `(${hs.board})` : ''}</strong>
+                    <div class="company">${hs.school_name || 'School'}</div>
+                    ${hs.percentage ? `<div class="small text-muted">Percentage: ${hs.percentage}</div>` : ''}
+                </div>
+                <div class="education-date">${hs.year || ''}</div>
+            `;
+            eduList.appendChild(hsDiv);
+        }
+
+        if (data.secondary) {
+            const sec = data.secondary;
+            const secDiv = document.createElement('div');
+            secDiv.className = 'education-item';
+            secDiv.innerHTML = `
+                <div class="education-content">
+                    <strong>Secondary ${sec.board ? `(${sec.board})` : ''}</strong>
+                    <div class="company">${sec.school_name || 'School'}</div>
+                    ${sec.percentage ? `<div class="small text-muted">Percentage: ${sec.percentage}</div>` : ''}
+                </div>
+                <div class="education-date">${sec.year || ''}</div>
+            `;
+            eduList.appendChild(secDiv);
+        }
+
+        // Certifications
+        if (data.certifications && data.certifications.length > 0) {
+            document.getElementById('certificationsSection').classList.remove('hidden');
+            const certList = document.getElementById('certificationsList');
+            certList.innerHTML = '<ul class="mb-0">';
+
+            data.certifications.forEach(cert => {
+                const li = document.createElement('li');
+                li.textContent = `${cert.name || cert.title || 'Certification'} – ${cert.issuing_organization || cert.provider || ''} ${cert.year || cert.date ? '(' + (cert.year || cert.date) + ')' : ''}`;
+                certList.querySelector('ul').appendChild(li);
+            });
+        }
+
+        // Paper Presentations
+        if (data.paper_presentations && data.paper_presentations.length > 0) {
+            document.getElementById('presentationsSection').classList.remove('hidden');
+            const presList = document.getElementById('presentationsList');
+            presList.innerHTML = '';
+
+            data.paper_presentations.forEach(pres => {
+                const presDiv = document.createElement('div');
+                presDiv.className = 'presentation-item';
+                presDiv.innerHTML = `
+                    <strong>${typeof pres === 'string' ? pres : (pres.title || pres.name || 'Presentation')}</strong>
+                    ${pres.venue ? `<p class="mb-1">${pres.venue} | ${pres.year || pres.date || ''}</p>` : ''}
+                    ${pres.description ? `<p class="mb-0">${pres.description}</p>` : ''}
+                `;
+                presList.appendChild(presDiv);
+            });
+        }
+
+        // Languages
+        if (data.languages && data.languages.length > 0) {
+            document.getElementById('languagesSection').classList.remove('hidden');
+            const langList = document.getElementById('languagesList');
+            langList.innerHTML = '';
+
+            data.languages.forEach(lang => {
+                const div = document.createElement('div');
+                div.className = 'mb-1';
+                const p = document.createElement('p');
+                p.className = 'mb-1';
+                if (typeof lang === 'string') {
+                    p.textContent = '• ' + lang;
+                } else {
+                    p.textContent = '• ' + (lang.name || '') + (lang.proficiency ? ` (${lang.proficiency})` : '');
+                }
+                div.appendChild(p);
+                langList.appendChild(div);
+            });
+        }
+
+        // Areas of Interest
+        if (data.areas_of_interest && data.areas_of_interest.length > 0) {
+            document.getElementById('interestsSection').classList.remove('hidden');
+            const interests = data.areas_of_interest.map(i => typeof i === 'string' ? i : i.name || i.title).filter(Boolean);
+            document.getElementById('interestsText').textContent = interests.join(', ');
+        }
+
+        // Hobbies
+        if (data.hobbies && data.hobbies.length > 0) {
+            document.getElementById('hobbiesSection').classList.remove('hidden');
+            const hobbies = data.hobbies.map(h => typeof h === 'string' ? h : h.name || h.title).filter(Boolean);
+            document.getElementById('hobbiesText').textContent = hobbies.join(', ');
+        }
+
+        // Achievements
+        if (data.achievements && data.achievements.length > 0) {
+            document.getElementById('achievementsSection').classList.remove('hidden');
+            const achList = document.getElementById('achievementsList');
+            achList.innerHTML = '';
+
+            data.achievements.forEach(ach => {
+                const li = document.createElement('li');
+                li.textContent = typeof ach === 'string' ? ach : (ach.description || ach.title || '');
+                achList.appendChild(li);
+            });
+        }
+
+        // Leadership
+        if (data.leadership && data.leadership.length > 0) {
+            document.getElementById('leadershipSection').classList.remove('hidden');
+            const leadList = document.getElementById('leadershipList');
+            leadList.innerHTML = '';
+
+            data.leadership.forEach(lead => {
+                const li = document.createElement('li');
+                li.textContent = typeof lead === 'string' ? lead : (lead.description || lead.title || lead.position || '');
+                leadList.appendChild(li);
+            });
+        }
+
+        // Volunteer Experience
+        if (data.volunteer_experience && data.volunteer_experience.length > 0) {
+            document.getElementById('volunteerSection').classList.remove('hidden');
+            const volList = document.getElementById('volunteerList');
+            volList.innerHTML = '';
+
+            data.volunteer_experience.forEach(vol => {
+                const li = document.createElement('li');
+                li.textContent = typeof vol === 'string' ? vol : (vol.description || vol.role || '');
+                volList.appendChild(li);
+            });
+        }
+    }
+
+    function formatDateRange(startDate, endDate) {
+        if (!startDate && !endDate) return '';
+
+        const formatDate = (date) => {
+            if (!date) return '';
+            if (date.toLowerCase() === 'present' || date.toLowerCase() === 'current') {
+                return 'Present';
+            }
+            return date;
+        };
+
+        const start = formatDate(startDate);
+        const end = formatDate(endDate) || 'Present';
+
+        if (!start && !end) return '';
+        if (!start) return end;
+        if (!end || end === 'Present') return `${start} – Present`;
+
+        return `${start} – ${end}`;
+    }
+
+    function shareResume() {
+        const url = window.location.href;
+        const title = document.getElementById('fullName').textContent + " - Resume";
+
+        if (navigator.share) {
+            navigator.share({
+                title: title,
+                text: "Check out my professional resume!",
+                url: url
+            }).catch((error) => {
+                copyToClipboard(url);
+            });
+        } else {
+            copyToClipboard(url);
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Link copied to clipboard! You can now share: ' + text);
+        }).catch((err) => {
+            console.error('Failed to copy:', err);
+        });
+    }
+</script>
 </body>
 </html>

@@ -307,6 +307,37 @@ class RegisterProvider {
     }
   }
 
+  // RESUME UPDATE
+
+  Future<ProfileUpdateModel> putUpdateResume({
+    required ExtractedResumeDataModel? updateData,
+  }) async {
+    try {
+      Map<String, dynamic> header = await AppApiHeader.formDataHeader();
+
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      // Convert Map to FormData
+      final formData = FormData.fromMap(updateData!.toFormDataJson());
+      for (var f in formData.fields) {
+        debugPrint('${f.key} => ${f.value}');
+      }
+      Response response = await client!
+          .put(
+            AppApiUrls.updateStudentRegisterData,
+            data: formData,
+            options: Options(headers: header),
+          )
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return ProfileUpdateModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return ProfileUpdateModel.fromJson(error.response?.data);
+    }
+  }
 
   // KYC VERIFICATION
 
@@ -324,10 +355,10 @@ class RegisterProvider {
 
       Response response = await client!
           .post(
-        AppApiUrls.verifyKycData,
-        data: formData,
-        options: Options(headers: header),
-      )
+            AppApiUrls.verifyKycData,
+            data: formData,
+            options: Options(headers: header),
+          )
           .timeout(const Duration(seconds: 60));
 
       responseStatus = response.statusCode!;

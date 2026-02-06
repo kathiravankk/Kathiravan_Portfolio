@@ -4,7 +4,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppFunctions {
   //Routing functions
@@ -27,7 +31,7 @@ class AppFunctions {
   }
 
   static void logOutFunc(BuildContext context) {
-    //LocalStorageService.clearUser();
+    LocalStorageService.clearUser();
     AppFunctions.navigateInitialScreen(context, AppRoutes.loginScreen);
   }
 
@@ -144,7 +148,6 @@ class AppFunctions {
     bool barrierDismissible = false,
   }) async {
     return showCupertinoDialog(
-
       context: context!,
       barrierDismissible: barrierDismissible,
       builder: (_) {
@@ -215,4 +218,105 @@ class AppFunctions {
       },
     );
   }
+
+  static getCategoryImage({required String service}) {
+    switch (service) {
+      case "Information Technology":
+        return AssetImages.softwareImg;
+      case "Logistics":
+        return AssetImages.logisticImg;
+      case "Finance":
+        return AssetImages.financeImg;
+      case "Healthcare":
+        return AssetImages.healthCareImg;
+      case "Hospitality & Tourism":
+        return AssetImages.tourismServiceImg;
+      case "Mining":
+        return AssetImages.miningImg;
+      case "IT/Software":
+        return AssetImages.softwareImg;
+      case "Customer Service":
+        return AssetImages.customerServiceImg;
+      case "Marketing":
+        return AssetImages.marketingImg;
+      case "Designing":
+        return AssetImages.designImg;
+      case "AI Engineering":
+        return AssetImages.aiEngineeringImg;
+      case "BPO":
+        return AssetImages.bpoImg;
+      case "Salesforce":
+        return AssetImages.salesForceImg;
+      default:
+        AssetImages.softwareImg;
+    }
+  }
+
+  static String convertPostedDate(String dateTimeString) {
+    if (dateTimeString.isEmpty) {
+      return "NA";
+    }
+    try {
+      final DateTime parsedDate = DateTime.parse(dateTimeString).toLocal();
+      final DateTime now = DateTime.now();
+      final Duration difference = now.difference(parsedDate);
+
+      if (difference.inDays == 0) {
+        return "Today";
+      } else if (difference.inDays == 1) {
+        return "Yesterday";
+      } else if (difference.inDays < 7) {
+        return "${difference.inDays} days ago";
+      } else if (difference.inDays < 30) {
+        final weeks = (difference.inDays / 7).floor();
+        return "$weeks week${weeks > 1 ? 's' : ''} ago";
+      } else if (difference.inDays < 365) {
+        final months = (difference.inDays / 30).floor();
+        return "$months month${months > 1 ? 's' : ''} ago";
+      } else {
+        final years = (difference.inDays / 365).floor();
+        return "$years year${years > 1 ? 's' : ''} ago";
+      }
+    } catch (e) {
+      return "NA";
+    }
+  }
+
+  static String formatIsoDate(String isoString) {
+    try {
+      DateTime dateTime = DateTime.parse(isoString);
+
+      // 2. Format to "03 March 2025"
+      // 'dd' -> padded day, 'MMMM' -> full month name, 'yyyy' -> year
+      return DateFormat("dd MMMM yyyy").format(dateTime);
+    } catch (e) {
+      return "Invalid date";
+    }
+  }
+
+  static Future<void> launchWebURL({required String webUrl}) async {
+    final Uri url = Uri.parse(webUrl);
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  static Future<void> openGoogleMap(String mapUrl) async {
+    final Uri uri = Uri.parse(mapUrl);
+
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw 'Could not launch map';
+    }
+  }
 }
+
+// <key>LSApplicationQueriesSchemes</key>
+// <array>
+// <string>https</string>
+// <string>http</string>
+// </array>
+
