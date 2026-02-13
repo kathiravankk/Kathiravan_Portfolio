@@ -14,6 +14,7 @@ class AppColors {
   static const Color lightBlackText2 = Color.fromRGBO(44, 43, 43, 1);
   static const Color blackGradient2 = Color.fromRGBO(31, 37, 37, 1);
   static const Color fieldBgColor = Color.fromRGBO(28, 33, 33, 1);
+  static const Color redColor = Color.fromRGBO(255, 0, 4, 1);
   static const Color contGradient1 = Color.fromRGBO(24, 20, 16, 1);
   static const Color blackLight = Color.fromRGBO(64, 64, 64, 1);
   static const Color contGradient2 = Color.fromRGBO(1, 205, 205, 0);
@@ -22,6 +23,8 @@ class AppColors {
   static const Color lightWhiteCont = Color.fromRGBO(242, 240, 240, 1);
   static const Color selectedContColor = Color.fromRGBO(4, 46, 132, 1);
   static const Color greyIcon = Color.fromRGBO(113, 113, 113, 1);
+  static const Color contLightColor = Color.fromRGBO(72, 77, 47, 1);
+  static const Color lightRedColor = Color.fromRGBO(83, 48, 48, 1);
   static const Color darkText = Color.fromRGBO(123, 125, 128, 1);
   static const Color fieldBorderColor = Color.fromRGBO(253, 253, 253, 0.3);
   static const Color whiteColor = Colors.white;

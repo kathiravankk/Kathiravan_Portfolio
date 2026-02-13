@@ -5,12 +5,11 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/resume_details_view_screen.dart';
-import 'package:internsharks/app/data/models/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/resume_template_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ResumeTemplateViewScreen extends StatefulWidget {
   const ResumeTemplateViewScreen({super.key});

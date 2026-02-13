@@ -27,6 +27,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   String internshipId = "";
   String? studentId = "";
   InternshipData? internship;
+  List<ReviewData>? reviewList = [];
 
   @override
   void initState() {
@@ -38,15 +39,14 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   Future<void> getDetailsData() async {
     // final prefs = await SharedPreferences.getInstance();
     // studentId = prefs.getString('student_id');
-     studentId = await LocalStorageService.getStudentId();
+    studentId = await LocalStorageService.getStudentId();
     await dashboardController.getInternshipViewData(internshipId: internshipId);
     if (dashboardController.getResponseCode() == 200 ||
         dashboardController.getResponseCode() == 201) {
       internship = dashboardController.internshipDetailModel.internshipData!;
     }
     await dashboardController.getReviewData(jobId: internshipId);
-
-
+    reviewList = dashboardController.reviewModel.reviewList;
   }
 
   List<String> tabNames = ["Internship Details", "About Company", "Reviews"];
@@ -74,7 +74,9 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             onPressed: () => Get.back(),
           ),
         ),
-        body: dashboardController.internshipDetailLoading || dashboardController.reviewDataLoading
+        body:
+            dashboardController.internshipDetailLoading ||
+                dashboardController.reviewDataLoading
             ? Center(
                 child: CupertinoActivityIndicator(
                   color: AppColors.secondaryColor,
@@ -340,12 +342,12 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     );
   }
 
-  Widget reviewField(){
+  Widget reviewField() {
     return Column(
       spacing: 15,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 10,),
+        SizedBox(height: 10),
         Text(
           "Reviews",
           style: AppStyles.customTextStyle(
@@ -355,48 +357,81 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           ),
         ),
         SizedBox(
-          height: 210,
-          child: dashboardController.reviewModel.reviewList!.isNotEmpty
+          height: 100,
+          child: reviewList!.isNotEmpty
               ? ListView.separated(
-            separatorBuilder: (context, index) =>
-                SizedBox(width: 10),
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: dashboardController.reviewModel.reviewList!.length,
-            itemBuilder: (context, index) {
-              ReviewData reviewData = dashboardController.reviewModel.reviewList![index];
-              return reviewCard(
-
-              );
-            },
-          )
+                  separatorBuilder: (context, index) => SizedBox(width: 10),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: reviewList!.length,
+                  itemBuilder: (context, index) {
+                    return reviewCard(
+                      studentName:
+                          reviewList![index].studentData!=null ? reviewList![index].studentData!.studentName ?? "" : "NA",
+                      reviewContent: reviewList![index].review ?? "",
+                    );
+                  },
+                )
               : CustomEmptyWidget(),
-        )
+        ),
       ],
     );
   }
 
-  Widget reviewCard(){
+  Widget reviewCard({
+    required String studentName,
+    required String reviewContent,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
+        spacing: 15,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.secondaryColor,
-              borderRadius: BorderRadius.only(topRight: Radius.circular(8), bottomLeft: Radius.circular(8))
-            ),
+          Padding(
+            padding: const EdgeInsets.only(left: 5, top: 5),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.secondaryColor,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(8),
+                  bottomLeft: Radius.circular(8),
+                ),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
 
-            child: Row(
-              children: [
-                Icon(Icons.person_4_outlined),
-              ],
+              child: Row(
+                spacing: 10,
+                children: [
+                  Icon(Icons.person_4_outlined, size: 15, color: AppColors.greyIcon,),
+                  Text(
+                    studentName ?? "",
+                    style: AppStyles.customTextStyle(
+                      size: 12,
+                      color: AppColors.blackLight,
+                      weight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Text(
+              reviewContent ?? "",
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: AppStyles.customTextStyle(
+                size: 10,
+                color: AppColors.blackColor,
+                weight: FontWeight.w400,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -500,7 +535,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                     ),
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       AppFunctions.openGoogleMap(internship!.locationLink!);
                     },
                     child: Text(
@@ -531,7 +566,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               ),
             ),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 AppFunctions.launchWebURL(webUrl: internship!.companyWebsite!);
               },
               child: Text(

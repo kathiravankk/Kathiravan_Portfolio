@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import '../pages/others/117.dart';
-import '../pages/others/account_settings_page.dart';
+import '../../app/modules/home/view/account_setting_screen.dart';
 import '../../app/modules/home/view/my_applies_screen.dart';
 import 'goto_intern_homepage.dart';
 
@@ -26,7 +26,7 @@ class _BottomScreenState extends State<BottomScreen> {
      InternshipHomePage(),
 
       MyAppliesScreen(),
-      AccountSettingsPage(),
+      AccountSettingScreen(),
       ProfilePage(),
     ];
   }

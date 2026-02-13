@@ -6,9 +6,9 @@ class ReviewDataModel {
   ReviewDataModel.fromJson(Map<String, dynamic> json) {
     success = json["success"] ?? false;
     count = json["count"] ?? 0;
-    if (json['jobs'] != null) {
+    if (json['reviews'] != null) {
       reviewList = <ReviewData>[];
-      json['jobs'].forEach((v) {
+      json['reviews'].forEach((v) {
         reviewList!.add(ReviewData.fromJson(v));
       });
     }
@@ -22,7 +22,7 @@ class ReviewData {
   String? job;
   StudentData? studentData;
   String? review;
-  double? rating;
+  dynamic rating;
   String? createdAt;
   String? updatedAt;
   int? vId;
@@ -45,7 +45,7 @@ class ReviewData {
     job = json["job"] ?? "";
     vId = json["__v"] ?? 0;
     review = json["review"] ?? "";
-    rating = json["rating"] ?? 0.0;
+    rating = json["rating"] ?? 0;
     studentData = json["student"] != null
         ? StudentData.fromJson(json["student"])
         : null;

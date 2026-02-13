@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:internsharks/app/data/models/education_model.dart';
+import 'package:internsharks/app/data/models/account/education_model.dart';
 
 class ResumeAnalysisModel {
   bool? success;

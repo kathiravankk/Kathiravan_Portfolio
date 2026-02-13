@@ -4,9 +4,9 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/resume_thumbnail_card.dart';
-import 'package:internsharks/app/data/models/resume_template_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import '../../../data/models/resume_analyze_model.dart';
 
 class ResumeTemplateSelectionScreen extends StatefulWidget {
   const ResumeTemplateSelectionScreen({super.key});

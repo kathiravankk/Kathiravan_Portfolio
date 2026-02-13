@@ -1,8 +1,7 @@
 import 'dart:async';
-
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/common_post_model.dart';
-import 'package:internsharks/app/data/models/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/student_register_model.dart';
 import 'package:internsharks/app/data/providers/login_provider.dart';
 
 class LoginController extends GetxController {

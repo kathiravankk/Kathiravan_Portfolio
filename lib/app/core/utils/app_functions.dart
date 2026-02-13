@@ -312,6 +312,38 @@ class AppFunctions {
       throw 'Could not launch map';
     }
   }
+
+  static String? validateEmail({required String? newEmail, required String? currentEmail}) {
+    final email = newEmail?.trim() ?? "";
+    final emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+    if (email.isEmpty) {
+      return 'Please enter an Email!';
+    }
+    if (!emailRegex.hasMatch(email)) {
+      return 'Please enter a valid email address!';
+    }
+    if (currentEmail != null && email == currentEmail.trim()) {
+      return 'New Email must be different from current!';
+    }
+
+    return null; // Return null if validation passes
+  }
+
+  static String getFileName(String? path) {
+    if (path == null || path.isEmpty) return "No file";
+
+    // Get '1770360640535-Kathiravan_K_Resumes.pdf'
+    String fullName = path.split('/').last;
+
+    // If there is a '-' after the timestamp, remove everything before it
+    if (fullName.contains('-')) {
+      return fullName.split('-').last; // Returns 'Kathiravan_K_Resumes.pdf'
+    }
+
+    return fullName;
+  }
+
 }
 
 // <key>LSApplicationQueriesSchemes</key>

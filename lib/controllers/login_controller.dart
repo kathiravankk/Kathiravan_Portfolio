@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import '../core/const_file/api_error_handling.dart';
 import '../provider/auth_provider.dart';
 

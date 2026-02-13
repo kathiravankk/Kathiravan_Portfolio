@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:internsharks/app/data/models/resume_extract_model.dart';
+import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
 import 'package:internsharks/core/const_file/api_constants.dart';
 
 

@@ -1,6 +1,7 @@
 class AppApiUrls {
   // BASE URL
   static const String baseUrl = "https://fulupo.selfietoons.com/api/";
+  static const String devServer = "https://fulupo.selfietoons.com/";
 
   // LOGIN URLS
   static const String sendLoginOtp = "${baseUrl}stulogin/request-mobile-otp";
@@ -31,4 +32,14 @@ class AppApiUrls {
   static  String getInternshipViewData(String internshipId) => "${baseUrl}jobpost/jobbyid/$internshipId";
   static  String getAppliedInternship(String studentId) => "${baseUrl}getjob/appliedjob/$studentId";
   static  String getReviewData(String jobId) => "${baseUrl}job/$jobId/reviews";
+
+  // PROFILE FLOW
+  static  String getProfileData = "${baseUrl}student/getById";
+  static  String sendUpdateMobileOtp = "${baseUrl}student/update-sendMobileOTP";
+  static  String verifyUpdateMobileOtp = "${baseUrl}student/update-verifyMobileOTP";
+  static  String sendUpdateEmailOtp = "${baseUrl}student/update-request-otp";
+  static  String verifyUpdateEmailOtp = "${baseUrl}student/update-verify-email-otp";
+  static  String getSavedJobs = "${baseUrl}savedjob/getsavedjobs";
+  static  String addToSavedJobs = "${baseUrl}savedjob/savenewjob";
+  static  String removeSavedJobs = "${baseUrl}savedjob/unsavejob";
 }

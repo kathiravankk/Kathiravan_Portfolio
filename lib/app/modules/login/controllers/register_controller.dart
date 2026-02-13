@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/common_post_model.dart';
-import 'package:internsharks/app/data/models/kyc_update_model.dart';
-import 'package:internsharks/app/data/models/profile_update_model.dart';
-import 'package:internsharks/app/data/models/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/resume_extract_model.dart';
-import 'package:internsharks/app/data/models/student_profile_model.dart';
-import 'package:internsharks/app/data/models/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
+import 'package:internsharks/app/data/models/account/profile_update_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/student_register_model.dart';
 import 'package:internsharks/app/data/providers/register_provider.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
 

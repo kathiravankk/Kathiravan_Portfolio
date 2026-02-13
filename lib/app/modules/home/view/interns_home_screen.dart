@@ -11,9 +11,10 @@ import 'package:internsharks/app/core/widgets/internship_card.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
+import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import '../../../../view/screens/drawer.dart';
+import '../../../core/widgets/home_drawer.dart';
 
 class InternsHomeScreen extends StatefulWidget {
   const InternsHomeScreen({super.key});
@@ -33,121 +34,137 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
   final DashboardController dashboardController =
       Get.find<DashboardController>();
 
+  final ProfileController profileController =
+  Get.find<ProfileController>();
+
   String? studentName;
+  String? studentId;
 
   @override
   void initState() {
     super.initState();
-    getTrendyCategoryData();
+    getHomeScreenData();
   }
 
-  Future<void> getTrendyCategoryData() async {
+  Future<void> getHomeScreenData() async {
     // final prefs = await SharedPreferences.getInstance();
     // studentName = prefs.getString('student_name');
     studentName = await LocalStorageService.getStudentName();
+    studentId = await LocalStorageService.getStudentId();
     await dashboardController.getCategoryListData();
     await dashboardController.getRecommentedInternship();
+    await profileController.getProfileData(studentId: studentId!);
   }
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Scaffold(
-        key: _scaffoldKey,
-        drawer: Drawers(),
-        backgroundColor: AppColors.blackColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.menu_sharp, size: 30, color: Colors.white),
-            onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-          ),
-          title: Text(
-            "Welcome ${studentName ?? "User"}!",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
-            ),
-          ),
-          actions: [
-            Stack(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: AppColors.appBgColor,
-                    borderRadius: BorderRadius.circular(12),
+      () => profileController.profileDataLoading
+          ? Center(
+              child: CupertinoActivityIndicator(
+                color: AppColors.secondaryColor,
+              ),
+            )
+          : Scaffold(
+              key: _scaffoldKey,
+              drawer: HomeDrawer(),
+              backgroundColor: AppColors.blackColor,
+              appBar: AppBar(
+                backgroundColor: AppColors.transparentColor,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.menu_sharp,
+                    size: 30,
+                    color: Colors.white,
                   ),
-                  child: const Icon(
-                    Icons.notifications_active_outlined,
-                    color: AppColors.whiteColor,
-                    size: 25,
+                  onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                ),
+                title: Text(
+                  "Welcome ${studentName ?? "User"}!",
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.secondaryColor,
+                    weight: FontWeight.w600,
                   ),
                 ),
-                Positioned(
-                  right: 7,
-                  top: 5,
-                  child: Container(
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFF1493),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(width: 10),
-          ],
-        ),
-        body:
-            dashboardController.getCategoryLoading ||
-                dashboardController.recommentedInternshipLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
-            : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
+                actions: [
+                  Stack(
                     children: [
-                      _buildSearchBar(),
-                      const SizedBox(height: 10),
-                      _buildBannerCarousel(),
-                      _buildSectionHeader(
-                        title: "Recommented Internship",
-                        onTabPage: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.recommentedInternshipScreen,
-                          );
-                        },
+                      Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.appBgColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.notifications_active_outlined,
+                          color: AppColors.whiteColor,
+                          size: 25,
+                        ),
                       ),
-                      _buildRecommendedInternships(),
-                      _buildSectionHeader(
-                        title: "Trendy Categories",
-                        onTabPage: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.trendyCategoryScreen,
-                          );
-                        },
+                      Positioned(
+                        right: 7,
+                        top: 5,
+                        child: Container(
+                          width: 7,
+                          height: 7,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFF1493),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
                       ),
-                      _buildTrendyCategories(),
-                      const SizedBox(height: 20),
                     ],
                   ),
-                ),
+
+                  SizedBox(width: 10),
+                ],
               ),
-      ),
+              body:
+                  dashboardController.getCategoryLoading ||
+                      dashboardController.recommentedInternshipLoading
+                  ? Center(
+                      child: CupertinoActivityIndicator(
+                        color: AppColors.secondaryColor,
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: 10,
+                          children: [
+                            _buildSearchBar(),
+                            const SizedBox(height: 10),
+                            _buildBannerCarousel(),
+                            _buildSectionHeader(
+                              title: "Recommented Internship",
+                              onTabPage: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recommentedInternshipScreen,
+                                );
+                              },
+                            ),
+                            _buildRecommendedInternships(),
+                            _buildSectionHeader(
+                              title: "Trendy Categories",
+                              onTabPage: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.trendyCategoryScreen,
+                                );
+                              },
+                            ),
+                            _buildTrendyCategories(),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+            ),
     );
   }
 
@@ -296,7 +313,13 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   companyName: recommentedList.companyName ?? "",
                   duration: recommentedList.internshipDuration ?? "",
                   applyFunc: () {},
-                  viewFunc: () {},
+                  viewFunc: () {
+                    AppFunctions.navigateScreen(
+                      context,
+                      AppRoutes.internshipDetailScreen,
+                      arguments: {"internshipId": recommentedList.sId},
+                    );
+                  },
                   eligibility: recommentedList.eligibilityCriteria ?? "",
                   qualification: recommentedList.studentQualification ?? "",
                   stipendRupees: recommentedList.internshipStipend ?? "",

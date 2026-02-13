@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/extracted_data_model.dart';
-import 'package:internsharks/app/data/models/resume_extract_model.dart';
+import 'package:internsharks/app/data/models/account/extracted_data_model.dart';
+import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
 import 'package:internsharks/provider/resume_provider.dart';
 
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/extracted_data_model.dart';
+import 'package:internsharks/app/data/models/account/extracted_data_model.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/controllers/resume_controller.dart';
 

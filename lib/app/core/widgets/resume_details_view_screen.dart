@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:internsharks/app/data/models/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ResumeDetailsViewScreen extends StatefulWidget {

@@ -2,13 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
-import 'package:internsharks/app/data/models/common_post_model.dart';
-import 'package:internsharks/app/data/models/kyc_update_model.dart';
-import 'package:internsharks/app/data/models/profile_update_model.dart';
-import 'package:internsharks/app/data/models/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/resume_extract_model.dart';
-import 'package:internsharks/app/data/models/student_profile_model.dart';
-import 'package:internsharks/app/data/models/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
+import 'package:internsharks/app/data/models/account/profile_update_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/student_register_model.dart';
 
 class RegisterProvider {
   final Dio? client;

@@ -18,6 +18,13 @@ class AppRoutes {
   static const internshipDetailScreen = '/internshipDetailScreen';
   static const recommentedInternshipScreen = '/recommentedInternshipScreen';
   static const applicationStatusScreen = '/applicationStatusScreen';
+  static const studentProfileScreen = '/studentProfileScreen';
+  static const accountSettingScreen = '/accountSettingScreen';
+  static const mobileUpdateScreen = '/mobileUpdateScreen';
+  static const emailUpdateScreen = '/emailUpdateScreen';
+  static const manageResumeScreen = '/manageResumeScreen';
+  static const resumeFileViewScreen = '/resumeFileViewScreen';
+  static const savedInternshipScreen = '/savedInternshipScreen';
 
 
 

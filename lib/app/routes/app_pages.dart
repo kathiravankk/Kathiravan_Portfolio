@@ -4,7 +4,10 @@ import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
 import 'package:internsharks/app/modules/home/view/category_wise_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/dashboard_screen.dart';
 import 'package:internsharks/app/modules/home/view/internship_detail_screen.dart';
+import 'package:internsharks/app/modules/home/view/profile_screen.dart';
 import 'package:internsharks/app/modules/home/view/recommented_internship_screen.dart';
+import 'package:internsharks/app/modules/home/view/resume_file_view_screen.dart';
+import 'package:internsharks/app/modules/home/view/saved_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/trendy_category_screen.dart';
 import 'package:internsharks/app/modules/login/bindings/login_bindings.dart';
 import 'package:internsharks/app/modules/login/view/kyc_verification_screen.dart';
@@ -23,13 +26,13 @@ import '../../view/pages/login/register_page.dart';
 import '../../view/pages/others/115.dart';
 import '../../view/pages/others/117.dart';
 import '../../view/pages/others/200.dart';
-import '../../view/pages/others/account_settings_page.dart';
+import '../modules/home/view/account_setting_screen.dart';
 import '../../view/pages/others/appPreferences_age.dart';
 import '../modules/home/view/application_status_screen.dart';
-import '../../view/pages/others/change_email_page.dart.dart';
-import '../../view/pages/others/change_phoneNumber_page.dart';
+import '../modules/home/view/email_update_screen.dart';
+import '../modules/home/view/mobile_update_screen.dart';
 import '../../view/pages/others/internship_details_page.dart';
-import '../../view/pages/others/manage_resume_page.dart';
+import '../modules/home/view/manage_resume_screen.dart';
 import '../../view/pages/others/my_application_page.dart';
 import '../../view/pages/others/settings_page.dart';
 import '../../view/pages/upload_resdp/resumeScreen.dart';
@@ -112,7 +115,7 @@ class AppPages {
     appPage(
       name: AppRoutes.dashBoardScreen,
       page: () => DashboardScreen(),
-      bindings: [DashboardBindings()],
+      bindings: [DashboardBindings(), RegisterBindings(), ProfileBindings()],
     ),
     appPage(
       name: AppRoutes.trendyCategoryScreen,
@@ -138,6 +141,43 @@ class AppPages {
       name: AppRoutes.applicationStatusScreen,
       page: () => ApplicationStatusScreen(),
       bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.studentProfileScreen,
+      page: () => ProfileScreen(),
+      bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.accountSettingScreen,
+      page: () => AccountSettingScreen(),
+      bindings: [ProfileBindings()],
+    ),
+    appPage(
+      name: AppRoutes.mobileUpdateScreen,
+      page: () => MobileUpdateScreen(),
+      bindings: [ProfileBindings()],
+    ),
+    appPage(
+      name: AppRoutes.emailUpdateScreen,
+      page: () => EmailUpdateScreen(),
+      bindings: [ProfileBindings()],
+    ),
+
+    appPage(
+      name: AppRoutes.manageResumeScreen,
+      page: () => ManageResumeScreen(),
+      bindings: [ProfileBindings()],
+    ),
+    appPage(
+      name: AppRoutes.savedInternshipScreen,
+      page: () => SavedInternshipScreen(),
+      bindings: [ProfileBindings()],
+    ),
+
+    appPage(
+      name: AppRoutes.resumeFileViewScreen,
+      page: () => ResumeFileViewScreen(),
+      bindings: [ProfileBindings()],
     ),
 
     // OTHER SCREEN
@@ -176,12 +216,12 @@ class AppPages {
     ),
     appPage(name: AppRoutes.kycCollegeIdPage, page: () => KycCollegeIdPage()),
     appPage(name: AppRoutes.uploadSelfiePage, page: () => UploadSelfiePage()),
-    appPage(name: AppRoutes.manageResumePage, page: () => ManageResumePage()),
+    appPage(name: AppRoutes.manageResumePage, page: () => ManageResumeScreen()),
     appPage(
       name: AppRoutes.changePhoneNumberPage,
-      page: () => ChangePhoneNumberPage(),
+      page: () => MobileUpdateScreen(),
     ),
-    appPage(name: AppRoutes.changeEmailPage, page: () => ChangeEmailPage()),
+    appPage(name: AppRoutes.changeEmailPage, page: () => EmailUpdateScreen()),
     appPage(
       name: AppRoutes.manageLinkedAccountsPage,
       page: () => ManageLinkedAccountsPage(),
@@ -193,7 +233,7 @@ class AppPages {
     ),
     appPage(
       name: AppRoutes.accountSettingsPage,
-      page: () => AccountSettingsPage(),
+      page: () => AccountSettingScreen(),
     ),
     appPage(name: AppRoutes.resumeScreen, page: () => ResumeScreen()),
     appPage(

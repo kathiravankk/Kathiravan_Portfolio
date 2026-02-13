@@ -7,7 +7,7 @@ import 'package:internsharks/core/const_file/app_text_style.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../pages/others/recommended_Internships_page.dart';
 import '../pages/others/trendy_category_listing_page.dart';
-import 'drawer.dart';
+import '../../app/core/widgets/home_drawer.dart';
 import '../pages/others/internship_details_page.dart';
 
 class InternshipHomePage extends StatefulWidget {
@@ -30,7 +30,7 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawers(),
+      drawer: HomeDrawer(),
       backgroundColor: Colors.black,
       body: SizedBox(
         width: double.infinity,

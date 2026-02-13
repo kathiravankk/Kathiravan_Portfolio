@@ -9,6 +9,7 @@ class AssetImages {
   static const String verificationIcon = "assets/images/verification_icon.png";
   static const String alertImage = "assets/images/alert_img.png";
   static const String homeScreenBannerImg = "assets/images/home_screen_banner.jpg";
+  static const String editIconImg = "assets/images/edit_icon_img.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

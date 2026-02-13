@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:internsharks/app/data/models/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import '../core/const_file/api_constants.dart';
 
 class AuthProvider {

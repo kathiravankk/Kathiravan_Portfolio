@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
-import 'package:internsharks/app/data/models/common_post_model.dart';
-import 'package:internsharks/app/data/models/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/student_register_model.dart';
+
 
 class LoginProvider {
   final Dio? client;

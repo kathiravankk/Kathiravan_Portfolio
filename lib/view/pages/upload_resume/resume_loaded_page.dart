@@ -2,12 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:internsharks/app/data/models/resume_response.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/core/const_file/app_button.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
 import 'package:internsharks/provider/resume_api_service.dart';
+
+import '../../../app/data/models/account/resume_response.dart';
 
 
 // Import fixed!

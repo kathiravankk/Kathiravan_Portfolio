@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/widgets/internship_card.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 import '../../../data/models/home/recommand_internship_model.dart';
 
@@ -202,7 +203,13 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                   companyName: similar.companyName ?? "",
                                   duration: similar.internshipDuration ?? "",
                                   applyFunc: () {},
-                                  viewFunc: () {},
+                                  viewFunc: () {
+                                    AppFunctions.navigateScreen(
+                                      context,
+                                      AppRoutes.internshipDetailScreen,
+                                      arguments: {"internshipId": similar.sId},
+                                    );
+                                  },
                                   eligibility:
                                       similar.eligibilityCriteria ?? "",
                                   qualification:

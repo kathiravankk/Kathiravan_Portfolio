@@ -1,4 +1,4 @@
-import 'package:internsharks/app/data/models/student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 
 class ProfileUpdateModel {
   String? message;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
-import 'package:internsharks/app/data/models/resume_template_model.dart';
+import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 
 class ResumeThumbnailCard extends StatelessWidget {
   final ResumeTemplateModel template;

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:internsharks/app/data/models/resume_response.dart';
+import 'package:internsharks/app/data/models/account/resume_response.dart';
 import 'package:internsharks/core/const_file/api_constants.dart';
 
 class ResumeApiService {

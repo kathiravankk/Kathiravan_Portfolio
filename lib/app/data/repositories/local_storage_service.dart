@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/student_register_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/student_register_model.dart';
 
 class LocalStorageService {
   static const _tokenKey = 'stud_token';
@@ -21,6 +21,22 @@ class LocalStorageService {
     await prefs.setString(_studentIdKey, student.id ?? '');
     await prefs.setBool(_isVerifiedKey, student.isVerified ?? false);
     await prefs.setString(studentNameKey, student.studentName ?? "");
+  }
+
+  static Future<void> saveUpdateStudent({
+    required StudentProfileModel student,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_studentKey, jsonEncode(student.toJson()));
+    await prefs.setString(_studentIdKey, student.id ?? '');
+    await prefs.setBool(_isVerifiedKey, student.isVerified ?? false);
+    await prefs.setString(studentNameKey, student.studentName ?? "");
+  }
+
+  /// Save student name
+  static Future<void> saveName({ String? studentName}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(studentNameKey, studentName ?? "");
   }
 
   /// Get token anywhere in app

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:internsharks/app/data/models/resume_response.dart';
+import 'package:internsharks/app/data/models/account/resume_response.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';

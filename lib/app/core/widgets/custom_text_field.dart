@@ -9,12 +9,14 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String labelText;
-  final String prefixText;
+  final String? prefixText;
   final int maxLength;
   final double? width;
   final bool isEnabled;
+  final bool isProfileFlow;
   final bool isNumberKeyboard;
   final Widget? suffixWidget;
+  final Widget? prefixWidget;
   final void Function(String)? onChanged;
 
   const CustomTextField({
@@ -25,10 +27,12 @@ class CustomTextField extends StatelessWidget {
     this.hintText = "",
     this.onChanged,
     this.width,
-    this.prefixText = "",
-    this.maxLength = 10,
+    this.prefixText,
+    this.maxLength = 300,
     this.labelText = "",
     this.suffixWidget,
+    this.prefixWidget,
+    this.isProfileFlow = false,
   });
 
   @override
@@ -41,7 +45,7 @@ class CustomTextField extends StatelessWidget {
           labelText,
           style: AppStyles.customTextStyle(
             color: AppColors.whiteColor,
-            size: 16,
+            size: 14,
             weight: FontWeight.w500,
           ),
         ),
@@ -51,14 +55,14 @@ class CustomTextField extends StatelessWidget {
           child: TextField(
             controller: controller,
             onChanged: onChanged,
-            maxLength: maxLength,
+            maxLength: isNumberKeyboard ? 10 :maxLength,
             keyboardType: isNumberKeyboard
                 ? TextInputType.number
                 : TextInputType.visiblePassword,
             style: AppStyles.customTextStyle(
               fontFamily: "Roboto",
               color: AppColors.whiteColor,
-              size: 16,
+              size: 14,
               weight: FontWeight.w500,
             ),
             inputFormatters: [
@@ -68,28 +72,47 @@ class CustomTextField extends StatelessWidget {
                       RegExp(r'^[\u0020-\u007E]+$'),
                     ),
             ],
+            autofocus: false,
             decoration: InputDecoration(
-              suffix: suffixWidget ?? Text(""),
+              //suffix: suffixWidget ?? Text(""),
+              //prefix: prefixWidget ?? Text(""),
+              suffixIcon: suffixWidget ?? Text(""),
               enabled: isEnabled,
               counterText: "",
               hintText: hintText,
               hintStyle: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
                 color: AppColors.greyColor,
-                size: 14,
+                size: 12,
                 weight: FontWeight.w200,
               ),
               filled: true,
               isDense: true,
               fillColor: isEnabled
                   ? AppColors.fieldBgColor
+                  : isProfileFlow
+                  ? AppColors.fieldBgColor
                   : AppColors.disableFieldColor,
-              prefixText: "$prefixText  ",
-              //prefixIcon: Icon(Icons.check_circle, color: Colors.green),
+              //prefixText: "$prefixText  ",
+              prefixIcon:
+                  prefixWidget ??
+                  Padding(
+                    padding: EdgeInsetsGeometry.only(top: 15),
+                    child: Text(
+                      prefixText ?? "",
+                      textAlign: TextAlign.center,
+                      style: AppStyles.customTextStyle(
+                        fontFamily: "Roboto",
+                        color: AppColors.whiteColor,
+                        size: 14,
+                        weight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
               prefixStyle: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
                 color: AppColors.whiteColor,
-                size: 18,
+                size: 14,
                 weight: FontWeight.w500,
               ),
               // constraints: BoxConstraints(
@@ -100,19 +123,23 @@ class CustomTextField extends StatelessWidget {
                 horizontal: 30,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(color: AppColors.fieldBorderColor),
               ),
               disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-                borderSide: const BorderSide(color: AppColors.sucTextColor),
+                borderRadius: BorderRadius.circular(15),
+                borderSide: BorderSide(
+                  color: isProfileFlow
+                      ? AppColors.fieldBorderColor
+                      : AppColors.sucTextColor,
+                ),
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(color: AppColors.fieldBorderColor),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(15),
                 borderSide: const BorderSide(color: AppColors.primaryColor),
               ),
             ),
