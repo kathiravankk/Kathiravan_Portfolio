@@ -58,12 +58,15 @@ class CardWidgets {
                       ),
                     ),
             ),
-            InkWell(
-              onTap: onTap,
-              child: const Icon(
-                Icons.arrow_forward_ios,
-                color: AppColors.whiteColor,
-                size: 20,
+            Visibility(
+              visible: !isResumeFlow,
+              child: InkWell(
+                onTap: onTap,
+                child: const Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.whiteColor,
+                  size: 20,
+                ),
               ),
             ),
           ],

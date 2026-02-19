@@ -4,7 +4,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
-import 'package:internsharks/app/core/widgets/resume_details_view_screen.dart';
+import 'package:internsharks/app/core/widgets/show_template_view.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -22,6 +22,7 @@ class ResumeTemplateViewScreen extends StatefulWidget {
 class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   ResumeTemplateModel? templateData;
   ExtractedResumeDataModel? resumeData;
+  bool? isChatFlow;
 
   final RegisterController registerController = Get.find<RegisterController>();
 
@@ -30,6 +31,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
     super.initState();
     templateData = Get.arguments["templateData"];
     resumeData = Get.arguments["resumeData"] ?? {};
+    isChatFlow = Get.arguments["isChatFlow"] ?? false;
   }
 
   @override
@@ -53,22 +55,26 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
             ),
           ),
           actions: [
-            CustomButtonWidget(
-              width: 130,
-              height: 35,
-              isLoading: registerController.updateResumeTemplateLoading,
-              buttonFunction: () async {
-                await updateResumeFunc();
-              },
-              buttonText: "CONFIRM",
-              bgColor: AppColors.appBgColor,
+            Visibility(
+              visible: !isChatFlow!,
+              child: CustomButtonWidget(
+                width: 130,
+                height: 35,
+                isLoading: registerController.updateResumeTemplateLoading,
+                buttonFunction: () async {
+                  await updateResumeFunc();
+                },
+                buttonText: "CONFIRM",
+                bgColor: AppColors.appBgColor,
+              ),
             ),
             SizedBox(width: 10),
           ],
         ),
-        body: ResumeDetailsViewScreen(
+        body: ShowTemplateView(
           htmlAssetPath: templateData!.htmlPath,
           resumeData: resumeData!,
+          //resumeData: ExtractedResumeDataModel(),
         ),
       ),
     );

@@ -221,6 +221,16 @@ class Experience {
       id: json['_id'] ?? "",
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "company": company ?? "",
+      "role": role ?? "",
+      "duration": duration ?? "",
+      "_id": id ?? "",
+    };
+  }
+
 }
 
 class Internship {

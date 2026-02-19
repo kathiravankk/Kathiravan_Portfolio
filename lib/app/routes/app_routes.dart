@@ -10,6 +10,10 @@ class AppRoutes {
   static const registerSelfiePreviewScreen = '/registerSelfiePreviewScreen';
   static const kycVerificationScreen = '/kycVerificationScreen';
   static const stepUpdateScreen = '/stepUpdateScreen';
+  static const chatResumeCreation = '/chatResumeCreation';
+  static const chatResumeTemplateScreen = '/chatResumeTemplateScreen';
+
+  // HOME FLOW
   static const dashBoardScreen = '/dashBoardScreen';
   static const resumeTemplateSelectionScreen = '/resumeTemplateSelectionScreen';
   static const resumeTemplateViewScreen = '/resumeTemplateViewScreen';

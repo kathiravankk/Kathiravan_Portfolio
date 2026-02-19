@@ -40,13 +40,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   Future<void> setInitialData() async {
     nameController.text =
         registerController.resumeExtractModel.resumeData!.personalInfo!.name ??
-            "";
+        "";
     emailController.text =
         registerController.resumeExtractModel.resumeData!.personalInfo!.email ??
-            "";
+        "";
     mobileController.text =
         registerController.resumeExtractModel.resumeData!.personalInfo!.phone ??
-            "";
+        "";
   }
 
   @override
@@ -90,7 +90,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(12),
           child: SingleChildScrollView(
             child: Column(
               spacing: 15,
@@ -118,136 +118,195 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                 CustomTextField(
                   controller: nameController,
                   labelText: "Name",
-                  isEnabled: false,
-                  onChanged: (value) {},
-                  suffixWidget: Icon(
-                    Icons.check_circle,
-                    color: AppColors.sucTextColor,
+                  isEnabled: true,
+                  onChanged: (value) {
+                    nameController.text = value;
+                  },
+                  prefixWidget: Icon(
+                    Icons.person_outline_sharp,
+                    color: AppColors.primaryColor,
                     size: 20,
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    CustomTextField(
-                      controller: mobileController,
-                      labelText: "Mobile Number",
-                      isEnabled: false,
-                      onChanged: (value) {},
-                      width: 230,
-                    ),
-                    Obx(() {
-                      final isVerified =
-                          registerController.isMobileVerified.value;
-                      final seconds =
-                          registerController.mobileResendSeconds.value;
-                      String text;
-                      VoidCallback onTap;
-
-                      if (isVerified) {
-                        text = "Verified";
-                        onTap = () {};
-                      } else if (seconds > 0) {
-                        text = "Resend OTP ($seconds)";
-                        onTap = () {};
-                      } else {
-                        text = "Send OTP";
-                        onTap = () async {
-                          await sendMobileOtp();
-                        };
-                      }
-
-                      return Expanded(
-                        child: CustomButtonWidget(
-                          disable: seconds > 0,
-                          buttonText: text,
-                          isLoading: registerController.sendMobileOtpLoading,
-                          buttonFunction: onTap,
-                        ),
-                      );
-                    }),
-                  ],
+                  isNumberKeyboard: false,
+                  // suffixWidget: Icon(
+                  //   Icons.check_circle,
+                  //   color: AppColors.sucTextColor,
+                  //   size: 20,
+                  // ),
                 ),
                 Obx(() {
-                  if (!registerController.showMobileOtpField.value) {
-                    return const SizedBox();
+                  final isVerified = registerController.isMobileVerified.value;
+                  final seconds = registerController.mobileResendSeconds.value;
+                  String text;
+                  VoidCallback onTap;
+
+                  if (isVerified) {
+                    text = "Verified";
+                    onTap = () {};
+                  } else if (seconds > 0) {
+                    text = "Resend($seconds)";
+                    onTap = () {};
+                  } else {
+                    text = "Send OTP";
+                    onTap = () async {
+                      await sendMobileOtp();
+                    };
                   }
 
                   return Row(
+                    spacing: 5,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      CustomTextField(
-                        controller: mobileOtpController,
-                        labelText: "Mobile OTP",
-                        hintText: "Enter OTP",
-                        width: 230,
-                        maxLength: 4,
+                      Expanded(
+                        child: CustomTextField(
+                          controller: mobileController,
+                          prefixWidget: Icon(
+                            Icons.phone,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
+                          labelText: "Mobile Number",
+                          isEnabled: isVerified ? false : true,
+                          onChanged: (value) {
+                            mobileController.text = value;
+                            print(value);
+                          },
+                          suffixWidget: Visibility(
+                            visible: isVerified,
+                            child: Icon(
+                              Icons.check_circle,
+                              color: AppColors.sucTextColor,
+                              size: 20,
+                            ),
+                          ),
+                        ),
                       ),
-                      CustomButtonWidget(
-                        width: 140,
-                        buttonText: registerController.isMobileVerified.value
-                            ? "Verified"
-                            : "Verify OTP",
-                        disable: registerController.isMobileVerified.value,
-                        isLoading: registerController.verifyMobileOtpLoading,
-                        buttonFunction:
-                        registerController.isMobileVerified.value
-                            ? () {}
-                            : () async {
-                          await verifyMobileOtp();
-                        },
+                      Visibility(
+                        visible: !isVerified,
+                        child: Expanded(
+                          child: CustomButtonWidget(
+                            disable: seconds > 0,
+                            buttonText: text,
+                            isLoading: registerController.sendMobileOtpLoading,
+                            buttonFunction: onTap,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                Obx(() {
+                  if (!registerController.showMobileOtpField.value ||
+                      registerController.isMobileVerified.value) {
+                    return const SizedBox();
+                  }
+                  return Row(
+                    spacing: 5,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          controller: mobileOtpController,
+                          labelText: "Mobile OTP",
+                          hintText: "Enter OTP",
+                          //width: 230,
+                          onChanged: (value) {
+                            mobileOtpController.text = value;
+                          },
+                          maxLength: 4,
+                          prefixWidget: Icon(
+                            Icons.lock_person_outlined,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomButtonWidget(
+                          width: 140,
+                          buttonText: registerController.isMobileVerified.value
+                              ? "Verified"
+                              : "Verify OTP",
+                          disable: registerController.isMobileVerified.value,
+                          isLoading: registerController.verifyMobileOtpLoading,
+                          buttonFunction:
+                              registerController.isMobileVerified.value
+                              ? () {}
+                              : () async {
+                                  await verifyMobileOtp();
+                                },
+                        ),
                       ),
                     ],
                   );
                 }),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    CustomTextField(
-                      controller: emailController,
-                      labelText: "Email Address",
-                      isEnabled: false,
-                      onChanged: (value) {},
-                      width: 230,
-                    ),
-                    Obx(() {
-                      final isVerified =
-                          registerController.isEmailVerified.value;
-                      final seconds =
-                          registerController.emailResendSeconds.value;
-                      String text;
-                      VoidCallback onTap;
-
-                      if (isVerified) {
-                        text = "Verified";
-                        onTap = () {};
-                      } else if (seconds > 0) {
-                        text = "Resend OTP ($seconds)";
-                        onTap = () {};
-                      } else {
-                        text = "Send OTP";
-                        onTap = () async {
-                          await sendEmailOtp();
-                        };
-                      }
-
-                      return Expanded(
-                        child: CustomButtonWidget(
-                          disable: seconds > 0,
-                          buttonText: text,
-                          isLoading: registerController.sendEmailOtpLoading,
-                          buttonFunction: onTap,
-                        ),
-                      );
-                    }),
-                  ],
-                ),
                 Obx(() {
-                  if (!registerController.showEmailOtpField.value) {
+                  final isVerified = registerController.isEmailVerified.value;
+                  final seconds = registerController.emailResendSeconds.value;
+                  String text;
+                  VoidCallback onTap;
+
+                  if (isVerified) {
+                    text = "Verified";
+                    onTap = () {};
+                  } else if (seconds > 0) {
+                    text = "Resend($seconds)";
+                    onTap = () {};
+                  } else {
+                    text = "Send OTP";
+                    onTap = () async {
+                      await sendEmailOtp();
+                    };
+                  }
+                  return Row(
+                    spacing: 5,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          controller: emailController,
+                          labelText: "Email Address",
+                          isEnabled: isVerified ? false : true,
+                          prefixWidget: Icon(
+                            Icons.mail_outline_sharp,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
+                          suffixWidget: Visibility(
+                            visible: isVerified,
+                            child: Icon(
+                              Icons.check_circle,
+                              color: AppColors.sucTextColor,
+                              size: 20,
+                            ),
+                          ),
+                          isNumberKeyboard: false,
+                          onChanged: (value) {
+                            emailController.text = value;
+                          },
+                        ),
+                      ),
+                      Visibility(
+                        visible: !isVerified,
+                        child: Expanded(
+                          child: CustomButtonWidget(
+                            disable: seconds > 0,
+                            buttonText: text,
+                            isLoading: registerController.sendEmailOtpLoading,
+                            buttonFunction: onTap,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+                Obx(() {
+                  if (!registerController.showEmailOtpField.value ||
+                      registerController.isEmailVerified.value) {
                     return const SizedBox();
                   }
 
@@ -261,6 +320,14 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         hintText: "Enter OTP here..",
                         width: 230,
                         maxLength: 4,
+                        prefixWidget: Icon(
+                          Icons.lock_outlined,
+                          color: AppColors.primaryColor,
+                          size: 20,
+                        ),
+                        onChanged: (value){
+                          emailOtpController.text = value;
+                        },
                       ),
                       CustomButtonWidget(
                         width: 140,
@@ -272,8 +339,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         buttonFunction: registerController.isEmailVerified.value
                             ? () {}
                             : () async {
-                          await verifyEmailOtp();
-                        },
+                                await verifyEmailOtp();
+                              },
                       ),
                     ],
                   );
@@ -282,7 +349,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                 Obx(() {
                   final enabled =
                       registerController.isMobileVerified.value &&
-                          registerController.isEmailVerified.value;
+                      registerController.isEmailVerified.value;
 
                   return Center(
                     child: CustomButtonWidget(
@@ -290,11 +357,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                       buttonText: "Save & Continue",
                       disable: !enabled,
                       isLoading: registerController.studentRegisterLoading,
-                      buttonFunction: enabled
+                      buttonFunction:
+                      enabled
                           ? () async {
-                        await studentRegisterFunc();
-                      }
-                          : () {},
+                              await studentRegisterFunc();
+                            }
+                          :
+                          () {},
                       // buttonFunction: () async {
                       //   //await studentRegisterFunc();
                       //
@@ -321,136 +390,120 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     final resumePath = await ResumeStorageService.getResumePath();
     Map<String, dynamic> registerData = {
       "studmobileno":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .personalInfo!
-          .phone ??
-          "",
+         mobileController.text,
 
       "studemail":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .personalInfo!
-          .email ??
-          "",
+         emailController.text,
 
       "studname":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .personalInfo!
-          .name ??
-          "",
-
+         nameController.text,
       "studgender":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .personalInfo!
-          .gender ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .personalInfo!
+              .gender ??
           "",
 
       "studdob": "",
 
       "studentaddress":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .personalInfo!
-          .location ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .personalInfo!
+              .location ??
           "",
 
       "studentdegree":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .college!
-          .first
-          .degree ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .college!
+              .first
+              .degree ??
           "",
 
       "studentfieldofstudy":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .college!
-          .first
-          .department ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .college!
+              .first
+              .department ??
           "",
 
       "studentcollegename":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .college!
-          .first
-          .institution ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .college!
+              .first
+              .institution ??
           "",
 
       "studcollegestartyear":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .college!
-          .first
-          .startYear
-          ?.toString() ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .college!
+              .first
+              .startYear
+              ?.toString() ??
           "",
 
       "studcollegelocation": "",
 
       "studhighschollname":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .school!
-          .higherSecondary
-          .institution ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .school!
+              .higherSecondary
+              .institution ??
           "",
 
       "studhighschoolpercentage":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .school!
-          .higherSecondary
-          .percentage
-          ?.toString() ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .school!
+              .higherSecondary
+              .percentage
+              ?.toString() ??
           "",
 
       "studentsecondaryschoolname":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .school!
-          .secondary
-          .institution ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .school!
+              .secondary
+              .institution ??
           "",
 
       "studentsecondaryschoolpercentage":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .education!
-          .school!
-          .secondary
-          .percentage
-          ?.toString() ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .education!
+              .school!
+              .secondary
+              .percentage
+              ?.toString() ??
           "",
 
       "projects": jsonEncode(
         registerController.resumeExtractModel.resumeData!.projects
-            ?.map((e) => e.toJson())
-            .toList() ??
+                ?.map((e) => e.toJson())
+                .toList() ??
             [],
       ),
 
@@ -493,8 +546,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
       "experience": jsonEncode(
         registerController.resumeExtractModel.resumeData!.experience
-            ?.map((e) => e.toJson())
-            .toList() ??
+                ?.map((e) => e.toJson())
+                .toList() ??
             [],
       ),
 
@@ -518,19 +571,19 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       ),
 
       "linkedIn":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .personalInfo!
-          .linkedIn ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .personalInfo!
+              .linkedIn ??
           "",
 
       "github":
-      registerController
-          .resumeExtractModel
-          .resumeData!
-          .personalInfo!
-          .github ??
+          registerController
+              .resumeExtractModel
+              .resumeData!
+              .personalInfo!
+              .github ??
           "",
 
       "portfolio_website": "",
@@ -538,9 +591,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       "student_banner": "",
       "studentresume": await MultipartFile.fromFile(
         resumePath!,
-        filename: resumePath
-            .split('/')
-            .last,
+        filename: resumePath.split('/').last,
         contentType: MediaType(
           "application",
           "pdf", // or doc/docx based on file
@@ -554,18 +605,22 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
         registerController.getResponseCode() == 201) {
       AppFunctions.showToast(
         message:
-        registerController.studentRegisterModel.message ??
+            registerController.studentRegisterModel.message ??
             "Student registered successfully!",
         isError: false,
       );
       final prefs = await SharedPreferences.getInstance();
       LocalStorageService.saveStudent(
-          token: registerController.studentRegisterModel.studentToken!,
-          student: registerController.studentRegisterModel.registerData!);
+        token: registerController.studentRegisterModel.studentToken!,
+        student: registerController.studentRegisterModel.registerData!,
+      );
       await prefs.setString(
         LocalStorageService.studentNameKey,
         registerController.studentRegisterModel.registerData!.studentName ?? "",
       );
+      // ResumeStorageService.saveNetworkResume(
+      //   resumeFile: studentProfileModel.studentResume!,
+      // );
       AppFunctions.navigateScreen(
         context,
         AppRoutes.registerResumeReportScreen,
@@ -584,7 +639,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-        registerController.commonPostModel.message ??
+            registerController.commonPostModel.message ??
             "OTP sent to your mobile!",
         isError: false,
       );
@@ -605,7 +660,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-        registerController.commonPostModel.message ??
+            registerController.commonPostModel.message ??
             "OTP verified successfully!",
         isError: false,
       );
@@ -623,7 +678,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-        registerController.commonPostModel.message ??
+            registerController.commonPostModel.message ??
             "OTP sent to your Email!",
         isError: false,
       );
@@ -638,13 +693,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
   Future<void> verifyEmailOtp() async {
     registerController.verifyEmailOtp(
-      emailAddress: mobileController.text,
-      otpNumber: mobileOtpController.text,
+      emailAddress: emailController.text,
+      otpNumber: emailOtpController.text,
     );
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-        registerController.commonPostModel.message ??
+            registerController.commonPostModel.message ??
             "OTP verified successfully!",
         isError: false,
       );

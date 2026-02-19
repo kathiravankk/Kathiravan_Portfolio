@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
+import 'package:internsharks/app/data/models/account/personal_info_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart' hide Education;
 
 class ResumeAnalysisModel {
   bool? success;
@@ -105,15 +108,15 @@ class SectionDetail {
 }
 
 class ExtractedResumeDataModel {
-  PersonalInfo? personalInfo;
+  PersonalInfoModel? personalInfo;
   String? profileSummary;
   List<String>? skills;
   List<Project>? projects;
-  List<Experience>? experience;
+  List<ExperienceData>? experience;
   List<Internship>? internships;
   List<Training>? trainings;
   List<dynamic>? industrialVisits;
-  List<dynamic>? certifications;
+  List<Certification>? certifications;
   List<dynamic>? paperPresentations;
   List<dynamic>? workShops;
   List<dynamic>? publications;
@@ -175,7 +178,7 @@ class ExtractedResumeDataModel {
 
   ExtractedResumeDataModel.fromJson(Map<String, dynamic> json) {
     personalInfo = json["personal_info"] != null
-        ? PersonalInfo.fromJson(json["personal_info"])
+        ? PersonalInfoModel.fromJson(json["personal_info"])
         : null;
     profileSummary = json['profile_summary'];
     skills = List<String>.from(json['skills'] ?? []);
@@ -183,7 +186,7 @@ class ExtractedResumeDataModel {
         .map<Project>((e) => Project.fromJson(e))
         .toList();
     experience = (json['experience'] ?? [])
-        .map<Experience>((e) => Experience.fromJson(e))
+        .map<ExperienceData>((e) => ExperienceData.fromJson(e))
         .toList();
     internships = (json['internships'] ?? [])
         .map<Internship>((e) => Internship.fromJson(e))
@@ -203,6 +206,9 @@ class ExtractedResumeDataModel {
     paperPresentations = json['paper_presentations'] ?? [];
     industrialVisits = json['industrial_visits'] ?? [];
     certifications = json['certifications'] ?? [];
+    certifications = (json['certifications'] ?? [])
+        .map<Certification>((e) => Certification.fromJson(e))
+        .toList();
     educationData = json["education"] != null
         ? Education.fromJson(json["education"])
         : null;
@@ -357,35 +363,39 @@ class PersonalInfo {
   }
 }
 
-class Project {
-  String? title;
-  dynamic description;
+// class Project {
+//   String? title;
+//   dynamic description;
+//
+//   Project({this.title, this.description});
+//
+//   Project.fromJson(Map<String, dynamic> json) {
+//     title = json['title'] ?? "";
+//     description = json['description'] ?? "";
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     return {"title": title ?? "", "description": description ?? []};
+//   }
+// }
 
-  Project({this.title, this.description});
-
-  Project.fromJson(Map<String, dynamic> json) {
-    title = json['title'] ?? "";
-    description = json['description'] ?? "";
-  }
-
-  Map<String, dynamic> toJson() {
-    return {"title": title ?? "", "description": description ?? []};
-  }
-}
-
-class Experience {
+class ExperienceData {
   String? company;
   String? role;
   String? duration;
   dynamic description;
+  String? id;
 
-  Experience({this.company, this.role, this.duration, this.description});
 
-  Experience.fromJson(Map<String, dynamic> json) {
+  ExperienceData({this.company, this.role, this.duration, this.description,     this.id,
+  });
+
+  ExperienceData.fromJson(Map<String, dynamic> json) {
     company = json['company'] ?? "";
     role = json['role'] ?? "";
     duration = json['duration'] ?? "";
     description = json['description'] ?? "";
+    id= json['_id']??"";
   }
 
   Map<String, dynamic> toJson() {
@@ -394,34 +404,35 @@ class Experience {
       "role": role ?? "",
       "duration": duration ?? "",
       "description": description ?? "",
+      "_id": id
     };
   }
 }
 
-class Internship {
-  String? company;
-  String? role;
-  String? duration;
-  dynamic description;
-
-  Internship({this.company, this.role, this.duration, this.description});
-
-  Internship.fromJson(Map<String, dynamic> json) {
-    company = json['company'] ?? "";
-    role = json['role'] ?? "";
-    duration = json['duration'] ?? "";
-    description = json['description'] ?? "";
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "company": company ?? "",
-      "role": role ?? "",
-      "duration": duration ?? "",
-      "description": description ?? "",
-    };
-  }
-}
+// class Internship {
+//   String? company;
+//   String? role;
+//   String? duration;
+//   dynamic description;
+//
+//   Internship({this.company, this.role, this.duration, this.description});
+//
+//   Internship.fromJson(Map<String, dynamic> json) {
+//     company = json['company'] ?? "";
+//     role = json['role'] ?? "";
+//     duration = json['duration'] ?? "";
+//     description = json['description'] ?? "";
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     return {
+//       "company": company ?? "",
+//       "role": role ?? "",
+//       "duration": duration ?? "",
+//       "description": description ?? "",
+//     };
+//   }
+// }
 
 class Training {
   String? title;

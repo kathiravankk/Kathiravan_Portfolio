@@ -19,6 +19,16 @@ class Certification {
       type: json['type']??"",
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name ?? "",
+      "issuer": issuer ?? "",
+      "date": date ?? "",
+      "type": type ?? "",
+    };
+  }
+
 }
 
 class PaperData {

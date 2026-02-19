@@ -1,24 +1,26 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class ResumeDetailsViewScreen extends StatefulWidget {
+class ShowTemplateView extends StatefulWidget {
   final String htmlAssetPath;
   final ExtractedResumeDataModel resumeData;
 
-  const ResumeDetailsViewScreen({
+  const ShowTemplateView({
     super.key,
     required this.htmlAssetPath,
     required this.resumeData,
   });
 
   @override
-  State<ResumeDetailsViewScreen> createState() =>
-      _ResumeDetailsViewScreenState();
+  State<ShowTemplateView> createState() =>
+      _ShowTemplateViewState();
 }
 
-class _ResumeDetailsViewScreenState extends State<ResumeDetailsViewScreen> {
+class _ShowTemplateViewState extends State<ShowTemplateView> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
@@ -56,7 +58,7 @@ class _ResumeDetailsViewScreenState extends State<ResumeDetailsViewScreen> {
     return Stack(
       children: [
         WebViewWidget(controller: _controller),
-        if (_isLoading) const Center(child: CircularProgressIndicator()),
+        if (_isLoading) const Center(child: CupertinoActivityIndicator(color: AppColors.primaryColor,)),
       ],
     );
   }

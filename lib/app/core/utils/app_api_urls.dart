@@ -22,6 +22,7 @@ class AppApiUrls {
   static const String analyzeResumeScore = "${baseUrl}analyze-resume-score";
   static const String updateResumeData = "${baseUrl}enhance-resume";
   static const String verifyKycData = "${baseUrl}verify-kyc";
+  static const String chatResumeCreation = "${baseUrl}chatbot";
 
   //DASHBOARD FLOW
   static const String getCategoryList = "${baseUrl}industry/getindustrylist";

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
@@ -34,6 +35,8 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
       savedJobs = profileController.savedJobModel.jobData ?? [];
     }
   }
+
+  bool isAlreadySaved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,21 +77,101 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
                   ),
                 )
               : savedJobs!.isNotEmpty
-              ? ListView.separated(
-                  padding: EdgeInsets.all(15),
-                  shrinkWrap: true,
-                  separatorBuilder: (context, index) => SizedBox(height: 10),
-                  itemCount: savedJobs!.length,
-                  itemBuilder: (context, index) => SavedInternshipCard(
-                    jobTitle: savedJobs![index].job!.title ?? "",
-                    companyLogo: savedJobs![index].job!.companyLogo ?? "",
-                    postedDate: savedJobs![index].job!.createdAt ?? "",
-                    companyName: savedJobs![index].job!.companyName ?? "",
-                  ),
+              ? Stack(
+                  children: [
+                    ListView.separated(
+                      padding: EdgeInsets.all(15),
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemCount: savedJobs!.length,
+                      itemBuilder: (context, index) => SavedInternshipCard(
+                        jobTitle: savedJobs![index].job!.title ?? "",
+                        companyLogo: savedJobs![index].job!.companyLogo ?? "",
+                        postedDate: savedJobs![index].job!.createdAt ?? "",
+                        companyName: savedJobs![index].job!.companyName ?? "",
+                        isApplyFunc: () {},
+                        isSaveFunc: () {
+                          removeToSaved(jobId: savedJobs![index].job!.id ?? "");
+                        },
+                      ),
+                    ),
+                    Visibility(
+                      visible: profileController.removeSavedJobsLoading,
+                      child: Positioned(
+                        child: Center(
+                          child: Container(
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: AppColors.blackGradient2,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: 10,
+                              children: [
+                                CupertinoActivityIndicator(
+                                  color: AppColors.secondaryColor,
+                                ),
+                                Text(
+                                  "Removing from saved posts..!",
+                                  style: AppStyles.customTextStyle(
+                                    size: 14,
+                                    color: AppColors.secondaryColor,
+                                    weight: FontWeight.w500,
+                                    fontFamily: "Roboto",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 )
               : CustomEmptyWidget(),
         ),
       ),
     );
+  }
+
+  // Future<void> addToSaved({required String jobId}) async {
+  //   await profileController.addSavedJobsData(jobId: jobId);
+  //   if (profileController.getResponseCode() == 200 ||
+  //       profileController.getResponseCode() == 201) {
+  //     AppFunctions.showToast(
+  //       message:
+  //           profileController.savedJobModel.message ??
+  //           "Internship added to your saved posts!",
+  //     );
+  //     await getSavedJobsData();
+  //   } else {
+  //     AppFunctions.apiErrorHandling(
+  //       profileController.getResponseCode(),
+  //       profileController.savedJobModel.message ??
+  //           "Something went wrong!, Please try again later",
+  //     );
+  //   }
+  // }
+
+  Future<void> removeToSaved({required String jobId}) async {
+    await profileController.removeSavedJobsData(jobId: jobId);
+    if (profileController.getResponseCode() == 200 ||
+        profileController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message:
+            profileController.savedJobModel.message ??
+            "Internship removed from your saved posts!",
+      );
+      await getSavedJobsData();
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.savedJobModel.message ??
+            "Something went wrong!, Please try again later",
+      );
+    }
   }
 }

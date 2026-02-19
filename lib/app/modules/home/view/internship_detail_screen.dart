@@ -96,11 +96,32 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                         color: AppColors.whiteColor,
                       ),
                     ),
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Text(
+                          internship!.companyName ?? "",
+                          style: AppStyles.customTextStyle(
+                            size: 14,
+                            weight: FontWeight.w700,
+                            color: AppColors.secondaryColor,
+                          ),
+                        ),
+                        Text(
+                          "( ⭐ ${internship!.averageRating ?? 0} Ratings )",
+                          style: AppStyles.customTextStyle(
+                            size: 11,
+                            weight: FontWeight.w700,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ],
+                    ),
                     Text(
-                      internship!.companyName ?? "",
+                      "${internship!.totalApplication ?? 0} applicants",
                       style: AppStyles.customTextStyle(
-                        size: 14,
-                        weight: FontWeight.w700,
+                        size: 10,
+                        weight: FontWeight.w300,
                         color: AppColors.secondaryColor,
                       ),
                     ),
@@ -335,10 +356,12 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   }
 
   Widget buildReviewWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 15,
-      children: [companyCard(), reviewField()],
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 15,
+        children: [companyCard(), reviewField(), SizedBox(height: 25,)],
+      ),
     );
   }
 
@@ -366,8 +389,9 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                   itemCount: reviewList!.length,
                   itemBuilder: (context, index) {
                     return reviewCard(
-                      studentName:
-                          reviewList![index].studentData!=null ? reviewList![index].studentData!.studentName ?? "" : "NA",
+                      studentName: reviewList![index].studentData != null
+                          ? reviewList![index].studentData!.studentName ?? ""
+                          : "NA",
                       reviewContent: reviewList![index].review ?? "",
                     );
                   },
@@ -406,7 +430,11 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               child: Row(
                 spacing: 10,
                 children: [
-                  Icon(Icons.person_4_outlined, size: 15, color: AppColors.greyIcon,),
+                  Icon(
+                    Icons.person_4_outlined,
+                    size: 15,
+                    color: AppColors.greyIcon,
+                  ),
                   Text(
                     studentName ?? "",
                     style: AppStyles.customTextStyle(
@@ -460,29 +488,32 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.navBarColor, width: 0.5),
               ),
-              child: Image.network(
-                internship!.companyLogo ?? "",
-                height: 40,
-                width: 40,
-                errorBuilder: (context, error, stackTrace) => CircleAvatar(
-                  backgroundColor: AppColors.whiteColor,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.photo_outlined,
-                        color: AppColors.lightHintText,
-                        size: 30,
-                      ),
-                      Text(
-                        "Error!",
-                        style: AppStyles.customTextStyle(
-                          size: 5,
-                          weight: FontWeight.w400,
-                          color: AppColors.failTextColor,
+              child: ClipOval(
+                child: Image.network(
+                  "https://fulupo.selfietoons.com/${internship!.companyLogo ?? ""}",
+                  height: 40,
+                  width: 40,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => CircleAvatar(
+                    backgroundColor: AppColors.whiteColor,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.photo_outlined,
+                          color: AppColors.lightHintText,
+                          size: 30,
                         ),
-                      ),
-                    ],
+                        Text(
+                          "Error!",
+                          style: AppStyles.customTextStyle(
+                            size: 5,
+                            weight: FontWeight.w400,
+                            color: AppColors.failTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

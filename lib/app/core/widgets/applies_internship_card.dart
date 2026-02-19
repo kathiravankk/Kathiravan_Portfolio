@@ -14,12 +14,13 @@ class AppliesInternshipCard extends StatelessWidget {
 
   const AppliesInternshipCard({
     super.key,
-     this.role = "",
-     this.companyName ="",
-     this.companyLocation ="",
-     this.companyDescription="",
-     this.appliedOn ="",
-     this.companyLogo="", this.viewFunc,
+    this.role = "",
+    this.companyName = "",
+    this.companyLocation = "",
+    this.companyDescription = "",
+    this.appliedOn = "",
+    this.companyLogo = "",
+    this.viewFunc,
   });
 
   @override
@@ -44,31 +45,37 @@ class AppliesInternshipCard extends StatelessWidget {
                   padding: EdgeInsets.all(3),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.navBarColor, width: 0.5),
+                    border: Border.all(
+                      color: AppColors.navBarColor,
+                      width: 0.5,
+                    ),
                   ),
-                  child: Image.network(
-                    companyLogo!,
-                    height: 40,
-                    width: 40,
-                    errorBuilder: (context, error, stackTrace) => CircleAvatar(
-                      backgroundColor: AppColors.whiteColor,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.photo_outlined,
-                            color: AppColors.lightHintText,
-                            size: 30,
-                          ),
-                          Text(
-                            "Error!",
-                            style: AppStyles.customTextStyle(
-                              size: 5,
-                              weight: FontWeight.w400,
-                              color: AppColors.failTextColor,
+                  child: ClipOval(
+                    child: Image.network(
+                      "https://fulupo.selfietoons.com/${companyLogo ?? ""}",
+                      height: 40,
+                      width: 40,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => CircleAvatar(
+                        backgroundColor: AppColors.whiteColor,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.photo_outlined,
+                              color: AppColors.lightHintText,
+                              size: 30,
                             ),
-                          ),
-                        ],
+                            Text(
+                              "Error!",
+                              style: AppStyles.customTextStyle(
+                                size: 5,
+                                weight: FontWeight.w400,
+                                color: AppColors.failTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -155,7 +162,7 @@ class AppliesInternshipCard extends StatelessWidget {
                       size: 10,
                       weight: FontWeight.w400,
                       color: AppColors.selectedContColor,
-                    )    ,
+                    ),
                   ),
                 ],
               ),

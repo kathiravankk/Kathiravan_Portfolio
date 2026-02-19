@@ -34,8 +34,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
   final DashboardController dashboardController =
       Get.find<DashboardController>();
 
-  final ProfileController profileController =
-  Get.find<ProfileController>();
+  final ProfileController profileController = Get.find<ProfileController>();
 
   String? studentName;
   String? studentId;
@@ -51,9 +50,10 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
     // studentName = prefs.getString('student_name');
     studentName = await LocalStorageService.getStudentName();
     studentId = await LocalStorageService.getStudentId();
+    await profileController.getProfileData(studentId: studentId!);
+
     await dashboardController.getCategoryListData();
     await dashboardController.getRecommentedInternship();
-    await profileController.getProfileData(studentId: studentId!);
   }
 
   @override
@@ -300,38 +300,88 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
       child:
           dashboardController.recommentedModel.internshipList != null &&
               dashboardController.recommentedModel.internshipList!.isNotEmpty
-          ? ListView.separated(
-              separatorBuilder: (context, index) => SizedBox(width: 10),
-              scrollDirection: Axis.horizontal,
-              itemCount:
-                  dashboardController.recommentedModel.internshipList!.length,
-              itemBuilder: (context, index) {
-                RecommentedData recommentedList =
-                    dashboardController.recommentedModel.internshipList![index];
-                return InternshipCard(
-                  width: 360,
-                  companyName: recommentedList.companyName ?? "",
-                  duration: recommentedList.internshipDuration ?? "",
-                  applyFunc: () {},
-                  viewFunc: () {
-                    AppFunctions.navigateScreen(
-                      context,
-                      AppRoutes.internshipDetailScreen,
-                      arguments: {"internshipId": recommentedList.sId},
+          ? Stack(
+              children: [
+                ListView.separated(
+                  separatorBuilder: (context, index) => SizedBox(width: 10),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: dashboardController
+                      .recommentedModel
+                      .internshipList!
+                      .length,
+                  itemBuilder: (context, index) {
+                    RecommentedData recommentedList = dashboardController
+                        .recommentedModel
+                        .internshipList![index];
+                    return InternshipCard(
+                      width: 360,
+                      companyName: recommentedList.companyName ?? "",
+                      duration: recommentedList.internshipDuration ?? "",
+                      isSaved: recommentedList.isSaved ?? false,
+                      saveFunc: () {
+                        recommentedList.isSaved!
+                            ? removeToSaved(jobId: recommentedList.sId!)
+                            : addToSaved(jobId: recommentedList.sId!);
+                      },
+                      viewFunc: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.internshipDetailScreen,
+                          arguments: {"internshipId": recommentedList.sId},
+                        );
+                      },
+                      eligibility: recommentedList.eligibilityCriteria ?? "",
+                      qualification: recommentedList.studentQualification ?? "",
+                      stipendRupees: recommentedList.internshipStipend ?? "",
+                      description: recommentedList.internshipDescription ?? "",
+                      imageUrl: recommentedList.companyLogo ?? "",
+                      internshipMode: recommentedList.internshipMode ?? "",
+                      role: recommentedList.title ?? "",
+                      postedDate: recommentedList.createdAt ?? "",
+                      skillList: recommentedList.requiredSkills ?? [],
+                      isApplied: recommentedList.applied ?? false,
                     );
                   },
-                  eligibility: recommentedList.eligibilityCriteria ?? "",
-                  qualification: recommentedList.studentQualification ?? "",
-                  stipendRupees: recommentedList.internshipStipend ?? "",
-                  description: recommentedList.internshipDescription ?? "",
-                  imageUrl: recommentedList.companyLogo ?? "",
-                  internshipMode: recommentedList.internshipMode ?? "",
-                  role: recommentedList.title ?? "",
-                  postedDate: recommentedList.createdAt ?? "",
-                  skillList: recommentedList.requiredSkills ?? [],
-                  isApplied: recommentedList.applied ?? false,
-                );
-              },
+                ),
+
+                Visibility(
+                  visible:
+                      profileController.removeSavedJobsLoading ||
+                      profileController.addSavedJobsLoading,
+                  child: Positioned(
+                    child: Center(
+                      child: Container(
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: AppColors.blackGradient2,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 10,
+                          children: [
+                            CupertinoActivityIndicator(
+                              color: AppColors.secondaryColor,
+                            ),
+                            Text(
+                              profileController.removeSavedJobsLoading
+                                  ? "Removing from saved posts..!"
+                                  : "Adding to saved posts..!",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                color: AppColors.secondaryColor,
+                                weight: FontWeight.w500,
+                                fontFamily: "Roboto",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             )
           : Center(
               child: Column(
@@ -451,5 +501,43 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
               ),
             ),
     );
+  }
+
+  Future<void> addToSaved({required String jobId}) async {
+    await profileController.addSavedJobsData(jobId: jobId);
+    if (profileController.getResponseCode() == 200 ||
+        profileController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message:
+            profileController.savedJobModel.message ??
+            "Internship added to your saved posts!",
+      );
+      await dashboardController.getRecommentedInternship();
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.savedJobModel.message ??
+            "Something went wrong!, Please try again later",
+      );
+    }
+  }
+
+  Future<void> removeToSaved({required String jobId}) async {
+    await profileController.removeSavedJobsData(jobId: jobId);
+    if (profileController.getResponseCode() == 200 ||
+        profileController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message:
+            profileController.savedJobModel.message ??
+            "Internship removed from your saved posts!",
+      );
+      await dashboardController.getRecommentedInternship();
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.savedJobModel.message ??
+            "Something went wrong!, Please try again later",
+      );
+    }
   }
 }

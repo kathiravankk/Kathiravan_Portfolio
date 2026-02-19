@@ -66,6 +66,47 @@ class SavedJobData {
   }
 }
 
+
+class JobData {
+  final String? id;
+  final String? job;
+  final String? student;
+  final String? createdAt;
+  final String? updatedAt;
+  final int? vId;
+
+  JobData({
+    this.id,
+    this.job,
+    this.student,
+    this.createdAt,
+    this.updatedAt,
+    this.vId,
+  });
+
+  factory JobData.fromJson(Map<String, dynamic> json) {
+    return JobData(
+      id: json['_id'] ?? "",
+      job: json['job'] ??"",
+      student: json['student'] ?? "",
+      createdAt: json['createdAt'] ?? "",
+      updatedAt: json['updatedAt'] ?? "",
+      vId: json['__v'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "_id": id,
+      "job": job,
+      "student": student,
+      "createdAt": createdAt,
+      "updatedAt": updatedAt,
+      "__v": vId,
+    };
+  }
+}
+
 class JobModel {
   final String? id;
   final String? companyName;
@@ -190,7 +231,7 @@ class JobModel {
 
 class SavedNewInternshipModel {
   final String? message;
-  final SavedJobData? data;
+  final JobData? data;
 
   SavedNewInternshipModel({
     this.message,
@@ -201,7 +242,7 @@ class SavedNewInternshipModel {
     return SavedNewInternshipModel(
       message: json['message'] ??"",
       data: json['data'] != null
-          ? SavedJobData.fromJson(json['data'])
+          ? JobData.fromJson(json['data'])
           : null,
     );
   }

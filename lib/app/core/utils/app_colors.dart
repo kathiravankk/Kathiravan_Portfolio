@@ -13,6 +13,10 @@ class AppColors {
   static const Color lightHintText = Color.fromRGBO(73, 69, 79, 1);
   static const Color lightBlackText2 = Color.fromRGBO(44, 43, 43, 1);
   static const Color blackGradient2 = Color.fromRGBO(31, 37, 37, 1);
+  static const Color chatTextColor = Color.fromRGBO(255, 255, 255, 0.72);
+  static const Color chatGradient1 = Color.fromRGBO(4, 165, 169, 1);
+  static const Color chatGradient2 = Color.fromRGBO(2, 189, 190, 1);
+  static const Color chatGradient3 = Color.fromRGBO(26, 41, 60, 1);
   static const Color fieldBgColor = Color.fromRGBO(28, 33, 33, 1);
   static const Color redColor = Color.fromRGBO(255, 0, 4, 1);
   static const Color contGradient1 = Color.fromRGBO(24, 20, 16, 1);

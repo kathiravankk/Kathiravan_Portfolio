@@ -10,6 +10,8 @@ import 'package:internsharks/app/modules/home/view/resume_file_view_screen.dart'
 import 'package:internsharks/app/modules/home/view/saved_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/trendy_category_screen.dart';
 import 'package:internsharks/app/modules/login/bindings/login_bindings.dart';
+import 'package:internsharks/app/modules/login/view/chat_resume_creation_screen.dart';
+import 'package:internsharks/app/modules/login/view/chat_resume_template_screen.dart';
 import 'package:internsharks/app/modules/login/view/kyc_verification_screen.dart';
 import 'package:internsharks/app/modules/login/view/login_screen.dart';
 import 'package:internsharks/app/modules/login/view/register_profile_upload_screen.dart';
@@ -107,8 +109,17 @@ class AppPages {
       page: () => ResumeTemplateViewScreen(),
     ),
     appPage(
+      name: AppRoutes.chatResumeTemplateScreen,
+      page: () => ChatResumeTemplateScreen(),
+    ),
+    appPage(
       name: AppRoutes.kycVerificationScreen,
       page: () => KycVerificationScreen(),
+      bindings: [RegisterBindings()],
+    ),
+    appPage(
+      name: AppRoutes.chatResumeCreation,
+      page: () => ChatResumeCreationScreen(),
       bindings: [RegisterBindings()],
     ),
     appPage(name: AppRoutes.stepUpdateScreen, page: () => StepUpdateScreen()),

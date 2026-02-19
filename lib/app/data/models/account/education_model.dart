@@ -76,6 +76,9 @@ class CollegeData {
   String? institution;
   dynamic startYear;
   dynamic endYear;
+  //String? id;
+  String? location;
+
 
   CollegeData({
     this.degree,
@@ -83,6 +86,8 @@ class CollegeData {
     this.institution,
     this.startYear,
     this.endYear,
+    //this.id,
+    this.location
   });
 
   CollegeData.fromJson(Map<String, dynamic> json) {
@@ -91,6 +96,9 @@ class CollegeData {
     institution = json['institution'] ?? '';
     startYear = json['start_year'] ?? '';
     endYear = json['end_year'] ?? '';
+    //id= json['_id']??"";
+    location= json['location']??"";
+
   }
 
   Map<String, dynamic> toJson() {
@@ -100,6 +108,8 @@ class CollegeData {
       "institution": institution,
       "start_year": startYear,
       "end_year": endYear,
+      //"_id":id,
+    "location":location
     };
   }
 }

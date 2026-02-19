@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/widgets/internship_card.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
+import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 import '../../../data/models/home/recommand_internship_model.dart';
@@ -26,6 +27,8 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
       Get.find<DashboardController>();
   ApplicationData? appliedData;
   List<RecommentedData> similarList = [];
+
+  final ProfileController profileController = Get.find<ProfileController>();
 
   @override
   void initState() {
@@ -147,13 +150,15 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                             color: AppColors.whiteColor,
                             size: 20,
                           ),
-                    title: 'Application View by recruiter',
+                    title: 'Application viewed by recruiter',
                     showLine: appliedData!.status != "Applied" ? true : false,
                   ),
                   Visibility(
                     visible: appliedData!.status != "Applied",
                     child: _buildStatusItem(
-                      iconWidget: appliedData!.status == "Selected"
+                      iconWidget:
+                          appliedData!.status == "Selected" ||
+                              appliedData!.status == "Shortlisted"
                           ? Icon(
                               Icons.check_circle_sharp,
                               color: AppColors.sucTextColor,
@@ -190,43 +195,98 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                   : SizedBox(
                       height: 210,
                       child: similarList.isNotEmpty
-                          ? ListView.separated(
-                              separatorBuilder: (context, index) =>
-                                  SizedBox(width: 10),
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: similarList.length,
-                              itemBuilder: (context, index) {
-                                RecommentedData similar = similarList[index];
-                                return InternshipCard(
-                                  width: 360,
-                                  companyName: similar.companyName ?? "",
-                                  duration: similar.internshipDuration ?? "",
-                                  applyFunc: () {},
-                                  viewFunc: () {
-                                    AppFunctions.navigateScreen(
-                                      context,
-                                      AppRoutes.internshipDetailScreen,
-                                      arguments: {"internshipId": similar.sId},
+                          ? Stack(
+                              children: [
+                                ListView.separated(
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(width: 10),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: similarList.length,
+                                  itemBuilder: (context, index) {
+                                    RecommentedData similar =
+                                        similarList[index];
+                                    return InternshipCard(
+                                      width: 360,
+                                      companyName: similar.companyName ?? "",
+                                      isSaved: similar.isSaved ?? false,
+                                      duration:
+                                          similar.internshipDuration ?? "",
+                                      saveFunc: () {
+                                        similar.isSaved!
+                                            ? removeToSaved(jobId: similar.sId!)
+                                            : addToSaved(jobId: similar.sId!);
+                                      },
+                                      viewFunc: () {
+                                        AppFunctions.navigateScreen(
+                                          context,
+                                          AppRoutes.internshipDetailScreen,
+                                          arguments: {
+                                            "internshipId": similar.sId,
+                                          },
+                                        );
+                                      },
+                                      eligibility:
+                                          similar.eligibilityCriteria ?? "",
+                                      qualification:
+                                          similar.studentQualification ?? "",
+                                      stipendRupees:
+                                          similar.internshipStipend ?? "",
+                                      description:
+                                          similar.internshipDescription ?? "",
+                                      imageUrl: similar.companyLogo ?? "",
+                                      internshipMode:
+                                          similar.internshipMode ?? "NA",
+                                      role: similar.title ?? "",
+                                      postedDate: similar.createdAt ?? "",
+                                      skillList: similar.requiredSkills ?? [],
+                                      isApplied: similar.applied ?? false,
                                     );
                                   },
-                                  eligibility:
-                                      similar.eligibilityCriteria ?? "",
-                                  qualification:
-                                      similar.studentQualification ?? "",
-                                  stipendRupees:
-                                      similar.internshipStipend ?? "",
-                                  description:
-                                      similar.internshipDescription ?? "",
-                                  imageUrl: similar.companyLogo ?? "",
-                                  internshipMode:
-                                      similar.internshipMode ?? "NA",
-                                  role: similar.title ?? "",
-                                  postedDate: similar.createdAt ?? "",
-                                  skillList: similar.requiredSkills ?? [],
-                                  isApplied: similar.applied ?? false,
-                                );
-                              },
+                                ),
+                                Visibility(
+                                  visible:
+                                      profileController
+                                          .removeSavedJobsLoading ||
+                                      profileController.addSavedJobsLoading,
+                                  child: Positioned(
+                                    child: Center(
+                                      child: Container(
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.blackGradient2,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          spacing: 10,
+                                          children: [
+                                            CupertinoActivityIndicator(
+                                              color: AppColors.secondaryColor,
+                                            ),
+                                            Text(
+                                              profileController
+                                                      .removeSavedJobsLoading
+                                                  ? "Removing from saved posts..!"
+                                                  : "Adding to saved posts..!",
+                                              style: AppStyles.customTextStyle(
+                                                size: 14,
+                                                color: AppColors.secondaryColor,
+                                                weight: FontWeight.w500,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             )
                           : CustomEmptyWidget(),
                     ),
@@ -235,6 +295,44 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> addToSaved({required String jobId}) async {
+    await profileController.addSavedJobsData(jobId: jobId);
+    if (profileController.getResponseCode() == 200 ||
+        profileController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message:
+            profileController.savedJobModel.message ??
+            "Internship added to your saved posts!",
+      );
+      await getSimilarData();
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.savedJobModel.message ??
+            "Something went wrong!, Please try again later",
+      );
+    }
+  }
+
+  Future<void> removeToSaved({required String jobId}) async {
+    await profileController.removeSavedJobsData(jobId: jobId);
+    if (profileController.getResponseCode() == 200 ||
+        profileController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message:
+            profileController.savedJobModel.message ??
+            "Internship removed from your saved posts!",
+      );
+      await getSimilarData();
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.savedJobModel.message ??
+            "Something went wrong!, Please try again later",
+      );
+    }
   }
 
   Widget _buildStatusItem({

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -9,6 +10,8 @@ class SavedInternshipCard extends StatelessWidget {
   final String? companyName;
   final String? companyLogo;
   final String? postedDate;
+  final VoidCallback? isApplyFunc;
+  final VoidCallback? isSaveFunc;
 
   const SavedInternshipCard({
     super.key,
@@ -16,6 +19,8 @@ class SavedInternshipCard extends StatelessWidget {
     this.companyName = "",
     this.companyLogo = "",
     this.postedDate = "",
+    this.isApplyFunc,
+    this.isSaveFunc,
   });
 
   @override
@@ -27,15 +32,17 @@ class SavedInternshipCard extends StatelessWidget {
       ),
       padding: EdgeInsets.all(15),
       child: Column(
+        spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Column(
+                spacing: 5,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    jobTitle ?? "",
+                    jobTitle!.capitalize ?? "",
                     style: AppStyles.customTextStyle(
                       size: 14,
                       color: AppColors.primaryColor,
@@ -52,6 +59,7 @@ class SavedInternshipCard extends StatelessWidget {
                   ),
                 ],
               ),
+              const Spacer(),
               Container(
                 padding: EdgeInsets.all(3),
                 decoration: BoxDecoration(
@@ -62,7 +70,6 @@ class SavedInternshipCard extends StatelessWidget {
                   companyLogo ?? "",
                   height: 50,
                   width: 50,
-                  //color: AppColors.whiteColor,
                   errorBuilder: (context, error, stackTrace) => CircleAvatar(
                     backgroundColor: AppColors.whiteColor,
                     child: Column(
@@ -97,16 +104,28 @@ class SavedInternshipCard extends StatelessWidget {
             ),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomButtonWidget(
-                buttonFunction: () {},
+                buttonFunction: isApplyFunc!,
                 buttonText: "Apply Now",
                 bgColor: AppColors.secondaryColor,
+                buttonTextStyle: AppStyles.customTextStyle(
+                  size: 14,
+                  color: AppColors.blackColor,
+                  weight: FontWeight.w500,
+                  fontFamily: "Roboto",
+                ),
                 width: 220,
+                height: 35,
               ),
               IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.bookmark, color: AppColors.secondaryColor),
+                onPressed: isSaveFunc!,
+                icon: Icon(
+                  Icons.bookmark,
+                  color: AppColors.secondaryColor,
+                  size: 35,
+                ),
               ),
             ],
           ),

@@ -6,7 +6,9 @@ import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
 import 'package:internsharks/app/core/widgets/home_drawer.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
+import 'package:internsharks/app/modules/home/view/my_course_screen.dart';
 import 'package:internsharks/app/modules/home/view/profile_screen.dart';
+import 'package:internsharks/view/pages/upload_resume/ResumeChat.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -23,14 +25,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         bool exit = await showExitAlert(context);
         return exit;
       },
-      child: const Scaffold(
+      child: Scaffold(
         backgroundColor: AppColors.transparentColor,
         body: CustomNavBar(
           screens: [
-            InternsHomeScreen(),
-            MyAppliesScreen(),
-            InternsHomeScreen(),
-            ProfileScreen(),
+            const InternsHomeScreen(),
+            const MyAppliesScreen(),
+            ResumeChat(),
+            const ProfileScreen(),
           ],
         ),
       ),

@@ -1,3 +1,6 @@
+import 'package:internsharks/app/data/models/account/education_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+
 class StudentProfileModel {
   Education? education;
   String? id;
@@ -22,15 +25,15 @@ class StudentProfileModel {
   String? linkedIn;
   String? github;
   List<Project>? projects;
-  List<Experience>? experience;
+  List<ExperienceData>? experience;
   List<Internship>? internships;
   List<dynamic>? industrialVisits;
   List<dynamic>? trainings;
   List<dynamic>? parents;
-  List<College>? college;
+  List<CollegeData>? college;
   List<Secondary>? higherSecondary;
   List<Secondary>? secondary;
-  String? studentCreditId;
+  dynamic? studentCreditId;
   bool? isVerified;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -109,7 +112,7 @@ class StudentProfileModel {
           .map<Project>((e) => Project.fromJson(e))
           .toList(),
       experience: (json['experience'] ?? [])
-          .map<Experience>((e) => Experience.fromJson(e))
+          .map<ExperienceData>((e) => ExperienceData.fromJson(e))
           .toList(),
       internships: (json['internships'] ?? [])
           .map<Internship>((e) => Internship.fromJson(e))
@@ -118,7 +121,7 @@ class StudentProfileModel {
       trainings: json['trainings'] ?? [],
       parents: json['parents'] ?? [],
       college: (json['college'] ?? [])
-          .map<College>((e) => College.fromJson(e))
+          .map<CollegeData>((e) => CollegeData.fromJson(e))
           .toList(),
       higherSecondary: (json['higher_secondary'] ?? [])
           .map<Secondary>((e) => Secondary.fromJson(e))
@@ -126,7 +129,7 @@ class StudentProfileModel {
       secondary: (json['secondary'] ?? [])
           .map<Secondary>((e) => Secondary.fromJson(e))
           .toList(),
-      studentCreditId: json['studentCreditId'],
+      studentCreditId: json['studentCreditId'] ?? "",
       isVerified: json['isVerified'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
@@ -183,88 +186,91 @@ class StudentProfileModel {
 
 }
 
-class Education {
-  List<dynamic>? college;
-
-  Education({ this.college});
-
-  factory Education.fromJson(Map<String, dynamic> json) {
-    return Education(
-      college: json['college'] ?? [],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    "college": college,
-  };
-}
+// class Education {
+//   List<dynamic>? college;
+//
+//   Education({ this.college});
+//
+//   factory Education.fromJson(Map<String, dynamic> json) {
+//     return Education(
+//       college: json['college'] ?? [],
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() => {
+//     "college": college,
+//   };
+// }
 class Project {
   String? title;
   dynamic description;
-  String? id;
+  //String? id;
 
   Project({
      this.title,
      this.description,
-     this.id,
+     //this.id,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
     return Project(
       title: json['title'] ?? "",
       description: json['description'] ?? "",
-      id: json['_id'] ?? "",
+      //id: json['_id'] ?? "",
     );
   }
   Map<String, dynamic> toJson() {
     return {
       'title': title,
       'description': description,
-      '_id': id,
+      //'_id': id,
     };
   }
 }
-class Experience {
-  String? company;
-  String? role;
-  String? duration;
-  String? id;
-
-  Experience({
-     this.company,
-     this.role,
-     this.duration,
-     this.id,
-  });
-
-  factory Experience.fromJson(Map<String, dynamic> json) {
-    return Experience(
-      company: json['company'] ?? "",
-      role: json['role'] ?? "",
-      duration: json['duration']??"",
-      id: json['_id']??"",
-    );
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'company': company,
-      'role': role,
-      'duration': duration,
-      '_id': id,
-    };
-  }
-}
+// class Experience {
+//   String? company;
+//   String? role;
+//   String? duration;
+//   String? id;
+//
+//   Experience({
+//      this.company,
+//      this.role,
+//      this.duration,
+//      this.id,
+//   });
+//
+//   factory Experience.fromJson(Map<String, dynamic> json) {
+//     return Experience(
+//       company: json['company'] ?? "",
+//       role: json['role'] ?? "",
+//       duration: json['duration']??"",
+//       id: json['_id']??"",
+//     );
+//   }
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'company': company,
+//       'role': role,
+//       'duration': duration,
+//       '_id': id,
+//     };
+//   }
+// }
 class Internship {
   String? company;
   String? role;
   String? duration;
-  String? id;
+  //String? id;
+  dynamic description;
+
 
   Internship({
     required this.company,
     this.role,
     required this.duration,
-    required this.id,
+    //required this.id,
+    this.description
   });
 
   factory Internship.fromJson(Map<String, dynamic> json) {
@@ -272,7 +278,8 @@ class Internship {
       company: json['company']??"",
       role: json['role']??"",
       duration: json['duration']??"",
-      id: json['_id']??"",
+      //id: json['_id']??"",
+        description : json['description'] ?? "",
     );
   }
 
@@ -281,7 +288,8 @@ class Internship {
       'company': company,
       'role': role,
       'duration': duration,
-      '_id': id,
+      //'_id': id,
+      "description": description
     };
   }
 }
@@ -320,43 +328,43 @@ class Secondary {
     };
   }
 }
-class College {
-  String? degree;
-  String? department;
-  String? institution;
-  dynamic startYear;
-  dynamic endYear;
-  String? id;
-
-  College({
-     this.degree,
-     this.department,
-     this.institution,
-    this.startYear,
-    this.endYear,
-     this.id,
-  });
-
-  factory College.fromJson(Map<String, dynamic> json) {
-    return College(
-      degree: json['degree']??"",
-      department: json['department']??"",
-      institution: json['institution']??"",
-      startYear: json['start_year'],
-      endYear: json['end_year'],
-      id: json['_id']??"",
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'degree': degree,
-      'department': department,
-      'institution': institution,
-      'start_year': startYear,
-      'end_year': endYear,
-      '_id': id,
-    };
-  }
-}
+// class College {
+//   String? degree;
+//   String? department;
+//   String? institution;
+//   dynamic startYear;
+//   dynamic endYear;
+//   String? id;
+//
+//   College({
+//      this.degree,
+//      this.department,
+//      this.institution,
+//     this.startYear,
+//     this.endYear,
+//      this.id,
+//   });
+//
+//   factory College.fromJson(Map<String, dynamic> json) {
+//     return College(
+//       degree: json['degree']??"",
+//       department: json['department']??"",
+//       institution: json['institution']??"",
+//       startYear: json['start_year'],
+//       endYear: json['end_year'],
+//       id: json['_id']??"",
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'degree': degree,
+//       'department': department,
+//       'institution': institution,
+//       'start_year': startYear,
+//       'end_year': endYear,
+//       '_id': id,
+//     };
+//   }
+// }
 

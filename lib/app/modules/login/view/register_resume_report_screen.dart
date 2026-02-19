@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -38,7 +39,7 @@ class _RegisterResumeReportScreenState
   }
 
   Future<void> getResumeScore() async {
-    // networkResumePath = await ResumeStorageService.getNetworkResume();
+     networkResumePath = await ResumeStorageService.getNetworkResume();
     // await registerController.checkResumeScore(
     //   resumeUrl:
     //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
@@ -51,6 +52,7 @@ class _RegisterResumeReportScreenState
 
   @override
   Widget build(BuildContext context) {
+    print(networkResumePath!);
     return Scaffold(
       backgroundColor: AppColors.appBgColor,
       appBar: AppBar(

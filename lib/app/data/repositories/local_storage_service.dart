@@ -4,7 +4,7 @@ import 'package:internsharks/app/data/models/account/student_register_model.dart
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
-  static const _tokenKey = 'stud_token';
+  static const tokenKey = 'stud_token';
   static const _studentKey = 'student_data';
   static const _studentIdKey = 'student_id';
   static const studentNameKey = 'student_name';
@@ -16,7 +16,7 @@ class LocalStorageService {
     required RegisterData student,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_tokenKey, token);
+    await prefs.setString(tokenKey, token);
     await prefs.setString(_studentKey, jsonEncode(student.toJson()));
     await prefs.setString(_studentIdKey, student.id ?? '');
     await prefs.setBool(_isVerifiedKey, student.isVerified ?? false);
@@ -42,8 +42,9 @@ class LocalStorageService {
   /// Get token anywhere in app
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_tokenKey);
+    return prefs.getString(tokenKey);
   }
+
 
   ///Get student id
   static Future<String?> getStudentId() async {

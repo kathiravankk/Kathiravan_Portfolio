@@ -55,6 +55,11 @@ class InternshipData {
   String? internshipMode;
   int? iV;
   bool? applied;
+  bool? isSaved;
+  int? totalApplication;
+  int? totalReviews;
+  dynamic averageRating;
+  String? status;
 
   InternshipData({
     this.syllabusData,
@@ -83,7 +88,12 @@ class InternshipData {
     this.updatedAt,
     this.iV,
     this.applied,
-    this.internshipMode
+    this.internshipMode,
+    this.isSaved,
+    this.totalApplication,
+    this.averageRating,
+    this.totalReviews,
+    this.status,
   });
 
   InternshipData.fromJson(Map<String, dynamic> json) {
@@ -118,6 +128,11 @@ class InternshipData {
     iV = json['__v'] ?? 0;
     applied = json['applied'] ?? false;
     internshipMode = json['internshipmode'] ?? "";
+    isSaved = json['isSaved'] ?? false;
+    totalApplication = json['totalapplication'] ?? 0;
+    totalReviews = json['totalReviews'] ?? 0;
+    averageRating = json['averageRating'] ?? 0;
+    status = json['status'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -153,6 +168,9 @@ class InternshipData {
     data['updatedAt'] = updatedAt;
     data['__v'] = iV;
     data['applied'] = applied;
+    data['isSaved'] = isSaved;
+    data['totalapplication'] = totalApplication;
+    data['status'] = status;
     return data;
   }
 }
@@ -164,8 +182,8 @@ class RecruiterData {
   RecruiterData({this.sId});
 
   RecruiterData.fromJson(Map<String, dynamic> json) {
-    sId = json['_id']??"";
-    sId = json['name']??"";
+    sId = json['_id'] ?? "";
+    sId = json['name'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -175,4 +193,3 @@ class RecruiterData {
     return data;
   }
 }
-

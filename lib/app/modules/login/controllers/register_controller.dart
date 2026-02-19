@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -9,6 +10,9 @@ import 'package:internsharks/app/data/models/account/student_profile_model.dart'
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
 import 'package:internsharks/app/data/providers/register_provider.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../data/repositories/local_storage_service.dart';
 
 class RegisterController extends GetxController {
   final RegisterProvider? registerProvider;
@@ -231,7 +235,16 @@ class RegisterController extends GetxController {
         registerData: registerData,
       );
       if (getResponseCode() == 200 || getResponseCode() == 201) {
-        getStudentProfile(studentId: studentRegisterModel.registerData!.id!);
+        final prefs = await SharedPreferences.getInstance();
+        LocalStorageService.saveStudent(
+          token: studentRegisterModel.studentToken!,
+          student: studentRegisterModel.registerData!,
+        );
+        await prefs.setString(
+          LocalStorageService.studentNameKey,
+          studentRegisterModel.registerData!.studentName ?? "",
+        );
+        await getStudentProfile(studentId: studentRegisterModel.registerData!.id!);
       }
       studentRegisterLoading = false;
     } catch (err) {
@@ -267,7 +280,7 @@ class RegisterController extends GetxController {
       );
       if (getResponseCode() == 200 || getResponseCode() == 201) {
         ResumeStorageService.saveNetworkResume(
-          resumeFile: studentProfileModel.studentResume!,
+          resumeFile: studentProfileModel.studentResume ?? "",
         );
       }
       studentDetailsLoading = false;
@@ -323,12 +336,15 @@ class RegisterController extends GetxController {
 
   final _extractedResumeModel = ExtractedResumeDataModel().obs;
 
-  ExtractedResumeDataModel get extractedResumeModel => _extractedResumeModel.value;
+  ExtractedResumeDataModel get extractedResumeModel =>
+      _extractedResumeModel.value;
 
   set extractedResumeModel(ExtractedResumeDataModel value) =>
       _extractedResumeModel.value = value;
 
-  Future<void> updateResumeData({required ExtractedResumeDataModel updateData}) async {
+  Future<void> updateResumeData({
+    required ExtractedResumeDataModel updateData,
+  }) async {
     try {
       updateResumeLoading = true;
       extractedResumeModel = await registerProvider!.postUpdateResume(
@@ -360,7 +376,9 @@ class RegisterController extends GetxController {
   set updateProfileModel(ProfileUpdateModel value) =>
       _updateProfileModel.value = value;
 
-  Future<void> updateStudentProfileData({required Map<String, dynamic> updateData}) async {
+  Future<void> updateStudentProfileData({
+    required Map<String, dynamic> updateData,
+  }) async {
     try {
       updateProfileLoading = true;
       updateProfileModel = await registerProvider!.putUpdateProfile(
@@ -381,11 +399,12 @@ class RegisterController extends GetxController {
 
   bool get updateResumeTemplateLoading => _updateResumeTemplateLoading.value;
 
-  set updateResumeTemplateLoading(bool value) => _updateResumeTemplateLoading.value = value;
+  set updateResumeTemplateLoading(bool value) =>
+      _updateResumeTemplateLoading.value = value;
 
-
-
-  Future<void> updateResumeProfileData({required ExtractedResumeDataModel? updateData}) async {
+  Future<void> updateResumeProfileData({
+    required ExtractedResumeDataModel? updateData,
+  }) async {
     try {
       updateResumeTemplateLoading = true;
       updateProfileModel = await registerProvider!.putUpdateResume(
@@ -406,7 +425,8 @@ class RegisterController extends GetxController {
 
   bool get kycVerificationLoading => _kycVerificationLoading.value;
 
-  set kycVerificationLoading(bool value) => _kycVerificationLoading.value = value;
+  set kycVerificationLoading(bool value) =>
+      _kycVerificationLoading.value = value;
 
   //Model
 
@@ -414,8 +434,7 @@ class RegisterController extends GetxController {
 
   KycUpdateModel get kycUpdateModel => _kycUpdateModel.value;
 
-  set kycUpdateModel(KycUpdateModel value) =>
-      _kycUpdateModel.value = value;
+  set kycUpdateModel(KycUpdateModel value) => _kycUpdateModel.value = value;
 
   Future<void> verifyKycData({required Map<String, dynamic> kycData}) async {
     try {
@@ -426,6 +445,40 @@ class RegisterController extends GetxController {
       kycVerificationLoading = false;
     } catch (err) {
       kycVerificationLoading = false;
+      rethrow;
+    }
+  }
+
+  // CHAT RESUME CREATION
+
+  // Loading
+
+  final _chatResumeLoading = false.obs;
+
+  bool get chatResumeLoading => _chatResumeLoading.value;
+
+  set chatResumeLoading(bool value) => _chatResumeLoading.value = value;
+
+  //Model
+
+  final _createResumeModel = CreateResumeModel().obs;
+
+  CreateResumeModel get createResumeModel => _createResumeModel.value;
+
+  set createResumeModel(CreateResumeModel value) =>
+      _createResumeModel.value = value;
+
+  Future<void> createChatResume({
+    required Map<String, dynamic> chatMessage,
+  }) async {
+    try {
+      chatResumeLoading = true;
+      createResumeModel = await registerProvider!.postChatResume(
+        chatMessage: chatMessage,
+      );
+      chatResumeLoading = false;
+    } catch (err) {
+      chatResumeLoading = false;
       rethrow;
     }
   }

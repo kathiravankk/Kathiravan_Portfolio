@@ -54,6 +54,7 @@ class RecommentedData {
   String? internshipMode;
   int? iV;
   bool? applied;
+  bool? isSaved;
 
   RecommentedData({
     this.syllabusData,
@@ -83,6 +84,7 @@ class RecommentedData {
     this.iV,
     this.applied,
     this.internshipMode,
+    this.isSaved
   });
 
   RecommentedData.fromJson(Map<String, dynamic> json) {
@@ -113,6 +115,7 @@ class RecommentedData {
     iV = json['__v'] ?? 0;
     applied = json['applied'] ?? false;
     internshipMode = json['internshipmode'] ?? "";
+    isSaved = json['isSaved'] ?? false;
   }
 
   Map<String, dynamic> toJson() {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -180,11 +181,20 @@ class RegisterProvider {
       // Convert Map to FormData
       final formData = FormData.fromMap(registerData);
 
+      registerData.forEach((k, v) {
+        debugPrint('$k : ${v.toString()}');
+      });
+
       Response response = await client!
           .post(
             AppApiUrls.newStudentRegister,
             data: formData,
             options: Options(contentType: 'multipart/form-data'),
+        // options: Options(
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        // ),
           )
           .timeout(const Duration(seconds: 60));
 
@@ -366,6 +376,27 @@ class RegisterProvider {
     } on DioException catch (error) {
       responseStatus = error.response?.statusCode ?? 0;
       return KycUpdateModel.fromJson(error.response?.data);
+    }
+  }
+
+  // CHAT RESUME CREATION
+
+  Future<CreateResumeModel> postChatResume({
+    required Map<String, dynamic> chatMessage,
+  }) async {
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(AppApiUrls.chatResumeCreation, data: chatMessage)
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return CreateResumeModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return CreateResumeModel.fromJson(error.response?.data);
     }
   }
 }

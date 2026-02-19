@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,9 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/data/models/account/personal_info_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
@@ -28,6 +32,18 @@ class _RegisterResumeUploadScreenState
   String? fileName;
 
   final RegisterController registerController = Get.find<RegisterController>();
+
+  // @override
+  // void initState() {
+  //   getInitialData();
+  //   super.initState();
+  // }
+
+  // Future<void> getInitialData() async {
+  //   await registerController.getStudentProfile(
+  //     studentId: "6995828777e9a4ba74ac4035",
+  //   );
+  // }
 
   Future<void> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -211,7 +227,95 @@ class _RegisterResumeUploadScreenState
                       Center(
                         child: InkWell(
                           onTap: () {
-                            //AppFunctions.navigateScreen(context, AppRoutes.loginScreen);
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.chatResumeCreation,
+                            );
+                            // Map<String, String> registerData2 = {
+                            //   "studname": "Kathir",
+                            //   "studemail": "kathirkannan2002@google.com",
+                            //   "studmobileno": "1231231234",
+                            //   "profile_summary": "XXXXX",
+                            //
+                            //   "studprogramminglang": json.encode(["Flutter"]),
+                            //
+                            //   "projects": json.encode([
+                            //     {
+                            //       "title": "XXXXX",
+                            //       "description": ["XXXXX"],
+                            //     },
+                            //   ]),
+                            //
+                            //   "paper_presentations": json.encode([
+                            //     {
+                            //       "title": "XXXXX",
+                            //       "event": "XXXXX",
+                            //       "year": "XXXXX",
+                            //       "description": "XXXXX",
+                            //     },
+                            //   ]),
+                            //
+                            //   "experience": json.encode([]),
+                            //
+                            //   "internships": json.encode([
+                            //     {"company": "XXXXX", "duration": "XXXXX", "description": "XXXXX"},
+                            //   ]),
+                            //
+                            //   "college": json.encode([
+                            //     {
+                            //       "degree": "BCA",
+                            //       "department": "Computer Application",
+                            //       "institution": "XXXXX",
+                            //       "start_year": "XXXXX",
+                            //       "end_year": "XXXXX",
+                            //       "location": "XXXXX",
+                            //     },
+                            //   ]),
+                            //
+                            //   "studentcertificate": json.encode([
+                            //     {"name": "XXXXX", "issuer": "XXXXX", "date": "XXXXX"},
+                            //   ]),
+                            //
+                            //   "workshops": json.encode(["XXXXX"]),
+                            //   "publications": json.encode(["XXXXX"]),
+                            //   "parents": json.encode([]),
+                            //   "achievements": json.encode(["XXXXX"]),
+                            //   "leadership": json.encode(["XXXXX"]),
+                            //   "volunteer_experience": json.encode(["XXXXX"]),
+                            //   "languages_known": json.encode(["XXXXX"]),
+                            //   "areas_of_interest": json.encode(["XXXXX"]),
+                            //   "hobbies": json.encode(["XXXXX"]),
+                            //   "industrial_visits": json.encode([
+                            //     {"company": "XXXXX", "location": "XXXXX", "date": "XXXXX"},
+                            //   ]),
+                            //   "soft_skills": json.encode(["XXXXX"]),
+                            //
+                            //   "linkedIn": "XXXXX",
+                            //   "github": "XXXXX",
+                            //
+                            //   "secondary": json.encode([
+                            //     {
+                            //       "institution": "XXXXX",
+                            //       "board": "XXXXX",
+                            //       "percentage": "XXXXX",
+                            //       "year_of_passing": "XXXXX",
+                            //     },
+                            //   ]),
+                            //
+                            //   "higher_secondary": json.encode([
+                            //     {
+                            //       "institution": "XXXXX",
+                            //       "board": "XXXXX",
+                            //       "percentage": "XXXXX",
+                            //       "year_of_passing": "XXXXX",
+                            //     },
+                            //   ]),
+                            // };
+                            //
+                            //
+                            //
+                            // debugPrint(registerData2.toString(), wrapWidth: 1024);
+                            // registerController.registerNewStudent(registerData: registerData2);
                           },
                           child: Text(
                             "Create Your Resume",
