@@ -20,12 +20,12 @@ class PersonalInfoModel {
   factory PersonalInfoModel.fromJson(Map<String, dynamic> json) {
     return PersonalInfoModel(
       name: json['name'] ?? '',
-      gender: json['gender'],
+      gender: json['gender']??"",
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
-      linkedIn: json['linkedIn'],
-      github: json['github'],
-      location: json['location'],
+      linkedIn: json['linkedIn']??"",
+      github: json['github']??"",
+      location: json['location']??"",
     );
   }
 

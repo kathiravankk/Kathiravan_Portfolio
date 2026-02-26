@@ -4,7 +4,8 @@ import 'package:internsharks/app/data/models/account/experience_model.dart' hide
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart' hide Project, ExperienceData;
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
-import 'package:internsharks/app/data/models/home/profile_data_model.dart' show Experience;
+import 'package:internsharks/app/data/models/home/profile_information_model.dart'
+    show Experience;
 
 class CreateResumeModel {
   bool? success;
@@ -33,7 +34,7 @@ class ReplyData {
   List<Experience>? experience;
   List<Internship>? internships;
   List<dynamic>? industrialVisits;
-  Education? education;
+  EducationModel? education;
   List<Certification>? certifications;
   List<PaperData>? paperPresentations;
   List<dynamic>? workshops;
@@ -89,7 +90,7 @@ class ReplyData {
     industrialVisits = json['industrial_visits'] ?? [];
 
     education = json['education'] != null
-        ? Education.fromJson(json['education'])
+        ? EducationModel.fromJson(json['education'])
         : null;
 
     if (json['certifications'] != null) {

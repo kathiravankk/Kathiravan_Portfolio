@@ -42,6 +42,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    getProfileData();
+  }
+
+  String? studentId;
+
+  Future<void> getProfileData() async {
+    studentId = await LocalStorageService.getStudentId();
+    await profileController.getProfileData(studentId: studentId ?? "");
     setInitialData();
   }
 
@@ -53,6 +61,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     emailController.text = profileController.profileDataModel.studEmail ?? "";
     mobileController.text =
         profileController.profileDataModel.studMobileNo ?? "";
+    print(profileController.profileDataModel.isVerified);
+    print("+================");
   }
 
   @override
@@ -65,163 +75,176 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
       child: Obx(
-        () => Scaffold(
-          backgroundColor: AppColors.transparentColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.transparentColor,
-            elevation: 0,
-            title: Text(
-              "Profile",
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.secondaryColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-            actions: [
-              registerController.updateProfileLoading
-                  ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
-                  : IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isEditMode = !isEditMode;
-                          if (!isEditMode) {
-                            debugPrint("Save profile");
-                            updateProfileData();
-                          }
-                        });
-                      },
-                      icon: isEditMode
-                          ? Icon(
-                              Icons.check,
-                              color: AppColors.whiteColor,
-                              size: 25,
-                            )
-                          : Image.asset(
-                              AssetImages.editIconImg,
-                              color: AppColors.failTextColor,
-                              height: 25,
-                              width: 25,
-                            ),
+        () => profileController.profileDataLoading
+            ? Center(
+                child: CupertinoActivityIndicator(
+                  color: AppColors.secondaryColor,
+                ),
+              )
+            : Scaffold(
+                backgroundColor: AppColors.transparentColor,
+                appBar: AppBar(
+                  backgroundColor: AppColors.transparentColor,
+                  elevation: 0,
+                  title: Text(
+                    "Profile",
+                    style: AppStyles.customTextStyle(
+                      size: 18,
+                      color: AppColors.secondaryColor,
+                      weight: FontWeight.w600,
                     ),
-              SizedBox(width: 10),
-            ],
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(15),
-            child: SingleChildScrollView(
-              child: Column(
-                spacing: 20,
-                children: [
-                  CustomProfileHolder(
-                    imageUrl:
-                        "https://fulupo.selfietoons.com/${updatedProfileImage ?? initialProfileImage ?? ""}",
-                    onTap: () {},
-                    fileCallBack: (file) {
-                      setState(() {
-                        updatedProfileImage = file;
-                      });
-                    },
-                    isEditable: isEditMode,
                   ),
-                  SizedBox(height: 10),
-                  CustomTextField(
-                    isNumberKeyboard: false,
-                    isProfileFlow: true,
-                    prefixWidget: Icon(
-                      Icons.person_outline_sharp,
-                      color: AppColors.primaryColor,
-                      size: 23,
-                    ),
-                    controller: nameController,
-                    labelText: "Name",
-                    isEnabled: isEditMode,
-                    onChanged: (value) {},
-                  ),
-                  CustomTextField(
-                    prefixWidget: Icon(
-                      CupertinoIcons.phone,
-                      color: AppColors.primaryColor,
-                      size: 23,
-                    ),
-                    suffixWidget: Icon(
-                      Icons.check_circle,
-                      color: AppColors.sucTextColor,
-                      size: 20,
-                    ),
-                    controller: mobileController,
-                    labelText: "Mobile Number",
-                    isEnabled: false,
-                    onChanged: (value) {},
-                  ),
-                  CustomTextField(
-                    isNumberKeyboard: false,
-                    prefixWidget: Icon(
-                      CupertinoIcons.mail,
-                      color: AppColors.primaryColor,
-                      size: 23,
-                    ),
-                    suffixWidget: Icon(
-                      Icons.check_circle,
-                      color: AppColors.sucTextColor,
-                      size: 20,
-                    ),
-                    controller: emailController,
-                    labelText: "Email Address",
-                    isEnabled: false,
-
-                    onChanged: (value) {},
-                  ),
-                  SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () {
-                      AppFunctions.navigateScreen(context, AppRoutes.manageResumeScreen);
-                    },
-                    child: Container(
-                      height: 50,
-                      //constraints: BoxConstraints(minHeight: 40),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.fieldBorderColor),
-                        color: AppColors.fieldBgColor,
-                      ),
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            spacing: 10,
-                            children: [
-                              Icon(
-                                CupertinoIcons.doc_richtext,
-                                color: AppColors.primaryColor,
-                                size: 25,
-                              ),
-                              Text(
-                                "Manage Resume",
-                                style: AppStyles.customTextStyle(
-                                  fontFamily: "Roboto",
-                                  color: AppColors.whiteColor,
-                                  size: 14,
-                                  weight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                  actions: [
+                    registerController.updateProfileLoading
+                        ? CupertinoActivityIndicator(
+                            color: AppColors.secondaryColor,
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isEditMode = !isEditMode;
+                                if (!isEditMode) {
+                                  debugPrint("Save profile");
+                                  updateProfileData();
+                                }
+                              });
+                            },
+                            icon: isEditMode
+                                ? Icon(
+                                    Icons.check,
+                                    color: AppColors.whiteColor,
+                                    size: 25,
+                                  )
+                                : Image.asset(
+                                    AssetImages.editIconImg,
+                                    color: AppColors.failTextColor,
+                                    height: 25,
+                                    width: 25,
+                                  ),
                           ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: AppColors.whiteColor,
+                    SizedBox(width: 10),
+                  ],
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      spacing: 20,
+                      children: [
+                        CustomProfileHolder(
+                          imageUrl:
+                              "${updatedProfileImage ?? initialProfileImage ?? ""}",
+                          onTap: () {},
+                          fileCallBack: (file) {
+                            setState(() {
+                              updatedProfileImage = file;
+                            });
+                          },
+                          isEditable: isEditMode,
+                        ),
+                        SizedBox(height: 10),
+                        CustomTextField(
+                          isNumberKeyboard: false,
+                          isProfileFlow: true,
+                          prefixWidget: Icon(
+                            Icons.person_outline_sharp,
+                            color: AppColors.primaryColor,
+                            size: 23,
+                          ),
+                          controller: nameController,
+                          labelText: "Name",
+                          isEnabled: isEditMode,
+                          onChanged: (value) {},
+                        ),
+                        CustomTextField(
+                          prefixWidget: Icon(
+                            CupertinoIcons.phone,
+                            color: AppColors.primaryColor,
+                            size: 23,
+                          ),
+                          suffixWidget: Icon(
+                            Icons.check_circle,
+                            color: AppColors.sucTextColor,
                             size: 20,
                           ),
-                        ],
-                      ),
+                          controller: mobileController,
+                          labelText: "Mobile Number",
+                          isEnabled: false,
+                          onChanged: (value) {},
+                        ),
+                        CustomTextField(
+                          isNumberKeyboard: false,
+                          prefixWidget: Icon(
+                            CupertinoIcons.mail,
+                            color: AppColors.primaryColor,
+                            size: 23,
+                          ),
+                          suffixWidget: Icon(
+                            Icons.check_circle,
+                            color: AppColors.sucTextColor,
+                            size: 20,
+                          ),
+                          controller: emailController,
+                          labelText: "Email Address",
+                          isEnabled: false,
+
+                          onChanged: (value) {},
+                        ),
+                        SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.manageResumeScreen,
+                            );
+                          },
+                          child: Container(
+                            height: 50,
+                            //constraints: BoxConstraints(minHeight: 40),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: AppColors.fieldBorderColor,
+                              ),
+                              color: AppColors.fieldBgColor,
+                            ),
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  spacing: 10,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.doc_richtext,
+                                      color: AppColors.primaryColor,
+                                      size: 25,
+                                    ),
+                                    Text(
+                                      "Manage Resume",
+                                      style: AppStyles.customTextStyle(
+                                        fontFamily: "Roboto",
+                                        color: AppColors.whiteColor,
+                                        size: 14,
+                                        weight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: AppColors.whiteColor,
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
       ),
     );
   }

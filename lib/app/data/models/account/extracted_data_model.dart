@@ -12,7 +12,7 @@ class ResumeData {
   List<Experience>? experience;
   List<dynamic>? internships;
   List<dynamic>? industrialVisits;
-  Education? education;
+  EducationModel? education;
   List<Certification>? certifications;
   List<PaperData>? paperPresentations;
   List<dynamic>? workshops;
@@ -90,7 +90,7 @@ class ResumeData {
     industrialVisits = json['industrial_visits'] ?? [];
 
     education = json['education'] != null
-        ? Education.fromJson(json['education'])
+        ? EducationModel.fromJson(json['education'])
         : null;
 
     if (json['certifications'] != null) {

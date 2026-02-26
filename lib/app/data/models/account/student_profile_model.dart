@@ -2,7 +2,7 @@ import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 
 class StudentProfileModel {
-  Education? education;
+  EducationModel? education;
   String? id;
   String? studentName;
   String? studEmail;
@@ -86,7 +86,7 @@ class StudentProfileModel {
 
   factory StudentProfileModel.fromJson(Map<String, dynamic> json) {
     return StudentProfileModel(
-      education: Education.fromJson(json['education'] ?? {}),
+      education: EducationModel.fromJson(json['education'] ?? {}),
       id: json['_id'],
       studentName: json['studname'],
       studEmail: json['studemail'],

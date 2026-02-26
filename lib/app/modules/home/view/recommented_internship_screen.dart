@@ -72,85 +72,112 @@ class _RecommentedInternshipScreenState
                   color: AppColors.secondaryColor,
                 ),
               )
-            : internshipList!.isNotEmpty
+            : dashboardController.recommentedModel.internshipList!.isNotEmpty
             ? Stack(
                 children: [
                   ListView.separated(
                     padding: EdgeInsets.all(15),
                     shrinkWrap: true,
                     separatorBuilder: (context, index) => SizedBox(height: 10),
-                    itemCount: internshipList!.length,
+                    itemCount: dashboardController
+                        .recommentedModel
+                        .internshipList!
+                        .length,
                     itemBuilder: (context, index) => InternshipCard(
                       viewFunc: () {
                         AppFunctions.navigateScreen(
                           context,
                           AppRoutes.internshipDetailScreen,
                           arguments: {
-                            "internshipId": internshipList![index].sId,
+                            "internshipId": dashboardController
+                                .recommentedModel
+                                .internshipList![index]
+                                .sId,
                           },
                         );
                       },
-                      isSaved: internshipList![index].isSaved ?? false,
-                      saveFunc: () {
-                        internshipList![index].isSaved!
-                            ? removeToSaved(jobId: internshipList![index].sId!)
-                            : addToSaved(jobId: internshipList![index].sId!);
-                      },
-                      postedDate: internshipList![index].createdAt!,
-                      role: internshipList![index].title ?? "",
-                      companyName: internshipList![index].companyName ?? "",
+                      isSaved:
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .isSaved ??
+                          false,
+                      // saveFunc: () {
+                      //   internshipList![index].isSaved!
+                      //       ? removeToSaved(jobId: internshipList![index].sId!)
+                      //       : addToSaved(jobId: internshipList![index].sId!);
+                      // },
+                      saveFunc: () => dashboardController.toggleSave(index),
+                      postedDate: dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .createdAt!,
+                      role:
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .title ??
+                          "",
+                      companyName:
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .companyName ??
+                          "",
                       internshipMode:
-                          internshipList![index].internshipMode ?? "NA",
-                      imageUrl: internshipList![index].companyLogo ?? "",
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .internshipMode ??
+                          "NA",
+                      imageUrl:
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .companyLogo ??
+                          "",
                       description:
-                          internshipList![index].internshipDescription ?? "",
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .internshipDescription ??
+                          "",
                       duration:
-                          internshipList![index].internshipDuration ?? "NA",
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .internshipDuration ??
+                          "NA",
                       stipendRupees:
-                          internshipList![index].internshipStipend ?? "NA",
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .internshipStipend ??
+                          "NA",
                       qualification:
-                          internshipList![index].studentQualification ?? "All",
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .studentQualification ??
+                          "All",
                       eligibility:
-                          internshipList![index].eligibilityCriteria ?? "All",
-                      skillList: internshipList![index].requiredSkills ?? [],
-                      isApplied: internshipList![index].applied ?? false,
-                    ),
-                  ),
-                  Visibility(
-                    visible:
-                        profileController.removeSavedJobsLoading ||
-                        profileController.addSavedJobsLoading,
-                    child: Positioned(
-                      child: Center(
-                        child: Container(
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: AppColors.blackGradient2,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: 10,
-                            children: [
-                              CupertinoActivityIndicator(
-                                color: AppColors.secondaryColor,
-                              ),
-                              Text(
-                                profileController.removeSavedJobsLoading
-                                    ? "Removing from saved posts..!"
-                                    : "Adding to saved posts..!",
-                                style: AppStyles.customTextStyle(
-                                  size: 14,
-                                  color: AppColors.secondaryColor,
-                                  weight: FontWeight.w500,
-                                  fontFamily: "Roboto",
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .eligibilityCriteria ??
+                          "All",
+                      skillList:
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .requiredSkills ??
+                          [],
+                      isApplied:
+                          dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .applied ??
+                          false,
                     ),
                   ),
                 ],

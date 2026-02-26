@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +14,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/core/const_file/asset_image.dart';
@@ -27,6 +29,7 @@ class KycVerificationScreen extends StatefulWidget {
 
 class _KycVerificationScreenState extends State<KycVerificationScreen> {
   final RegisterController registerController = Get.find<RegisterController>();
+  final ProfileController profileController = Get.find<ProfileController>();
 
   File? collegeIdImg;
   File? aadhaarImg;
@@ -286,12 +289,17 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
       contentType: MediaType("image", "jpeg"),
     );
 
+    print(studentName);
+
     Map<String, dynamic> kycData = {
       "college_id": collegeIdFile,
       "aadhaar": aadhaarFile,
       //"name": "THENMOZHI. D",
       "name": studentName,
+      "college": jsonEncode(profileController.profileDataModel.education!.college ?? []),
     };
+    debugPrint(kycData.toString());
+    print("******************");
     await registerController.verifyKycData(kycData: kycData);
 
     if (registerController.getResponseCode() == 200 ||
@@ -507,7 +515,9 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
               ),
             ),
             Text(
-              "Your identity verification is pending. Our recruiter will call you shortly to assist with your verification!",
+              registerController.kycUpdateModel.reasoning != null
+                  ? registerController.kycUpdateModel.reasoning!
+                  : "Your identity verification is pending. Our recruiter will call you shortly to assist with your verification!",
               textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
                 size: 14,

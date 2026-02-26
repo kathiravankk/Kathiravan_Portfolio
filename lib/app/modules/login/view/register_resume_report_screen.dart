@@ -44,6 +44,8 @@ class _RegisterResumeReportScreenState
     //   resumeUrl:
     //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
     // );
+     print(networkResumePath!);
+     print("******************");
     await registerController.checkResumeScore(
       resumeUrl:
       networkResumePath!,
@@ -52,7 +54,7 @@ class _RegisterResumeReportScreenState
 
   @override
   Widget build(BuildContext context) {
-    print(networkResumePath!);
+    print(networkResumePath ?? "");
     return Scaffold(
       backgroundColor: AppColors.appBgColor,
       appBar: AppBar(
@@ -103,8 +105,7 @@ class _RegisterResumeReportScreenState
       ),
       clipBehavior: Clip.hardEdge,
       child: SfPdfViewer.network(
-        //"https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
-        networkResumePath!,
+        networkResumePath??"",
         canShowScrollHead: false,
         canShowScrollStatus: false,
         enableDoubleTapZooming: false,
@@ -188,12 +189,17 @@ class _RegisterResumeReportScreenState
                 weight: FontWeight.w600,
               ),
             ),
-            Text(
-              AppFunctions.getSubtitle(key: title, score: rating),
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w300,
+            SizedBox(
+              width: 230,
+              child: Text(
+                AppFunctions.getSubtitle(key: title, score: rating),
+                maxLines: 2,
+                softWrap: true,
+                style: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w300,
+                ),
               ),
             ),
           ],
@@ -543,12 +549,19 @@ class _RegisterResumeReportScreenState
         message: "Resume Updated Successfully!",
         isError: false,
       );
+      // AppFunctions.navigateScreen(
+      //   context,
+      //   AppRoutes.resumeTemplateSelectionScreen,
+      //   arguments: {
+      //     "resumeData": registerController.extractedResumeModel
+      //   }
+      // );
       AppFunctions.navigateScreen(
-        context,
-        AppRoutes.resumeTemplateSelectionScreen,
-        arguments: {
-          "resumeData": registerController.extractedResumeModel
-        }
+          context,
+          AppRoutes.chatResumeTemplateScreen,
+          arguments: {
+            "resumeData": registerController.extractedResumeModel
+          }
       );
     } else {
       AppFunctions.apiErrorHandling(

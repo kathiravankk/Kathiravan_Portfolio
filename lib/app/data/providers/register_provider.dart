@@ -179,10 +179,23 @@ class RegisterProvider {
         LogInterceptor(responseBody: true, requestBody: true),
       );
       // Convert Map to FormData
-      final formData = FormData.fromMap(registerData);
+      final formData = FormData();
 
       registerData.forEach((k, v) {
         debugPrint('$k : ${v.toString()}');
+      });
+      registerData.forEach((key, value) {
+        if (key == "studprogramminglang" && value is List) {
+          for (var skill in value) {
+            formData.fields.add(
+              MapEntry("studprogramminglang", skill.toString()),
+            );
+          }
+        } else {
+          formData.fields.add(
+            MapEntry(key, value.toString()),
+          );
+        }
       });
 
       Response response = await client!

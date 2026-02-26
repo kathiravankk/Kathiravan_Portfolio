@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
-import 'package:internsharks/app/data/models/home/profile_data_model.dart';
+import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 import 'package:internsharks/app/data/providers/profile_provider.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 
 class ProfileController extends GetxController {
   final ProfileProvider? profileProvider;
@@ -37,6 +38,11 @@ class ProfileController extends GetxController {
         studentId: studentId,
       );
       profileDataLoading = false;
+      if (getResponseCode() == 200 || getResponseCode() == 201) {
+        LocalStorageService.saveVerifiedValue(
+          isVerified: profileDataModel.isVerified ?? false,
+        );
+      }
     } catch (err) {
       profileDataLoading = false;
       rethrow;

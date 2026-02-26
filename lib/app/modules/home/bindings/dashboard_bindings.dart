@@ -8,6 +8,10 @@ import 'package:internsharks/app/modules/home/controller/profile_controller.dart
 class DashboardBindings extends Bindings {
   @override
   void dependencies() {
+    Get.put<ProfileController>(
+      ProfileController(ProfileProvider(client: Dio())),
+      permanent: true,
+    );
     Get.put<DashboardController>(
       DashboardController(DashboardProvider(client: Dio())),
       permanent: true,

@@ -10,6 +10,7 @@ import 'package:internsharks/app/data/models/home/internship_detail_model.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/models/home/review_data_model.dart';
 import 'package:internsharks/app/data/models/home/similar_internship_model.dart';
+import 'package:internsharks/app/data/models/home/update_chat_model.dart';
 
 class DashboardProvider {
   final Dio? client;
@@ -179,9 +180,7 @@ class DashboardProvider {
 
   // GET REVIEW DATA
 
-  Future<ReviewDataModel> fetchReviewData({
-    required String jobId,
-  }) async {
+  Future<ReviewDataModel> fetchReviewData({required String jobId}) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
@@ -199,7 +198,49 @@ class DashboardProvider {
     }
   }
 
+  // GET UPDATE RESUME DATA
 
+  Future<UpdateChatModel> fetchUpdateResumeData({
+    required Map<String, dynamic> resumeData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        data: resumeData,
+        AppApiUrls.getUpdateChatResumeData,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return UpdateChatModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return UpdateChatModel.fromJson(err.response!.data);
+    }
+  }
 
+  // UPDATE CHAT RESUME DATA
 
+  Future<UpdateChatResumeModel> updateChatResumeData({
+    required Map<String, dynamic> resumeData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        data: resumeData,
+        AppApiUrls.updateChatResume,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return UpdateChatResumeModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return UpdateChatResumeModel.fromJson(err.response!.data);
+    }
+  }
 }

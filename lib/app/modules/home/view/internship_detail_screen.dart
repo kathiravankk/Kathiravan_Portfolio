@@ -10,6 +10,9 @@ import 'package:internsharks/app/core/widgets/custom_tab_bar.dart';
 import 'package:internsharks/app/data/models/home/review_data_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
+import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+import '../../../core/utils/asset_images.dart' show AssetImages;
 import '../../../data/models/home/category_wise_internship_model.dart';
 
 class InternshipDetailScreen extends StatefulWidget {
@@ -23,6 +26,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     with TickerProviderStateMixin {
   final DashboardController dashboardController =
       Get.find<DashboardController>();
+  final RegisterController registerController = Get.find<RegisterController>();
 
   String internshipId = "";
   String? studentId = "";
@@ -61,7 +65,9 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           height: 40,
           isLoading: dashboardController.internshipApplyLoading,
           buttonFunction: () async {
-            await internshipApplyFunc();
+            await LocalStorageService.getVerifiedValue() == true
+                ? await internshipApplyFunc()
+                : showAlertDialog();
           },
           buttonText: "Apply Now",
         ),
@@ -360,7 +366,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 15,
-        children: [companyCard(), reviewField(), SizedBox(height: 25,)],
+        children: [companyCard(), reviewField(), SizedBox(height: 25)],
       ),
     );
   }
@@ -490,7 +496,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               ),
               child: ClipOval(
                 child: Image.network(
-                  "https://fulupo.selfietoons.com/${internship!.companyLogo ?? ""}",
+                  internship!.companyLogo ?? "",
                   height: 40,
                   width: 40,
                   fit: BoxFit.cover,
@@ -612,6 +618,60 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           ],
         ),
       ],
+    );
+  }
+
+  void showAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.fieldBgColor,
+        title: Image.asset(AssetImages.alertImage, height: 30, width: 30),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 15,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Verification Pending..!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              registerController.kycUpdateModel.reasoning != null
+                  ? registerController.kycUpdateModel.reasoning!
+                  : "Your identity verification is pending. This step is mandatory before you can apply for any internships!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w300,
+                lineSpace: 1.3,
+              ),
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          CustomButtonWidget(
+            buttonFunction: () {
+              Get.back();
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.kycVerificationScreen,
+                //arguments: {"isProfileFlow": true},
+              );
+            },
+            buttonText: "Check Now",
+            width: 150,
+            height: 40,
+          ),
+        ],
+      ),
     );
   }
 }

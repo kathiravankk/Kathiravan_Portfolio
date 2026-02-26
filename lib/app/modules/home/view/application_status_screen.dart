@@ -194,99 +194,122 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                     )
                   : SizedBox(
                       height: 210,
-                      child: similarList.isNotEmpty
-                          ? Stack(
-                              children: [
-                                ListView.separated(
-                                  separatorBuilder: (context, index) =>
-                                      SizedBox(width: 10),
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: similarList.length,
-                                  itemBuilder: (context, index) {
-                                    RecommentedData similar =
-                                        similarList[index];
-                                    return InternshipCard(
-                                      width: 360,
-                                      companyName: similar.companyName ?? "",
-                                      isSaved: similar.isSaved ?? false,
-                                      duration:
-                                          similar.internshipDuration ?? "",
-                                      saveFunc: () {
-                                        similar.isSaved!
-                                            ? removeToSaved(jobId: similar.sId!)
-                                            : addToSaved(jobId: similar.sId!);
+                      child:
+                          dashboardController
+                              .similarInternshipModel
+                              .similarList!
+                              .isNotEmpty
+                          ? ListView.separated(
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(width: 10),
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: dashboardController
+                                  .similarInternshipModel
+                                  .similarList!
+                                  .length,
+                              itemBuilder: (context, index) {
+                                RecommentedData similar = dashboardController
+                                    .similarInternshipModel
+                                    .similarList![index];
+                                return InternshipCard(
+                                  width: 360,
+                                  companyName:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .companyName ??
+                                      "",
+                                  isSaved:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .isSaved ??
+                                      false,
+                                  duration:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .internshipDuration ??
+                                      "",
+                                  // saveFunc: () {
+                                  //   similar.isSaved!
+                                  //       ? removeToSaved(jobId: similar.sId!)
+                                  //       : addToSaved(jobId: similar.sId!);
+                                  // },
+                                  saveFunc: () =>
+                                      dashboardController.similarSaveFunc(index),
+                                  viewFunc: () {
+                                    AppFunctions.navigateScreen(
+                                      context,
+                                      AppRoutes.internshipDetailScreen,
+                                      arguments: {
+                                        "internshipId": dashboardController
+                                            .similarInternshipModel
+                                            .similarList![index]
+                                            .sId,
                                       },
-                                      viewFunc: () {
-                                        AppFunctions.navigateScreen(
-                                          context,
-                                          AppRoutes.internshipDetailScreen,
-                                          arguments: {
-                                            "internshipId": similar.sId,
-                                          },
-                                        );
-                                      },
-                                      eligibility:
-                                          similar.eligibilityCriteria ?? "",
-                                      qualification:
-                                          similar.studentQualification ?? "",
-                                      stipendRupees:
-                                          similar.internshipStipend ?? "",
-                                      description:
-                                          similar.internshipDescription ?? "",
-                                      imageUrl: similar.companyLogo ?? "",
-                                      internshipMode:
-                                          similar.internshipMode ?? "NA",
-                                      role: similar.title ?? "",
-                                      postedDate: similar.createdAt ?? "",
-                                      skillList: similar.requiredSkills ?? [],
-                                      isApplied: similar.applied ?? false,
                                     );
                                   },
-                                ),
-                                Visibility(
-                                  visible:
-                                      profileController
-                                          .removeSavedJobsLoading ||
-                                      profileController.addSavedJobsLoading,
-                                  child: Positioned(
-                                    child: Center(
-                                      child: Container(
-                                        height: 80,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.blackGradient2,
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          spacing: 10,
-                                          children: [
-                                            CupertinoActivityIndicator(
-                                              color: AppColors.secondaryColor,
-                                            ),
-                                            Text(
-                                              profileController
-                                                      .removeSavedJobsLoading
-                                                  ? "Removing from saved posts..!"
-                                                  : "Adding to saved posts..!",
-                                              style: AppStyles.customTextStyle(
-                                                size: 14,
-                                                color: AppColors.secondaryColor,
-                                                weight: FontWeight.w500,
-                                                fontFamily: "Roboto",
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                  eligibility:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .eligibilityCriteria ??
+                                      "",
+                                  qualification:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .studentQualification ??
+                                      "",
+                                  stipendRupees:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .internshipStipend ??
+                                      "",
+                                  description:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .internshipDescription ??
+                                      "",
+                                  imageUrl: dashboardController
+                                      .similarInternshipModel
+                                      .similarList![index].companyLogo ?? "",
+                                  internshipMode:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .internshipMode ??
+                                      "NA",
+                                  role:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .title ??
+                                      "",
+                                  postedDate:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .createdAt ??
+                                      "",
+                                  skillList:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .requiredSkills ??
+                                      [],
+                                  isApplied:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .applied ??
+                                      false,
+                                );
+                              },
                             )
                           : CustomEmptyWidget(),
                     ),

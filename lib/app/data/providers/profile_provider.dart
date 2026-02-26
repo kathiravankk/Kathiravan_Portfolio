@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
-import 'package:internsharks/app/data/models/home/profile_data_model.dart';
+import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 
 import '../models/account/common_post_model.dart';

@@ -50,7 +50,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
     // studentName = prefs.getString('student_name');
     studentName = await LocalStorageService.getStudentName();
     studentId = await LocalStorageService.getStudentId();
-    await profileController.getProfileData(studentId: studentId!);
+    await profileController.getProfileData(studentId: studentId ?? "");
 
     await dashboardController.getCategoryListData();
     await dashboardController.getRecommentedInternship();
@@ -59,7 +59,10 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => profileController.profileDataLoading
+      () =>
+          profileController.profileDataLoading ||
+              dashboardController.getCategoryLoading ||
+              dashboardController.recommentedInternshipLoading
           ? Center(
               child: CupertinoActivityIndicator(
                 color: AppColors.secondaryColor,
@@ -81,7 +84,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                 ),
                 title: Text(
-                  "Welcome ${studentName ?? "User"}!",
+                  "Welcome ${profileController.profileDataModel.studentName ?? "User"}!",
                   style: AppStyles.customTextStyle(
                     size: 18,
                     color: AppColors.secondaryColor,
@@ -121,49 +124,41 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   SizedBox(width: 10),
                 ],
               ),
-              body:
-                  dashboardController.getCategoryLoading ||
-                      dashboardController.recommentedInternshipLoading
-                  ? Center(
-                      child: CupertinoActivityIndicator(
-                        color: AppColors.secondaryColor,
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
+                    children: [
+                      _buildSearchBar(),
+                      const SizedBox(height: 10),
+                      _buildBannerCarousel(),
+                      _buildSectionHeader(
+                        title: "Recommented Internship",
+                        onTabPage: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.recommentedInternshipScreen,
+                          );
+                        },
                       ),
-                    )
-                  : SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 10,
-                          children: [
-                            _buildSearchBar(),
-                            const SizedBox(height: 10),
-                            _buildBannerCarousel(),
-                            _buildSectionHeader(
-                              title: "Recommented Internship",
-                              onTabPage: () {
-                                AppFunctions.navigateScreen(
-                                  context,
-                                  AppRoutes.recommentedInternshipScreen,
-                                );
-                              },
-                            ),
-                            _buildRecommendedInternships(),
-                            _buildSectionHeader(
-                              title: "Trendy Categories",
-                              onTabPage: () {
-                                AppFunctions.navigateScreen(
-                                  context,
-                                  AppRoutes.trendyCategoryScreen,
-                                );
-                              },
-                            ),
-                            _buildTrendyCategories(),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
+                      _buildRecommendedInternships(),
+                      _buildSectionHeader(
+                        title: "Trendy Categories",
+                        onTabPage: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.trendyCategoryScreen,
+                          );
+                        },
                       ),
-                    ),
+                      _buildTrendyCategories(),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
             ),
     );
   }
@@ -300,88 +295,44 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
       child:
           dashboardController.recommentedModel.internshipList != null &&
               dashboardController.recommentedModel.internshipList!.isNotEmpty
-          ? Stack(
-              children: [
-                ListView.separated(
-                  separatorBuilder: (context, index) => SizedBox(width: 10),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: dashboardController
-                      .recommentedModel
-                      .internshipList!
-                      .length,
-                  itemBuilder: (context, index) {
-                    RecommentedData recommentedList = dashboardController
-                        .recommentedModel
-                        .internshipList![index];
-                    return InternshipCard(
-                      width: 360,
-                      companyName: recommentedList.companyName ?? "",
-                      duration: recommentedList.internshipDuration ?? "",
-                      isSaved: recommentedList.isSaved ?? false,
-                      saveFunc: () {
-                        recommentedList.isSaved!
-                            ? removeToSaved(jobId: recommentedList.sId!)
-                            : addToSaved(jobId: recommentedList.sId!);
-                      },
-                      viewFunc: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.internshipDetailScreen,
-                          arguments: {"internshipId": recommentedList.sId},
-                        );
-                      },
-                      eligibility: recommentedList.eligibilityCriteria ?? "",
-                      qualification: recommentedList.studentQualification ?? "",
-                      stipendRupees: recommentedList.internshipStipend ?? "",
-                      description: recommentedList.internshipDescription ?? "",
-                      imageUrl: recommentedList.companyLogo ?? "",
-                      internshipMode: recommentedList.internshipMode ?? "",
-                      role: recommentedList.title ?? "",
-                      postedDate: recommentedList.createdAt ?? "",
-                      skillList: recommentedList.requiredSkills ?? [],
-                      isApplied: recommentedList.applied ?? false,
+          ? ListView.separated(
+              separatorBuilder: (context, index) => SizedBox(width: 10),
+              scrollDirection: Axis.horizontal,
+              itemCount:
+                  dashboardController.recommentedModel.internshipList!.length,
+              itemBuilder: (context, index) {
+                RecommentedData recommentedList =
+                    dashboardController.recommentedModel.internshipList![index];
+                return InternshipCard(
+                  width: 360,
+                  companyName: recommentedList.companyName ?? "",
+                  duration: recommentedList.internshipDuration ?? "",
+                  isSaved: recommentedList.isSaved ?? false,
+                  // saveFunc: () {
+                  //   recommentedList.isSaved!
+                  //       ? removeToSaved(jobId: recommentedList.sId!)
+                  //       : addToSaved(jobId: recommentedList.sId!);
+                  // },
+                  saveFunc: () => dashboardController.toggleSave(index),
+                  viewFunc: () {
+                    AppFunctions.navigateScreen(
+                      context,
+                      AppRoutes.internshipDetailScreen,
+                      arguments: {"internshipId": recommentedList.sId},
                     );
                   },
-                ),
-
-                Visibility(
-                  visible:
-                      profileController.removeSavedJobsLoading ||
-                      profileController.addSavedJobsLoading,
-                  child: Positioned(
-                    child: Center(
-                      child: Container(
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppColors.blackGradient2,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          spacing: 10,
-                          children: [
-                            CupertinoActivityIndicator(
-                              color: AppColors.secondaryColor,
-                            ),
-                            Text(
-                              profileController.removeSavedJobsLoading
-                                  ? "Removing from saved posts..!"
-                                  : "Adding to saved posts..!",
-                              style: AppStyles.customTextStyle(
-                                size: 14,
-                                color: AppColors.secondaryColor,
-                                weight: FontWeight.w500,
-                                fontFamily: "Roboto",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                  eligibility: recommentedList.eligibilityCriteria ?? "",
+                  qualification: recommentedList.studentQualification ?? "",
+                  stipendRupees: recommentedList.internshipStipend ?? "",
+                  description: recommentedList.internshipDescription ?? "",
+                  imageUrl: recommentedList.companyLogo ?? "",
+                  internshipMode: recommentedList.internshipMode ?? "",
+                  role: recommentedList.title ?? "",
+                  postedDate: recommentedList.createdAt ?? "",
+                  skillList: recommentedList.requiredSkills ?? [],
+                  isApplied: recommentedList.applied ?? false,
+                );
+              },
             )
           : Center(
               child: Column(

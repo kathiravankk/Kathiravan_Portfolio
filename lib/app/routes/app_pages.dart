@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
 import 'package:internsharks/app/modules/home/view/category_wise_internship_screen.dart';
+import 'package:internsharks/app/modules/home/view/chat_resume_update_screen.dart';
 import 'package:internsharks/app/modules/home/view/dashboard_screen.dart';
 import 'package:internsharks/app/modules/home/view/internship_detail_screen.dart';
 import 'package:internsharks/app/modules/home/view/profile_screen.dart';
@@ -111,6 +112,10 @@ class AppPages {
     appPage(
       name: AppRoutes.chatResumeTemplateScreen,
       page: () => ChatResumeTemplateScreen(),
+    ),
+    appPage(
+      name: AppRoutes.chatResumeUpdateScreen,
+      page: () => ChatResumeUpdateScreen(),
     ),
     appPage(
       name: AppRoutes.kycVerificationScreen,

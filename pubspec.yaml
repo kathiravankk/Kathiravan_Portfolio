@@ -59,6 +59,8 @@ dependencies:
   step_progress: ^2.5.2
   intl: ^0.20.2
   url_launcher: ^6.3.2
+  connectivity_plus: ^6.0.3
+  flutter_launcher_icons: ^0.14.4
 
 
 
@@ -123,3 +125,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+    android: true
+    ios: true
+    image_path: "assets/images/app_icon.png"
+#
+#    # Optional: different icons per platform
+#    # image_path_android: "assets/icons/app_icon_android.png"
+#    # image_path_ios: "assets/icons/app_icon_ios.png"
+#
+#    # Android adaptive icon (recommended for Android 8+)
+#    adaptive_icon_background: "#FFFFFF"   # or use image: "assets/icons/bg.png"
+#    adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+#
+#    # iOS
+#    remove_alpha_ios: true   # Required — iOS doesn't allow transparent icons
+

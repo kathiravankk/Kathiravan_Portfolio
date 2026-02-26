@@ -314,33 +314,38 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      CustomTextField(
-                        controller: emailOtpController,
-                        labelText: "Email OTP",
-                        hintText: "Enter OTP here..",
-                        width: 230,
-                        maxLength: 4,
-                        prefixWidget: Icon(
-                          Icons.lock_outlined,
-                          color: AppColors.primaryColor,
-                          size: 20,
+                      Expanded(
+                        child: CustomTextField(
+                          controller: emailOtpController,
+                          labelText: "Email OTP",
+                          hintText: "Enter OTP here..",
+                          width: 230,
+                          maxLength: 4,
+                          prefixWidget: Icon(
+                            Icons.lock_outlined,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
+                          onChanged: (value) {
+                            emailOtpController.text = value;
+                          },
                         ),
-                        onChanged: (value){
-                          emailOtpController.text = value;
-                        },
                       ),
-                      CustomButtonWidget(
-                        width: 140,
-                        buttonText: registerController.isEmailVerified.value
-                            ? "Verified"
-                            : "Verify OTP",
-                        disable: registerController.isEmailVerified.value,
-                        isLoading: registerController.verifyEmailOtpLoading,
-                        buttonFunction: registerController.isEmailVerified.value
-                            ? () {}
-                            : () async {
-                                await verifyEmailOtp();
-                              },
+                      Expanded(
+                        child: CustomButtonWidget(
+                          width: 140,
+                          buttonText: registerController.isEmailVerified.value
+                              ? "Verified"
+                              : "Verify OTP",
+                          disable: registerController.isEmailVerified.value,
+                          isLoading: registerController.verifyEmailOtpLoading,
+                          buttonFunction:
+                              registerController.isEmailVerified.value
+                              ? () {}
+                              : () async {
+                                  await verifyEmailOtp();
+                                },
+                        ),
                       ),
                     ],
                   );
@@ -357,13 +362,11 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                       buttonText: "Save & Continue",
                       disable: !enabled,
                       isLoading: registerController.studentRegisterLoading,
-                      buttonFunction:
-                      enabled
+                      buttonFunction: enabled
                           ? () async {
                               await studentRegisterFunc();
                             }
-                          :
-                          () {},
+                          : () {},
                       // buttonFunction: () async {
                       //   //await studentRegisterFunc();
                       //
@@ -389,14 +392,11 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   Future<void> studentRegisterFunc() async {
     final resumePath = await ResumeStorageService.getResumePath();
     Map<String, dynamic> registerData = {
-      "studmobileno":
-         mobileController.text,
+      "studmobileno": mobileController.text,
 
-      "studemail":
-         emailController.text,
+      "studemail": emailController.text,
 
-      "studname":
-         nameController.text,
+      "studname": nameController.text,
       "studgender":
           registerController
               .resumeExtractModel
@@ -527,6 +527,12 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       "leadership": jsonEncode(
         registerController.resumeExtractModel.resumeData!.leadership ?? [],
       ),
+      "studentcertificate": jsonEncode(
+        registerController.resumeExtractModel.resumeData!.certifications
+                ?.map((e) => e.toJson())
+                .toList() ??
+            [],
+      ),
 
       "achievements": jsonEncode(
         registerController.resumeExtractModel.resumeData!.achievements ?? [],
@@ -566,10 +572,22 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
         registerController.resumeExtractModel.resumeData!.education!.toJson(),
       ),
 
-      "studprogramminglang": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.skills ?? [],
-      ),
-
+      // "studprogramminglang": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.skills ?? [],
+      // ),
+      // "studprogramminglang":
+      //     registerController.resumeExtractModel.resumeData!.skills!.isEmpty
+      //     ? "{}"
+      //     : "{${registerController.resumeExtractModel.resumeData!.skills!.map((e) => '["$e"]').join(", ")}}",
+      // "studprogramminglang": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData?.skills ??
+      //       [].map((e) => [e]).toList(),
+      // ),
+      // "studprogramminglang":
+      //   (registerController.resumeExtractModel.resumeData?.skills ?? [])
+      //       .map((skill) => [skill])
+      //       .toList(),
+      "studprogramminglang": registerController.resumeExtractModel.resumeData?.skills ?? [],
       "linkedIn":
           registerController
               .resumeExtractModel
@@ -621,10 +639,11 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       // ResumeStorageService.saveNetworkResume(
       //   resumeFile: studentProfileModel.studentResume!,
       // );
-      AppFunctions.navigateScreen(
-        context,
-        AppRoutes.registerResumeReportScreen,
-      );
+      // AppFunctions.navigateScreen(
+      //   context,
+      //   AppRoutes.registerResumeReportScreen,
+      // );
+      showAlertDialog();
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
@@ -735,6 +754,58 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void showAlertDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.fieldBgColor,
+        title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 15,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Welcome to InternShark!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              "Registration successful! You can access your dashboard now or complete the remaining steps here.!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w300,
+                lineSpace: 1.3,
+              ),
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          CustomButtonWidget(
+            buttonFunction: () {
+              Get.back();
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.registerResumeReportScreen,
+              );
+            },
+            buttonText: "OKAY",
+            width: 150,
+            height: 40,
+          ),
+        ],
+      ),
     );
   }
 }

@@ -50,6 +50,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
       messages.add(ChatMessage(text: userMessage, isBot: false));
       chatTextController.clear();
       scrollToBottom();
+      FocusScope.of(context).unfocus();
     }
 
     await registerController.createChatResume(chatMessage: chatData);
@@ -202,7 +203,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
         isError: false,
       );
       final prefs = await SharedPreferences.getInstance();
-      LocalStorageService.saveStudent(
+      await LocalStorageService.saveStudent(
         token: registerController.studentRegisterModel.studentToken!,
         student: registerController.studentRegisterModel.registerData!,
       );
@@ -231,7 +232,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       StudentProfileModel? data = registerController.studentProfileModel;
-      AppFunctions.navigateScreen(
+      AppFunctions.navigateInitialScreen(
         context,
         AppRoutes.chatResumeTemplateScreen,
         arguments: {
@@ -266,10 +267,10 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
             experience: data.experience,
             trainings: [],
             studentId: data.id,
-            higherSecondary: null,
+            higherSecondary: data.education!.school!.higherSecondary ,
             institution: [],
             parents: [],
-            secondary: null,
+            secondary: data.education!.school!.secondary,
           ),
         },
       );

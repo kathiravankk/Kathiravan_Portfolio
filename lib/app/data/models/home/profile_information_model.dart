@@ -1,5 +1,21 @@
+import 'package:internsharks/app/data/models/account/education_model.dart';
+
+class ProfileInformationModel{
+  String? message;
+  ProfileDataModel? profileData;
+
+  ProfileInformationModel.fromJson(Map<String, dynamic>json){
+    message = json["message"]??"";
+    profileData = json["student"] != null
+        ? ProfileDataModel.fromJson(json["student"])
+        : null;
+  }
+
+  ProfileInformationModel({this.profileData,this.message});
+}
+
 class ProfileDataModel {
-  Education? education;
+  EducationModel? education;
   String? id;
   String? studentName;
   String? studEmail;
@@ -27,7 +43,7 @@ class ProfileDataModel {
   List<dynamic>? industrialVisits;
   List<dynamic>? trainings;
   List<dynamic>? parents;
-  List<College>? college;
+  List<College>? collegeData;
   List<Secondary>? higherSecondary;
   List<Secondary>? secondary;
   CreditData? studentCreditId;
@@ -35,7 +51,7 @@ class ProfileDataModel {
   String? createdAt;
   String? updatedAt;
   int? vId;
-  int? collegeStartYear;
+  dynamic collegeStartYear;
   String? templateNumber;
   String? collegeName;
   String? studentDegree;
@@ -72,7 +88,7 @@ class ProfileDataModel {
     this.industrialVisits,
     this.trainings,
     this.parents,
-    this.college,
+    this.collegeData,
     this.higherSecondary,
     this.secondary,
     this.studentCreditId,
@@ -91,7 +107,7 @@ class ProfileDataModel {
 
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
     return ProfileDataModel(
-      education: Education.fromJson(json['education'] ?? {}),
+      education: EducationModel.fromJson(json['education'] ?? {}),
       id: json['_id'],
       studentName: json['studname'],
       studEmail: json['studemail'],
@@ -125,7 +141,7 @@ class ProfileDataModel {
       industrialVisits: json['industrial_visits'] ?? [],
       trainings: json['trainings'] ?? [],
       parents: json['parents'] ?? [],
-      college: (json['college'] ?? [])
+      collegeData: (json['college'] ?? [])
           .map<College>((e) => College.fromJson(e))
           .toList(),
       higherSecondary: (json['higher_secondary'] ?? [])
@@ -143,7 +159,7 @@ class ProfileDataModel {
       studentBanner: json['student_banner'],
       studentCreditId: CreditData.fromJson(json['studentCreditId'] ?? {}),
       collegeName: json["studentcollegename"] ?? "",
-      collegeStartYear: json["studcollegestartyear"] ?? 0,
+      collegeStartYear: json["studcollegestartyear"] ?? "",
       fieldOfStudy: json["studentfieldofstudy"] ?? "",
       studentDegree: json["studentdegree"] ?? "",
     );
@@ -203,6 +219,14 @@ class Project {
       id: json['_id'] ?? "",
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title ?? "",
+      "description": description ?? [],
+      "_id": id ?? "",
+    };
+  }
 }
 
 class Experience {
@@ -253,6 +277,15 @@ class Internship {
       duration: json['duration'] ?? "",
       id: json['_id'] ?? "",
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "company": company ?? "",
+      "role": role ?? "",
+      "duration": duration ?? "",
+      "_id": id ?? "",
+    };
   }
 }
 

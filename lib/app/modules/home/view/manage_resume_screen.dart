@@ -138,7 +138,12 @@ class _ManageResumeScreenState extends State<ManageResumeScreen> {
                   CardWidgets.settingsTile(
                     icon: CupertinoIcons.pencil_outline,
                     title: "Update your resume with AI",
-                    onTap: () {},
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.chatResumeUpdateScreen,
+                      );
+                    },
                   ),
                   // Divider(color: AppColors.contBorderColor),
                   // SizedBox(height: 5),

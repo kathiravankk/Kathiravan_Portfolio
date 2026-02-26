@@ -31,7 +31,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           screens: [
             const InternsHomeScreen(),
             const MyAppliesScreen(),
-            ResumeChat(),
+            MyCourseScreen(),
             const ProfileScreen(),
           ],
         ),

@@ -133,7 +133,7 @@ class InternshipCard extends StatelessWidget {
                     ),
                     child: ClipOval(
                       child: Image.network(
-                        "https://fulupo.selfietoons.com/$imageUrl",
+                        imageUrl,
                         height: 40,
                         width: 40,
                         fit: BoxFit.cover,

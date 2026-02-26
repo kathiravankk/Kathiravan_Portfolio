@@ -69,7 +69,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 10),
                 CustomTextField(
                   labelText: "Mobile Number",
-                  prefixText: "+91",
+
+                  ///prefixText: "+91",
+                  prefixWidget: Icon(
+                    Icons.phone_outlined,
+                    size: 20,
+                    color: AppColors.primaryColor,
+                  ),
                   hintText: "Enter your mobile number",
                   controller: mobileController,
                   maxLength: 10,
@@ -97,6 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         CustomTextField(
                           labelText: "OTP",
                           hintText: "Enter your OTP",
+                          prefixWidget: Icon(
+                            Icons.lock_outline_sharp,
+                            size: 20,
+                            color: AppColors.primaryColor,
+                          ),
                           controller: otpController,
                           maxLength: 4,
                           onChanged: (val) {
@@ -213,7 +224,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 context,
                                 AppRoutes.registerResumeUploadScreen,
                               );
-
                             },
                         ),
                       ],
@@ -270,6 +280,10 @@ class _LoginScreenState extends State<LoginScreen> {
         LocalStorageService.saveStudent(
           token: loginController.studentRegisterModel.studentToken!,
           student: loginController.studentRegisterModel.registerData!,
+        );
+        LocalStorageService.saveStudentId(
+          studentId:
+              loginController.studentRegisterModel.registerData!.id ?? "",
         );
         AppFunctions.showToast(
           message:

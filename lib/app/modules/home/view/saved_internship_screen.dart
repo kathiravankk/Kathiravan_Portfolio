@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/saved_internship_card.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 class SavedInternshipScreen extends StatefulWidget {
   const SavedInternshipScreen({super.key});
@@ -90,7 +91,24 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
                         companyLogo: savedJobs![index].job!.companyLogo ?? "",
                         postedDate: savedJobs![index].job!.createdAt ?? "",
                         companyName: savedJobs![index].job!.companyName ?? "",
-                        isApplyFunc: () {},
+                        isApplyFunc: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.internshipDetailScreen,
+                            arguments: {
+                              "internshipId": savedJobs![index].job!.id,
+                            },
+                          );
+                        },
+                        isViewFunc: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.internshipDetailScreen,
+                            arguments: {
+                              "internshipId": savedJobs![index].job!.id,
+                            },
+                          );
+                        },
                         isSaveFunc: () {
                           removeToSaved(jobId: savedJobs![index].job!.id ?? "");
                         },

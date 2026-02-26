@@ -78,100 +78,117 @@ class _CategoryWiseInternshipScreenState
                   ),
                 ),
               ),
-              body: internshipList!.isNotEmpty
-                  ? Stack(
-                      children: [
-                        ListView.separated(
-                          padding: EdgeInsets.all(15),
-                          shrinkWrap: true,
-                          separatorBuilder: (context, index) =>
-                              SizedBox(height: 10),
-                          itemCount: internshipList!.length,
-                          itemBuilder: (context, index) => InternshipCard(
-                            viewFunc: () {
-                              AppFunctions.navigateScreen(
-                                context,
-                                AppRoutes.internshipDetailScreen,
-                                arguments: {
-                                  "internshipId": internshipList![index].sId,
-                                },
-                              );
+              body: dashboardController.categoryInternshipModel.jobs!.isNotEmpty
+                  ? ListView.separated(
+                      padding: EdgeInsets.all(15),
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemCount: dashboardController
+                          .categoryInternshipModel
+                          .jobs!
+                          .length,
+                      itemBuilder: (context, index) => InternshipCard(
+                        viewFunc: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.internshipDetailScreen,
+                            arguments: {
+                              "internshipId": dashboardController
+                                  .categoryInternshipModel
+                                  .jobs![index]
+                                  .sId,
                             },
-                            saveFunc: () {
-                              internshipList![index].isSaved!
-                                  ? removeToSaved(
-                                      jobId: internshipList![index].sId!,
-                                    )
-                                  : addToSaved(
-                                      jobId: internshipList![index].sId!,
-                                    );
-                            },
-                            isSaved: internshipList![index].isSaved ?? false,
-                            postedDate: internshipList![index].createdAt!,
-                            role: internshipList![index].title ?? "",
-                            companyName:
-                                internshipList![index].companyName ?? "",
-                            internshipMode:
-                                internshipList![index].internshipMode ?? "NA",
-                            imageUrl: internshipList![index].companyLogo ?? "",
-                            description:
-                                internshipList![index].internshipDescription ??
-                                "",
-                            duration:
-                                internshipList![index].internshipDuration ??
-                                "NA",
-                            stipendRupees:
-                                internshipList![index].internshipStipend ??
-                                "NA",
-                            qualification:
-                                internshipList![index].studentQualification ??
-                                "All",
-                            eligibility:
-                                internshipList![index].eligibilityCriteria ??
-                                "All",
-                            skillList:
-                                internshipList![index].requiredSkills ?? [],
-                            isApplied: internshipList![index].applied ?? false,
-                          ),
-                        ),
-                        Visibility(
-                          visible:
-                              profileController.removeSavedJobsLoading ||
-                              profileController.addSavedJobsLoading,
-                          child: Positioned(
-                            child: Center(
-                              child: Container(
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  color: AppColors.blackGradient2,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  spacing: 10,
-                                  children: [
-                                    CupertinoActivityIndicator(
-                                      color: AppColors.secondaryColor,
-                                    ),
-                                    Text(
-                                      profileController.removeSavedJobsLoading
-                                          ? "Removing from saved posts..!"
-                                          : "Adding to saved posts..!",
-                                      style: AppStyles.customTextStyle(
-                                        size: 14,
-                                        color: AppColors.secondaryColor,
-                                        weight: FontWeight.w500,
-                                        fontFamily: "Roboto",
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                        saveFunc: () =>
+                            dashboardController.internshipSaveFunc(index),
+                        // saveFunc: () {
+                        //   internshipList![index].isSaved!
+                        //       ? removeToSaved(
+                        //           jobId: internshipList![index].sId!,
+                        //         )
+                        //       : addToSaved(
+                        //           jobId: internshipList![index].sId!,
+                        //         );
+                        // },
+                        isSaved:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .isSaved ??
+                            false,
+                        postedDate: dashboardController
+                            .categoryInternshipModel
+                            .jobs![index]
+                            .createdAt!,
+                        role:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .title ??
+                            "",
+                        companyName:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .companyName ??
+                            "",
+                        internshipMode:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .internshipMode ??
+                            "NA",
+                        imageUrl:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .companyLogo ??
+                            "",
+                        description:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .internshipDescription ??
+                            "",
+                        duration:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .internshipDuration ??
+                            "NA",
+                        stipendRupees:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .internshipStipend ??
+                            "NA",
+                        qualification:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .studentQualification ??
+                            "All",
+                        eligibility:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .eligibilityCriteria ??
+                            "All",
+                        skillList:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .requiredSkills ??
+                            [],
+                        isApplied:
+                            dashboardController
+                                .categoryInternshipModel
+                                .jobs![index]
+                                .applied ??
+                            false,
+                      ),
                     )
                   : CustomEmptyWidget(),
             ),

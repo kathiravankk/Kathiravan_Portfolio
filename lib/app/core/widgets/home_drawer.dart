@@ -47,7 +47,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     radius: 25,
                     backgroundColor: AppColors.whiteColor,
                     backgroundImage: NetworkImage(
-                      "https://fulupo.selfietoons.com/${profileController.profileDataModel.studProfile ?? ""}",
+                      profileController.profileDataModel.studProfile ?? "",
                       // fit: BoxFit.fill,
                       // errorBuilder: (context, error, stackTrace) => Column(
                       //   mainAxisAlignment: MainAxisAlignment.center,

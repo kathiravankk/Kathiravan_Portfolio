@@ -62,7 +62,7 @@ class AnalysisData {
 }
 
 class Sections {
-  SectionDetail profileSummary;
+  dynamic profileSummary;
   SectionDetail projects;
   SectionDetail internships;
   SectionDetail experience;
@@ -94,14 +94,14 @@ class Sections {
 }
 
 class SectionDetail {
-  double rating;
+  dynamic rating;
   List<String> suggestions;
 
   SectionDetail({required this.rating, required this.suggestions});
 
   factory SectionDetail.fromJson(Map<String, dynamic> json) {
     return SectionDetail(
-      rating: (json['rating'] as num).toDouble(),
+      rating:  (json['rating'] ?? 0 as num).toDouble(),
       suggestions: List<String>.from(json['suggestions'] ?? []),
     );
   }
@@ -127,7 +127,7 @@ class ExtractedResumeDataModel {
   List<dynamic>? languages;
   List<dynamic>? areasOfInterest;
   List<dynamic>? hobbies;
-  Education? educationData;
+  EducationModel? educationData;
   SchoolEducation? higherSecondary;
   SchoolEducation? secondary;
   List<CollegeData>? colleges;
@@ -205,12 +205,12 @@ class ExtractedResumeDataModel {
     hobbies = json['hobbies'] ?? [];
     paperPresentations = json['paper_presentations'] ?? [];
     industrialVisits = json['industrial_visits'] ?? [];
-    certifications = json['certifications'] ?? [];
+    //certifications = json['certifications'] ?? [];
     certifications = (json['certifications'] ?? [])
         .map<Certification>((e) => Certification.fromJson(e))
         .toList();
     educationData = json["education"] != null
-        ? Education.fromJson(json["education"])
+        ? EducationModel.fromJson(json["education"])
         : null;
     secondary = json["secondary"] != null
         ? SchoolEducation.fromJson(json["secondary"])

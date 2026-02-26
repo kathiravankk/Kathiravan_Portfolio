@@ -236,15 +236,24 @@ class RegisterController extends GetxController {
       );
       if (getResponseCode() == 200 || getResponseCode() == 201) {
         final prefs = await SharedPreferences.getInstance();
-        LocalStorageService.saveStudent(
+        await LocalStorageService.saveStudent(
           token: studentRegisterModel.studentToken!,
           student: studentRegisterModel.registerData!,
         );
+        await LocalStorageService.saveStudentId(
+          studentId: studentRegisterModel.registerData!.id ?? "",
+        );
+        await LocalStorageService.saveStudentToken(
+          studentToken: studentRegisterModel.studentToken ?? "",
+        );
+
         await prefs.setString(
           LocalStorageService.studentNameKey,
           studentRegisterModel.registerData!.studentName ?? "",
         );
-        await getStudentProfile(studentId: studentRegisterModel.registerData!.id!);
+        await getStudentProfile(
+          studentId: studentRegisterModel.registerData!.id!,
+        );
       }
       studentRegisterLoading = false;
     } catch (err) {
@@ -279,7 +288,7 @@ class RegisterController extends GetxController {
         studentId: studentId,
       );
       if (getResponseCode() == 200 || getResponseCode() == 201) {
-        ResumeStorageService.saveNetworkResume(
+        await ResumeStorageService.saveNetworkResume(
           resumeFile: studentProfileModel.studentResume ?? "",
         );
       }

@@ -34,9 +34,32 @@ class LocalStorageService {
   }
 
   /// Save student name
-  static Future<void> saveName({ String? studentName}) async {
+  static Future<void> saveName({String? studentName}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(studentNameKey, studentName ?? "");
+  }
+
+  /// Save verified value
+  static Future<void> saveVerifiedValue({bool? isVerified}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isVerifiedKey, isVerified ?? false);
+  }
+  /// Get verified value
+  static Future<bool?> getVerifiedValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_isVerifiedKey);
+  }
+
+  /// Save student token
+  static Future<void> saveStudentToken({String? studentToken}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(tokenKey, studentToken ?? "");
+  }
+
+  /// Save student name
+  static Future<void> saveStudentId({String? studentId}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_studentIdKey, studentId ?? "");
   }
 
   /// Get token anywhere in app
@@ -44,7 +67,6 @@ class LocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(tokenKey);
   }
-
 
   ///Get student id
   static Future<String?> getStudentId() async {

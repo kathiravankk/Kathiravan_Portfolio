@@ -175,6 +175,7 @@ class _ChatResumeTemplateScreenState
 // }
 {
   ExtractedResumeDataModel? resumeData;
+  bool? isRegisterFlow;
 
   final RegisterController registerController = Get.find<RegisterController>();
 
@@ -195,6 +196,7 @@ class _ChatResumeTemplateScreenState
   void initState() {
     super.initState();
     resumeData = Get.arguments["resumeData"];
+    isRegisterFlow = Get.arguments["isRegisterFlow"] ?? true;
   }
 
   void nextTemplate() {
@@ -207,180 +209,180 @@ class _ChatResumeTemplateScreenState
   Widget build(BuildContext context) {
     final template = templates[currentTemplateIndex];
 
-    return Obx(
-      () => Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-          title: Text(
-            "Choose any Resume Template",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w600,
-            ),
+    return Scaffold(
+      backgroundColor: AppColors.appBgColor_2,
+      appBar: AppBar(
+        backgroundColor: AppColors.transparentColor,
+        elevation: 0,
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+        //   onPressed: () => Get.back(),
+        // ),
+        title: Text(
+          "Choose any Resume Template",
+          style: AppStyles.customTextStyle(
+            size: 18,
+            color: AppColors.whiteColor,
+            weight: FontWeight.w600,
           ),
         ),
-        body: Obx(
-          () => Column(
-            spacing: 15,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+      ),
+      body: Obx(
+        () => Column(
+          spacing: 15,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "🎁 Credit: 100",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(width: 80),
+              ],
+            ),
+            SizedBox(
+              height: 300,
+              width: 250,
+              child: ResumeThumbnailCard(template: template, onTap: () {}),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.blackGradient1, AppColors.blackGradient2],
+                ),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 1),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "🎁 Credit: 100",
-                    style: AppStyles.customTextStyle(
-                      size: 14,
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      CupertinoIcons.heart,
                       color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
+                      size: 20,
                     ),
                   ),
-                  SizedBox(width: 80),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      CupertinoIcons.share,
+                      color: AppColors.whiteColor,
+                      size: 20,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.resumeTemplateViewScreen,
+                        arguments: {
+                          "templateData": template,
+                          "resumeData": resumeData,
+                          "isChatFlow": true,
+                        },
+                      );
+                    },
+                    icon: Icon(
+                      CupertinoIcons.eye,
+                      color: AppColors.whiteColor,
+                      size: 20,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      CupertinoIcons.arrow_down_doc,
+                      color: AppColors.whiteColor,
+                      size: 20,
+                    ),
+                  ),
+                  Container(
+                    height: 20,
+                    width: 1.5,
+                    color: AppColors.fieldBorderColor,
+                  ),
+                  SizedBox(width: 10),
+                  SizedBox(
+                    height: 30,
+                    width: 30,
+                    child: FloatingActionButton(
+                      elevation: 0,
+                      mini: true,
+                      backgroundColor: AppColors.primaryColor,
+                      onPressed: () {
+                        nextTemplate();
+                      },
+                      child: const Icon(
+                        Icons.refresh,
+                        color: AppColors.whiteColor,
+                        size: 20,
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              SizedBox(
-                height: 300,
-                width: 250,
-                child: ResumeThumbnailCard(template: template, onTap: () {}),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.blackGradient1,
-                      AppColors.blackGradient2,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 1),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        CupertinoIcons.heart,
-                        color: AppColors.whiteColor,
-                        size: 20,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        CupertinoIcons.share,
-                        color: AppColors.whiteColor,
-                        size: 20,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.resumeTemplateViewScreen,
-                          arguments: {
-                            "templateData": template,
-                            "resumeData": resumeData,
-                            "isChatFlow": true,
-                          },
-                        );
-                      },
-                      icon: Icon(
-                        CupertinoIcons.eye,
-                        color: AppColors.whiteColor,
-                        size: 20,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        CupertinoIcons.arrow_down_doc,
-                        color: AppColors.whiteColor,
-                        size: 20,
-                      ),
-                    ),
-                    Container(
-                      height: 20,
-                      width: 1.5,
-                      color: AppColors.fieldBorderColor,
-                    ),
-                    SizedBox(width: 10),
-                    SizedBox(
-                      height: 30,
-                      width: 30,
-                      child: FloatingActionButton(
-                        elevation: 0,
-                        mini: true,
-                        backgroundColor: AppColors.primaryColor,
-                        onPressed: () {
-                          nextTemplate();
-                        },
-                        child: const Icon(
-                          Icons.refresh,
-                          color: AppColors.whiteColor,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 15),
+            ),
+            SizedBox(height: 15),
 
-              Text(
-                "Wow! Your Ready to Impress..!",
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  size: 16,
-                  weight: FontWeight.w600,
-                  color: AppColors.secondaryColor,
-                ),
+            Text(
+              "Wow! Your Ready to Impress..!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 16,
+                weight: FontWeight.w600,
+                color: AppColors.secondaryColor,
               ),
-              Text(
-                "Your resume shines! It's perfectly crafted to catch employers' eyes.",
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w400,
-                ),
+            ),
+            Text(
+              "Your resume shines! It's perfectly crafted to catch employers' eyes.",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w400,
               ),
-              const SizedBox(height: 20),
+            ),
+            const SizedBox(height: 20),
 
-              CustomButtonWidget(
-                width: 200,
-                height: 35,
-                isLoading: registerController.updateResumeTemplateLoading,
-                buttonFunction: () async {
-                  await updateResumeFunc(template);
-                },
-                buttonText: "CONTINUE",
-                bgColor: AppColors.appBgColor_2,
-              ),
-              CustomButtonWidget(
-                width: 200,
-                height: 35,
-                buttonFunction: () async {},
-                buttonText: "Update with AI",
-                bgColor: AppColors.primaryColor,
-              ),
-              SizedBox(height: 20),
-            ],
-          ),
+            CustomButtonWidget(
+              width: 200,
+              height: 35,
+              isLoading: registerController.updateResumeTemplateLoading,
+              buttonFunction: () async {
+                await updateResumeFunc(template);
+              },
+              buttonText: "CONTINUE",
+              bgColor: AppColors.appBgColor_2,
+            ),
+            CustomButtonWidget(
+              width: 200,
+              height: 35,
+              buttonFunction: () async {
+                AppFunctions.navigateScreen(
+                  context,
+                  AppRoutes.chatResumeUpdateScreen,
+                );
+              },
+              buttonText: "Update with AI",
+              bgColor: AppColors.primaryColor,
+            ),
+            SizedBox(height: 20),
+          ],
         ),
       ),
     );
   }
 
   Future<void> updateResumeFunc(ResumeTemplateModel template) async {
-    print(registerController.studentRegisterModel.studentToken!);
+    print(registerController.studentRegisterModel.studentToken ?? "");
     final studentId = await LocalStorageService.getStudentId();
 
     resumeData!.templateNumber = template.id.toString();
@@ -394,12 +396,15 @@ class _ChatResumeTemplateScreenState
         message: "Resume updated successfully!",
         isError: false,
       );
-
-      AppFunctions.navigateScreen(
-        context,
-        AppRoutes.stepUpdateScreen,
-        arguments: {"activeStep": 2},
-      );
+      if (isRegisterFlow!) {
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.stepUpdateScreen,
+          arguments: {"activeStep": 2},
+        );
+      } else {
+        Get.close(2);
+      }
     } else {
       AppFunctions.showToast(
         message:

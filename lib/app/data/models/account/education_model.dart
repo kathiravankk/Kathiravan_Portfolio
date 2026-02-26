@@ -1,10 +1,10 @@
-class Education {
+class EducationModel {
   School? school;
   List<CollegeData>? college;
 
-  Education({required this.school, required this.college});
+  EducationModel({required this.school, required this.college});
 
-   Education.fromJson(Map<String, dynamic> json) {
+   EducationModel.fromJson(Map<String, dynamic> json) {
       school= School.fromJson(json['school'] ?? {});
       college= (json['college'] ?? [])
           .map<CollegeData>((e) => CollegeData.fromJson(e))
