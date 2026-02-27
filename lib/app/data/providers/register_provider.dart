@@ -184,6 +184,19 @@ class RegisterProvider {
       registerData.forEach((k, v) {
         debugPrint('$k : ${v.toString()}');
       });
+      // registerData.forEach((key, value) {
+      //   if (key == "studprogramminglang" && value is List) {
+      //     for (var skill in value) {
+      //       formData.fields.add(
+      //         MapEntry("studprogramminglang", skill.toString()),
+      //       );
+      //     }
+      //   } else {
+      //     formData.fields.add(
+      //       MapEntry(key, value.toString()),
+      //     );
+      //   }
+      // });
       registerData.forEach((key, value) {
         if (key == "studprogramminglang" && value is List) {
           for (var skill in value) {
@@ -191,7 +204,13 @@ class RegisterProvider {
               MapEntry("studprogramminglang", skill.toString()),
             );
           }
-        } else {
+        }
+        else if (value is MultipartFile) {
+          formData.files.add(
+            MapEntry(key, value),
+          );
+        }
+        else {
           formData.fields.add(
             MapEntry(key, value.toString()),
           );
@@ -203,11 +222,11 @@ class RegisterProvider {
             AppApiUrls.newStudentRegister,
             data: formData,
             options: Options(contentType: 'multipart/form-data'),
-        // options: Options(
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        // ),
+            // options: Options(
+            //   headers: {
+            //     "Content-Type": "application/json",
+            //   },
+            // ),
           )
           .timeout(const Duration(seconds: 60));
 

@@ -30,6 +30,7 @@ class AppRoutes {
   static const resumeFileViewScreen = '/resumeFileViewScreen';
   static const savedInternshipScreen = '/savedInternshipScreen';
   static const chatResumeUpdateScreen = '/chatResumeUpdateScreen';
+  static const allInternshipScreen = '/allInternshipScreen';
 
 
 

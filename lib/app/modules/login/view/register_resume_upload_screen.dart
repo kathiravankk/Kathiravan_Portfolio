@@ -249,7 +249,19 @@ class _RegisterResumeUploadScreenState
                   );
                 }
 
+                //final progress = registerController.uploadProgress.value;
                 final progress = registerController.uploadProgress.value;
+                final isExtracting = registerController.isExtracting.value;
+
+                String statusText;
+
+                if (progress < 0.7) {
+                  statusText = "Uploading resume...";
+                } else if (progress < 1.0) {
+                  statusText = "Extracting data from resume...";
+                } else {
+                  statusText = "Extraction complete!";
+                }
 
                 return Padding(
                   padding: const EdgeInsets.all(15),
@@ -297,7 +309,9 @@ class _RegisterResumeUploadScreenState
                         Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            "${(progress * 100).toInt()}% complete",
+                            progress == 1.0
+                                ? "Completed"
+                                : "${(progress * 100).toInt()}% • $statusText",
                             style: AppStyles.customTextStyle(
                               size: 10,
                               weight: FontWeight.w600,

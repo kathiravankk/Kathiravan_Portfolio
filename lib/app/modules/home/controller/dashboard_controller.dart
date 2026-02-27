@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
 import 'package:internsharks/app/data/models/home/category_wise_internship_model.dart';
@@ -258,25 +259,20 @@ class DashboardController extends GetxController {
 
   bool get reviewDataLoading => _reviewDataLoading.value;
 
-  set reviewDataLoading(bool value) =>
-      _reviewDataLoading.value = value;
+  set reviewDataLoading(bool value) => _reviewDataLoading.value = value;
 
   // Model
 
   final _reviewModel = ReviewDataModel().obs;
 
-  ReviewDataModel get reviewModel =>
-      _reviewModel.value;
+  ReviewDataModel get reviewModel => _reviewModel.value;
 
-  set reviewModel(ReviewDataModel value) =>
-      _reviewModel.value = value;
+  set reviewModel(ReviewDataModel value) => _reviewModel.value = value;
 
   Future<void> getReviewData({required String jobId}) async {
     try {
       reviewDataLoading = true;
-      reviewModel = await dashboardProvider!.fetchReviewData(
-        jobId: jobId,
-      );
+      reviewModel = await dashboardProvider!.fetchReviewData(jobId: jobId);
       reviewDataLoading = false;
     } catch (err) {
       reviewDataLoading = false;
@@ -292,20 +288,19 @@ class DashboardController extends GetxController {
 
   bool get getUpdateChatLoading => _getUpdateChatLoading.value;
 
-  set getUpdateChatLoading(bool value) =>
-      _getUpdateChatLoading.value = value;
+  set getUpdateChatLoading(bool value) => _getUpdateChatLoading.value = value;
 
   // Model
 
   final _updateChatModel = UpdateChatModel().obs;
 
-  UpdateChatModel get updateChatModel =>
-      _updateChatModel.value;
+  UpdateChatModel get updateChatModel => _updateChatModel.value;
 
-  set updateChatModel(UpdateChatModel value) =>
-      _updateChatModel.value = value;
+  set updateChatModel(UpdateChatModel value) => _updateChatModel.value = value;
 
-  Future<void> getUpdateResumeData({required Map<String, dynamic> resumeData}) async {
+  Future<void> getUpdateResumeData({
+    required Map<String, dynamic> resumeData,
+  }) async {
     try {
       getUpdateChatLoading = true;
       updateChatModel = await dashboardProvider!.fetchUpdateResumeData(
@@ -339,7 +334,9 @@ class DashboardController extends GetxController {
   set updateChatResumeModel(UpdateChatResumeModel value) =>
       _updateChatResumeModel.value = value;
 
-  Future<void> updateChatResumeData({required Map<String, dynamic> resumeData}) async {
+  Future<void> updateChatResumeData({
+    required Map<String, dynamic> resumeData,
+  }) async {
     try {
       resumeUpdateChatLoading = true;
       updateChatResumeModel = await dashboardProvider!.updateChatResumeData(
@@ -348,6 +345,50 @@ class DashboardController extends GetxController {
       resumeUpdateChatLoading = false;
     } catch (err) {
       resumeUpdateChatLoading = false;
+      rethrow;
+    }
+  }
+
+  // GET ALL INTERNSHIPS
+
+  // Loading
+
+  final _allInternshipLoading = false.obs;
+
+  bool get allInternshipLoading => _allInternshipLoading.value;
+
+  set allInternshipLoading(bool value) => _allInternshipLoading.value = value;
+
+  // Model
+
+  final _internshipModel = AllInternshipModel().obs;
+
+  AllInternshipModel get internshipModel => _internshipModel.value;
+
+  set internshipModel(AllInternshipModel value) =>
+      _internshipModel.value = value;
+
+  Future<void> getAllInternship({
+    required String companyState,
+    required String companyCity,
+    required String qualification,
+    required String duration,
+    required String stipend,
+    required String internshipMode,
+  }) async {
+    try {
+      allInternshipLoading = true;
+      internshipModel = await dashboardProvider!.fetchAllInternship(
+        duration: duration,
+        companyCity: companyCity,
+        companyState: companyState,
+        internshipMode: internshipMode,
+        qualification: qualification,
+        stipend: stipend,
+      );
+      allInternshipLoading = false;
+    } catch (err) {
+      allInternshipLoading = false;
       rethrow;
     }
   }
@@ -361,9 +402,9 @@ class DashboardController extends GetxController {
 
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-
       AppFunctions.showToast(
-        message: profileController.newSavedJobModel.message ??
+        message:
+            profileController.newSavedJobModel.message ??
             "Internship added to saved!",
       );
 
@@ -372,8 +413,7 @@ class DashboardController extends GetxController {
 
     AppFunctions.apiErrorHandling(
       profileController.getResponseCode(),
-      profileController.newSavedJobModel.message ??
-          "Something went wrong",
+      profileController.newSavedJobModel.message ?? "Something went wrong",
     );
 
     return false;
@@ -384,9 +424,9 @@ class DashboardController extends GetxController {
 
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-
       AppFunctions.showToast(
-        message: profileController.newSavedJobModel.message ??
+        message:
+            profileController.newSavedJobModel.message ??
             "Internship removed from saved!",
       );
 
@@ -395,22 +435,18 @@ class DashboardController extends GetxController {
 
     AppFunctions.apiErrorHandling(
       profileController.getResponseCode(),
-      profileController.newSavedJobModel.message ??
-          "Something went wrong",
+      profileController.newSavedJobModel.message ?? "Something went wrong",
     );
 
     return false;
   }
 
   Future<void> toggleSave(int index) async {
-
-    final internship = recommentedModel
-        .internshipList![index];
+    final internship = recommentedModel.internshipList![index];
     bool oldValue = internship.isSaved ?? false;
 
     internship.isSaved = !oldValue;
-    _recommentedModel
-        .refresh();
+    _recommentedModel.refresh();
 
     bool success;
 
@@ -422,20 +458,16 @@ class DashboardController extends GetxController {
 
     if (!success) {
       internship.isSaved = oldValue;
-      _recommentedModel
-          .refresh();
+      _recommentedModel.refresh();
     }
   }
 
   Future<void> internshipSaveFunc(int index) async {
-
-    final internship =
-    categoryInternshipModel.jobs![index];
+    final internship = categoryInternshipModel.jobs![index];
     bool oldValue = internship.isSaved ?? false;
 
     internship.isSaved = !oldValue;
-    _categoryInternshipModel
-        .refresh();
+    _categoryInternshipModel.refresh();
 
     bool success;
 
@@ -447,20 +479,16 @@ class DashboardController extends GetxController {
 
     if (!success) {
       internship.isSaved = oldValue;
-      _categoryInternshipModel
-          .refresh();
+      _categoryInternshipModel.refresh();
     }
   }
 
   Future<void> similarSaveFunc(int index) async {
-
-    final internship =
-    similarInternshipModel.similarList![index];
+    final internship = similarInternshipModel.similarList![index];
     bool oldValue = internship.isSaved ?? false;
 
     internship.isSaved = !oldValue;
-    _similarInternshipModel
-        .refresh();
+    _similarInternshipModel.refresh();
 
     bool success;
 
@@ -472,12 +500,7 @@ class DashboardController extends GetxController {
 
     if (!success) {
       internship.isSaved = oldValue;
-      _similarInternshipModel
-          .refresh();
+      _similarInternshipModel.refresh();
     }
   }
-
-
-
-
 }

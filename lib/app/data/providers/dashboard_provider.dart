@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
 import 'package:internsharks/app/data/models/home/category_wise_internship_model.dart';
@@ -241,6 +242,40 @@ class DashboardProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return UpdateChatResumeModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET ALL INTERNSHIP DATA
+
+  Future<AllInternshipModel> fetchAllInternship({
+    required String companyState,
+    required String companyCity,
+    required String qualification,
+    required String duration,
+    required String stipend,
+    required String internshipMode,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getAllInternship(
+          companyState,
+          companyCity,
+          qualification,
+          duration,
+          stipend,
+          internshipMode,
+        ),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return AllInternshipModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return AllInternshipModel.fromJson(err.response!.data);
     }
   }
 }

@@ -18,7 +18,6 @@ import 'package:internsharks/app/modules/home/controller/profile_controller.dart
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/core/const_file/asset_image.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class KycVerificationScreen extends StatefulWidget {
   const KycVerificationScreen({super.key});
@@ -30,6 +29,14 @@ class KycVerificationScreen extends StatefulWidget {
 class _KycVerificationScreenState extends State<KycVerificationScreen> {
   final RegisterController registerController = Get.find<RegisterController>();
   final ProfileController profileController = Get.find<ProfileController>();
+
+  bool isRegisterFlow = true;
+
+  @override
+  void initState() {
+    isRegisterFlow = Get.arguments["isRegisterFlow"] ?? true;
+    super.initState();
+  }
 
   File? collegeIdImg;
   File? aadhaarImg;
@@ -296,7 +303,9 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
       "aadhaar": aadhaarFile,
       //"name": "THENMOZHI. D",
       "name": studentName,
-      "college": jsonEncode(profileController.profileDataModel.education!.college ?? []),
+      "college": jsonEncode(
+        profileController.profileDataModel.education!.college ?? [],
+      ),
     };
     debugPrint(kycData.toString());
     print("******************");
@@ -326,11 +335,13 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           message: "KYC details verified successfully!",
           isError: false,
         );
-        AppFunctions.navigateScreen(
-          context,
-          AppRoutes.stepUpdateScreen,
-          arguments: {"activeStep": 4},
-        );
+        isRegisterFlow!
+            ? AppFunctions.navigateScreen(
+                context,
+                AppRoutes.stepUpdateScreen,
+                arguments: {"activeStep": 4},
+              )
+            : Get.close(2);
       } else {
         AppFunctions.showToast(
           message:
@@ -533,11 +544,13 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           CustomButtonWidget(
             buttonFunction: () {
               Get.back();
-              AppFunctions.navigateScreen(
-                context,
-                AppRoutes.stepUpdateScreen,
-                arguments: {"activeStep": 4},
-              );
+              isRegisterFlow
+                  ? AppFunctions.navigateScreen(
+                      context,
+                      AppRoutes.stepUpdateScreen,
+                      arguments: {"activeStep": 4},
+                    )
+                  : Get.close(2);
             },
             buttonText: "OKAY",
             width: 150,

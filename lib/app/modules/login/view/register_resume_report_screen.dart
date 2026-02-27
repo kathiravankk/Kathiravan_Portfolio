@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
@@ -39,24 +40,21 @@ class _RegisterResumeReportScreenState
   }
 
   Future<void> getResumeScore() async {
-     networkResumePath = await ResumeStorageService.getNetworkResume();
+    networkResumePath = await ResumeStorageService.getNetworkResume();
     // await registerController.checkResumeScore(
     //   resumeUrl:
     //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
     // );
-     print(networkResumePath!);
-     print("******************");
-    await registerController.checkResumeScore(
-      resumeUrl:
-      networkResumePath!,
-    );
+    print(networkResumePath!);
+    print("******************");
+    await registerController.checkResumeScore(resumeUrl: networkResumePath!);
   }
 
   @override
   Widget build(BuildContext context) {
     print(networkResumePath ?? "");
     return Scaffold(
-      backgroundColor: AppColors.appBgColor,
+      backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
         backgroundColor: AppColors.transparentColor,
         elevation: 0,
@@ -105,7 +103,7 @@ class _RegisterResumeReportScreenState
       ),
       clipBehavior: Clip.hardEdge,
       child: SfPdfViewer.network(
-        networkResumePath??"",
+        networkResumePath ?? "",
         canShowScrollHead: false,
         canShowScrollStatus: false,
         enableDoubleTapZooming: false,
@@ -326,30 +324,30 @@ class _RegisterResumeReportScreenState
                 weight: FontWeight.w700,
               ),
             ),
-           Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "• ",
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "• ",
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  points,
                   style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: AppColors.whiteColor,
-                    weight: FontWeight.w700,
+                    size: 12,
+                    lineSpace: 1.3,
+                    color: AppColors.lightColorText,
+                    weight: FontWeight.w300,
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    points,
-                    style: AppStyles.customTextStyle(
-                      size: 12,
-                      lineSpace: 1.3,
-                      color: AppColors.lightColorText,
-                      weight: FontWeight.w300,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -522,14 +520,9 @@ class _RegisterResumeReportScreenState
           bgColor: AppColors.transparentColor,
           width: 150,
           height: 40,
-          buttonFunction: () {
-            AppFunctions.navigateScreen(
-              context,
-              AppRoutes.stepUpdateScreen,
-              arguments: {
-                "activeStep": 2
-              }
-            );
+          isLoading: registerController.updateResumeTemplateLoading,
+          buttonFunction: () async {
+            await updateSkipProfileFunc();
           },
           buttonText: "Skip",
         ),
@@ -537,7 +530,35 @@ class _RegisterResumeReportScreenState
     );
   }
 
-
+  Future<void> updateSkipProfileFunc() async {
+    final studentId = await LocalStorageService.getStudentId();
+    Map<String, dynamic> resumeData = {
+      registerController.extractedResumeModel.templateNumber!: 1.toString(),
+      registerController.extractedResumeModel.studentId!: studentId,
+    };
+    await registerController.updateResumeProfileData(
+      updateData: registerController.extractedResumeModel,
+    );
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message: "Resume updated successfully!",
+        isError: false,
+      );
+      AppFunctions.navigateScreen(
+        context,
+        AppRoutes.stepUpdateScreen,
+        arguments: {"activeStep": 2},
+      );
+    } else {
+      AppFunctions.showToast(
+        message:
+            registerController.updateProfileModel.message ??
+            "Something went wrong!,Please try again later!",
+        isError: true,
+      );
+    }
+  }
 
   Future<void> updateResumeFunc() async {
     await registerController.updateResumeData(
@@ -557,11 +578,9 @@ class _RegisterResumeReportScreenState
       //   }
       // );
       AppFunctions.navigateScreen(
-          context,
-          AppRoutes.chatResumeTemplateScreen,
-          arguments: {
-            "resumeData": registerController.extractedResumeModel
-          }
+        context,
+        AppRoutes.chatResumeTemplateScreen,
+        arguments: {"resumeData": registerController.extractedResumeModel},
       );
     } else {
       AppFunctions.apiErrorHandling(

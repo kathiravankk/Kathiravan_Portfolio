@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -88,6 +86,7 @@ class _SplashScreenState extends State<SplashScreen>
     await _upgrader.initialize();
 
     if (!_upgrader.shouldDisplayUpgrade()) {
+      await Future.delayed(const Duration(seconds: 3));
       await _checkLoginStatus();
     }
   }

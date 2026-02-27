@@ -311,6 +311,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                   }
 
                   return Row(
+                    spacing: 5,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [

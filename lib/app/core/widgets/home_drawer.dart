@@ -73,7 +73,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       Text(
                         profileController.profileDataModel.studentName ?? "",
                         style: AppStyles.customTextStyle(
-                          size: 16,
+                          size: 14,
                           color: AppColors.secondaryColor,
                           weight: FontWeight.w700,
                         ),
@@ -81,7 +81,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       Text(
                         profileController.profileDataModel.studEmail ?? "",
                         style: AppStyles.customTextStyle(
-                          size: 13,
+                          size: 12,
                           color: AppColors.lightWhiteCont,
                           weight: FontWeight.w300,
                         ),

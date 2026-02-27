@@ -21,7 +21,7 @@ class RegisterController extends GetxController {
 
   int getResponseCode() => registerProvider!.responseStatus;
 
-  final uploadProgress = 0.0.obs;
+  // final uploadProgress = 0.0.obs;
 
   // Loading
 
@@ -48,26 +48,65 @@ class RegisterController extends GetxController {
 
   //UPLOAD RESUME
 
+  final uploadProgress = 0.0.obs;
+  final isExtracting = false.obs;
+
   Future<void> extractResumeData(String? filePath) async {
     resumeExtractLoading = true;
     uploadProgress.value = 0;
+    isExtracting.value = false;
+
     try {
       resumeExtractModel = await registerProvider!.uploadExtractResume(
         filePath: filePath!,
         onProgress: (sent, total) {
           if (total != 0) {
-            uploadProgress.value = sent / total;
+            // Upload will fill 0 → 0.7 (70%)
+            uploadProgress.value = (sent / total) * 0.7;
           }
         },
       );
+
+      // After upload finished → start fake processing animation
+      isExtracting.value = true;
+
+      // Smoothly animate from 70% → 95%
+      while (uploadProgress.value < 0.95) {
+        await Future.delayed(const Duration(milliseconds: 200));
+        uploadProgress.value += 0.01;
+      }
+
       uploadProgress.value = 1.0;
-      resumeExtractLoading = false;
+
     } catch (error) {
       uploadProgress.value = 0;
-      resumeExtractLoading = false;
       rethrow;
+    } finally {
+      resumeExtractLoading = false;
+      isExtracting.value = false;
     }
   }
+
+  // Future<void> extractResumeData(String? filePath) async {
+  //   resumeExtractLoading = true;
+  //   uploadProgress.value = 0;
+  //   try {
+  //     resumeExtractModel = await registerProvider!.uploadExtractResume(
+  //       filePath: filePath!,
+  //       onProgress: (sent, total) {
+  //         if (total != 0) {
+  //           uploadProgress.value = sent / total;
+  //         }
+  //       },
+  //     );
+  //     uploadProgress.value = 1.0;
+  //     resumeExtractLoading = false;
+  //   } catch (error) {
+  //     uploadProgress.value = 0;
+  //     resumeExtractLoading = false;
+  //     rethrow;
+  //   }
+  // }
 
   // Mobile OTP
 

@@ -18,8 +18,7 @@ class AppApiUrls {
       "${baseUrl}student/new-student-register";
   static const String updateStudentRegisterData =
       "${baseUrl}student/update-new-student-register";
-  static const String
-  getStudentProfile = "${baseUrl}student/getById";
+  static const String getStudentProfile = "${baseUrl}student/getById";
   static const String analyzeResumeScore = "${baseUrl}analyze-resume-score";
   static const String updateResumeData = "${baseUrl}enhance-resume";
   static const String verifyKycData = "${baseUrl}verify-kyc";
@@ -28,22 +27,43 @@ class AppApiUrls {
   //DASHBOARD FLOW
   static const String getCategoryList = "${baseUrl}industry/getindustrylist";
   static const String applyInternship = "${baseUrl}getjob/jobs/apply";
-  static const String getRecommandInternship = "${baseUrl}jobpost/student/recommended-jobs";
-  static const String getSimilarInternship = "${baseUrl}jobpost/student/similarjobs";
-  static  String getCategoryInternship(String categoryId) => "${baseUrl}getjob/industry/$categoryId";
-  static  String getInternshipViewData(String internshipId) => "${baseUrl}jobpost/jobbyid/$internshipId";
-  static  String getAppliedInternship(String studentId) => "${baseUrl}getjob/appliedjob/$studentId";
-  static  String getReviewData(String jobId) => "${baseUrl}job/$jobId/reviews";
-  static  String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
-  static  String updateChatResume = "${baseUrl}updatemessage";
+  static const String getRecommandInternship =
+      "${baseUrl}jobpost/student/recommended-jobs";
+  static const String getSimilarInternship =
+      "${baseUrl}jobpost/student/similarjobs";
+
+  static String getCategoryInternship(String categoryId) =>
+      "${baseUrl}getjob/industry/$categoryId";
+
+  static String getInternshipViewData(String internshipId) =>
+      "${baseUrl}jobpost/jobbyid/$internshipId";
+
+  static String getAppliedInternship(String studentId) =>
+      "${baseUrl}getjob/appliedjob/$studentId";
+
+  static String getReviewData(String jobId) => "${baseUrl}job/$jobId/reviews";
+  static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
+  static String updateChatResume = "${baseUrl}updatemessage";
+
+  static String getAllInternship(
+    String state,
+    String city,
+    String qualification,
+    String duration,
+    String stipend,
+    String mode,
+  ) =>
+      "${baseUrl}jobpost/student/getalljobs?companystate=$state&companycity=$city&studentqualification=$qualification&internshipduration=$duration&internshipstipend=$stipend&internshipmode=$mode";
 
   // PROFILE FLOW
-  static  String getProfileData = "${baseUrl}student/getById";
-  static  String sendUpdateMobileOtp = "${baseUrl}student/update-sendMobileOTP";
-  static  String verifyUpdateMobileOtp = "${baseUrl}student/update-verifyMobileOTP";
-  static  String sendUpdateEmailOtp = "${baseUrl}student/update-request-otp";
-  static  String verifyUpdateEmailOtp = "${baseUrl}student/update-verify-email-otp";
-  static  String getSavedJobs = "${baseUrl}savedjob/getsavedjobs";
-  static  String addToSavedJobs = "${baseUrl}savedjob/savenewjob";
-  static  String removeSavedJobs = "${baseUrl}savedjob/unsavejob";
+  static String getProfileData = "${baseUrl}student/getById";
+  static String sendUpdateMobileOtp = "${baseUrl}student/update-sendMobileOTP";
+  static String verifyUpdateMobileOtp =
+      "${baseUrl}student/update-verifyMobileOTP";
+  static String sendUpdateEmailOtp = "${baseUrl}student/update-request-otp";
+  static String verifyUpdateEmailOtp =
+      "${baseUrl}student/update-verify-email-otp";
+  static String getSavedJobs = "${baseUrl}savedjob/getsavedjobs";
+  static String addToSavedJobs = "${baseUrl}savedjob/savenewjob";
+  static String removeSavedJobs = "${baseUrl}savedjob/unsavejob";
 }

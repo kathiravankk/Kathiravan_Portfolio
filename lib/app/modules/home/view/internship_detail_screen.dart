@@ -663,7 +663,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               AppFunctions.navigateScreen(
                 context,
                 AppRoutes.kycVerificationScreen,
-                //arguments: {"isProfileFlow": true},
+                arguments: {"isRegisterFlow": false},
               );
             },
             buttonText: "Check Now",

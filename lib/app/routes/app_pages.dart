@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
+import 'package:internsharks/app/modules/home/view/all_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/category_wise_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/chat_resume_update_screen.dart';
 import 'package:internsharks/app/modules/home/view/dashboard_screen.dart';
@@ -120,14 +121,18 @@ class AppPages {
     appPage(
       name: AppRoutes.kycVerificationScreen,
       page: () => KycVerificationScreen(),
-      bindings: [RegisterBindings()],
+      bindings: [RegisterBindings(), ProfileBindings()],
     ),
     appPage(
       name: AppRoutes.chatResumeCreation,
       page: () => ChatResumeCreationScreen(),
       bindings: [RegisterBindings()],
     ),
-    appPage(name: AppRoutes.stepUpdateScreen, page: () => StepUpdateScreen()),
+    appPage(
+      name: AppRoutes.stepUpdateScreen,
+      page: () => StepUpdateScreen(),
+      bindings: [ProfileBindings()],
+    ),
     appPage(
       name: AppRoutes.dashBoardScreen,
       page: () => DashboardScreen(),
@@ -147,6 +152,10 @@ class AppPages {
       name: AppRoutes.internshipDetailScreen,
       page: () => InternshipDetailScreen(),
       bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.allInternshipScreen,
+      page: () => AllInternshipScreen(),
     ),
     appPage(
       name: AppRoutes.recommentedInternshipScreen,

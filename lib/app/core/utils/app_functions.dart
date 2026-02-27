@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
@@ -137,7 +138,7 @@ class AppFunctions {
   }
 
   static Future<void> showAppAlert({
-    BuildContext? context,
+    required BuildContext context,
     String? title,
     required String content,
     String cancelText = 'Cancel',
@@ -147,72 +148,63 @@ class AppFunctions {
     bool isDestructive = false,
     bool barrierDismissible = false,
   }) async {
-    return showCupertinoDialog(
-      context: context!,
+    return showDialog(
+      context: context,
       barrierDismissible: barrierDismissible,
       builder: (_) {
-        return CupertinoAlertDialog(
-          title: title != null
-              ? Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    title,
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      weight: FontWeight.w600,
-                      color: AppColors.primaryColor,
-                    ),
-                    textAlign: TextAlign.center,
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 15,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (title != null) ...[
+                Text(
+                  title,
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w700,
                   ),
-                )
-              : null,
-          content: Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              content,
-              style: AppStyles.customTextStyle(
-                size: 14,
-                weight: FontWeight.w600,
-                color: AppColors.primaryColor,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          actions: [
-            CupertinoDialogAction(
-              isDefaultAction: true,
-              onPressed: () {
-                Get.back();
-                onCancel?.call();
-              },
-              child: Text(
-                cancelText,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              Text(
+                content,
+                textAlign: TextAlign.center,
                 style: AppStyles.customTextStyle(
                   size: 14,
-                  weight: FontWeight.w600,
-                  color: AppColors.failTextColor,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w300,
+                  lineSpace: 1.3,
                 ),
               ),
-            ),
-
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
             if (confirmText != null)
-              CupertinoDialogAction(
-                isDestructiveAction: isDestructive,
-                onPressed: () {
+              CustomButtonWidget(
+                buttonFunction: () {
                   Get.back();
                   onConfirm?.call();
                 },
-                child: Text(
-                  confirmText,
-                  style: AppStyles.customTextStyle(
-                    size: 14,
-                    weight: FontWeight.w600,
-                    color: isDestructive
-                        ? AppColors.failTextColor
-                        : AppColors.primaryColor,
-                  ),
-                ),
+                buttonText: confirmText,
+                width: 130,
+                height: 35,
               ),
+            CustomButtonWidget(
+              buttonFunction: () {
+                Get.back();
+                onCancel?.call();
+              },
+              buttonText: cancelText,
+              bgColor: AppColors.fieldBgColor,
+              width: 130,
+              height: 35,
+            )
           ],
         );
       },
@@ -305,17 +297,19 @@ class AppFunctions {
   static Future<void> openGoogleMap(String mapUrl) async {
     final Uri uri = Uri.parse(mapUrl);
 
-    if (!await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       throw 'Could not launch map';
     }
   }
 
-  static String? validateEmail({required String? newEmail, required String? currentEmail}) {
+  static String? validateEmail({
+    required String? newEmail,
+    required String? currentEmail,
+  }) {
     final email = newEmail?.trim() ?? "";
-    final emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+    final emailRegex = RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+    );
 
     if (email.isEmpty) {
       return 'Please enter an Email!';
@@ -343,7 +337,6 @@ class AppFunctions {
 
     return fullName;
   }
-
 }
 
 // <key>LSApplicationQueriesSchemes</key>
@@ -351,4 +344,3 @@ class AppFunctions {
 // <string>https</string>
 // <string>http</string>
 // </array>
-

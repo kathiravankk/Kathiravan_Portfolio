@@ -7,6 +7,8 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_empty_widget.dart'
+    show CustomEmptyWidget;
 import 'package:internsharks/app/core/widgets/internship_card.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -86,43 +88,43 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 title: Text(
                   "Welcome ${profileController.profileDataModel.studentName ?? "User"}!",
                   style: AppStyles.customTextStyle(
-                    size: 18,
+                    size: 17,
                     color: AppColors.secondaryColor,
                     weight: FontWeight.w600,
                   ),
                 ),
-                actions: [
-                  Stack(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: AppColors.appBgColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_active_outlined,
-                          color: AppColors.whiteColor,
-                          size: 25,
-                        ),
-                      ),
-                      Positioned(
-                        right: 7,
-                        top: 5,
-                        child: Container(
-                          width: 7,
-                          height: 7,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFF1493),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(width: 10),
-                ],
+                // actions: [
+                //   Stack(
+                //     children: [
+                //       Container(
+                //         padding: EdgeInsets.all(6),
+                //         decoration: BoxDecoration(
+                //           color: AppColors.appBgColor,
+                //           borderRadius: BorderRadius.circular(12),
+                //         ),
+                //         child: const Icon(
+                //           Icons.notifications_active_outlined,
+                //           color: AppColors.whiteColor,
+                //           size: 25,
+                //         ),
+                //       ),
+                //       Positioned(
+                //         right: 7,
+                //         top: 5,
+                //         child: Container(
+                //           width: 7,
+                //           height: 7,
+                //           decoration: const BoxDecoration(
+                //             color: Color(0xFFFF1493),
+                //             shape: BoxShape.circle,
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                //
+                //   SizedBox(width: 10),
+                // ],
               ),
               body: SingleChildScrollView(
                 child: Padding(
@@ -153,7 +155,15 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                           );
                         },
                       ),
-                      _buildTrendyCategories(),
+                      dashboardController.categoryListModel.categoryList ==
+                                  null ||
+                              dashboardController
+                                  .categoryListModel
+                                  .categoryList!
+                                  .isEmpty
+                          ? CustomEmptyWidget()
+                          : _buildTrendyCategories(),
+
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -164,44 +174,50 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      height: 45,
-      decoration: BoxDecoration(
-        color: AppColors.lightWhiteCont,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Row(
-        spacing: 15,
-        children: [
-          SizedBox(),
-          Icon(CupertinoIcons.search, color: AppColors.lightHintText, size: 25),
-          Expanded(
-            child: TextField(
-              style: AppStyles.customTextStyle(
-                size: 14,
-                color: AppColors.blackColor,
-                weight: FontWeight.w400,
-              ),
-              decoration: InputDecoration(
-                hintText: 'Search',
-                hintStyle: AppStyles.customTextStyle(
-                  size: 12,
-                  color: AppColors.lightHintText,
-                  weight: FontWeight.w400,
-                ),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.tune,
+    return GestureDetector(
+      onTap: () {
+        AppFunctions.navigateScreen(context, AppRoutes.allInternshipScreen);
+      },
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          color: AppColors.lightWhiteCont,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Row(
+          spacing: 15,
+          children: [
+            SizedBox(),
+            Icon(
+              CupertinoIcons.search,
               color: AppColors.lightHintText,
               size: 25,
             ),
-            onPressed: () {},
-          ),
-        ],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Tap to search..!",
+                    style: AppStyles.customTextStyle(
+                      size: 12,
+                      color: AppColors.lightHintText,
+                      weight: FontWeight.w400,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.tune,
+                      color: AppColors.lightHintText,
+                      size: 25,
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -362,95 +378,69 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
   Widget _buildTrendyCategories() {
     return SizedBox(
       height: 120,
-      child:
-          dashboardController.categoryListModel.categoryList != null ||
-              dashboardController.categoryListModel.categoryList!.isNotEmpty
-          ? ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount:
-                  dashboardController.categoryListModel.categoryList!.length,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.categoryWiseInternshipScreen,
-                    arguments: {
-                      "categoryData": dashboardController
-                          .categoryListModel
-                          .categoryList![index],
-                    },
-                  );
-                },
-                child: Container(
-                  margin: EdgeInsets.only(right: 15),
-                  width: 140,
-                  padding: const EdgeInsets.all(10),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: dashboardController.categoryListModel.categoryList!.length,
+        itemBuilder: (context, index) => GestureDetector(
+          onTap: () {
+            AppFunctions.navigateScreen(
+              context,
+              AppRoutes.categoryWiseInternshipScreen,
+              arguments: {
+                "categoryData":
+                    dashboardController.categoryListModel.categoryList![index],
+              },
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.only(right: 15),
+            width: 140,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.selectedContColor,
+              borderRadius: BorderRadius.circular(23),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 15,
+              children: [
+                Container(
                   decoration: BoxDecoration(
-                    color: AppColors.selectedContColor,
-                    borderRadius: BorderRadius.circular(23),
+                    color: AppColors.whiteColor,
+                    shape: BoxShape.circle,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 15,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor,
-                          shape: BoxShape.circle,
-                        ),
-                        padding: EdgeInsets.all(5),
-                        child: Image.asset(
-                          AppFunctions.getCategoryImage(
-                            service:
-                                dashboardController
-                                    .categoryListModel
-                                    .categoryList![index]
-                                    .categoryName ??
-                                "",
-                          ),
-                          height: 35,
-                          width: 35,
-                          color: AppColors.blackColor,
-                        ),
-                      ),
-                      Text(
-                        dashboardController
-                                .categoryListModel
-                                .categoryList![index]
-                                .categoryName ??
-                            "",
-                        style: AppStyles.customTextStyle(
-                          size: 10,
-                          color: AppColors.secondaryColor,
-                          weight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
+                  padding: EdgeInsets.all(5),
+                  child: Image.asset(
+                    AppFunctions.getCategoryImage(
+                      service:
+                          dashboardController
+                              .categoryListModel
+                              .categoryList![index]
+                              .categoryName ??
+                          "",
+                    ),
+                    height: 35,
+                    width: 35,
+                    color: AppColors.blackColor,
                   ),
                 ),
-              ),
-            )
-          : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 15,
-                children: [
-                  Icon(
-                    Icons.file_copy_outlined,
-                    size: 30,
+                Text(
+                  dashboardController
+                          .categoryListModel
+                          .categoryList![index]
+                          .categoryName ??
+                      "",
+                  style: AppStyles.customTextStyle(
+                    size: 10,
                     color: AppColors.secondaryColor,
+                    weight: FontWeight.w700,
                   ),
-                  Text(
-                    "No Data Found..!",
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      weight: FontWeight.w400,
-                      color: AppColors.secondaryColor,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
+        ),
+      ),
     );
   }
 

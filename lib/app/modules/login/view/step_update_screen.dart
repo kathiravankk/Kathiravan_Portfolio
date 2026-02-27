@@ -32,7 +32,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
     if (activeStep == 2) {
       headerText = "First Step Updated!";
     } else if (activeStep == 3) {
-      headerText = "Second step Updated!";
+      headerText = "Second Step Updated!";
     } else if (activeStep > 3) {
       headerText = "Congratulations! You've completed the final step";
     }
@@ -71,7 +71,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                 textAlign: TextAlign.center,
                 style: AppStyles.customTextStyle(
                   size: 18,
-                  weight: FontWeight.w700,
+                  weight: FontWeight.w600,
                   color: AppColors.secondaryColor,
                   lineSpace: 1.3
                 ),
@@ -135,6 +135,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                     AppFunctions.navigateScreen(
                       context,
                       AppRoutes.kycVerificationScreen,
+                      arguments: {"isRegisterFlow": true},
                     );
                   }
                 },
@@ -312,7 +313,7 @@ class _StepCardWidgetState extends State<StepCardWidget> {
                       color: (shouldHighlight || widget.isCompleted)
                           ? AppColors.whiteColor
                           : AppColors.greyColor,
-                      size: 14,
+                      size: 12,
                       weight: FontWeight.w500,
                     ),
                   ),
@@ -322,7 +323,7 @@ class _StepCardWidgetState extends State<StepCardWidget> {
                       color: (shouldHighlight || widget.isCompleted)
                           ? AppColors.whiteColor
                           : AppColors.greyColor,
-                      size: 16,
+                      size: 14,
                       weight: FontWeight.w600,
                     ),
                   ),
