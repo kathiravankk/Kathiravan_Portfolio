@@ -304,7 +304,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
       //"name": "THENMOZHI. D",
       "name": studentName,
       "college": jsonEncode(
-        profileController.profileDataModel.education!.college ?? [],
+        profileController.profileDataModel.education!=null? profileController.profileDataModel.education!.college ?? [] :[],
       ),
     };
     debugPrint(kycData.toString());

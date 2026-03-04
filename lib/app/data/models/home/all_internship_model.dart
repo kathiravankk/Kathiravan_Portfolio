@@ -1,14 +1,27 @@
 class AllInternshipModel {
   final String? message;
+  final bool? success;
   final int? count;
+  final int? page;
+  final int? limit;
+  final int? totalPages;
+  final int? totalJobs;
   final List<InternshipModel>? internship;
 
-  AllInternshipModel({this.message, this.count, this.internship});
+  AllInternshipModel({this.message, this.count, this.internship, this.success,
+  this.limit,this.page,
+  this.totalJobs,
+  this.totalPages});
 
   factory AllInternshipModel.fromJson(Map<String, dynamic> json) {
     return AllInternshipModel(
       message: json['message'] ?? "",
+      success: json['success'] ?? false,
       count: json['count'] ?? 0,
+      page: json['page'] ?? 0,
+      limit: json['limit'] ?? 0,
+      totalPages: json['totalPages'] ?? 0,
+      totalJobs: json['totalJobs'] ?? 0,
       internship: json['jobs'] != null
           ? List<InternshipModel>.from(
               json['jobs'].map((x) => InternshipModel.fromJson(x)),
@@ -20,6 +33,11 @@ class AllInternshipModel {
   Map<String, dynamic> toJson() {
     return {
       "message": message,
+      "totalJobs": totalJobs,
+      "totalPages": totalPages,
+      "limit": limit,
+      "page": page,
+      "success": success,
       "count": count,
       "jobs": internship != null
           ? List<dynamic>.from(internship!.map((x) => x.toJson()))
@@ -39,7 +57,7 @@ class InternshipModel {
   final String? aboutInternship;
   final String? internshipDescription;
   final String? internshipQualification;
-  final String? studentQualification;
+  final List<String>? studentQualification;
   final String? fieldOfStudy;
   final List<String>? requiredSkills;
   final String? eligibilityCriteria;
@@ -101,7 +119,10 @@ class InternshipModel {
       aboutInternship: json['aboutinternship'] ?? "",
       internshipDescription: json['intershipdescription'] ?? "",
       internshipQualification: json['Internshipqualification'] ?? "",
-      studentQualification: json['studentqualification'] ?? "",
+      //studentQualification: json['studentqualification'] ?? "",
+      studentQualification: json['studentqualification'] != null
+          ? List<String>.from(json['studentqualification'])
+          : [],
       fieldOfStudy: json['fieldofstudy'] ?? "",
       requiredSkills: json['requiredskills'] != null
           ? List<String>.from(json['requiredskills'])

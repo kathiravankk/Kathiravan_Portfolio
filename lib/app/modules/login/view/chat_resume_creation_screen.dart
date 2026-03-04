@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -216,6 +217,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
         registerController.studentRegisterModel.studentToken ?? "",
       );
       await getStudentProfileData();
+      showAlertDialog();
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
@@ -413,6 +415,55 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
               );
               //registerNewStudent();
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showAlertDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.fieldBgColor,
+        title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 15,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Welcome to InternShark!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              "Registration successful! You can access your dashboard now or complete the remaining steps here.!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w300,
+                lineSpace: 1.3,
+              ),
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          CustomButtonWidget(
+            buttonFunction: () {
+              Get.back();
+              Get.back();
+            },
+            buttonText: "OKAY",
+            width: 150,
+            height: 40,
           ),
         ],
       ),

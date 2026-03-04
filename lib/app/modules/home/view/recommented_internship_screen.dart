@@ -116,7 +116,7 @@ class _RecommentedInternshipScreenState
                           dashboardController
                               .recommentedModel
                               .internshipList![index]
-                              .title ??
+                              .roleType ??
                           "",
                       companyName:
                           dashboardController

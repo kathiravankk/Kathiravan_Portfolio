@@ -126,7 +126,7 @@ class _CategoryWiseInternshipScreenState
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .title ??
+                                .roleType ??
                             "",
                         companyName:
                             dashboardController
@@ -168,7 +168,7 @@ class _CategoryWiseInternshipScreenState
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .studentQualification ??
+                                .studentQualification!.join(", ") ??
                             "All",
                         eligibility:
                             dashboardController

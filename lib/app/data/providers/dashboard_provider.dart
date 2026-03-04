@@ -254,6 +254,9 @@ class DashboardProvider {
     required String duration,
     required String stipend,
     required String internshipMode,
+    required int page,
+    required int limit,
+  required String roleType,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
@@ -268,6 +271,9 @@ class DashboardProvider {
           duration,
           stipend,
           internshipMode,
+          roleType,
+          page,
+          limit
         ),
         options: Options(headers: header),
       );

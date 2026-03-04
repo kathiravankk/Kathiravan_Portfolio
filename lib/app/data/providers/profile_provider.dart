@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 
@@ -22,20 +23,16 @@ class ProfileProvider {
 
   // GET PROFILE DATA
 
-  Future<ProfileDataModel> fetchProfileData({
-    required String studentId,
-  }) async {
+  Future<ProfileDataModel> fetchProfileData({required String studentId}) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.post(
-          AppApiUrls.getProfileData,
-          options: Options(headers: header),
-          data: {
-            "studentId": studentId
-          }
+        AppApiUrls.getProfileData,
+        options: Options(headers: header),
+        data: {"studentId": studentId},
       );
       responseStatus = response.statusCode!;
       return ProfileDataModel.fromJson(response.data);
@@ -139,8 +136,7 @@ class ProfileProvider {
 
   // GET SAVED JOBS DATA
 
-  Future<SavedInternshipModel> fetchSavedJobsData(
-  ) async {
+  Future<SavedInternshipModel> fetchSavedJobsData() async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
@@ -160,8 +156,9 @@ class ProfileProvider {
 
   // ADD SAVED JOBS DATA
 
-  Future<SavedNewInternshipModel> putSavedJobsData({required String jobId}
-      ) async {
+  Future<SavedNewInternshipModel> putSavedJobsData({
+    required String jobId,
+  }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
@@ -170,9 +167,7 @@ class ProfileProvider {
       Response response = await client!.post(
         AppApiUrls.addToSavedJobs,
         options: Options(headers: header),
-        data: {
-          "jobId": jobId
-        }
+        data: {"jobId": jobId},
       );
       responseStatus = response.statusCode!;
       return SavedNewInternshipModel.fromJson(response.data);
@@ -184,25 +179,44 @@ class ProfileProvider {
 
   // ADD SAVED JOBS DATA
 
-  Future<SavedNewInternshipModel> deleteSavedJobsData({required String jobId}
-      ) async {
+  Future<SavedNewInternshipModel> deleteSavedJobsData({
+    required String jobId,
+  }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.post(
-          AppApiUrls.removeSavedJobs,
-          options: Options(headers: header),
-          data: {
-            "jobId": jobId
-          }
+        AppApiUrls.removeSavedJobs,
+        options: Options(headers: header),
+        data: {"jobId": jobId},
       );
       responseStatus = response.statusCode!;
       return SavedNewInternshipModel.fromJson(response.data);
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return SavedNewInternshipModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET FILTER OPTIONS
+
+  Future<FilterOptionModel> fetchFilterOption() async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getFilterOption,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return FilterOptionModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return FilterOptionModel.fromJson(err.response!.data);
     }
   }
 }

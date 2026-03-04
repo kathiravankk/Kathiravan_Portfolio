@@ -6,6 +6,7 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class StepUpdateScreen extends StatefulWidget {
@@ -17,6 +18,8 @@ class StepUpdateScreen extends StatefulWidget {
 
 class _StepUpdateScreenState extends State<StepUpdateScreen> {
   int activeStep = 1;
+
+  final RegisterController registerController = Get.find<RegisterController>();
 
   @override
   void initState() {
@@ -73,7 +76,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                   size: 18,
                   weight: FontWeight.w600,
                   color: AppColors.secondaryColor,
-                  lineSpace: 1.3
+                  lineSpace: 1.3,
                 ),
               ),
 
@@ -125,7 +128,13 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
               StepCardWidget(
                 step: "Step 3",
                 title: activeStep > 3
-                    ? "KYC Verified Successfully"
+                    ? registerController.kycUpdateModel.name != "invalid" ||
+                              registerController.kycUpdateModel.aadhaar !=
+                                  "invalid" ||
+                              registerController.kycUpdateModel.collegeId !=
+                                  "invalid"
+                          ? "KYC Verification Pending"
+                          : "KYC Verified Successfully"
                     : "KYC Verification",
                 isActive: activeStep == 3,
                 isCompleted: activeStep > 3,

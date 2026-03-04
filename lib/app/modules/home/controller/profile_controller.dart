@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 import 'package:internsharks/app/data/providers/profile_provider.dart';
@@ -235,6 +236,36 @@ class ProfileController extends GetxController {
       removeSavedJobsLoading = false;
     } catch (err) {
       removeSavedJobsLoading = false;
+      rethrow;
+    }
+  }
+
+  // GET FILTER OPTIONS DATA
+
+  // Loading
+
+  final _filterLoading = false.obs;
+
+  bool get filterLoading => _filterLoading.value;
+
+  set filterLoading(bool value) => _filterLoading.value = value;
+
+  // Model
+
+  final _filterModel = FilterOptionModel().obs;
+
+  FilterOptionModel get filterModel => _filterModel.value;
+
+  set filterModel(FilterOptionModel value) =>
+      _filterModel.value = value;
+
+  Future<void> getFilterOption() async {
+    try {
+      filterLoading = true;
+      filterModel = await profileProvider!.fetchFilterOption();
+      filterLoading = false;
+    } catch (err) {
+      filterLoading = false;
       rethrow;
     }
   }

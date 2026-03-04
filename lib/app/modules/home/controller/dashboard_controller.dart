@@ -375,6 +375,9 @@ class DashboardController extends GetxController {
     required String duration,
     required String stipend,
     required String internshipMode,
+    required String roleType,
+    required int page,
+    required int limit,
   }) async {
     try {
       allInternshipLoading = true;
@@ -385,6 +388,9 @@ class DashboardController extends GetxController {
         internshipMode: internshipMode,
         qualification: qualification,
         stipend: stipend,
+        roleType: roleType,
+        page: page,
+        limit: limit,
       );
       allInternshipLoading = false;
     } catch (err) {

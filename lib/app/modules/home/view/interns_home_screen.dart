@@ -343,7 +343,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   description: recommentedList.internshipDescription ?? "",
                   imageUrl: recommentedList.companyLogo ?? "",
                   internshipMode: recommentedList.internshipMode ?? "",
-                  role: recommentedList.title ?? "",
+                  role: recommentedList.roleType ?? "",
                   postedDate: recommentedList.createdAt ?? "",
                   skillList: recommentedList.requiredSkills ?? [],
                   isApplied: recommentedList.applied ?? false,

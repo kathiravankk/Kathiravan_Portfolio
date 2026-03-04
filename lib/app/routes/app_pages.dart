@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
-import 'package:internsharks/app/modules/home/view/all_internship_screen.dart';
+import 'package:internsharks/app/modules/home/view/search_all_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/category_wise_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/chat_resume_update_screen.dart';
 import 'package:internsharks/app/modules/home/view/dashboard_screen.dart';
@@ -155,7 +155,7 @@ class AppPages {
     ),
     appPage(
       name: AppRoutes.allInternshipScreen,
-      page: () => AllInternshipScreen(),
+      page: () => SearchAllInternshipScreen(),
     ),
     appPage(
       name: AppRoutes.recommentedInternshipScreen,

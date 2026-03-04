@@ -288,7 +288,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                       dashboardController
                                           .similarInternshipModel
                                           .similarList![index]
-                                          .title ??
+                                          .roleType ??
                                       "",
                                   postedDate:
                                       dashboardController

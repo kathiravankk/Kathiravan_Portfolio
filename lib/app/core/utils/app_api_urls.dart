@@ -52,8 +52,11 @@ class AppApiUrls {
     String duration,
     String stipend,
     String mode,
+    String role,
+    int page,
+    int limit,
   ) =>
-      "${baseUrl}jobpost/student/getalljobs?companystate=$state&companycity=$city&studentqualification=$qualification&internshipduration=$duration&internshipstipend=$stipend&internshipmode=$mode";
+      "${baseUrl}jobpost/student/getalljobs?companystate=$state&companycity=$city&studentqualification=$qualification&internshipduration=$duration&internshipstipend=$stipend&internshipmode=$mode&roletype=$role&limit=10&page=$page";
 
   // PROFILE FLOW
   static String getProfileData = "${baseUrl}student/getById";
@@ -66,4 +69,5 @@ class AppApiUrls {
   static String getSavedJobs = "${baseUrl}savedjob/getsavedjobs";
   static String addToSavedJobs = "${baseUrl}savedjob/savenewjob";
   static String removeSavedJobs = "${baseUrl}savedjob/unsavejob";
+  static String getFilterOption = "${baseUrl}jobpost/getvalue";
 }
