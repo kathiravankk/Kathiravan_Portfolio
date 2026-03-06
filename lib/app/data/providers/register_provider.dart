@@ -74,13 +74,13 @@ class RegisterProvider {
           .post(AppApiUrls.registerSendOtp, data: {"mobile": mobileNumber})
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return SendMobileOtpModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonPostModel.fromJson(error.response!.data);
+        return SendMobileOtpModel.fromJson(error.response!.data);
       } else {
-        return CommonPostModel.fromJson(error.response!.data);
+        return SendMobileOtpModel.fromJson(error.response!.data);
       }
     }
   }
@@ -101,13 +101,13 @@ class RegisterProvider {
           )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return VerifyMobileOtpModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonPostModel.fromJson(error.response!.data);
+        return VerifyMobileOtpModel.fromJson(error.response!.data);
       } else {
-        return CommonPostModel.fromJson(error.response!.data);
+        return VerifyMobileOtpModel.fromJson(error.response!.data);
       }
     }
   }
@@ -127,13 +127,13 @@ class RegisterProvider {
           )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return SendEmailOtpModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonPostModel.fromJson(error.response!.data);
+        return SendEmailOtpModel.fromJson(error.response!.data);
       } else {
-        return CommonPostModel.fromJson(error.response!.data);
+        return SendEmailOtpModel.fromJson(error.response!.data);
       }
     }
   }
@@ -158,13 +158,13 @@ class RegisterProvider {
           )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return VerifyEmailOtpModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonPostModel.fromJson(error.response!.data);
+        return VerifyEmailOtpModel.fromJson(error.response!.data);
       } else {
-        return CommonPostModel.fromJson(error.response!.data);
+        return VerifyEmailOtpModel.fromJson(error.response!.data);
       }
     }
   }

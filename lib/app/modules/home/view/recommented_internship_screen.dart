@@ -158,7 +158,7 @@ class _RecommentedInternshipScreenState
                           dashboardController
                               .recommentedModel
                               .internshipList![index]
-                              .studentQualification ??
+                              .studentQualification!.join(", ") ??
                           "All",
                       eligibility:
                           dashboardController

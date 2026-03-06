@@ -27,7 +27,7 @@ class _ResumeTemplateSelectionScreenState
   }
 
   final List<ResumeTemplateModel> templates = List.generate(
-    8,
+    10,
     (index) => ResumeTemplateModel(
       id: 1 + index,
       htmlPath:

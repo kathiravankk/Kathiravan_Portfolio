@@ -338,7 +338,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                     );
                   },
                   eligibility: recommentedList.eligibilityCriteria ?? "",
-                  qualification: recommentedList.studentQualification ?? "",
+                  qualification: recommentedList.studentQualification!.join(", ") ?? "",
                   stipendRupees: recommentedList.internshipStipend ?? "",
                   description: recommentedList.internshipDescription ?? "",
                   imageUrl: recommentedList.companyLogo ?? "",

@@ -47,34 +47,34 @@ class AllInternshipModel {
 }
 
 class InternshipModel {
-  final String? id;
-  final String? companyName;
-  final String? aboutCompany;
-  final String? companyWebsite;
-  final String? companyLogo;
-  final String? roleType;
-  final String? title;
-  final String? aboutInternship;
-  final String? internshipDescription;
-  final String? internshipQualification;
-  final List<String>? studentQualification;
-  final String? fieldOfStudy;
-  final List<String>? requiredSkills;
-  final String? eligibilityCriteria;
-  final String? companyState;
-  final String? companyCity;
-  final String? locationLink;
-  final String? internshipDuration;
-  final String? internshipStipend;
-  final dynamic projectDescription;
-  final String? internshipMode;
-  final String? recruiter;
-  final String? industry;
-  final dynamic syllabusData;
-  final String? createdAt;
-  final String? updatedAt;
-  final int? v;
-  final bool? isSaved;
+   String? id;
+   String? companyName;
+   String? aboutCompany;
+   String? companyWebsite;
+   String? companyLogo;
+   String? roleType;
+   String? title;
+   String? aboutInternship;
+   String? internshipDescription;
+   String? internshipQualification;
+   List<String>? studentQualification;
+   String? fieldOfStudy;
+   List<String>? requiredSkills;
+   String? eligibilityCriteria;
+   String? companyState;
+   String? companyCity;
+   String? locationLink;
+   String? internshipDuration;
+   String? internshipStipend;
+   dynamic projectDescription;
+   String? internshipMode;
+   String? recruiter;
+   String? industry;
+   dynamic syllabusData;
+   String? createdAt;
+   String? updatedAt;
+   int? v;
+   bool? isSaved;
 
   InternshipModel({
     this.id,

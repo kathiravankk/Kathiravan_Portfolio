@@ -21,6 +21,7 @@ class AssetImages {
   static const String aiEngineeringImg = "assets/images/ai_engineering_img.png";
   static const String bpoImg = "assets/images/bpo_img.png";
   static const String healthCareImg = "assets/images/healthcare_img.png";
+  static const String emptyImage = "assets/images/empty_image.jpeg";
   static const String tourismServiceImg = "assets/images/tourism_service.png";
   static const String miningImg = "assets/images/mining_img.png";
   static const String logisticImg = "assets/images/logistic_img.png";

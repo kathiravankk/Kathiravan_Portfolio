@@ -6,7 +6,7 @@ import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
 import 'package:internsharks/app/core/widgets/home_drawer.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
-import 'package:internsharks/app/modules/home/view/my_course_screen.dart';
+import 'package:internsharks/app/modules/home/view/my_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/profile_screen.dart';
 import 'package:internsharks/view/pages/upload_resume/ResumeChat.dart';
 
@@ -31,7 +31,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           screens: [
             const InternsHomeScreen(),
             const MyAppliesScreen(),
-            MyCourseScreen(),
+            MyInternshipScreen(),
             const ProfileScreen(),
           ],
         ),

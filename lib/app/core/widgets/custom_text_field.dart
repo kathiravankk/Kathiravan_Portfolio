@@ -72,8 +72,12 @@ class CustomTextField extends StatelessWidget {
                       RegExp(r'^[\u0020-\u007E]+$'),
                     ),
             ],
+            cursorColor:
+            AppColors.primaryColor,
+            cursorErrorColor: AppColors.primaryColor,
             autofocus: false,
             decoration: InputDecoration(
+              focusColor: AppColors.primaryColor,
               //suffix: suffixWidget ?? Text(""),
               //prefix: prefixWidget ?? Text(""),
               suffixIcon: suffixWidget ?? Text(""),
@@ -131,7 +135,7 @@ class CustomTextField extends StatelessWidget {
                 borderSide: BorderSide(
                   color: isProfileFlow
                       ? AppColors.fieldBorderColor
-                      : AppColors.sucTextColor,
+                      : AppColors.disableBorderColor,
                 ),
               ),
               border: OutlineInputBorder(

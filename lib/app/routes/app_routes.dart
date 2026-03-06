@@ -31,6 +31,7 @@ class AppRoutes {
   static const savedInternshipScreen = '/savedInternshipScreen';
   static const chatResumeUpdateScreen = '/chatResumeUpdateScreen';
   static const allInternshipScreen = '/allInternshipScreen';
+  static const resumeTemplatePreviewScreen = '/resumeTemplatePreviewScreen';
 
 
 

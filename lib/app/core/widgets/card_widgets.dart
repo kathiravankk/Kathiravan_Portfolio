@@ -3,13 +3,13 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 
 class CardWidgets {
-  static Widget settingsCard({required List<Widget> children}) {
+  static Widget settingsCard({required List<Widget> children, isDisable = false}) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.fieldBgColor,
+        color: isDisable ?AppColors.disableFieldColor :AppColors.fieldBgColor,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.contBorderColor),
+        border: Border.all(color: isDisable ?AppColors.disableBorderColor :AppColors.contBorderColor),
       ),
       child: Column(children: children),
     );

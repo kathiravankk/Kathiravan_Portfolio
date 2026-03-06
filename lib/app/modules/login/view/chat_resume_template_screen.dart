@@ -214,10 +214,10 @@ class _ChatResumeTemplateScreenState
       appBar: AppBar(
         backgroundColor: AppColors.transparentColor,
         elevation: 0,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-        //   onPressed: () => Get.back(),
-        // ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),
         title: Text(
           "Choose any Resume Template",
           style: AppStyles.customTextStyle(

@@ -22,7 +22,7 @@ class SearchAllInternshipScreen extends StatefulWidget {
 
 class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
   final DashboardController dashboardController =
-  Get.find<DashboardController>();
+      Get.find<DashboardController>();
   final ProfileController profileController = Get.find<ProfileController>();
 
   final TextEditingController searchController = TextEditingController();
@@ -49,11 +49,11 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
 
   bool get _hasActiveFilters =>
       companyState.isNotEmpty ||
-          companyCity.isNotEmpty ||
-          qualification.isNotEmpty ||
-          duration.isNotEmpty ||
-          stipend.isNotEmpty ||
-          internshipMode.isNotEmpty;
+      companyCity.isNotEmpty ||
+      qualification.isNotEmpty ||
+      duration.isNotEmpty ||
+      stipend.isNotEmpty ||
+      internshipMode.isNotEmpty;
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
@@ -83,7 +83,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
   }
 
   void _loadNextPage() {
-    if (_isPaginating) return;           // already loading
+    if (_isPaginating) return; // already loading
     if (_currentPage >= _totalPages) return; // no more pages
 
     _fetchPage(page: _currentPage + 1, isNewSearch: false);
@@ -145,8 +145,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
   }
 
   /// Called by search submit + filter apply — always resets to page 1
-  Future<void> getInternshipData() =>
-      _fetchPage(page: 1, isNewSearch: true);
+  Future<void> getInternshipData() => _fetchPage(page: 1, isNewSearch: true);
 
   // ── Filter sheet ─────────────────────────────────────────────────────────────
 
@@ -168,24 +167,25 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
           initialDuration: duration,
           initialStipend: stipend,
           initialMode: internshipMode,
-          onApply: ({
-            required String companyState,
-            required String companyCity,
-            required String qualification,
-            required String duration,
-            required String stipend,
-            required String internshipMode,
-          }) {
-            setState(() {
-              this.companyState = companyState;
-              this.companyCity = companyCity;
-              this.qualification = qualification;
-              this.duration = duration;
-              this.stipend = stipend;
-              this.internshipMode = internshipMode;
-            });
-            getInternshipData();
-          },
+          onApply:
+              ({
+                required String companyState,
+                required String companyCity,
+                required String qualification,
+                required String duration,
+                required String stipend,
+                required String internshipMode,
+              }) {
+                setState(() {
+                  this.companyState = companyState;
+                  this.companyCity = companyCity;
+                  this.qualification = qualification;
+                  this.duration = duration;
+                  this.stipend = stipend;
+                  this.internshipMode = internshipMode;
+                });
+                getInternshipData();
+              },
         ),
       ),
     );
@@ -214,7 +214,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
         ),
       ),
       body: Obx(
-            () => Padding(
+        () => Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
             spacing: 10,
@@ -290,7 +290,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
               );
             },
             isSaved: item.isSaved ?? false,
-            saveFunc: () {},
+            saveFunc: () => dashboardController.searchFilterSaveFunc(index),
             postedDate: item.createdAt!,
             role: item.roleType ?? '',
             companyName: item.companyName ?? '',
@@ -395,7 +395,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
         scrollDirection: Axis.horizontal,
         children: [
           ...activeFilters.entries.map(
-                (e) => Container(
+            (e) => Container(
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
@@ -441,7 +441,11 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.close, size: 12, color: AppColors.failTextColor),
+                  const Icon(
+                    Icons.close,
+                    size: 12,
+                    color: AppColors.failTextColor,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'Clear All',

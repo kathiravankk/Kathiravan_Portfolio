@@ -41,7 +41,8 @@ class AppApiUrls {
   static String getAppliedInternship(String studentId) =>
       "${baseUrl}getjob/appliedjob/$studentId";
 
-  static String getReviewData(String jobId) => "${baseUrl}job/$jobId/reviews";
+  //static String getReviewData(String jobId) => "${baseUrl}job/$jobId/reviews";
+  static String getReviewData(String jobId) => "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
   static String updateChatResume = "${baseUrl}updatemessage";
 
@@ -70,4 +71,9 @@ class AppApiUrls {
   static String addToSavedJobs = "${baseUrl}savedjob/savenewjob";
   static String removeSavedJobs = "${baseUrl}savedjob/unsavejob";
   static String getFilterOption = "${baseUrl}jobpost/getvalue";
+
+  // INTERNSHIP FLOW
+
+  static String getInternshipData(String studentId) => "${baseUrl}getall?studentId=$studentId";
+
 }

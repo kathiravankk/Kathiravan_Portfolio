@@ -489,6 +489,27 @@ class DashboardController extends GetxController {
     }
   }
 
+  Future<void> searchFilterSaveFunc(int index) async {
+    final internship = internshipModel.internship![index];
+    bool oldValue = internship.isSaved ?? false;
+
+    internship.isSaved = !oldValue;
+    _internshipModel.refresh();
+
+    bool success;
+
+    if (!oldValue) {
+      success = await addToSaved(jobId: internship.id!);
+    } else {
+      success = await removeToSaved(jobId: internship.id!);
+    }
+
+    if (!success) {
+      internship.isSaved = oldValue;
+      _internshipModel.refresh();
+    }
+  }
+
   Future<void> similarSaveFunc(int index) async {
     final internship = similarInternshipModel.similarList![index];
     bool oldValue = internship.isSaved ?? false;

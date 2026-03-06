@@ -1,16 +1,15 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/card_widgets.dart';
+import 'package:internsharks/app/data/models/account/personal_info_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:internsharks/core/const_file/app_text_style.dart';
 
 class ManageResumeScreen extends StatefulWidget {
   const ManageResumeScreen({super.key});
@@ -69,95 +68,142 @@ class _ManageResumeScreenState extends State<ManageResumeScreen> {
             spacing: 15,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Active Resume',
-                style: AppStyles.customTextStyle(
+            Text(
+            'Active Resume',
+            style: AppStyles.customTextStyle(
+              color: AppColors.whiteColor,
+              size: 16,
+              weight: FontWeight.w700,
+            ),
+          ),
+          CardWidgets.settingsCard(
+            isDisable: true,
+            children: [
+              CardWidgets.settingsTile(
+                isResumeFlow: true,
+                icon: CupertinoIcons.doc_richtext,
+                title: "",
+                onTap: () {},
+                titleWidget: Column(
+                  spacing: 5,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(
+                //AppFunctions.getFileName(resumeName),
+                "${profileController.profileDataModel.studentName?? ""}_resume.pdf",
+                  style: AppStyles.customTextStyle(
                   color: AppColors.whiteColor,
-                  size: 16,
-                  weight: FontWeight.w700,
+                  size: 14,
+                  weight: FontWeight.w500,
                 ),
               ),
-              CardWidgets.settingsCard(
-                children: [
-                  CardWidgets.settingsTile(
-                    isResumeFlow: true,
-                    icon: CupertinoIcons.doc_richtext,
-                    title: "",
-                    onTap: () {},
-                    titleWidget: Column(
-                      spacing: 5,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppFunctions.getFileName(resumeName),
-                          style: AppStyles.customTextStyle(
-                            color: AppColors.whiteColor,
-                            size: 14,
-                            weight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          "Updated ${AppFunctions.formatIsoDate(updatedAt)}",
-                          style: AppStyles.customTextStyle(
-                            color: AppColors.whiteColor,
-                            size: 10,
-                            weight: FontWeight.w300,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
               Text(
-                'Actions',
+                "Updated ${AppFunctions.formatIsoDate(updatedAt)}",
                 style: AppStyles.customTextStyle(
                   color: AppColors.whiteColor,
-                  size: 16,
-                  weight: FontWeight.w700,
+                  size: 10,
+                  weight: FontWeight.w300,
                 ),
-              ),
-              CardWidgets.settingsCard(
-                children: [
-                  CardWidgets.settingsTile(
-                    icon: CupertinoIcons.tray_arrow_down,
-                    title: "View / Download Resume",
-                    onTap: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.resumeFileViewScreen,
-                        arguments: {
-                          "resumeUrl": "${AppApiUrls.devServer}$resumeName",
-                        },
-                      );
-                    },
-                  ),
-                  SizedBox(height: 5),
-                  Divider(color: AppColors.contBorderColor),
-                  SizedBox(height: 5),
-                  CardWidgets.settingsTile(
-                    icon: CupertinoIcons.pencil_outline,
-                    title: "Update your resume with AI",
-                    onTap: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.chatResumeUpdateScreen,
-                      );
-                    },
-                  ),
-                  // Divider(color: AppColors.contBorderColor),
-                  // SizedBox(height: 5),
-                  // CardWidgets.settingsTile(
-                  //   icon: CupertinoIcons.pencil_outline,
-                  //   title: "Create / Edit with Ai",
-                  //   onTap: () {},
-                  // ),
-                ],
               ),
             ],
           ),
         ),
+        ],
       ),
+      Text(
+        'Actions',
+        style: AppStyles.customTextStyle(
+          color: AppColors.whiteColor,
+          size: 16,
+          weight: FontWeight.w700,
+        ),
+      ),
+      CardWidgets.settingsCard(
+        children: [
+          CardWidgets.settingsTile(
+            icon: CupertinoIcons.tray_arrow_down,
+            title: "View / Download Resume",
+            onTap: () {
+              // AppFunctions.navigateScreen(
+              //   context,
+              //   AppRoutes.resumeFileViewScreen,
+              //   arguments: {
+              //     "resumeUrl": "${AppApiUrls.devServer}$resumeName",
+              //   },
+              // );
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.resumeTemplatePreviewScreen,
+                arguments: {
+                  "templateId": int.parse(profileController.profileDataModel.templateNumber!),
+                  //"templateId": 8,
+                  "resumeData": ExtractedResumeDataModel(
+                    personalInfo: PersonalInfoModel(
+                      name: profileController.profileDataModel.studentName ?? '',
+                      gender: "",
+                      email: profileController.profileDataModel.studEmail!,
+                      phone: profileController.profileDataModel.studMobileNo!,
+                      linkedIn: profileController.profileDataModel.linkedIn,
+                      github: profileController.profileDataModel.github,
+                      location: "",
+                    ),
+                    internships: profileController.profileDataModel.internships!,
+                    hobbies: profileController.profileDataModel.hobbies,
+                    areasOfInterest: profileController.profileDataModel.areasOfInterest,
+                    languages: profileController.profileDataModel.languagesKnown,
+                    volunteerExperience: profileController.profileDataModel.volunteerExperience,
+                    leaderships: profileController.profileDataModel.leadership,
+                    achievements: profileController.profileDataModel.achievements,
+                    publications: profileController.profileDataModel.publications,
+                    workShops:profileController.profileDataModel.workshops,
+                    paperPresentations:profileController.profileDataModel.paperPresentations,
+                    certifications: [],
+                    educationData: profileController.profileDataModel.education,
+                    industrialVisits:profileController.profileDataModel.industrialVisits,
+                    projects: profileController.profileDataModel.projects!,
+                    skills: profileController.profileDataModel.studProgrammingLang,
+                    profileSummary: "",
+                    colleges: profileController.profileDataModel.collegeData!,
+                    degree: [],
+                    experience: profileController.profileDataModel.experience,
+                    trainings: [],
+                    studentId: profileController.profileDataModel.id,
+                    higherSecondary: profileController.profileDataModel.education!.school!.higherSecondary,
+                    institution: [],
+                    parents: [],
+                    secondary: profileController.profileDataModel.education!.school!.secondary,
+                  ),
+                },
+              );
+            },
+          ),
+          SizedBox(height: 5),
+          Divider(color: AppColors.contBorderColor),
+          SizedBox(height: 5),
+          CardWidgets.settingsTile(
+            icon: CupertinoIcons.pencil_outline,
+            title: "Update your resume with AI",
+            onTap: () {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.chatResumeUpdateScreen,
+              );
+            },
+          ),
+          // Divider(color: AppColors.contBorderColor),
+          // SizedBox(height: 5),
+          // CardWidgets.settingsTile(
+          //   icon: CupertinoIcons.pencil_outline,
+          //   title: "Create / Edit with Ai",
+          //   onTap: () {},
+          // ),
+        ],
+      ),
+      ],
+    ),)
+    ,
+    )
+    ,
     );
   }
 }

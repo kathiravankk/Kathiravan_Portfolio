@@ -164,7 +164,9 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
       "studentaddress": profileData.personalInfo!.location,
 
-      "studentdegree": profileData.education!.college!.first.degree ?? "",
+      "studentdegree": profileData.education!.college!.isNotEmpty
+          ? profileData.education!.college!.first.degree ?? ""
+          : "",
 
       "studentfieldofstudy":
           profileData.education!.college!.first.department ?? "",
@@ -174,7 +176,6 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
       "studcollegestartyear":
           profileData.education!.college!.first.startYear?.toString() ?? "",
-
       "studcollegelocation": "",
 
       "studhighschollname":
@@ -337,29 +338,58 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                   color: AppColors.secondaryColor,
                 ),
               )
-            : Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        itemCount: messages.length,
-                        itemBuilder: (context, i) =>
-                            _buildChatBubble(messages[i]),
+            : Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            controller: scrollController,
+                            itemCount: messages.length,
+                            itemBuilder: (context, i) =>
+                                _buildChatBubble(messages[i]),
+                          ),
+                        ),
+                        if (dashboardController.resumeUpdateChatLoading)
+                          loadingContainer(),
+                        if (availableOptions.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: _buildOptionsChips(),
+                          ),
+
+                        _buildInputArea(),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: registerController.updateProfileLoading,
+                    child: Positioned(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CupertinoActivityIndicator(
+                              color: AppColors.secondaryColor,
+                            ),
+                            Text(
+                              "AI Updating your resume..!",
+                              textAlign: TextAlign.center,
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                weight: FontWeight.w600,
+                                color: AppColors.secondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    if (dashboardController.resumeUpdateChatLoading)
-                      loadingContainer(),
-                    if (availableOptions.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: _buildOptionsChips(),
-                      ),
-
-                    _buildInputArea(),
-                  ],
-                ),
+                  ),
+                ],
               ),
       ),
     );
@@ -458,7 +488,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
               } else {
                 await updateChatResume(message: chatTextController.text);
               }
-              // await updateStudentProfile();
+              //await updateStudentProfile();
             },
           ),
         ],

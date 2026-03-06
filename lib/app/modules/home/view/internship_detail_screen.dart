@@ -302,15 +302,19 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                 color: AppColors.primaryColor,
               ),
             ),
-            Text(
-              (internship!.requiredSkills != null &&
-                      internship!.requiredSkills != [])
-                  ? internship!.requiredSkills!.join(',')
-                  : "NA",
-              style: AppStyles.customTextStyle(
-                size: 14,
-                weight: FontWeight.w600,
-                color: AppColors.whiteColor,
+            Expanded(
+              child: Text(
+                (internship!.requiredSkills != null &&
+                        internship!.requiredSkills != [])
+                    ? internship!.requiredSkills!.join(',')
+                    : "NA",
+                maxLines: 3,
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  lineSpace: 1.3,
+                  weight: FontWeight.w600,
+                  color: AppColors.whiteColor,
+                ),
               ),
             ),
           ],

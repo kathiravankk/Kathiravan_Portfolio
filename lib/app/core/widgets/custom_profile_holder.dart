@@ -74,7 +74,7 @@ class _CustomProfileHolderState extends State<CustomProfileHolder> {
                           ? FileImage(selectedFile.value!)
                           : (widget.imageUrl.isNotEmpty
                                     ? NetworkImage(widget.imageUrl)
-                                    : AssetImage(AssetImages.healthCareImg))
+                                    : AssetImage(AssetImages.emptyImage,))
                                 as ImageProvider,
                     );
                   },

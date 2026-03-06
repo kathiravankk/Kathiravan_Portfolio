@@ -38,7 +38,7 @@ class RecommentedData {
   String? aboutInternship;
   String? internshipDescription;
   String? internshipQualification;
-  String? studentQualification;
+  List<String>? studentQualification;
   String? fieldOfStudy;
   List<String>? requiredSkills;
   String? eligibilityCriteria;
@@ -99,7 +99,9 @@ class RecommentedData {
     aboutInternship = json['aboutinternship'] ?? "";
     internshipDescription = json['intershipdescription'] ?? "";
     internshipQualification = json['Internshipqualification'] ?? "";
-    studentQualification = json['studentqualification'] ?? "";
+    //studentQualification = json['studentqualification'] ?? "";
+    studentQualification = json['studentqualification'].cast<String>();
+
     fieldOfStudy = json['fieldofstudy'] ?? "";
     requiredSkills = json['requiredskills'].cast<String>();
     eligibilityCriteria = json['eligibilitycriteria'] ?? "";

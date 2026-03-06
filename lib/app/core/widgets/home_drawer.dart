@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:get/get.dart';
@@ -20,6 +22,18 @@ class _HomeDrawerState extends State<HomeDrawer> {
       Get.find<DashboardController>();
 
   final ProfileController profileController = Get.find<ProfileController>();
+  bool? isVerified = true;
+
+  @override
+  void initState() {
+    checkVerifiedUser();
+    super.initState();
+  }
+
+  Future<void> checkVerifiedUser() async {
+    isVerified = await LocalStorageService.getVerifiedValue();
+    debugPrint("$isVerified...............**************");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +118,66 @@ class _HomeDrawerState extends State<HomeDrawer> {
           ),
 
           Divider(color: AppColors.contBorderColor),
+          Visibility(
+            visible: !isVerified!,
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.blackGradient1,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: AppColors.primaryColor),
+              ),
+              padding: EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${profileController.profileDataModel.studentName ?? "User"}, you aren't not verified!",
+                        style: AppStyles.customTextStyle(
+                          size: 14,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w500,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => Get.back(),
+                        child: Icon(
+                          Icons.close_sharp,
+                          color: AppColors.primaryColor,
+                          size: 22,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "AI verification is a signal of trust, giving \nRecruiters more confidence to interact with you.",
+                    style: AppStyles.customTextStyle(
+                      lineSpace: 1.3,
+                      size: 12,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                    ),
+                  ),
+                  CustomButtonWidget(
+                    height: 35,
+                    width: 120,
+                    buttonFunction: () {
+                      Get.back();
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.kycVerificationScreen,
+                        arguments: {"isRegisterFlow": false},
+                      );
+                    },
+                    buttonText: "Verify Now",
+                  ),
+                ],
+              ),
+            ),
+          ),
 
           Column(
             children: [

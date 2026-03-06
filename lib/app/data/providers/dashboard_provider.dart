@@ -169,7 +169,7 @@ class DashboardProvider {
       Response response = await client!.post(
         AppApiUrls.getSimilarInternship,
         options: Options(headers: header),
-        data: {"skills": skillList},
+        data: {"skill": skillList},
       );
       responseStatus = response.statusCode!;
       return SimilarInternshipModel.fromJson(response.data);

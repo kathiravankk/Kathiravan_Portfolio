@@ -235,84 +235,97 @@ class InternshipCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 5,
-                    children: [
-                      Row(
-                        spacing: 10,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "Education: ",
-                                style: AppStyles.customTextStyle(
-                                  size: 8,
-                                  weight: FontWeight.w400,
-                                  color: AppColors.primaryColor,
-                                ),
+                  Expanded(
+                    child: Column(
+                      spacing: 10,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Education: ",
+                                    style: AppStyles.customTextStyle(
+                                      size: 8,
+                                      weight: FontWeight.w400,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      qualification,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppStyles.customTextStyle(
+                                        size: 8,
+                                        weight: FontWeight.w400,
+                                        color: AppColors.navBarColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                qualification,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Available: ",
+                                    style: AppStyles.customTextStyle(
+                                      size: 8,
+                                      weight: FontWeight.w400,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      eligibility,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: AppStyles.customTextStyle(
+                                        size: 8,
+                                        weight: FontWeight.w400,
+                                        color: AppColors.navBarColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              "*Skills: ",
+                              style: AppStyles.customTextStyle(
+                                size: 8,
+                                weight: FontWeight.w400,
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                skillList.join(', '),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: AppStyles.customTextStyle(
                                   size: 8,
+                                  lineSpace: 1.3,
                                   weight: FontWeight.w400,
                                   color: AppColors.navBarColor,
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "Available: ",
-                                style: AppStyles.customTextStyle(
-                                  size: 8,
-                                  weight: FontWeight.w400,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 160,
-                                child: Text(
-                                  eligibility,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppStyles.customTextStyle(
-                                    size: 8,
-                                    weight: FontWeight.w400,
-                                    color: AppColors.navBarColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "*Skills: ",
-                            style: AppStyles.customTextStyle(
-                              size: 8,
-                              weight: FontWeight.w400,
-                              color: AppColors.primaryColor,
                             ),
-                          ),
-                          Text(
-                            " ${skillList.join(',  ')}",
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppStyles.customTextStyle(
-                              size: 8,
-                              weight: FontWeight.w400,
-                              color: AppColors.navBarColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
+
+                  /// Bookmark button
                   IconButton(
                     onPressed: saveFunc!,
                     icon: Icon(
@@ -321,23 +334,8 @@ class InternshipCard extends StatelessWidget {
                       size: 30,
                     ),
                   ),
-                  // CustomButtonWidget(
-                  //   width: 100,
-                  //   buttonFunction: isApplied ? (){} :applyFunc!,
-                  //   buttonText: isApplied ? "Applied": "Apply Now",
-                  //   bgColor: isApplied ? AppColors.sucBgColor : AppColors.selectedContColor,
-                  //   //width: 100,
-                  //   height: 30,
-                  //   buttonTextStyle: AppStyles.customTextStyle(
-                  //     size: 10,
-                  //     color: isApplied ? AppColors.sucTextColor : AppColors.whiteColor,
-                  //     weight: FontWeight.w600,
-                  //     fontFamily: "Roboto",
-                  //   ),
-                  // ),
                 ],
-              ),
-            ],
+              )            ],
           ),
         ),
       ),

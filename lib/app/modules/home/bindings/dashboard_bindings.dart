@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/providers/dashboard_provider.dart';
+import 'package:internsharks/app/data/providers/internship_provider.dart';
 import 'package:internsharks/app/data/providers/profile_provider.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
+import 'package:internsharks/app/modules/home/controller/internship_controller.dart';
 import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
 
 class DashboardBindings extends Bindings {
@@ -14,6 +16,10 @@ class DashboardBindings extends Bindings {
     );
     Get.put<DashboardController>(
       DashboardController(DashboardProvider(client: Dio())),
+      permanent: true,
+    );
+    Get.put<InternshipController>(
+      InternshipController(InternshipProvider(client: Dio())),
       permanent: true,
     );
   }

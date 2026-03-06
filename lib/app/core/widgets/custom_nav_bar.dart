@@ -101,7 +101,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
           Icons.file_copy_sharp,
           color: AppColors.secondaryColor,
         ),
-        label: ("Course"),
+        label: ("Internships"),
       ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.person_outline_sharp, color: AppColors.whiteColor),

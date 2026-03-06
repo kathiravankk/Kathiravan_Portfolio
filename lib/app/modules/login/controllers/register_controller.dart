@@ -77,7 +77,6 @@ class RegisterController extends GetxController {
       }
 
       uploadProgress.value = 1.0;
-
     } catch (error) {
       uploadProgress.value = 0;
       rethrow;
@@ -110,6 +109,44 @@ class RegisterController extends GetxController {
 
   // Mobile OTP
 
+  //Models
+
+  //SEND OTP
+
+  final _sendMobileOtpModel = SendMobileOtpModel().obs;
+
+  SendMobileOtpModel get sendMobileOtpModel => _sendMobileOtpModel.value;
+
+  set sendMobileOtpModel(SendMobileOtpModel value) =>
+      _sendMobileOtpModel.value = value;
+
+  // VERIFY OTP
+
+  final _verifyMobileOtpModel = VerifyMobileOtpModel().obs;
+
+  VerifyMobileOtpModel get verifyMobileOtpModel => _verifyMobileOtpModel.value;
+
+  set verifyMobileOtpModel(VerifyMobileOtpModel value) =>
+      _verifyMobileOtpModel.value = value;
+
+  // SEND EMAIL OTP
+
+  final _sendEmailOtpModel = SendEmailOtpModel().obs;
+
+  SendEmailOtpModel get sendEmailOtpModel => _sendEmailOtpModel.value;
+
+  set sendEmailOtpModel(SendEmailOtpModel value) =>
+      _sendEmailOtpModel.value = value;
+
+  // VERIFY EMAIL OTP
+
+  final _verifyEmailOtpModel = VerifyEmailOtpModel().obs;
+
+  VerifyEmailOtpModel get verifyEmailOtpModel => _verifyEmailOtpModel.value;
+
+  set verifyEmailOtpModel(VerifyEmailOtpModel value) =>
+      _verifyEmailOtpModel.value = value;
+
   // MOBILE
   final showMobileOtpField = false.obs;
   final isMobileVerified = false.obs;
@@ -124,7 +161,7 @@ class RegisterController extends GetxController {
   Future<void> sendMobileOtp({required String mobileNumber}) async {
     try {
       sendMobileOtpLoading = true;
-      commonPostModel = await registerProvider!.registerSendOtp(
+      sendMobileOtpModel = await registerProvider!.registerSendOtp(
         mobileNumber: mobileNumber,
       );
       sendMobileOtpLoading = false;
@@ -153,7 +190,7 @@ class RegisterController extends GetxController {
   }) async {
     try {
       verifyMobileOtpLoading = true;
-      commonPostModel = await registerProvider!.registerVerifyOtp(
+      verifyMobileOtpModel = await registerProvider!.registerVerifyOtp(
         mobileNumber: mobileNumber,
         otpNumber: otpNumber,
       );
@@ -196,7 +233,7 @@ class RegisterController extends GetxController {
   Future<void> sendEmailOtp({required String emailAddress}) async {
     try {
       sendEmailOtpLoading = true;
-      commonPostModel = await registerProvider!.registerSendEmailOtp(
+      sendEmailOtpModel = await registerProvider!.registerSendEmailOtp(
         emailAddress: emailAddress,
       );
       sendEmailOtpLoading = false;
@@ -222,7 +259,7 @@ class RegisterController extends GetxController {
   }) async {
     try {
       verifyEmailOtpLoading = true;
-      commonPostModel = await registerProvider!.registerVerifyEmailOtp(
+      verifyEmailOtpModel = await registerProvider!.registerVerifyEmailOtp(
         emailAddress: emailAddress,
         otpNumber: otpNumber,
       );

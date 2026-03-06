@@ -261,7 +261,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                       dashboardController
                                           .similarInternshipModel
                                           .similarList![index]
-                                          .studentQualification ??
+                                          .studentQualification!.join(", ") ??
                                       "",
                                   stipendRupees:
                                       dashboardController

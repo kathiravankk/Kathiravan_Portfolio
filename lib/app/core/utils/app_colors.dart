@@ -46,7 +46,9 @@ class AppColors {
 static const Color iconBgColor = Color(0xFF123B34);
 static const Color iconContColor = Color(0xFF192226);
 //static final Color disableFieldColor = Colors.green.withValues(alpha: 0.2);
-  static const Color disableFieldColor = Color(0xFF2E4026);
+  //static const Color disableFieldColor = Color(0xFF2E4026);
+  static const Color disableFieldColor = Color(0xFF0F2323);
+  static const Color disableBorderColor = Color.fromRGBO(1, 203, 203, 0.2);
   static const Color secColor = Color(0xFF181818);
   static const Color thirdColor = Color(0xFF1c2121);
   static const Color appBlue = Color(0xFF01cdcd);

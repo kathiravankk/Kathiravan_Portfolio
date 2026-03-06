@@ -391,6 +391,9 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   }
 
   Future<void> studentRegisterFunc() async {
+    print(registerController
+        .resumeExtractModel
+        .resumeData!);
     final resumePath = await ResumeStorageService.getResumePath();
     Map<String, dynamic> registerData = {
       "studmobileno": mobileController.text,
@@ -418,44 +421,88 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
       "studentdegree":
           registerController
+                  .resumeExtractModel
+                  .resumeData!
+                  .education!
+                  .college !=
+              null && registerController
               .resumeExtractModel
               .resumeData!
               .education!
-              .college!
-              .first
-              .degree ??
-          "",
+              .college!.isNotEmpty
+          ? registerController
+                    .resumeExtractModel
+                    .resumeData!
+                    .education!
+                    .college!
+                    .first
+                    .degree ??
+                ""
+          : "",
 
       "studentfieldofstudy":
           registerController
+                  .resumeExtractModel
+                  .resumeData!
+                  .education!
+                  .college !=
+              null&& registerController
               .resumeExtractModel
               .resumeData!
               .education!
-              .college!
-              .first
-              .department ??
-          "",
+              .college!.isNotEmpty
+          ? registerController
+                    .resumeExtractModel
+                    .resumeData!
+                    .education!
+                    .college!
+                    .first
+                    .department ??
+                ""
+          : "",
 
       "studentcollegename":
           registerController
+                  .resumeExtractModel
+                  .resumeData!
+                  .education!
+                  .college !=
+              null&& registerController
               .resumeExtractModel
               .resumeData!
               .education!
-              .college!
-              .first
-              .institution ??
-          "",
+              .college!.isNotEmpty
+          ? registerController
+                    .resumeExtractModel
+                    .resumeData!
+                    .education!
+                    .college!
+                    .first
+                    .institution ??
+                ""
+          : "",
 
       "studcollegestartyear":
           registerController
+                  .resumeExtractModel
+                  .resumeData!
+                  .education!
+                  .college !=
+              null&& registerController
               .resumeExtractModel
               .resumeData!
               .education!
-              .college!
-              .first
-              .startYear
-              ?.toString() ??
-          "",
+              .college!.isNotEmpty
+          ? registerController
+                    .resumeExtractModel
+                    .resumeData!
+                    .education!
+                    .college!
+                    .first
+                    .startYear
+                    ?.toString() ??
+                ""
+          : "",
 
       "studcollegelocation": "",
 
@@ -588,7 +635,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       //   (registerController.resumeExtractModel.resumeData?.skills ?? [])
       //       .map((skill) => [skill])
       //       .toList(),
-      "studprogramminglang": registerController.resumeExtractModel.resumeData?.skills ?? [],
+      "studprogramminglang":
+          registerController.resumeExtractModel.resumeData?.skills ?? [],
       "linkedIn":
           registerController
               .resumeExtractModel
@@ -659,14 +707,14 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+            registerController.sendMobileOtpModel.message ??
             "OTP sent to your mobile!",
         isError: false,
       );
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
-        registerController.commonPostModel.message ??
+        registerController.sendMobileOtpModel.message ??
             "Something went wrong. Please try again!",
       );
     }
@@ -680,14 +728,14 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+            registerController.verifyMobileOtpModel.message ??
             "OTP verified successfully!",
         isError: false,
       );
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
-        registerController.commonPostModel.message ??
+        registerController.verifyMobileOtpModel.message ??
             "Something went wrong. Please try again!",
       );
     }
@@ -698,14 +746,14 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+            registerController.sendEmailOtpModel.message ??
             "OTP sent to your Email!",
         isError: false,
       );
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
-        registerController.commonPostModel.message ??
+        registerController.sendEmailOtpModel.message ??
             "Something went wrong. Please try again!",
       );
     }
@@ -719,14 +767,14 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
         message:
-            registerController.commonPostModel.message ??
+            registerController.verifyEmailOtpModel.message ??
             "OTP verified successfully!",
         isError: false,
       );
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
-        registerController.commonPostModel.message ??
+        registerController.verifyEmailOtpModel.message ??
             "Something went wrong. Please try again!",
       );
     }
