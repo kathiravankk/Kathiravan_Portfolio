@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
+import 'package:internsharks/app/modules/home/view/intern_syllabus_screen.dart';
 import 'package:internsharks/app/modules/home/view/resume_template_preview_screen.dart';
 import 'package:internsharks/app/modules/home/view/search_all_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/category_wise_internship_screen.dart';
@@ -11,6 +12,7 @@ import 'package:internsharks/app/modules/home/view/profile_screen.dart';
 import 'package:internsharks/app/modules/home/view/recommented_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/resume_file_view_screen.dart';
 import 'package:internsharks/app/modules/home/view/saved_internship_screen.dart';
+import 'package:internsharks/app/modules/home/view/syllabus_view_screen.dart';
 import 'package:internsharks/app/modules/home/view/trendy_category_screen.dart';
 import 'package:internsharks/app/modules/login/bindings/login_bindings.dart';
 import 'package:internsharks/app/modules/login/view/chat_resume_creation_screen.dart';
@@ -209,6 +211,14 @@ class AppPages {
       name: AppRoutes.resumeFileViewScreen,
       page: () => ResumeFileViewScreen(),
       bindings: [ProfileBindings()],
+    ),
+    appPage(
+      name: AppRoutes.internshipSyllabusScreen,
+      page: () => InternSyllabusScreen(),
+    ),
+    appPage(
+      name: AppRoutes.syllabusViewScreen,
+      page: () => SyllabusViewScreen(),
     ),
 
     // OTHER SCREEN

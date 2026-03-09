@@ -9,6 +9,8 @@ class AppColors {
   static const Color lightColorText = Color.fromRGBO(204, 204, 204, 1);
   static const Color disableButtonColor = Color.fromRGBO(104, 104, 104, 1);
   static const Color contBorderColor = Color.fromRGBO(198, 195, 195, 0.19);
+  static const Color contBorderColor2 = Color.fromRGBO(50, 50, 50, 1);
+  static const Color contColor2 = Color.fromRGBO(24, 24, 27, 1);
   static const Color blackGradient1 = Color.fromRGBO(31, 38, 38, 1);
   static const Color lightHintText = Color.fromRGBO(73, 69, 79, 1);
   static const Color lightBlackText2 = Color.fromRGBO(44, 43, 43, 1);
@@ -30,10 +32,12 @@ class AppColors {
   static const Color contLightColor = Color.fromRGBO(72, 77, 47, 1);
   static const Color lightRedColor = Color.fromRGBO(83, 48, 48, 1);
   static const Color darkText = Color.fromRGBO(123, 125, 128, 1);
+  static const Color lightText = Color.fromRGBO(188, 188, 188, 1);
   static const Color fieldBorderColor = Color.fromRGBO(253, 253, 253, 0.3);
   static const Color whiteColor = Colors.white;
   static const Color blackColor = Colors.black;
   static const Color greyColor = Colors.grey;
+  static const Color codeColor = Colors.greenAccent;
   static const Color transparentColor = Colors.transparent;
   static const Color failBgColor = Color.fromRGBO(254, 226, 226,1);
   static const Color failTextColor = Color.fromRGBO(220, 38, 38,1);

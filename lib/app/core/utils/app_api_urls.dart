@@ -75,5 +75,6 @@ class AppApiUrls {
   // INTERNSHIP FLOW
 
   static String getInternshipData(String studentId) => "${baseUrl}getall?studentId=$studentId";
+  static String getSyllabusData(String jobId) => "${baseUrl}syllabus/$jobId";
 
 }

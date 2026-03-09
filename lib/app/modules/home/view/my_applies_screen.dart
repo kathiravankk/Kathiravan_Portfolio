@@ -38,7 +38,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
 
   Future<void> getInternshipData() async {
     studentId = await LocalStorageService.getStudentId();
-    print(studentId);
+    debugPrint(studentId);
     await dashboardController.getAppliedInternship(studentId: studentId!);
     if (dashboardController.getResponseCode() == 200 ||
         dashboardController.getResponseCode() == 201) {
@@ -48,65 +48,68 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.blackColor,
-      appBar: AppBar(
+    return RefreshIndicator(
+      backgroundColor: AppColors.appBgColor_2,
+      color: AppColors.primaryColor,
+      onRefresh: () => getInternshipData(),
+      child: Scaffold(
         backgroundColor: AppColors.blackColor,
-        elevation: 0,
-        automaticallyImplyActions: false,
-        centerTitle: true,
-        title: Text(
-          "My Applies",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
+        appBar: AppBar(
+          backgroundColor: AppColors.blackColor,
+          elevation: 0,
+          automaticallyImplyActions: false,
+          centerTitle: true,
+          title: Text(
+            "My Applies",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
           ),
         ),
-      ),
-      body: Obx(
-        () => dashboardController.appliedInternshipLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
-            : appliedList!.isNotEmpty
-            ? ListView.separated(
-                separatorBuilder: (context, index) => SizedBox(height: 10),
-                itemCount: appliedList!.length,
-                shrinkWrap: true,
-                padding: EdgeInsets.all(15),
-                itemBuilder: (context, index) {
-                  final item = appliedList![index];
-                  return AppliesInternshipCard(
-                    viewFunc: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.applicationStatusScreen,
-                        arguments: {"appliedData": item},
-                      );
-                    },
-                    role: item.jobData != null ? item.jobData!.title : "",
-                    companyName: item.jobData != null
-                        ? item.jobData!.companyName
-                        : "",
-                    companyLocation: item.jobData != null
-                        ? item.jobData!.companyCity
-                        : "",
-                    companyDescription: item.jobData != null
-                        ? item.jobData!.aboutCompany
-                        : "",
-                    appliedOn: item.jobData != null
-                        ? item.createdAt
-                        : "",
-                    companyLogo: item.jobData != null
-                        ? item.jobData!.companyLogo
-                        : "",
-                  );
-                },
-              )
-            : CustomEmptyWidget(),
+        body: Obx(
+          () => dashboardController.appliedInternshipLoading
+              ? Center(
+                  child: CupertinoActivityIndicator(
+                    color: AppColors.secondaryColor,
+                  ),
+                )
+              : appliedList!.isNotEmpty
+              ? ListView.separated(
+                  separatorBuilder: (context, index) => SizedBox(height: 10),
+                  itemCount: appliedList!.length,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(15),
+                  itemBuilder: (context, index) {
+                    final item = appliedList![index];
+                    return AppliesInternshipCard(
+                      viewFunc: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.applicationStatusScreen,
+                          arguments: {"appliedData": item},
+                        );
+                      },
+                      role: item.jobData != null ? item.jobData!.title : "",
+                      companyName: item.jobData != null
+                          ? item.jobData!.companyName
+                          : "",
+                      companyLocation: item.jobData != null
+                          ? item.jobData!.companyCity
+                          : "",
+                      companyDescription: item.jobData != null
+                          ? item.jobData!.aboutCompany
+                          : "",
+                      appliedOn: item.jobData != null ? item.createdAt : "",
+                      companyLogo: item.jobData != null
+                          ? item.jobData!.companyLogo
+                          : "",
+                    );
+                  },
+                )
+              : CustomEmptyWidget(),
+        ),
       ),
     );
   }
