@@ -22,6 +22,18 @@ class AppFunctions {
     Get.toNamed(screenName, arguments: arguments);
   }
 
+  static Future<dynamic> navigateFutureScreen(
+      BuildContext context,
+      String screenName, {
+        dynamic arguments,
+      }) async {
+    FocusScope.of(context).unfocus();
+    return await Get.toNamed(
+      screenName,
+      arguments: arguments,
+    );
+  }
+
   static void navigateInitialScreen(
     BuildContext context,
     String screenName, {

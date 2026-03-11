@@ -37,6 +37,7 @@ class AppRoutes {
 
   static const internshipSyllabusScreen = '/internshipSyllabusScreen';
   static const syllabusViewScreen = '/syllabusViewScreen';
+  static const mcqTestScreen = '/mcqTestScreen';
 
 
 

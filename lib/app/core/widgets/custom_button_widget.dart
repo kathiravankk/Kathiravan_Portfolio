@@ -37,13 +37,13 @@ class CustomButtonWidget extends StatelessWidget {
         style: ButtonStyle(
           elevation: WidgetStatePropertyAll(0),
           backgroundColor: WidgetStatePropertyAll(
-            disable ? AppColors.greyColor : bgColor,
+            disable ? AppColors.disableButtonColor2 : bgColor,
           ),
           padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10)),
           maximumSize: WidgetStatePropertyAll(Size(double.infinity, 40)),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: AppColors.primaryColor),
+              side: BorderSide(width: 1, color: disable ? AppColors.transparentColor :AppColors.primaryColor),
               borderRadius: BorderRadius.all(Radius.circular(25)),
             ),
           ),

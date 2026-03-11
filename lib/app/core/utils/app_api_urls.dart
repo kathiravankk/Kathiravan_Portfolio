@@ -76,5 +76,8 @@ class AppApiUrls {
 
   static String getInternshipData(String studentId) => "${baseUrl}getall?studentId=$studentId";
   static String getSyllabusData(String jobId) => "${baseUrl}syllabus/$jobId";
+  static String getInternshipStatus = "${baseUrl}getjob/getapplicationstatus";
+  static String updateWeeklyStatus = "${baseUrl}getjob/application/update-week";
+  static String generateMcqQuestions = "${baseUrl}generate-mcq";
 
 }
