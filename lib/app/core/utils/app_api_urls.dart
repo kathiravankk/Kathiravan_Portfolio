@@ -79,5 +79,8 @@ class AppApiUrls {
   static String getInternshipStatus = "${baseUrl}getjob/getapplicationstatus";
   static String updateWeeklyStatus = "${baseUrl}getjob/application/update-week";
   static String generateMcqQuestions = "${baseUrl}generate-mcq";
+  static String validateMcqAnswer = "${baseUrl}checktestscore";
+  static String addFeedbackReview = "${baseUrl}job/review";
+  static String saveTestResult = "${baseUrl}savetestresult";
 
 }

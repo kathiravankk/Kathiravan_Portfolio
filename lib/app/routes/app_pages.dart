@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
 import 'package:internsharks/app/modules/home/view/intern_syllabus_screen.dart';
+import 'package:internsharks/app/modules/home/view/mcq_result_review_screen.dart';
 import 'package:internsharks/app/modules/home/view/mcq_test_screen.dart';
 import 'package:internsharks/app/modules/home/view/resume_template_preview_screen.dart';
 import 'package:internsharks/app/modules/home/view/search_all_internship_screen.dart';
@@ -221,9 +222,10 @@ class AppPages {
       name: AppRoutes.syllabusViewScreen,
       page: () => SyllabusViewScreen(),
     ),
+    appPage(name: AppRoutes.mcqTestScreen, page: () => McqTestScreen()),
     appPage(
-      name: AppRoutes.mcqTestScreen,
-      page: () => McqTestScreen(),
+      name: AppRoutes.mcqResultReviewScreen,
+      page: () => McqResultReviewScreen(),
     ),
 
     // OTHER SCREEN

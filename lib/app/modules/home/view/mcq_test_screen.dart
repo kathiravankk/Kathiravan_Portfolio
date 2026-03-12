@@ -5,6 +5,10 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
+import 'package:internsharks/app/modules/home/controller/internship_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+
+import '../../../core/utils/app_functions.dart' show AppFunctions;
 
 class McqTestScreen extends StatefulWidget {
   const McqTestScreen({super.key});
@@ -14,19 +18,28 @@ class McqTestScreen extends StatefulWidget {
 }
 
 class _McqTestScreenState extends State<McqTestScreen> {
+  final InternshipController internController =
+      Get.find<InternshipController>();
   List<QuestionDataModel> allQuestions = [];
 
   int currentQuestionIndex = 0;
   String selectedOption = "";
 
   Timer? timer;
-  int totalSeconds = 0;
+  int totalSeconds = 450;
+
+  List<String> answers = [];
+
+  String jobId = "";
+  String studentId = "";
 
   @override
   void initState() {
     super.initState();
 
     McqQuestionModel model = Get.arguments["mockTestModel"];
+    jobId = Get.arguments["jobId"] ?? "";
+    studentId = Get.arguments["studentId"];
 
     prepareQuestions(model);
     startTimer();
@@ -38,18 +51,21 @@ class _McqTestScreenState extends State<McqTestScreen> {
       ...(model.page2 ?? []),
       ...(model.page3 ?? []),
     ];
+
+    answers = List.filled(allQuestions.length, "");
   }
 
   void startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        totalSeconds++;
-      });
+      if (totalSeconds == 0) {
+        timer.cancel();
+        submitTest();
+      } else {
+        setState(() {
+          totalSeconds--;
+        });
+      }
     });
-  }
-
-  void stopTimer() {
-    timer?.cancel();
   }
 
   String get formattedTime {
@@ -57,6 +73,10 @@ class _McqTestScreenState extends State<McqTestScreen> {
     int seconds = totalSeconds % 60;
 
     return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+  }
+
+  void stopTimer() {
+    timer?.cancel();
   }
 
   double get progressValue {
@@ -68,16 +88,62 @@ class _McqTestScreenState extends State<McqTestScreen> {
     if (currentQuestionIndex < allQuestions.length - 1) {
       setState(() {
         currentQuestionIndex++;
-        selectedOption = "";
+        selectedOption = answers[currentQuestionIndex];
       });
     } else {
-      stopTimer();
+      submitTest();
+    }
+  }
 
-      Get.snackbar(
-        "Test Completed",
-        "You finished the mock test",
-        backgroundColor: Colors.black,
-        colorText: Colors.white,
+  Future<void> submitTest() async {
+    stopTimer();
+    Map<String, dynamic> answerData = {
+      "answers": answers,
+      "questions": allQuestions,
+    };
+    debugPrint(answerData.toString());
+    await internController.validateMcqAnswer(answerData: answerData);
+    if (internController.getResponseCode() == 200 ||
+        internController.getResponseCode() == 201 ||
+        internController.testResultModel.success == true) {
+      Map<String, dynamic> testData = {
+        "jobId": jobId,
+        "testresult": internController.testResultModel.testResult!.toJson(),
+      };
+      debugPrint(testData.toString(), wrapWidth: 1024);
+      await saveTestResult(testData: testData);
+      // AppFunctions.showToast(message: "Your Test Submitted Successfully!");
+    } else {
+      AppFunctions.apiErrorHandling(
+        internController.getResponseCode(),
+        "Something went wrong!, Try again later!",
+      );
+    }
+  }
+
+  Future<void> saveTestResult({required Map<String, dynamic> testData}) async {
+    await internController.saveTestResult(testData: testData);
+    if (internController.getResponseCode() == 200 ||
+        internController.getResponseCode() == 201) {
+      AppFunctions.showToast(
+        message:
+            internController.saveTestModel.message ??
+            "Test Submitted Successfully!",
+      );
+      // AppFunctions.navigateScreen(
+      //   context,
+      //   AppRoutes.mcqResultReviewScreen,
+      //   arguments: {
+      //     "testDuration": formattedTime,
+      //     "jobId": jobId,
+      //     "studentId": studentId,
+      //   },
+      // );
+    } else {
+      AppFunctions.apiErrorHandling(
+        internController.getResponseCode(),
+        internController.saveTestModel.message ??
+            "Something went wrong, Try again later!",
       );
     }
   }
@@ -89,6 +155,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
       onTap: () {
         setState(() {
           selectedOption = key;
+          answers[currentQuestionIndex] = key;
         });
       },
       child: Container(
@@ -145,100 +212,169 @@ class _McqTestScreenState extends State<McqTestScreen> {
 
     QuestionDataModel question = allQuestions[currentQuestionIndex];
 
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async {
+        if (currentQuestionIndex > 0) {
+          setState(() {
+            currentQuestionIndex--;
+            selectedOption = answers[currentQuestionIndex];
+          });
+          return false;
+        } else {
+          AppFunctions.showAppAlert(
+            context: context,
+            title: "Exit Test",
+            content:
+                "If you go back now, your test will be cancelled and answers will not be submitted.\n\nDo you want to exit the test?",
+            cancelText: "Stay Here",
+            confirmText: "Exit Test",
+            onConfirm: () {
+              stopTimer();
+              Get.back();
+            },
+          );
+          return false;
+        }
+      },
+      child: Scaffold(
         backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 25,
-            color: AppColors.whiteColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.appBgColor_2,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 25,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () {
+              if (currentQuestionIndex > 0) {
+                setState(() {
+                  currentQuestionIndex--;
+                  selectedOption = answers[currentQuestionIndex];
+                });
+              } else {
+                AppFunctions.showAppAlert(
+                  context: context,
+                  title: "Exit Test",
+                  content:
+                      "If you go back now, your test will be cancelled and answers will not be submitted.\n\nDo you want to exit the test?",
+                  cancelText: "Stay Here",
+                  confirmText: "Exit Test",
+                  onConfirm: () {
+                    stopTimer();
+                    Get.back();
+                  },
+                );
+              }
+            },
           ),
-          onPressed: () => Get.back(),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 15,
-          children: [
-            Text(
-              "Progress",
-              style: AppStyles.customTextStyle(
-                size: 16,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w500,
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 15,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Question ${currentQuestionIndex + 1} of ${allQuestions.length}",
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.secondaryColor,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      formattedTime,
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.primaryColor,
-                        weight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-
-                LinearProgressIndicator(
-                  borderRadius: BorderRadius.circular(5),
-                  value: progressValue,
-                  backgroundColor: AppColors.dividerContColor,
+        body: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 15,
+            children: [
+              Text(
+                "Progress",
+                style: AppStyles.customTextStyle(
+                  size: 16,
                   color: AppColors.whiteColor,
-                  minHeight: 6,
+                  weight: FontWeight.w500,
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            Text(
-              question.question ?? "",
-              style: AppStyles.customTextStyle(
-                lineSpace: 1.3,
-                size: 16,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w700,
               ),
-            ),
-            const SizedBox(height: 5),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 15,
 
-            optionTile("A", question.options?.a),
-            optionTile("B", question.options?.b),
-            optionTile("C", question.options?.c),
-            optionTile("D", question.options?.d),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Question ${currentQuestionIndex + 1} of ${allQuestions.length}",
+                        style: AppStyles.customTextStyle(
+                          size: 14,
+                          color: AppColors.secondaryColor,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        formattedTime,
+                        style: AppStyles.customTextStyle(
+                          size: 14,
+                          color: AppColors.primaryColor,
+                          weight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
 
-            const Spacer(),
-            CustomButtonWidget(
-              disable: selectedOption.isEmpty,
-              height: 45,
-              buttonFunction: () {
-                selectedOption.isEmpty ? null : nextQuestion();
-              },
-              buttonText: "Next",
-            ),
+                  LinearProgressIndicator(
+                    borderRadius: BorderRadius.circular(5),
+                    value: progressValue,
+                    backgroundColor: AppColors.dividerContColor,
+                    color: AppColors.whiteColor,
+                    minHeight: 6,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
 
-            const SizedBox(height: 20),
-          ],
+              Text(
+                question.question ?? "",
+                style: AppStyles.customTextStyle(
+                  lineSpace: 1.3,
+                  size: 16,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 5),
+
+              optionTile("A", question.options?.a),
+              optionTile("B", question.options?.b),
+              optionTile("C", question.options?.c),
+              optionTile("D", question.options?.d),
+
+              const Spacer(),
+              Obx(
+                () => CustomButtonWidget(
+                  isLoading:
+                      internController.validateMcqAnswerLoading ||
+                      internController.saveTestLoading,
+                  disable: selectedOption.isEmpty,
+                  height: 45,
+                  buttonFunction: () async {
+                    if (currentQuestionIndex == allQuestions.length - 1) {
+                      AppFunctions.showAppAlert(
+                        context: context,
+                        title: "Complete Test",
+                        content:
+                            "Are you sure you want to complete this test?\n\n"
+                            "Remaining Time: $formattedTime\n\n"
+                            "You can go back and review your answers before submitting.",
+                        cancelText: "Review",
+                        confirmText: "Submit",
+                        onConfirm: () async {
+                          await submitTest();
+                        },
+                      );
+                    } else {
+                      nextQuestion();
+                    }
+                  },
+                  buttonText: currentQuestionIndex == allQuestions.length - 1
+                      ? "Complete the Test"
+                      : "Next",
+                ),
+              ),
+
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

@@ -320,7 +320,6 @@ class _InternSyllabusScreenState extends State<InternSyllabusScreen> {
                 title: "Mock Test Instructions",
                 content:
                     "This mock test contains 15 questions.\n\n"
-                    "Each question has 30 seconds.\n"
                     "Total test duration is 7 minutes 30 seconds.\n\n"
                     "Please feel free to attend the test.\n"
                     "Once the time is up, your answers will be automatically submitted.",
@@ -429,7 +428,11 @@ class _InternSyllabusScreenState extends State<InternSyllabusScreen> {
       AppFunctions.navigateScreen(
         context,
         AppRoutes.mcqTestScreen,
-        arguments: {"mockTestModel": internController.mcqQuesModel},
+        arguments: {
+          "mockTestModel": internController.mcqQuesModel,
+          "jobId": internController.syllabusModel.syllabusData!.job,
+          "studentId": internController.syllabusModel.syllabusData!.student,
+        },
       );
     }
   }

@@ -34,6 +34,12 @@ class AppColors {
   static const Color greyIcon = Color.fromRGBO(113, 113, 113, 1);
   static const Color contLightColor = Color.fromRGBO(72, 77, 47, 1);
   static const Color lightRedColor = Color.fromRGBO(83, 48, 48, 1);
+  static const Color correctBg = Color.fromRGBO(34, 197, 94, 0.1);
+  static const Color correctText = Color.fromRGBO(34, 197, 94, 1);
+  static const Color correctBorder = Color.fromRGBO(34, 197, 94, 0.3);
+  static const Color inCorrectBg = Color.fromRGBO(239, 68, 68, 0.1);
+  static const Color inCorrectText = Color.fromRGBO(239, 68, 68, 1);
+  static const Color inCorrectBorder = Color.fromRGBO(239, 68, 68, 0.3);
   static const Color darkText = Color.fromRGBO(123, 125, 128, 1);
   static const Color lightText = Color.fromRGBO(188, 188, 188, 1);
   static const Color disableContBorder = Color.fromRGBO(51, 65, 85, 1);
@@ -52,6 +58,7 @@ class AppColors {
   static const Color gradientColor1 = Color.fromRGBO(24, 20, 16, 1);
   static const Color gradientColor2 = Color.fromRGBO(1, 205, 205, 0);
   static const Color lightTextColor = Color.fromRGBO(255, 255, 255, 0.23);
+  static const Color contLightText = Color.fromRGBO(107, 114, 128, 1);
   static const Color gradientColor3 = Color(0xff161e16);
 static const Color iconBgColor = Color(0xFF123B34);
 static const Color iconContColor = Color(0xFF192226);

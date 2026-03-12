@@ -2,10 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_status_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
+import 'package:internsharks/app/data/models/internship/save_test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/syllabus_data_model.dart';
+import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/weekly_update_model.dart';
 
 class InternshipProvider {
@@ -130,6 +133,75 @@ class InternshipProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return McqQuestionModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VALIDATE MCQ ANSWERS
+
+  Future<TestResultModel> validateMcqAnswer({
+    required Map<String, dynamic>? answerData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.validateMcqAnswer,
+        options: Options(headers: header),
+        data: answerData,
+      );
+      responseStatus = response.statusCode!;
+      return TestResultModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return TestResultModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VALIDATE MCQ ANSWERS
+
+  Future<AddReviewDataModel> giveFeedBackReview({
+    required Map<String, dynamic>? feedBackData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.addFeedbackReview,
+        options: Options(headers: header),
+        data: feedBackData,
+      );
+      responseStatus = response.statusCode!;
+      return AddReviewDataModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return AddReviewDataModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VALIDATE MCQ ANSWERS
+
+  Future<SaveTestResultModel> saveTestResult({
+    required Map<String, dynamic>? testData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.saveTestResult,
+        options: Options(headers: header),
+        data: testData,
+      );
+      responseStatus = response.statusCode!;
+      return SaveTestResultModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return SaveTestResultModel.fromJson(err.response!.data);
     }
   }
 }

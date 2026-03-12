@@ -1,8 +1,11 @@
 import 'package:get/get.dart';
+import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_status_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
+import 'package:internsharks/app/data/models/internship/save_test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/syllabus_data_model.dart';
+import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/weekly_update_model.dart';
 import 'package:internsharks/app/data/providers/internship_provider.dart';
 
@@ -174,6 +177,98 @@ class InternshipController extends GetxController {
       getMcqQuestionLoading = false;
     } catch (err) {
       getMcqQuestionLoading = false;
+      rethrow;
+    }
+  }
+
+  // VALIDATE MCQ TEST
+
+  // Loading
+
+  final _validateMcqAnswerLoading = false.obs;
+
+  bool get validateMcqAnswerLoading => _validateMcqAnswerLoading.value;
+
+  set validateMcqAnswerLoading(bool value) => _validateMcqAnswerLoading.value = value;
+
+  // Model
+
+  final _testResultModel = TestResultModel().obs;
+
+  TestResultModel get testResultModel => _testResultModel.value;
+
+  set testResultModel(TestResultModel value) =>
+      _testResultModel.value = value;
+
+  Future<void> validateMcqAnswer({
+    required Map<String, dynamic> answerData,
+  }) async {
+    try {
+      validateMcqAnswerLoading = true;
+      testResultModel = await internshipProvider!.validateMcqAnswer(
+        answerData: answerData,
+      );
+      validateMcqAnswerLoading = false;
+    } catch (err) {
+      validateMcqAnswerLoading = false;
+      rethrow;
+    }
+  }
+
+  // GIVE FEEDBACK REVIEW
+
+  // Loading
+
+  final _feedBackLoading = false.obs;
+
+  bool get feedBackLoading => _feedBackLoading.value;
+
+  set feedBackLoading(bool value) => _feedBackLoading.value = value;
+
+  //Model
+
+  final _reviewModel = AddReviewDataModel().obs;
+
+  AddReviewDataModel get reviewModel => _reviewModel.value;
+
+  set reviewModel(AddReviewDataModel value) => _reviewModel.value = value;
+
+  Future<void> giveFeedBackReview({required Map<String, dynamic> feedBackData}) async {
+    try {
+      feedBackLoading = true;
+      reviewModel = await internshipProvider!.giveFeedBackReview(feedBackData: feedBackData);
+      feedBackLoading = false;
+    } catch (err) {
+      feedBackLoading = false;
+      rethrow;
+    }
+  }
+
+  // SAVE TEST RESULT
+
+  // Loading
+
+  final _saveTestLoading = false.obs;
+
+  bool get saveTestLoading => _saveTestLoading.value;
+
+  set saveTestLoading(bool value) => _saveTestLoading.value = value;
+
+  //Model
+
+  final _saveTestModel = SaveTestResultModel().obs;
+
+  SaveTestResultModel get saveTestModel => _saveTestModel.value;
+
+  set saveTestModel(SaveTestResultModel value) => _saveTestModel.value = value;
+
+  Future<void> saveTestResult({required Map<String, dynamic> testData}) async {
+    try {
+      saveTestLoading = true;
+      saveTestModel = await internshipProvider!.saveTestResult(testData: testData);
+      saveTestLoading = false;
+    } catch (err) {
+      saveTestLoading = false;
       rethrow;
     }
   }
