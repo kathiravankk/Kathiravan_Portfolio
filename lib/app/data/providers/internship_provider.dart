@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
+import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_status_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
@@ -48,7 +49,7 @@ class InternshipProvider {
 
   // GET INTERNSHIP SYLLABUS DATA
 
-  Future<SyllabusDataModel> fetchSyllabusData({required String jobId}) async {
+  Future<InternSyllabusResponseModel> fetchSyllabusData({required String jobId}) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
@@ -59,10 +60,10 @@ class InternshipProvider {
         options: Options(headers: header),
       );
       responseStatus = response.statusCode!;
-      return SyllabusDataModel.fromJson(response.data);
+      return InternSyllabusResponseModel.fromJson(response.data);
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
-      return SyllabusDataModel.fromJson(err.response!.data);
+      return InternSyllabusResponseModel.fromJson(err.response!.data);
     }
   }
 
@@ -101,7 +102,7 @@ class InternshipProvider {
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.put(
-        AppApiUrls.updateWeeklyStatus,
+        AppApiUrls.updateDailyStatus,
         options: Options(headers: header),
         data: weelyData,
       );
@@ -116,7 +117,7 @@ class InternshipProvider {
   // GET MCQ QUESTIONS
 
   Future<McqQuestionModel> fetchMcqQuestions({
-    required List<WeeklyData>? weekData,
+    required List<dynamic>? weekData,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {

@@ -50,7 +50,9 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+
+
+      canPop: false,
       child: Scaffold(
         backgroundColor: AppColors.appBgColor_2,
         floatingActionButton: CustomButtonWidget(

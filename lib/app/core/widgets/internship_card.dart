@@ -53,58 +53,62 @@ class InternshipCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
           color: AppColors.whiteColor,
         ),
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(15),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.lightWhiteCont,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Text(
-                  AppFunctions.convertPostedDate(postedDate),
-                  style: AppStyles.customTextStyle(
-                    size: 10,
-                    weight: FontWeight.w400,
-                    color: AppColors.blackLight,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    role.capitalize!,
+                    style: AppStyles.customTextStyle(
+                      color: AppColors.disableButtonColor2,
+                      size: 16,
+                      weight: FontWeight.w700,
+                    ),
                   ),
-                ),
+                  IconButton(
+                    onPressed: saveFunc!,
+                    icon: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.lightWhiteCont,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: EdgeInsets.all(5),
+                      child: Icon(
+                        isSaved ? Icons.bookmark : Icons.bookmark_border,
+                        color: isSaved
+                            ? AppColors.secondaryColor
+                            : AppColors.greyIcon,
+                        size: 25,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    spacing: 5,
+                    spacing: 10,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        role.capitalize!,
+                        companyName.capitalize!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: AppStyles.customTextStyle(
-                          color: AppColors.primaryColor,
                           size: 14,
-                          weight: FontWeight.w700,
+                          weight: FontWeight.w500,
+                          color: AppColors.selectedContColor,
                         ),
                       ),
                       Row(
                         spacing: 8,
                         children: [
-                          SizedBox(
-                            width: 210,
-                            child: Text(
-                              companyName.capitalize!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppStyles.customTextStyle(
-                                size: 10,
-                                weight: FontWeight.w400,
-                                color: AppColors.selectedContColor,
-                              ),
-                            ),
-                          ),
                           Icon(
                             Icons.location_on_outlined,
                             size: 15,
@@ -113,10 +117,92 @@ class InternshipCard extends StatelessWidget {
                           Text(
                             internshipMode,
                             style: AppStyles.customTextStyle(
-                              size: 8,
+                              size: 12,
                               weight: FontWeight.w700,
                               color: AppColors.primaryColor,
                             ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            spacing: 10,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Education: ",
+                                        style: AppStyles.customTextStyle(
+                                          size: 10,
+                                          weight: FontWeight.w400,
+                                          color: AppColors.primaryColor,
+                                        ),
+                                      ),
+                                      Text(
+                                        qualification,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: AppStyles.customTextStyle(
+                                          size: 10,
+                                          weight: FontWeight.w400,
+                                          color: AppColors.navBarColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(width: 20),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Available: ",
+                                        style: AppStyles.customTextStyle(
+                                          size: 10,
+                                          weight: FontWeight.w400,
+                                          color: AppColors.primaryColor,
+                                        ),
+                                      ),
+                                      Text(
+                                        eligibility,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: AppStyles.customTextStyle(
+                                          size: 10,
+                                          weight: FontWeight.w400,
+                                          color: AppColors.navBarColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              // Row(
+                              //   children: [
+                              //     Text(
+                              //       "*Skills: ",
+                              //       style: AppStyles.customTextStyle(
+                              //         size: 8,
+                              //         weight: FontWeight.w400,
+                              //         color: AppColors.primaryColor,
+                              //       ),
+                              //     ),
+                              //     Text(
+                              //       skillList.join(', '),
+                              //       maxLines: 2,
+                              //       overflow: TextOverflow.ellipsis,
+                              //       style: AppStyles.customTextStyle(
+                              //         size: 8,
+                              //         lineSpace: 1.3,
+                              //         weight: FontWeight.w400,
+                              //         color: AppColors.navBarColor,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                            ],
                           ),
                         ],
                       ),
@@ -134,8 +220,8 @@ class InternshipCard extends StatelessWidget {
                     child: ClipOval(
                       child: Image.network(
                         imageUrl,
-                        height: 40,
-                        width: 40,
+                        height: 50,
+                        width: 50,
                         fit: BoxFit.cover,
                         //color: AppColors.whiteColor,
                         errorBuilder: (context, error, stackTrace) =>
@@ -166,17 +252,17 @@ class InternshipCard extends StatelessWidget {
                 ],
               ),
 
-              Text(
-                description,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: AppStyles.customTextStyle(
-                  size: 8,
-                  lineSpace: 1.3,
-                  weight: FontWeight.w400,
-                  color: AppColors.blackColor,
-                ),
-              ),
+              // Text(
+              //   description,
+              //   maxLines: 2,
+              //   overflow: TextOverflow.ellipsis,
+              //   style: AppStyles.customTextStyle(
+              //     size: 8,
+              //     lineSpace: 1.3,
+              //     weight: FontWeight.w400,
+              //     color: AppColors.blackColor,
+              //   ),
+              // ),
               Row(
                 spacing: 10,
                 children: [
@@ -191,13 +277,13 @@ class InternshipCard extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.access_time,
-                          size: 10,
+                          size: 12,
                           color: AppColors.greyIcon,
                         ),
                         Text(
                           "Duration : $duration",
                           style: AppStyles.customTextStyle(
-                            size: 8,
+                            size: 10,
                             weight: FontWeight.w400,
                             color: AppColors.blackLight,
                           ),
@@ -210,18 +296,19 @@ class InternshipCard extends StatelessWidget {
                       color: AppColors.lightWhiteCont,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     child: Row(
+                      spacing: 6,
                       children: [
                         const Icon(
                           Icons.currency_rupee,
-                          size: 10,
+                          size: 12,
                           color: AppColors.greyIcon,
                         ),
                         Text(
                           "Stipend : $stipendRupees",
                           style: AppStyles.customTextStyle(
-                            size: 8,
+                            size: 10,
                             weight: FontWeight.w400,
                             color: AppColors.blackLight,
                           ),
@@ -231,111 +318,39 @@ class InternshipCard extends StatelessWidget {
                   ),
                 ],
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Column(
-                      spacing: 10,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Education: ",
-                                    style: AppStyles.customTextStyle(
-                                      size: 8,
-                                      weight: FontWeight.w400,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      qualification,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppStyles.customTextStyle(
-                                        size: 8,
-                                        weight: FontWeight.w400,
-                                        color: AppColors.navBarColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Available: ",
-                                    style: AppStyles.customTextStyle(
-                                      size: 8,
-                                      weight: FontWeight.w400,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      eligibility,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppStyles.customTextStyle(
-                                        size: 8,
-                                        weight: FontWeight.w400,
-                                        color: AppColors.navBarColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "*Skills: ",
-                              style: AppStyles.customTextStyle(
-                                size: 8,
-                                weight: FontWeight.w400,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                skillList.join(', '),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: AppStyles.customTextStyle(
-                                  size: 8,
-                                  lineSpace: 1.3,
-                                  weight: FontWeight.w400,
-                                  color: AppColors.navBarColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.lightWhiteCont,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                    child: Text(
+                      "Posted ${AppFunctions.convertPostedDate(postedDate)}",
+                      style: AppStyles.customTextStyle(
+                        size: 10,
+                        weight: FontWeight.w500,
+                        color: AppColors.blackLight,
+                      ),
                     ),
                   ),
-
-                  /// Bookmark button
-                  IconButton(
-                    onPressed: saveFunc!,
-                    icon: Icon(
-                      isSaved ? Icons.bookmark : Icons.bookmark_border,
-                      color: AppColors.secondaryColor,
-                      size: 30,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.selectedContColor,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(5),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.whiteColor,
+                      size: 25,
                     ),
                   ),
                 ],
-              )            ],
+              ),
+            ],
           ),
         ),
       ),

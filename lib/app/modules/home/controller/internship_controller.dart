@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
+import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_status_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
@@ -60,11 +61,11 @@ class InternshipController extends GetxController {
 
   // Model
 
-  final _syllabusModel = SyllabusDataModel().obs;
+  final _syllabusModel = InternSyllabusResponseModel().obs;
 
-  SyllabusDataModel get syllabusModel => _syllabusModel.value;
+  InternSyllabusResponseModel get syllabusModel => _syllabusModel.value;
 
-  set syllabusModel(SyllabusDataModel value) => _syllabusModel.value = value;
+  set syllabusModel(InternSyllabusResponseModel value) => _syllabusModel.value = value;
 
   Future<void> getSyllabusData({required String jobId}) async {
     try {
@@ -132,7 +133,7 @@ class InternshipController extends GetxController {
   set weeklyUpdateModel(WeeklyUpdateModel value) =>
       _weeklyUpdateModel.value = value;
 
-  Future<void> updateInternWeeklyStatus({
+  Future<void> updateInternDailyStatus({
     required Map<String, dynamic> weeklyData,
   }) async {
     try {
@@ -167,7 +168,7 @@ class InternshipController extends GetxController {
       _mcqQuesModel.value = value;
 
   Future<void> getMcqQuestions({
-    required List<WeeklyData>? weekData,
+    required List<dynamic>? weekData,
   }) async {
     try {
       getMcqQuestionLoading = true;

@@ -54,6 +54,7 @@ class AppColors {
   static const Color failBgColor = Color.fromRGBO(254, 226, 226,1);
   static const Color failTextColor = Color.fromRGBO(220, 38, 38,1);
   static const Color sucTextColor = Color.fromRGBO(22, 163, 74,1);
+  static const Color completedColor = Color.fromRGBO(9, 99, 4, 1);
   static const Color sucBgColor = Color.fromRGBO(220, 252, 231,1);
   static const Color gradientColor1 = Color.fromRGBO(24, 20, 16, 1);
   static const Color gradientColor2 = Color.fromRGBO(1, 205, 205, 0);

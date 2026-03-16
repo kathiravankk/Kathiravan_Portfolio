@@ -27,16 +27,16 @@ class InternSyllabusCard extends StatelessWidget {
       ),
       padding: EdgeInsets.all(15),
       child: Column(
-        spacing: 10,
+        spacing: 15,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 130,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColors.gradientColor3,
-            ),
-          ),
+          // Container(
+          //   height: 130,
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(20),
+          //     color: AppColors.gradientColor3,
+          //   ),
+          // ),
           Text(
             title,
             style: AppStyles.customTextStyle(
@@ -107,6 +107,6 @@ class InternSyllabusCard extends StatelessWidget {
   }
 
   static String getWeek(int week) {
-    return week <= 1 ? "$week Week" : "$week Weeks";
+    return week <= 1 ? "$week Day" : "$week Days";
   }
 }

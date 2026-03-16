@@ -108,9 +108,16 @@ class _McqTestScreenState extends State<McqTestScreen> {
         internController.testResultModel.success == true) {
       Map<String, dynamic> testData = {
         "jobId": jobId,
-        "testresult": internController.testResultModel.testResult!.toJson(),
+        //"testresult": internController.testResultModel.testResult!.toJson(),
+        "testresult": {
+          "correct_answer":
+              internController.testResultModel.testResult!.correctAnswer,
+          "score": internController.testResultModel.testResult!.score,
+          "stars": internController.testResultModel.testResult!.stars,
+        },
       };
       debugPrint(testData.toString(), wrapWidth: 1024);
+
       await saveTestResult(testData: testData);
       // AppFunctions.showToast(message: "Your Test Submitted Successfully!");
     } else {
@@ -130,15 +137,15 @@ class _McqTestScreenState extends State<McqTestScreen> {
             internController.saveTestModel.message ??
             "Test Submitted Successfully!",
       );
-      // AppFunctions.navigateScreen(
-      //   context,
-      //   AppRoutes.mcqResultReviewScreen,
-      //   arguments: {
-      //     "testDuration": formattedTime,
-      //     "jobId": jobId,
-      //     "studentId": studentId,
-      //   },
-      // );
+      AppFunctions.navigateScreen(
+        context,
+        AppRoutes.mcqResultReviewScreen,
+        arguments: {
+          "testDuration": formattedTime,
+          "jobId": jobId,
+          "studentId": studentId,
+        },
+      );
     } else {
       AppFunctions.apiErrorHandling(
         internController.getResponseCode(),

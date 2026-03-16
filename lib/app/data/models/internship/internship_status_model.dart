@@ -34,10 +34,10 @@ class StatusData {
   String? student;
   String? recruiter;
   String? status;
-  int? currentWeek;
+  int? currentDay;
   String? jobMessage;
-  List<dynamic>? internProjectLink;
-  List<dynamic>? weeklyProgress;
+  List<String>? internProjectLink;
+  List<DailyProgress>? dailyProgress;
   String? createdAt;
   String? updatedAt;
   int? v;
@@ -48,10 +48,10 @@ class StatusData {
     this.student,
     this.recruiter,
     this.status,
-    this.currentWeek,
+    this.currentDay,
     this.jobMessage,
     this.internProjectLink,
-    this.weeklyProgress,
+    this.dailyProgress,
     this.createdAt,
     this.updatedAt,
     this.v,
@@ -63,10 +63,20 @@ class StatusData {
     student = json['student'];
     recruiter = json['recruiter'];
     status = json['status'];
-    currentWeek = json['currentWeek'];
+    currentDay = json['currentDay'];
     jobMessage = json['jobmessage'];
-    internProjectLink = json['internProjectlink'];
-    weeklyProgress = json['weeklyProgress'];
+
+    if (json['internProjectlink'] != null) {
+      internProjectLink = List<String>.from(json['internProjectlink']);
+    }
+
+    if (json['dailyProgress'] != null) {
+      dailyProgress = [];
+      json['dailyProgress'].forEach((v) {
+        dailyProgress!.add(DailyProgress.fromJson(v));
+      });
+    }
+
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     v = json['__v'];
@@ -79,13 +89,48 @@ class StatusData {
     data['student'] = student;
     data['recruiter'] = recruiter;
     data['status'] = status;
-    data['currentWeek'] = currentWeek;
+    data['currentDay'] = currentDay;
     data['jobmessage'] = jobMessage;
     data['internProjectlink'] = internProjectLink;
-    data['weeklyProgress'] = weeklyProgress;
+
+    if (dailyProgress != null) {
+      data['dailyProgress'] = dailyProgress!.map((v) => v.toJson()).toList();
+    }
+
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
     data['__v'] = v;
+
+    return data;
+  }
+}
+
+class DailyProgress {
+  int? dayNumber;
+  String? status;
+  String? completedAt;
+  String? id;
+
+  DailyProgress({
+    this.dayNumber,
+    this.status,
+    this.completedAt,
+    this.id,
+  });
+
+  DailyProgress.fromJson(Map<String, dynamic> json) {
+    dayNumber = json['dayNumber'];
+    status = json['status'];
+    completedAt = json['completedAt'];
+    id = json['_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['dayNumber'] = dayNumber;
+    data['status'] = status;
+    data['completedAt'] = completedAt;
+    data['_id'] = id;
     return data;
   }
 }

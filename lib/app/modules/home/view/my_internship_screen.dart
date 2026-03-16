@@ -80,13 +80,16 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
                     return InternSyllabusCard(
                       title: item.subject ?? "NA",
                       subTitle: "Introduction to Software Developer",
-                      totalWeeks: item.totalWeeks ?? 0,
+                      totalWeeks: item.totalDays ?? 0,
                       totalTopics: item.meta!.totalTopics ?? 0,
                       viewFunc: () {
                         AppFunctions.navigateScreen(
                           context,
                           AppRoutes.internshipSyllabusScreen,
-                          arguments: {"jobId": item.job, "studentId": item.student},
+                          arguments: {
+                            "jobId": item.job,
+                            "studentId": item.student,
+                          },
                         );
                       },
                     );

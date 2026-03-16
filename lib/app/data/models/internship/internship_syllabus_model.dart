@@ -41,6 +41,8 @@ class SyllabusData {
   String? subject;
   int? months;
   int? totalWeeks;
+  int? totalMonth;
+  int? totalDays;
   Meta? meta;
   List<WeeklyData>? data;
   String? createdAt;
@@ -60,6 +62,8 @@ class SyllabusData {
     this.createdAt,
     this.updatedAt,
     this.iV,
+    this.totalDays,
+    this.totalMonth,
   });
 
   SyllabusData.fromJson(Map<String, dynamic> json) {
@@ -70,6 +74,8 @@ class SyllabusData {
     subject = json['subject'];
     months = json['months'];
     totalWeeks = json['total_weeks'];
+    totalMonth = json['total_month'];
+    totalDays = json['total_days'];
 
     meta = json['meta'] != null ? Meta.fromJson(json['meta']) : null;
 
@@ -95,6 +101,8 @@ class SyllabusData {
       "data": data?.map((e) => e.toJson()).toList(),
       "createdAt": createdAt,
       "updatedAt": updatedAt,
+      "total_month": totalMonth,
+      "total_days": totalDays,
       "__v": iV,
     };
   }

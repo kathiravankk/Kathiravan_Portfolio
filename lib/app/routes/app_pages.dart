@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
 import 'package:internsharks/app/modules/home/view/intern_syllabus_screen.dart';
+import 'package:internsharks/app/modules/home/view/internship_syllabus_screen.dart';
 import 'package:internsharks/app/modules/home/view/mcq_result_review_screen.dart';
 import 'package:internsharks/app/modules/home/view/mcq_test_screen.dart';
 import 'package:internsharks/app/modules/home/view/resume_template_preview_screen.dart';
@@ -14,6 +15,7 @@ import 'package:internsharks/app/modules/home/view/profile_screen.dart';
 import 'package:internsharks/app/modules/home/view/recommented_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/resume_file_view_screen.dart';
 import 'package:internsharks/app/modules/home/view/saved_internship_screen.dart';
+import 'package:internsharks/app/modules/home/view/syllabus_detail_view_screen.dart';
 import 'package:internsharks/app/modules/home/view/syllabus_view_screen.dart';
 import 'package:internsharks/app/modules/home/view/trendy_category_screen.dart';
 import 'package:internsharks/app/modules/login/bindings/login_bindings.dart';
@@ -216,11 +218,11 @@ class AppPages {
     ),
     appPage(
       name: AppRoutes.internshipSyllabusScreen,
-      page: () => InternSyllabusScreen(),
+      page: () => InternshipSyllabusScreen(),
     ),
     appPage(
       name: AppRoutes.syllabusViewScreen,
-      page: () => SyllabusViewScreen(),
+      page: () => SyllabusDetailViewScreen(),
     ),
     appPage(name: AppRoutes.mcqTestScreen, page: () => McqTestScreen()),
     appPage(

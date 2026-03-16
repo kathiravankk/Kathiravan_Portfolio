@@ -1,7 +1,10 @@
 class AppApiUrls {
   // BASE URL
-  static const String baseUrl = "https://fulupo.selfietoons.com/api/";
+  static const String baseUrl = newBaseUrl;
+  static const String oldBaseUrl = "https://fulupo.selfietoons.com/api/";
+  static const String newBaseUrl = "https://dev.api.internsharks.ai/api/";
   static const String devServer = "https://fulupo.selfietoons.com/";
+  static const String prodServer = "https://fulupo.selfietoons.com/";
 
   // LOGIN URLS
   static const String sendLoginOtp = "${baseUrl}stulogin/request-mobile-otp";
@@ -42,9 +45,13 @@ class AppApiUrls {
       "${baseUrl}getjob/appliedjob/$studentId";
 
   //static String getReviewData(String jobId) => "${baseUrl}job/$jobId/reviews";
-  static String getReviewData(String jobId) => "${baseUrl}job/reviews?jobId=$jobId";
+  static String getReviewData(String jobId) =>
+      "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
-  static String updateChatResume = "${baseUrl}updatemessage";
+  static String updateChatResume =
+      "${baseUrl}updat"
+      ""
+      "emessage";
 
   static String getAllInternship(
     String state,
@@ -74,13 +81,15 @@ class AppApiUrls {
 
   // INTERNSHIP FLOW
 
-  static String getInternshipData(String studentId) => "${baseUrl}getall?studentId=$studentId";
+  static String getInternshipData(String studentId) =>
+      "${baseUrl}getall?studentId=$studentId";
+
   static String getSyllabusData(String jobId) => "${baseUrl}syllabus/$jobId";
   static String getInternshipStatus = "${baseUrl}getjob/getapplicationstatus";
-  static String updateWeeklyStatus = "${baseUrl}getjob/application/update-week";
+  //static String updateWeeklyStatus = "${baseUrl}getjob/application/update-week";
+  static String updateDailyStatus = "${baseUrl}getjob/application/update-day";
   static String generateMcqQuestions = "${baseUrl}generate-mcq";
   static String validateMcqAnswer = "${baseUrl}checktestscore";
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
-
 }
