@@ -6,7 +6,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/feedback_widget.dart';
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
-import 'package:internsharks/app/modules/home/controller/internship_controller.dart';
+import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class McqResultReviewScreen extends StatefulWidget {

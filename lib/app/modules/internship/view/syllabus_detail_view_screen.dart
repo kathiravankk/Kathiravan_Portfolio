@@ -6,7 +6,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/code_example_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
-import 'package:internsharks/app/modules/home/controller/internship_controller.dart';
+import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 
 class SyllabusDetailViewScreen extends StatefulWidget {
   const SyllabusDetailViewScreen({super.key});

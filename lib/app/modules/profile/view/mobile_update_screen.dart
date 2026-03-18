@@ -8,20 +8,20 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
-import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 
-class EmailUpdateScreen extends StatefulWidget {
-  const EmailUpdateScreen({super.key});
+class MobileUpdateScreen extends StatefulWidget {
+  const MobileUpdateScreen({super.key});
 
   @override
-  State<EmailUpdateScreen> createState() => _EmailUpdateScreenState();
+  State<MobileUpdateScreen> createState() => _MobileUpdateScreenState();
 }
 
-class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
-  final TextEditingController newEmailController = TextEditingController();
+class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
+  final TextEditingController newMobileController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
-  final TextEditingController currentEmailController = TextEditingController();
+  final TextEditingController currentMobileController = TextEditingController();
 
   final ProfileController profileController = Get.find<ProfileController>();
 
@@ -30,15 +30,15 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
   @override
   void initState() {
     super.initState();
-    currentEmailController.text =
-        profileController.profileDataModel.studEmail ?? "";
+    currentMobileController.text =
+        profileController.profileDataModel.studMobileNo ?? "";
   }
 
   bool isisOtpSent = false;
 
   @override
   void dispose() {
-    newEmailController.dispose();
+    newMobileController.dispose();
     otpController.dispose();
     super.dispose();
   }
@@ -92,7 +92,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
                           width: 100,
                         ),
                         Text(
-                          "Enter a new Email to secure your account!",
+                          "Enter a new number to secure your account!",
                           style: AppStyles.customTextStyle(
                             size: 16,
                             color: AppColors.secondaryColor,
@@ -102,7 +102,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
                         SizedBox(height: 10),
                         CustomTextField(
                           prefixWidget: Icon(
-                            CupertinoIcons.mail,
+                            CupertinoIcons.phone,
                             color: AppColors.primaryColor,
                             size: 23,
                           ),
@@ -111,20 +111,19 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
                             color: AppColors.sucTextColor,
                             size: 20,
                           ),
-                          controller: currentEmailController,
-                          labelText: "Current Email Address",
+                          controller: currentMobileController,
+                          labelText: "Current Mobile Number",
                           isEnabled: false,
                           onChanged: (value) {},
                         ),
                         CustomTextField(
-                          isNumberKeyboard: false,
                           prefixWidget: Icon(
-                            CupertinoIcons.mail,
+                            CupertinoIcons.phone,
                             color: AppColors.primaryColor,
                             size: 23,
                           ),
-                          controller: newEmailController,
-                          labelText: "New Email Address",
+                          controller: newMobileController,
+                          labelText: "New Mobile Number",
                           onChanged: (value) {},
                         ),
                         Visibility(
@@ -146,30 +145,30 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
                         !isisOtpSent
                             ? CustomButtonWidget(
                                 isLoading:
-                                    profileController.emailOtpSendLoading,
+                                    profileController.mobileOtpSendLoading,
                                 width: 300,
                                 buttonFunction: () {
-                                  final validationMessage =
-                                      AppFunctions.validateEmail(
-                                        newEmail: newEmailController.text,
-                                        currentEmail:
-                                            currentEmailController.text,
-                                      );
-
-                                  if (validationMessage != null) {
+                                  if (newMobileController.text.isEmpty) {
                                     AppFunctions.showToast(
-                                      message: validationMessage,
+                                      message: 'Please enter a mobile number!',
+                                      isError: true,
+                                    );
+                                  } else if (newMobileController.text ==
+                                      currentMobileController.text) {
+                                    AppFunctions.showToast(
+                                      message:
+                                          'New number must be different from current!',
                                       isError: true,
                                     );
                                   } else {
-                                    sendEmailOtp();
+                                    sendMobileOtp();
                                   }
                                 },
                                 buttonText: "Send OTP",
                               )
                             : CustomButtonWidget(
                                 isLoading:
-                                    profileController.emailOtpVerifyLoading ||
+                                    profileController.mobileOtpVerifyLoading ||
                                     registerController.updateProfileLoading,
                                 width: 300,
                                 buttonFunction: () {
@@ -183,7 +182,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
                                     verifyMobileOtp();
                                   }
                                 },
-                                buttonText: "Verify & Update",
+                                buttonText: "Verify & update",
                               ),
                         SizedBox(height: 20),
                       ],
@@ -195,15 +194,17 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
     );
   }
 
-  Future<void> sendEmailOtp() async {
-    await profileController.sendUpdateEmailOtp(email: newEmailController.text);
+  Future<void> sendMobileOtp() async {
+    await profileController.sendUpdateMobileOtp(
+      mobileNo: newMobileController.text,
+    );
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       isisOtpSent = true;
       AppFunctions.showToast(
         message:
             profileController.commonPostModel.message ??
-            "OTP sent to your Email!",
+            "OTP sent to your mobile number!",
       );
     } else {
       AppFunctions.apiErrorHandling(
@@ -214,8 +215,8 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
   }
 
   Future<void> verifyMobileOtp() async {
-    await profileController.verifyUpdateEmailOtp(
-      email: newEmailController.text,
+    await profileController.verifyUpdateMobileOtp(
+      mobileNo: newMobileController.text,
       otpNo: otpController.text,
     );
     if (profileController.getResponseCode() == 200 ||
@@ -223,7 +224,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
       AppFunctions.showToast(
         message:
             profileController.commonPostModel.message ??
-            "OTP Verified & Email updated successfully",
+            "OTP Verified & Mobile updated successfully",
       );
       await updateProfileFunc();
     } else {
@@ -238,7 +239,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
   Future<void> updateProfileFunc() async {
     String? studentId = await LocalStorageService.getStudentId() ?? "";
     Map<String, dynamic> updateData = {
-      "studemail": newEmailController.text,
+      "studmobileno": newMobileController.text,
       "stuid": studentId,
     };
     await registerController.updateStudentProfileData(updateData: updateData);
@@ -251,7 +252,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
       AppFunctions.showToast(
         message:
             registerController.updateProfileModel.message ??
-            "Your Email updated successfully!",
+            "Your Mobile updated successfully!",
       );
       Get.back();
     } else {

@@ -1,10 +1,18 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 import 'package:internsharks/app/data/providers/profile_provider.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:internsharks/app/modules/home/view/resume_template_preview_screen.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ProfileController extends GetxController {
   final ProfileProvider? profileProvider;
@@ -12,6 +20,47 @@ class ProfileController extends GetxController {
   ProfileController(this.profileProvider);
 
   int getResponseCode() => profileProvider!.responseStatus;
+
+  WebViewController? webViewController;
+
+  var isResumeLoading = true.obs;
+
+  Future<void> initResumeWebView(
+    ExtractedResumeDataModel resumeData,
+    int templateId,
+  ) async {
+    try {
+      isResumeLoading.value = true;
+
+      final template = templates.firstWhere((e) => e.id == templateId);
+
+      webViewController = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageFinished: (_) async {
+              final jsonData = jsonEncode(resumeData.toJson());
+              await webViewController!.runJavaScript(
+                "renderResume($jsonData);",
+              );
+
+              isResumeLoading.value = false;
+            },
+          ),
+        );
+
+      final html = await rootBundle.loadString(template.htmlPath);
+      await webViewController!.loadHtmlString(html);
+    } catch (e) {
+      isResumeLoading.value = false;
+      debugPrint("WebView init error: $e");
+    }
+  }
+
+  Future<void> _loadHtml(String path) async {
+    final html = await rootBundle.loadString(path);
+    await webViewController!.loadHtmlString(html);
+  }
 
   // GET STUDENT PROFILE DATA
 
@@ -256,8 +305,7 @@ class ProfileController extends GetxController {
 
   FilterOptionModel get filterModel => _filterModel.value;
 
-  set filterModel(FilterOptionModel value) =>
-      _filterModel.value = value;
+  set filterModel(FilterOptionModel value) => _filterModel.value = value;
 
   Future<void> getFilterOption() async {
     try {
@@ -266,6 +314,37 @@ class ProfileController extends GetxController {
       filterLoading = false;
     } catch (err) {
       filterLoading = false;
+      rethrow;
+    }
+  }
+
+  // GENERATE RESUME BANNER
+
+  // Loading
+
+  final _resDpLoading = false.obs;
+
+  bool get resDpLoading => _resDpLoading.value;
+
+  set resDpLoading(bool value) => _resDpLoading.value = value;
+
+  // Model
+
+  final _resDpModel = BannerGenerationModel().obs;
+
+  BannerGenerationModel get resDpModel => _resDpModel.value;
+
+  set resDpModel(BannerGenerationModel value) => _resDpModel.value = value;
+
+  Future<void> generateResDp({required Map<String, dynamic> bannerData}) async {
+    try {
+      resDpLoading = true;
+      resDpModel = await profileProvider!.resDpGeneration(
+        bannerData: bannerData,
+      );
+      resDpLoading = false;
+    } catch (err) {
+      resDpLoading = false;
       rethrow;
     }
   }

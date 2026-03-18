@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
@@ -217,6 +218,28 @@ class ProfileProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return FilterOptionModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GENERATE AI BANNER
+
+  Future<BannerGenerationModel> resDpGeneration({required Map<String, dynamic> bannerData}) async {
+    Map<String, dynamic> header = await AppApiHeader.formDataHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      final formData = FormData.fromMap(bannerData);
+      Response response = await client!.post(
+        AppApiUrls.generateResDp,
+        options: Options(headers: header),
+        data: formData
+      );
+      responseStatus = response.statusCode!;
+      return BannerGenerationModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return BannerGenerationModel.fromJson(err.response!.data);
     }
   }
 }

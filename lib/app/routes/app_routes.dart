@@ -32,6 +32,7 @@ class AppRoutes {
   static const chatResumeUpdateScreen = '/chatResumeUpdateScreen';
   static const allInternshipScreen = '/allInternshipScreen';
   static const resumeTemplatePreviewScreen = '/resumeTemplatePreviewScreen';
+  static const profileEditScreen = '/profileEditScreen';
 
   // INTERNSHIP FLOW
 

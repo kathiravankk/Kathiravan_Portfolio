@@ -5,7 +5,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
-import 'package:internsharks/app/modules/home/controller/internship_controller.dart';
+import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 import '../../../core/utils/app_functions.dart' show AppFunctions;

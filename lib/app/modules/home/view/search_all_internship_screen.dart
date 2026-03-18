@@ -9,7 +9,7 @@ import 'package:internsharks/app/core/widgets/filter_bottom_sheet.dart';
 import 'package:internsharks/app/core/widgets/internship_card.dart';
 import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
-import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class SearchAllInternshipScreen extends StatefulWidget {

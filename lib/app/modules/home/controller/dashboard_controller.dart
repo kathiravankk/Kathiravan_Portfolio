@@ -11,7 +11,7 @@ import 'package:internsharks/app/data/models/home/review_data_model.dart';
 import 'package:internsharks/app/data/models/home/similar_internship_model.dart';
 import 'package:internsharks/app/data/models/home/update_chat_model.dart';
 import 'package:internsharks/app/data/providers/dashboard_provider.dart';
-import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 
 class DashboardController extends GetxController {
   final DashboardProvider? dashboardProvider;

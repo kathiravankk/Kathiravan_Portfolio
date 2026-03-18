@@ -9,7 +9,7 @@ import 'package:internsharks/app/core/widgets/internship_card.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
 import 'package:internsharks/app/data/models/home/category_wise_internship_model.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
-import 'package:internsharks/app/modules/home/controller/profile_controller.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class CategoryWiseInternshipScreen extends StatefulWidget {

@@ -11,6 +11,7 @@ class CustomTextField extends StatelessWidget {
   final String labelText;
   final String? prefixText;
   final int maxLength;
+  final int maxLines;
   final double? width;
   final bool isEnabled;
   final bool isProfileFlow;
@@ -26,6 +27,7 @@ class CustomTextField extends StatelessWidget {
     this.isNumberKeyboard = true,
     this.hintText = "",
     this.onChanged,
+    this.maxLines= 1,
     this.width,
     this.prefixText,
     this.maxLength = 300,
@@ -53,6 +55,7 @@ class CustomTextField extends StatelessWidget {
           constraints: BoxConstraints(minHeight: 40),
           width: width != null ? width! : double.maxFinite,
           child: TextField(
+            maxLines: maxLines,
             controller: controller,
             onChanged: onChanged,
             maxLength: isNumberKeyboard ? 10 :maxLength,

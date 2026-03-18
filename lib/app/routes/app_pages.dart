@@ -1,22 +1,21 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
-import 'package:internsharks/app/modules/home/view/intern_syllabus_screen.dart';
-import 'package:internsharks/app/modules/home/view/internship_syllabus_screen.dart';
-import 'package:internsharks/app/modules/home/view/mcq_result_review_screen.dart';
-import 'package:internsharks/app/modules/home/view/mcq_test_screen.dart';
+import 'package:internsharks/app/modules/internship/view/internship_syllabus_screen.dart';
+import 'package:internsharks/app/modules/internship/view/mcq_result_review_screen.dart';
+import 'package:internsharks/app/modules/internship/view/mcq_test_screen.dart';
 import 'package:internsharks/app/modules/home/view/resume_template_preview_screen.dart';
 import 'package:internsharks/app/modules/home/view/search_all_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/category_wise_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/chat_resume_update_screen.dart';
 import 'package:internsharks/app/modules/home/view/dashboard_screen.dart';
 import 'package:internsharks/app/modules/home/view/internship_detail_screen.dart';
-import 'package:internsharks/app/modules/home/view/profile_screen.dart';
+import 'package:internsharks/app/modules/profile/view/profile_edit_screen.dart';
+import 'package:internsharks/app/modules/profile/view/profile_screen.dart';
 import 'package:internsharks/app/modules/home/view/recommented_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/resume_file_view_screen.dart';
 import 'package:internsharks/app/modules/home/view/saved_internship_screen.dart';
-import 'package:internsharks/app/modules/home/view/syllabus_detail_view_screen.dart';
-import 'package:internsharks/app/modules/home/view/syllabus_view_screen.dart';
+import 'package:internsharks/app/modules/internship/view/syllabus_detail_view_screen.dart';
 import 'package:internsharks/app/modules/home/view/trendy_category_screen.dart';
 import 'package:internsharks/app/modules/login/bindings/login_bindings.dart';
 import 'package:internsharks/app/modules/login/view/chat_resume_creation_screen.dart';
@@ -40,8 +39,8 @@ import '../../view/pages/others/200.dart';
 import '../modules/home/view/account_setting_screen.dart';
 import '../../view/pages/others/appPreferences_age.dart';
 import '../modules/home/view/application_status_screen.dart';
-import '../modules/home/view/email_update_screen.dart';
-import '../modules/home/view/mobile_update_screen.dart';
+import '../modules/profile/view/email_update_screen.dart';
+import '../modules/profile/view/mobile_update_screen.dart';
 import '../../view/pages/others/internship_details_page.dart';
 import '../modules/home/view/manage_resume_screen.dart';
 import '../../view/pages/others/my_application_page.dart';
@@ -228,6 +227,10 @@ class AppPages {
     appPage(
       name: AppRoutes.mcqResultReviewScreen,
       page: () => McqResultReviewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.profileEditScreen,
+      page: () => ProfileEditScreen(),
     ),
 
     // OTHER SCREEN

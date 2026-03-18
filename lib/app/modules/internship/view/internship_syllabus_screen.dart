@@ -7,7 +7,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
-import 'package:internsharks/app/modules/home/controller/internship_controller.dart';
+import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class InternshipSyllabusScreen extends StatefulWidget {
