@@ -92,42 +92,56 @@ class ProfileWidgets {
     ]),
   );
 
-  static Widget bsDropdown(
-      {required String? value,
-        String? hint,
-        required List<String> items,
-        required ValueChanged<String?> onChanged}) =>
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: BoxDecoration(
-            color: AppColors.fieldBgColor,
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColors.fieldBorderColor)),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: value,
-            hint: Text(hint ?? (items.isNotEmpty ? items.first : ''),
-                style: AppStyles.customTextStyle(
-                    fontFamily: 'Roboto', color: AppColors.whiteColor, size: 14, weight: FontWeight.w500)),
-            isExpanded: true,
-            dropdownColor: AppColors.fieldBgColor,
+  static Widget bsDropdown({
+    required String? value,
+    String? hint,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    final validValue = items.contains(value) ? value : null;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: AppColors.fieldBgColor,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColors.fieldBorderColor),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: validValue, // ✅ FIX HERE
+          hint: Text(
+            hint ?? 'Select',
             style: AppStyles.customTextStyle(
-                fontFamily: 'Roboto', color: AppColors.whiteColor, size: 14, weight: FontWeight.w500),
-            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 20),
-            items: items
-                .map((e) => DropdownMenuItem(
-                value: e,
-                child: Text(e,
-                    style: AppStyles.customTextStyle(
-                        fontFamily: 'Roboto',
-                        color: AppColors.whiteColor,
-                        size: 14,
-                        weight: FontWeight.w500))))
-                .toList(),
-            onChanged: onChanged,
+              fontFamily: 'Roboto',
+              color: AppColors.whiteColor,
+              size: 14,
+              weight: FontWeight.w500,
+            ),
           ),
+          isExpanded: true,
+          dropdownColor: AppColors.fieldBgColor,
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+          items: items
+              .toSet() // ✅ prevent duplicates
+              .map((e) => DropdownMenuItem(
+            value: e,
+            child: Text(
+              e,
+              style: AppStyles.customTextStyle(
+                fontFamily: 'Roboto',
+                color: AppColors.whiteColor,
+                size: 14,
+                weight: FontWeight.w500,
+              ),
+            ),
+          ))
+              .toList(),
+          onChanged: onChanged,
         ),
-      );
+      ),
+    );
+  }
 
   static void showBottomSheet({
     required BuildContext context,

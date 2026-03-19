@@ -332,6 +332,9 @@ class RegisterProvider {
       );
       // Convert Map to FormData
       final formData = FormData.fromMap(updateData);
+      for (var f in formData.fields) {
+        debugPrint('${f.key} => ${f.value}');
+      }
 
       Response response = await client!
           .put(

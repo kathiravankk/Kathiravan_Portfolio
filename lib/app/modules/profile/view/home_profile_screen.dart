@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -13,6 +13,7 @@ import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:path_provider/path_provider.dart';
@@ -33,6 +34,7 @@ class HomeProfileScreen extends StatefulWidget {
 
 class _HomeProfileScreenState extends State<HomeProfileScreen> {
   final ProfileController profileController = Get.find<ProfileController>();
+  final registerController = Get.find<RegisterController>();
 
   @override
   void initState() {
@@ -42,6 +44,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
   String? studentId;
   int? templateNumber;
+  bool isLiked = false;
+  bool isDisliked = false;
   ExtractedResumeDataModel? resumeData;
   late WebViewController _controller;
   bool isLoading = true;
@@ -79,6 +83,22 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         AppFunctions.showToast(
           message: "Your AI Banner Generated Successfully!",
         );
+        await registerController.updateStudentProfileData(
+          updateData: {
+            "student_banner":
+                profileController.resDpModel.status!.imageUrl ?? "",
+          },
+        );
+        final code = registerController.getResponseCode();
+        if (code == 200 || code == 201) {
+          AppFunctions.showToast(message: 'Profile updated successfully!');
+          await getProfileData();
+        } else {
+          AppFunctions.showToast(
+            message: 'Failed to update. Please try again.',
+            isError: true,
+          );
+        }
       }
     } else {
       AppFunctions.apiErrorHandling(
@@ -472,89 +492,50 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                   padding: const EdgeInsets.all(15),
                   child: Column(
                     children: [
-                      Container(
-                        height: 180,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(AssetImages.resDpBannerImg),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.circular(15),
-                          border: Border.all(
-                            color: AppColors.creditBorderColor,
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(15),
-                        child: Stack(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      profileController.profileDataModel.studentBanner !=
+                                  null &&
+                              profileController
+                                  .profileDataModel
+                                  .studentBanner!
+                                  .isNotEmpty
+                          ? Stack(
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    aiPoweredContainer(),
-                                    likeShareContainer(),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  "Your Custom AI Banner",
-                                  style: AppStyles.customTextStyle(
-                                    size: 16,
-                                    color: AppColors.whiteColor,
-                                    weight: FontWeight.w700,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Image.network(
+                                    height: 180,
+                                    // loadingBuilder:
+                                    //     (context, child, loadingProgress) =>
+                                    //         CupertinoActivityIndicator(
+                                    //           color: AppColors.secondaryColor,
+                                    //         ),
+                                    profileController
+                                            .profileDataModel
+                                            .studentBanner ??
+                                        "",
+                                    fit: BoxFit.fill,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Icon(Icons.photo),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  "This is how your profile will look to \n recruiters and peers.",
-                                  style: AppStyles.customTextStyle(
-                                    size: 12,
-                                    color: AppColors.contLightText2,
-                                    weight: FontWeight.w400,
-                                    lineSpace: 1.3,
-                                  ),
-                                ),
-                                const Spacer(),
-
-                                CustomButtonWidget(
-                                  width: 175,
-                                  height: 35,
-                                  buttonFunction: () async {
-                                    await generateAiBanner();
-                                  },
-                                  buttonText: "Generate AI Banner",
-                                  buttonTextStyle: AppStyles.customTextStyle(
-                                    size: 12,
-                                    weight: FontWeight.w600,
-                                    color: AppColors.whiteColor,
+                                Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  left: 10,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      aiPoweredContainer(),
+                                      likeShareContainer(),
+                                    ],
                                   ),
                                 ),
                               ],
-                            ),
-
-                            Visibility(
-                              visible: profileController.resDpLoading,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black45,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Center(
-                                  child: CupertinoActivityIndicator(
-                                    color: AppColors.primaryColor,
-                                    radius: 14,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                            )
+                          : aiBannerContainer(),
                       SizedBox(height: 15),
-
                       Expanded(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15),
@@ -625,6 +606,94 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     );
   }
 
+  Widget aiBannerContainer() {
+    return Container(
+      height: 180,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.resDpBannerImg),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColors.creditBorderColor),
+      ),
+      padding: const EdgeInsets.all(15),
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  AppFunctions.showToast(
+                    message: "Generate your AI Banner First!",
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    aiPoweredContainer(),
+                    likeShareContainer(isBanner: true),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Your Custom AI Banner",
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "This is how your profile will look to \n recruiters and peers.",
+                style: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.contLightText2,
+                  weight: FontWeight.w400,
+                  lineSpace: 1.3,
+                ),
+              ),
+              const Spacer(),
+
+              CustomButtonWidget(
+                width: 175,
+                height: 35,
+                buttonFunction: () async {
+                  await generateAiBanner();
+                },
+                buttonText: "Generate AI Banner",
+                buttonTextStyle: AppStyles.customTextStyle(
+                  size: 12,
+                  weight: FontWeight.w600,
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ],
+          ),
+
+          Visibility(
+            visible: profileController.resDpLoading,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black45,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Center(
+                child: CupertinoActivityIndicator(
+                  color: AppColors.primaryColor,
+                  radius: 14,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _actionItem(IconData icon, String text, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -642,17 +711,17 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   Widget aiPoweredContainer() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.creditContColor,
+        color: AppColors.creditContColor.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(50),
         border: Border.all(color: AppColors.creditBorderColor),
       ),
-      padding: EdgeInsets.all(7),
+      padding: EdgeInsets.all(5),
       child: Row(
         children: [
           Text(
             "✨ AI POWERED",
             style: AppStyles.customTextStyle(
-              size: 10,
+              size: 8,
               weight: FontWeight.w500,
               color: AppColors.whiteColor,
             ),
@@ -662,23 +731,133 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     );
   }
 
-  Widget likeShareContainer() {
+  Widget likeShareContainer({bool isBanner = false}) {
+    final bannerUrl = profileController.profileDataModel.studentBanner ?? "";
+
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.creditContColor,
+        color: AppColors.creditContColor.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(50),
         border: Border.all(color: AppColors.creditBorderColor),
       ),
-      padding: EdgeInsetsGeometry.all(10),
+      padding: const EdgeInsets.all(5),
       child: Row(
-        spacing: 10,
+        spacing: 5,
         children: [
-          iconWidget(icon: Icons.thumb_up_alt_outlined, onTap: () {}),
-          iconWidget(icon: Icons.thumb_down_alt_outlined, onTap: () {}),
-          iconWidget(icon: Icons.share_outlined, onTap: () {}),
+          iconWidget(
+            icon: isLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined,
+            onTap: () {
+              if (isBanner) {
+                AppFunctions.showToast(
+                  message: "Generate your AI Banner First!",
+                  isError: true,
+                );
+                return;
+              }
+              setState(() {
+                isLiked = !isLiked;
+                if (isLiked) isDisliked = false;
+              });
+            },
+          ),
+          // iconWidget(
+          //   icon: isDisliked ? Icons.thumb_down : Icons.thumb_down_alt_outlined,
+          //   onTap: () {
+          //     if (isBanner) {
+          //       AppFunctions.showToast(
+          //         message: "Generate your AI Banner First!",
+          //         isError: true,
+          //       );
+          //       return;
+          //     }
+          //     setState(() {
+          //       isDisliked = !isDisliked;
+          //       if (isDisliked) isLiked = false;
+          //     });
+          //   },
+          // ),
+          iconWidget(
+            icon: Icons.share_outlined,
+            onTap: () async {
+              if (bannerUrl.isEmpty) {
+                AppFunctions.showToast(
+                  message: "No banner available!",
+                  isError: true,
+                );
+                return;
+              }
+              await _shareBannerImage(bannerUrl);
+            },
+          ),
+          iconWidget(
+            icon: Icons.download,
+            onTap: () async {
+              if (bannerUrl.isEmpty) {
+                AppFunctions.showToast(
+                  message: "No banner available!",
+                  isError: true,
+                );
+                return;
+              }
+              await _downloadBannerImage(bannerUrl);
+            },
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _shareBannerImage(String imageUrl) async {
+    try {
+      final response = await HttpClient().getUrl(Uri.parse(imageUrl));
+      final res = await response.close();
+
+      final bytes = await consolidateHttpClientResponseBytes(res);
+
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/banner.png');
+      await file.writeAsBytes(bytes);
+
+      await Share.shareXFiles([XFile(file.path)]);
+    } catch (e) {
+      AppFunctions.showToast(message: "Share failed", isError: true);
+    }
+  }
+
+  Future<void> _downloadBannerImage(String imageUrl) async {
+    try {
+      final hasPermission = await _requestStoragePermission();
+      if (!hasPermission) {
+        AppFunctions.showToast(message: "Permission denied", isError: true);
+        return;
+      }
+
+      final response = await HttpClient().getUrl(Uri.parse(imageUrl));
+      final res = await response.close();
+      final bytes = await consolidateHttpClientResponseBytes(res);
+
+      Directory downloadDir;
+
+      if (Platform.isAndroid) {
+        downloadDir = Directory('/storage/emulated/0/Download');
+      } else {
+        downloadDir = await getApplicationDocumentsDirectory();
+      }
+
+      if (!await downloadDir.exists()) {
+        await downloadDir.create(recursive: true);
+      }
+
+      final file = File(
+        '${downloadDir.path}/banner_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
+
+      await file.writeAsBytes(bytes);
+
+      AppFunctions.showToast(message: "Saved to Downloads");
+    } catch (e) {
+      AppFunctions.showToast(message: "Download failed", isError: true);
+    }
   }
 
   Widget iconWidget({required IconData icon, required VoidCallback onTap}) {

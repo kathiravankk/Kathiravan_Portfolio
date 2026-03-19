@@ -25,6 +25,7 @@ class ProfileDataModel {
   List<String>? studProgrammingLang;
   List<dynamic>? studentCertificate;
   String? studentResume;
+  String? profileSummary;
   List<String>? studentAadhar;
   List<String>? studentId;
   List<String>? areasOfInterest;
@@ -105,6 +106,7 @@ class ProfileDataModel {
     this.collegeStartYear,
     this.fieldOfStudy,
     this.studentDegree,
+    this.profileSummary
   });
 
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
@@ -112,6 +114,7 @@ class ProfileDataModel {
       education: EducationModel.fromJson(json['education'] ?? {}),
       id: json['_id'],
       studentName: json['studname'],
+      profileSummary: json['profile_summary']??"",
       studEmail: json['studemail'],
       studMobileNo: json['studmobileno'],
       studProgrammingLang: List<String>.from(json['studprogramminglang'] ?? []),

@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide MultipartFile;
+import 'package:http/http.dart' hide MultipartFile;
+import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/widgets/education_card.dart';
@@ -31,8 +33,6 @@ class ProfileEditScreen extends StatefulWidget {
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final profileController = Get.find<ProfileController>();
   final registerController = Get.find<RegisterController>();
-
-  final _dashCtrl = Get.find<DashboardController>();
 
   // Personal controllers
   final _nameCtrl = TextEditingController();
@@ -95,7 +95,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _mobileCtrl.text = p.studMobileNo ?? '';
     _linkedinCtrl.text = p.linkedIn ?? '';
     _websiteCtrl.text = p.github ?? '';
-    _bioCtrl.text = '';
+    _bioCtrl.text = p.profileSummary ??"";
     _profileImageUrl = p.studProfile;
 
     _certifications = (p.studentCertificate ?? [])
@@ -207,10 +207,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     } else {
       AppFunctions.showToast(message: 'Permission denied', isError: true);
     }
-
-
-
-
   }
 
   void _showPermissionDialog(String resource) {
@@ -326,9 +322,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Future<void> _saveAll() async {
     setState(() => _isSaving = true);
     try {
-      await registerController.updateStudentProfileData(
-        updateData: _buildPayload(),
-      );
+      final payload = await _buildPayload();
+      await registerController.updateStudentProfileData(updateData: payload);
       final code = registerController.getResponseCode();
       if (code == 200 || code == 201) {
         AppFunctions.showToast(message: 'Profile updated successfully!');
@@ -345,48 +340,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       if (mounted) setState(() => _isSaving = false);
     }
   }
-
-  Map<String, dynamic> _buildPayload() => {
-    'studname': _nameCtrl.text.trim(),
-    'studemail': _emailCtrl.text.trim(),
-    'studmobileno': _mobileCtrl.text.trim(),
-    'linkedIn': _linkedinCtrl.text.trim(),
-    'github': _websiteCtrl.text.trim(),
-    'profile_summary': _bioCtrl.text.trim(),
-    'studentcertificate': jsonEncode(_certifications),
-    'experience': jsonEncode(
-      _experiences
-          .map(
-            (e) => {
-              'role': e['role'],
-              'company': e['company'],
-              'duration': e['duration'],
-              'description': e['description'],
-            },
-          )
-          .toList(),
-    ),
-    'projects': jsonEncode(
-      _projects
-          .map(
-            (e) => {
-              'title': e['title'],
-              'description': [e['description']],
-            },
-          )
-          .toList(),
-    ),
-    'studprogramminglang': jsonEncode(_programmingSkills),
-    'tools_and_technologies': jsonEncode(_toolsSkills),
-    'studentdegree': _collegeData?['degree'] ?? '',
-    'studentfieldofstudy': _collegeData?['department'] ?? '',
-    'studentcollegename': _collegeData?['institution'] ?? '',
-    'studcollegestartyear': _collegeData?['start_year'] ?? '',
-    'studhighschollname': _higherSecData?['institution'] ?? '',
-    'studhighschoolpercentage': _higherSecData?['percentage'] ?? '',
-    'studentsecondaryschoolname': _secondaryData?['institution'] ?? '',
-    'studentsecondaryschoolpercentage': _secondaryData?['percentage'] ?? '',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -674,6 +627,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
                 // ── Save ──────────────────────────────────────────────────
                 CustomButtonWidget(
+                  isLoading: registerController.updateProfileLoading,
                   buttonFunction: () {
                     _isSaving ? null : _saveAll();
                   },
@@ -686,6 +640,133 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         }),
       ),
     );
+  }
+
+  Future<Map<String, dynamic>> _buildPayload() async {
+    dynamic multipartFile;
+    if (_pickedImage != null) {
+      multipartFile = await MultipartFile.fromFile(
+        _pickedImage!.path,
+        filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      );
+    }
+    final collegeArray = _collegeData != null
+        ? [
+            {
+              'degree': _collegeData!['degree'] ?? '',
+              'department': _collegeData!['department'] ?? '',
+              'institution': _collegeData!['institution'] ?? '',
+              'start_year': _collegeData!['start_year'] ?? '',
+              'end_year': _collegeData!['end_year'] ?? '',
+            },
+          ]
+        : [];
+    final higherSecArray = _higherSecData != null
+        ? [
+            {
+              'institution': _higherSecData!['institution'] ?? '',
+              'board': _higherSecData!['board'] ?? '',
+              'percentage': _higherSecData!['percentage'] ?? '',
+              'year_of_passing': _higherSecData!['year'] ?? '',
+            },
+          ]
+        : [];
+    final secondaryArray = _secondaryData != null
+        ? [
+            {
+              'institution': _secondaryData!['institution'] ?? '',
+              'board': _secondaryData!['board'] ?? '',
+              'percentage': _secondaryData!['percentage'] ?? '',
+              'year_of_passing': _secondaryData!['year'] ?? '',
+            },
+          ]
+        : [];
+    final educationObject = {
+      'school': {
+        'higher_secondary': _higherSecData != null
+            ? {
+                'institution': _higherSecData!['institution'] ?? '',
+                'board': _higherSecData!['board'] ?? '',
+                'percentage': _higherSecData!['percentage'] ?? '',
+                'year_of_passing': _higherSecData!['year'] ?? '',
+              }
+            : {},
+        'secondary': _secondaryData != null
+            ? {
+                'institution': _secondaryData!['institution'] ?? '',
+                'board': _secondaryData!['board'] ?? '',
+                'percentage': _secondaryData!['percentage'] ?? '',
+                'year_of_passing': _secondaryData!['year'] ?? '',
+              }
+            : {},
+      },
+      'college': collegeArray,
+    };
+    return {
+      if (multipartFile != null) 'studprofile': multipartFile,
+      'studname': _nameCtrl.text.trim(),
+      'studemail': _emailCtrl.text.trim(),
+      'studmobileno': _mobileCtrl.text.trim(),
+      'linkedIn': _linkedinCtrl.text.trim(),
+      'github': _websiteCtrl.text.trim(),
+      'portfolio_website': _websiteCtrl.text.trim(),
+      'profile_summary': _bioCtrl.text.trim(),
+      'studentdegree': _collegeData?['degree'] ?? '',
+      'studentfieldofstudy': _collegeData?['department'] ?? '',
+      'studentcollegename': _collegeData?['institution'] ?? '',
+      'studcollegestartyear': _collegeData?['start_year'] ?? '',
+      'studcollegeendyear': _collegeData?['end_year'] ?? '',
+      'studcollegelocation': '',
+      'studhighschollname': _higherSecData?['institution'] ?? '',
+      'studhighschoolpercentage': _higherSecData?['percentage'] ?? '',
+      'studhighschoollocation': '',
+      'studentsecondaryschoolname': _secondaryData?['institution'] ?? '',
+      'studentsecondaryschoolpercentage': _secondaryData?['percentage'] ?? '',
+      'studsecondaryschoollocation': '',
+      'college': jsonEncode(collegeArray),
+      'higher_secondary': jsonEncode(higherSecArray),
+      'secondary': jsonEncode(secondaryArray),
+      'education': jsonEncode(educationObject),
+      'studprogramminglang': jsonEncode(_programmingSkills),
+      'tools_and_technologies': jsonEncode(_toolsSkills),
+      'projects': jsonEncode(
+        _projects
+            .map(
+              (e) => {
+                'title': e['title'] ?? '',
+                'description': [e['description'] ?? ''],
+              },
+            )
+            .toList(),
+      ),
+      'experience': jsonEncode(
+        _experiences
+            .map(
+              (e) => {
+                'role': e['role'] ?? '',
+                'company': e['company'] ?? '',
+                'duration': e['duration'] ?? '',
+                'description': e['description'] ?? '',
+              },
+            )
+            .toList(),
+      ),
+      'studentcertificate': jsonEncode(_certifications),
+      'internships': jsonEncode([]),
+      'industrial_visits': jsonEncode([]),
+      'trainings': jsonEncode([]),
+      'paper_presentations': jsonEncode([]),
+      'areas_of_interest': jsonEncode([]),
+      'hobbies': jsonEncode([]),
+      'languages_known': jsonEncode([]),
+      'volunteer_experience': jsonEncode([]),
+      'leadership': jsonEncode([]),
+      'achievements': jsonEncode([]),
+      'publications': jsonEncode([]),
+      'workshops': jsonEncode([]),
+      //'student_banner': '',
+    };
   }
 
   // helper for personal-info fields
@@ -870,8 +951,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
     String selectedType = type;
     String courseType = 'Full time';
-    String? startYear = existing?['start_year'];
-    String? endYear = existing?['end_year'];
+    // String? startYear = existing?['start_year'];
+    // String? endYear = existing?['end_year'];
 
     final uniCtrl = TextEditingController(text: existing?['institution'] ?? '');
     final courseCtrl = TextEditingController(text: existing?['degree'] ?? '');
@@ -880,6 +961,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       text: existing?['percentage'] ?? '',
     );
     final years = List.generate(30, (i) => (2000 + i).toString());
+    String? startYear = existing?['start_year']?.toString();
+    String? endYear = existing?['end_year']?.toString();
+
+    if (!years.contains(startYear)) startYear = null;
+    if (!years.contains(endYear)) endYear = null;
 
     ProfileWidgets.showBottomSheet(
       context: context,

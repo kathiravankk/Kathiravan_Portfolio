@@ -1,12 +1,8 @@
-
-
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
-
 import '../utils/app_colors.dart' show AppColors;
 
 class ProfileAvatar extends StatelessWidget {
@@ -37,6 +33,7 @@ class ProfileAvatar extends StatelessWidget {
 
     return Center(
       child: Column(
+        spacing: 10,
         children: [
           GestureDetector(
             onTap: onTap,
@@ -80,7 +77,6 @@ class ProfileAvatar extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8),
           Text(
             name,
             style: AppStyles.customTextStyle(
