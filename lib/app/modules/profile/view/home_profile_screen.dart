@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -103,8 +104,10 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     } else {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),
-        profileController.resDpModel.status!.message ??
-            "Something went wrong!, try again later!",
+        profileController.resDpModel.status != null
+            ? profileController.resDpModel.status!.message ??
+                  "Something Went Wrong!, Try Again Later!"
+            : "Something went wrong!, try again later!",
       );
     }
   }
@@ -446,7 +449,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           profileController.profileDataModel.education!.school!.secondary,
     );
     templateNumber = int.parse(
-      profileController.profileDataModel.templateNumber!,
+      profileController.profileDataModel.templateNumber!.isEmpty
+          ? "1"
+          : profileController.profileDataModel.templateNumber ?? "1",
     );
     //await profileController.initResumeWebView(resumeData!, templateNumber!);
     _initWebview();
@@ -486,7 +491,18 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                       weight: FontWeight.w600,
                     ),
                   ),
-                  actions: [creditContainer(), const SizedBox(width: 20)],
+                  actions: [
+                    ProfileWidgets.creditContainer(
+                      creditCount:
+                          profileController
+                              .profileDataModel
+                              .studentCreditId!
+                              .balance ??
+                          0,
+                      viewFunc: () {},
+                    ),
+                    const SizedBox(width: 20),
+                  ],
                 ),
                 body: Padding(
                   padding: const EdgeInsets.all(15),
@@ -500,25 +516,31 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                   .isNotEmpty
                           ? Stack(
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: Image.network(
-                                    height: 180,
-                                    // loadingBuilder:
-                                    //     (context, child, loadingProgress) =>
-                                    //         CupertinoActivityIndicator(
-                                    //           color: AppColors.secondaryColor,
-                                    //         ),
-                                    profileController
-                                            .profileDataModel
-                                            .studentBanner ??
-                                        "",
-                                    fit: BoxFit.fill,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Icon(Icons.photo),
-                                  ),
-                                ),
+                                profileController.resDpLoading
+                                    ? Center(
+                                        child: CupertinoActivityIndicator(
+                                          color: AppColors.secondaryColor,
+                                        ),
+                                      )
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Image.network(
+                                          height: 180,
+                                          // loadingBuilder:
+                                          //     (context, child, loadingProgress) =>
+                                          //         CupertinoActivityIndicator(
+                                          //           color: AppColors.secondaryColor,
+                                          //         ),
+                                          profileController
+                                                  .profileDataModel
+                                                  .studentBanner ??
+                                              "",
+                                          fit: BoxFit.fill,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Icon(Icons.photo),
+                                        ),
+                                      ),
                                 Positioned(
                                   top: 10,
                                   right: 10,
@@ -588,13 +610,23 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                             ),
                             _actionItem(Icons.share, "Share", _handleShare),
                             _actionItem(Icons.remove_red_eye, "View", () {}),
-                            _actionItem(Icons.refresh, "Update", () {}),
-                            _actionItem(Icons.edit, "Edit Profile", () {
+                            _actionItem2("Update", () {
                               AppFunctions.navigateScreen(
                                 context,
-                                AppRoutes.profileEditScreen,
+                                AppRoutes.chatResumeUpdateScreen,
                               );
                             }),
+                            //_actionItem(Icons.refresh, "Update", () {}),
+                            _actionItem(
+                              CupertinoIcons.create,
+                              "Edit Profile",
+                              () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.profileEditScreen,
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -708,6 +740,27 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     );
   }
 
+  Widget _actionItem2(String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "✧˖°",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(text, style: TextStyle(color: Colors.white, fontSize: 10)),
+        ],
+      ),
+    );
+  }
+
   Widget aiPoweredContainer() {
     return Container(
       decoration: BoxDecoration(
@@ -802,6 +855,28 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
               await _downloadBannerImage(bannerUrl);
             },
           ),
+          Visibility(
+            visible: bannerUrl.isNotEmpty,
+            child: iconWidget(
+              icon: Icons.refresh,
+              onTap: () async {
+                AppFunctions.showAppAlert(
+                  context: context,
+                  content:
+                      "✨ You've already used your free AI banner.\n\n🔁 Regenerating will cost 25 credits.\n\nProceed?",
+                  title: "Regenerate AI Banner",
+                  onCancel: () {
+                    Get.back();
+                  },
+                  onConfirm: () async {
+                    await generateAiBanner();
+                  },
+                  confirmText: "Continue",
+                  cancelText: "Cancel",
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -864,44 +939,6 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Icon(icon, color: AppColors.whiteColor, size: 20),
-    );
-  }
-
-  Widget creditContainer() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.creditContColor,
-        borderRadius: BorderRadius.circular(50),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.secondaryColor,
-            blurRadius: 13,
-            spreadRadius: -2,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      child: Row(
-        spacing: 10,
-        children: [
-          Image.asset(
-            AssetImages.creditIcon,
-            height: 20,
-            width: 20,
-            color: AppColors.secondaryColor,
-          ),
-          Text(
-            (profileController.profileDataModel.studentCreditId!.balance ?? 0)
-                .toString(),
-            style: AppStyles.customTextStyle(
-              size: 12,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

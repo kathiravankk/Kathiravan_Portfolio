@@ -81,7 +81,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
             onPressed: () => Get.back(),
           ),
           title: Text(
-            "Register",
+            "Student Registration",
             style: AppStyles.customTextStyle(
               size: 18,
               color: AppColors.whiteColor,
@@ -352,6 +352,15 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                   );
                 }),
                 SizedBox(height: 15),
+                Text(
+                  "🚀 Register Now & Get 200 FREE Credits 🎁",
+                  textAlign: TextAlign.center,
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.secondaryColor,
+                    weight: FontWeight.w700,
+                  ),
+                ),
                 Obx(() {
                   final enabled =
                       registerController.isMobileVerified.value &&
@@ -360,7 +369,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                   return Center(
                     child: CustomButtonWidget(
                       width: 320,
-                      buttonText: "Save & Continue",
+                      buttonText: "Continue to Register",
                       disable: !enabled,
                       isLoading: registerController.studentRegisterLoading,
                       buttonFunction: enabled
@@ -391,9 +400,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   }
 
   Future<void> studentRegisterFunc() async {
-    print(registerController
-        .resumeExtractModel
-        .resumeData!);
+    print(registerController.resumeExtractModel.resumeData!);
     final resumePath = await ResumeStorageService.getResumePath();
     Map<String, dynamic> registerData = {
       "studmobileno": mobileController.text,
@@ -421,15 +428,17 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
       "studentdegree":
           registerController
+                      .resumeExtractModel
+                      .resumeData!
+                      .education!
+                      .college !=
+                  null &&
+              registerController
                   .resumeExtractModel
                   .resumeData!
                   .education!
-                  .college !=
-              null && registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!.isNotEmpty
+                  .college!
+                  .isNotEmpty
           ? registerController
                     .resumeExtractModel
                     .resumeData!
@@ -442,15 +451,17 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
       "studentfieldofstudy":
           registerController
+                      .resumeExtractModel
+                      .resumeData!
+                      .education!
+                      .college !=
+                  null &&
+              registerController
                   .resumeExtractModel
                   .resumeData!
                   .education!
-                  .college !=
-              null&& registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!.isNotEmpty
+                  .college!
+                  .isNotEmpty
           ? registerController
                     .resumeExtractModel
                     .resumeData!
@@ -463,15 +474,17 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
       "studentcollegename":
           registerController
+                      .resumeExtractModel
+                      .resumeData!
+                      .education!
+                      .college !=
+                  null &&
+              registerController
                   .resumeExtractModel
                   .resumeData!
                   .education!
-                  .college !=
-              null&& registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!.isNotEmpty
+                  .college!
+                  .isNotEmpty
           ? registerController
                     .resumeExtractModel
                     .resumeData!
@@ -484,15 +497,17 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
       "studcollegestartyear":
           registerController
+                      .resumeExtractModel
+                      .resumeData!
+                      .education!
+                      .college !=
+                  null &&
+              registerController
                   .resumeExtractModel
                   .resumeData!
                   .education!
-                  .college !=
-              null&& registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .college!.isNotEmpty
+                  .college!
+                  .isNotEmpty
           ? registerController
                     .resumeExtractModel
                     .resumeData!
@@ -844,7 +859,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           CustomButtonWidget(
             buttonFunction: () {
               Get.back();
-              AppFunctions.navigateScreen(
+              AppFunctions.navigateInitialScreen(
                 context,
                 AppRoutes.registerResumeReportScreen,
               );

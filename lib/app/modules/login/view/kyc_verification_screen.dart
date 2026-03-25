@@ -13,6 +13,7 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/kyc_response_dialog.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
@@ -322,7 +323,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         "studname": studentName,
         "isVerified":
             (registerController.kycUpdateModel.name != "invalid" &&
-                registerController.kycUpdateModel.aadhaar != "invalid")
+                registerController.kycUpdateModel.aadhaarDocument != "invalid")
             ? true
             : false,
       };
@@ -330,7 +331,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         updateData: updateProfileData,
       );
       if (registerController.kycUpdateModel.name != "invalid" &&
-          registerController.kycUpdateModel.aadhaar != "invalid") {
+          registerController.kycUpdateModel.aadhaarDocument != "invalid") {
         AppFunctions.showToast(
           message: "KYC details verified successfully!",
           isError: false,
@@ -349,7 +350,11 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
               "KYC Verification Pending..",
           isError: true,
         );
-        showAlertDialog();
+           await showKycResultDialog(
+     context        : context,
+     model          : registerController.kycUpdateModel,
+     isRegisterFlow : isRegisterFlow,
+   );
       }
     } else {
       AppFunctions.apiErrorHandling(
@@ -505,59 +510,59 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     );
   }
 
-  void showAlertDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.fieldBgColor,
-        title: Image.asset(AssetImages.alertImage, height: 30, width: 30),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: 15,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "Verification Pending..!",
-              textAlign: TextAlign.center,
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w700,
-              ),
-            ),
-            Text(
-              registerController.kycUpdateModel.reasoning != null
-                  ? registerController.kycUpdateModel.reasoning!
-                  : "Your identity verification is pending. Our recruiter will call you shortly to assist with your verification!",
-              textAlign: TextAlign.center,
-              style: AppStyles.customTextStyle(
-                size: 14,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w300,
-                lineSpace: 1.3,
-              ),
-            ),
-          ],
-        ),
-        actionsAlignment: MainAxisAlignment.center,
-        actions: [
-          CustomButtonWidget(
-            buttonFunction: () {
-              Get.back();
-              isRegisterFlow
-                  ? AppFunctions.navigateScreen(
-                      context,
-                      AppRoutes.stepUpdateScreen,
-                      arguments: {"activeStep": 4},
-                    )
-                  : Get.close(2);
-            },
-            buttonText: "OKAY",
-            width: 150,
-            height: 40,
-          ),
-        ],
-      ),
-    );
-  }
+  // void showAlertDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       backgroundColor: AppColors.fieldBgColor,
+  //       title: Image.asset(AssetImages.alertImage, height: 30, width: 30),
+  //       content: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         spacing: 15,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           Text(
+  //             "Verification Pending..!",
+  //             textAlign: TextAlign.center,
+  //             style: AppStyles.customTextStyle(
+  //               size: 18,
+  //               color: AppColors.whiteColor,
+  //               weight: FontWeight.w700,
+  //             ),
+  //           ),
+  //           Text(
+  //             registerController.kycUpdateModel.reasoning != null
+  //                 ? registerController.kycUpdateModel.reasoning!
+  //                 : "Your identity verification is pending. Our recruiter will call you shortly to assist with your verification!",
+  //             textAlign: TextAlign.center,
+  //             style: AppStyles.customTextStyle(
+  //               size: 14,
+  //               color: AppColors.whiteColor,
+  //               weight: FontWeight.w300,
+  //               lineSpace: 1.3,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       actionsAlignment: MainAxisAlignment.center,
+  //       actions: [
+  //         CustomButtonWidget(
+  //           buttonFunction: () {
+  //             Get.back();
+  //             isRegisterFlow
+  //                 ? AppFunctions.navigateScreen(
+  //                     context,
+  //                     AppRoutes.stepUpdateScreen,
+  //                     arguments: {"activeStep": 4},
+  //                   )
+  //                 : Get.close(2);
+  //           },
+  //           buttonText: "OKAY",
+  //           width: 150,
+  //           height: 40,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

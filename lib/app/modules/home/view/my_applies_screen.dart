@@ -91,20 +91,22 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                           arguments: {"appliedData": item},
                         );
                       },
-                      role: item.jobData != null ? item.jobData!.title : "",
+                      role: item.jobData != null ? item.jobData!.roleType
+                          : "",
                       companyName: item.jobData != null
                           ? item.jobData!.companyName
                           : "",
                       companyLocation: item.jobData != null
-                          ? item.jobData!.companyCity
+                          ? item.jobData!.internshipMode
                           : "",
-                      companyDescription: item.jobData != null
-                          ? item.jobData!.aboutCompany
-                          : "",
-                      appliedOn: item.jobData != null ? item.createdAt : "",
+                      // companyDescription: item.jobData != null
+                      //     ? item.jobData!.aboutCompany
+                      //     : "",
+                      // appliedOn: item.jobData != null ? item.createdAt : "",
                       companyLogo: item.jobData != null
                           ? item.jobData!.companyLogo
                           : "",
+
                     );
                   },
                 )

@@ -69,7 +69,7 @@ class AppFunctions {
       showToast(message: "Session expired, Please login again!", isError: true);
       Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 403) {
-      showToast(message: message, isError: true);
+      showToast(message: "Insufficient Balance!, Please Buy Credits!", isError: true);
     } else if (responseCode == 404) {
       showToast(message: message, isError: true);
     } else if (responseCode == 500) {
@@ -198,25 +198,35 @@ class AppFunctions {
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             if (confirmText != null)
-              CustomButtonWidget(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 10,
+                children: [
+              Expanded(
+                child: CustomButtonWidget(
+                  buttonFunction: () {
+                    Get.back();
+                    onConfirm?.call();
+                  },
+                  buttonText: confirmText,
+                  //width: 130,
+                  height: 35,
+                ),
+              ),
+            Expanded(
+              child: CustomButtonWidget(
                 buttonFunction: () {
                   Get.back();
-                  onConfirm?.call();
+                  onCancel?.call();
                 },
-                buttonText: confirmText,
-                width: 130,
+                buttonText: cancelText,
+                bgColor: AppColors.fieldBgColor,
+                //width: 130,
                 height: 35,
               ),
-            CustomButtonWidget(
-              buttonFunction: () {
-                Get.back();
-                onCancel?.call();
-              },
-              buttonText: cancelText,
-              bgColor: AppColors.fieldBgColor,
-              width: 130,
-              height: 35,
             )
+                ],
+              )
           ],
         );
       },

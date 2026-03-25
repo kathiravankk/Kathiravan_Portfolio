@@ -567,4 +567,35 @@ class RegisterController extends GetxController {
       rethrow;
     }
   }
+
+  // TEMPLATE REFRESH CREDIT
+
+  // Loading
+
+  final _templateRefreshLoading = false.obs;
+
+  bool get templateRefreshLoading => _templateRefreshLoading.value;
+
+  set templateRefreshLoading(bool value) => _templateRefreshLoading.value = value;
+
+  //Model
+
+  final _templateRefreshModel = TemplateRefreshModel().obs;
+
+  TemplateRefreshModel get templateRefreshModel => _templateRefreshModel.value;
+
+  set templateRefreshModel(TemplateRefreshModel value) =>
+      _templateRefreshModel.value = value;
+
+  Future<void> templateRefreshCredit() async {
+    try {
+      updateProfileLoading = true;
+      templateRefreshModel = await registerProvider!.templateRefreshCredit(
+      );
+      updateProfileLoading = false;
+    } catch (err) {
+      updateProfileLoading = false;
+      rethrow;
+    }
+  }
 }

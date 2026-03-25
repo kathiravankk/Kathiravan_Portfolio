@@ -104,14 +104,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                 ],
               ),
-              IconButton(
-                onPressed: () {
-                  Get.back();
-                },
-                icon: Icon(
-                  Icons.close_sharp,
-                  color: AppColors.failTextColor,
-                  size: 22,
+              Expanded(
+                child: IconButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  icon: Icon(
+                    Icons.close_sharp,
+                    color: AppColors.failTextColor,
+                    size: 22,
+                  ),
                 ),
               ),
             ],
@@ -137,17 +139,19 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       Text(
                         "${profileController.profileDataModel.studentName ?? "User"}, you aren't not verified!",
                         style: AppStyles.customTextStyle(
-                          size: 14,
+                          size: 13,
                           color: AppColors.whiteColor,
                           weight: FontWeight.w500,
                         ),
                       ),
-                      InkWell(
-                        onTap: () => Get.back(),
-                        child: Icon(
-                          Icons.close_sharp,
-                          color: AppColors.primaryColor,
-                          size: 22,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => Get.back(),
+                          child: Icon(
+                            Icons.close_sharp,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ],
@@ -214,6 +218,18 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     context,
                     AppRoutes.accountSettingScreen,
                   );
+                },
+              ),
+              _drawerItem(
+                icon: Icons.card_membership_sharp,
+                title: "Certificates",
+                onTap: () {
+                },
+              ),
+              _drawerItem(
+                icon: Icons.currency_exchange_sharp,
+                title: "Buy Credits",
+                onTap: () {
                 },
               ),
               _drawerItem(

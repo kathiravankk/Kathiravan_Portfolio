@@ -10,7 +10,7 @@ class StudentProfileModel {
   List<String>? studProgrammingLang;
   List<dynamic>? studentCertificate;
   String? studentResume;
-  List<String>? studentAadhar;
+  List<String>? studentAadhaar;
   List<String>? studentId;
   List<String>? areasOfInterest;
   List<dynamic>? hobbies;
@@ -33,7 +33,8 @@ class StudentProfileModel {
   List<CollegeData>? college;
   List<Secondary>? higherSecondary;
   List<Secondary>? secondary;
-  dynamic? studentCreditId;
+  //CreditData? studentCreditId;
+  dynamic studentCreditId;
   bool? isVerified;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -51,7 +52,7 @@ class StudentProfileModel {
      this.studProgrammingLang,
      this.studentCertificate,
      this.studentResume,
-     this.studentAadhar,
+     this.studentAadhaar,
      this.studentId,
      this.areasOfInterest,
      this.hobbies,
@@ -94,7 +95,7 @@ class StudentProfileModel {
       studProgrammingLang: List<String>.from(json['studprogramminglang'] ?? []),
       studentCertificate: json['studentcertificate'] ?? [],
       studentResume: json['studentresume'],
-      studentAadhar: List<String>.from(json['studentAdhar'] ?? []),
+      studentAadhaar: List<String>.from(json['studentAdhar'] ?? []),
       studentId: List<String>.from(json['studentId'] ?? []),
       areasOfInterest: List<String>.from(json['areas_of_interest'] ?? []),
       hobbies: json['hobbies'] ?? [],
@@ -129,7 +130,8 @@ class StudentProfileModel {
       secondary: (json['secondary'] ?? [])
           .map<Secondary>((e) => Secondary.fromJson(e))
           .toList(),
-      studentCreditId: json['studentCreditId'] ?? "",
+      //studentCreditId: CreditData.fromJson(json['studentCreditId'] ?? {}),
+      studentCreditId: json['studentCreditId']?? "",
       isVerified: json['isVerified'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
@@ -150,7 +152,7 @@ class StudentProfileModel {
       'studprogramminglang': studProgrammingLang,
       'studentcertificate': studentCertificate,
       'studentresume': studentResume,
-      'studentAdhar': studentAadhar,
+      'studentAdhar': studentAadhaar,
       'studentId': studentId,
       'areas_of_interest': areasOfInterest,
       'hobbies': hobbies,
@@ -173,7 +175,6 @@ class StudentProfileModel {
       'college': college?.map((e) => e.toJson()).toList(),
       'higher_secondary': higherSecondary?.map((e) => e.toJson()).toList(),
       'secondary': secondary?.map((e) => e.toJson()).toList(),
-      'studentCreditId': studentCreditId,
       'isVerified': isVerified,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
@@ -181,6 +182,7 @@ class StudentProfileModel {
       'templateNumber': templateNumber,
       'studprofile': studProfile,
       'student_banner': studentBanner,
+      'studentCreditId': studentCreditId,
     };
   }
 

@@ -204,16 +204,10 @@ class RegisterProvider {
               MapEntry("studprogramminglang", skill.toString()),
             );
           }
-        }
-        else if (value is MultipartFile) {
-          formData.files.add(
-            MapEntry(key, value),
-          );
-        }
-        else {
-          formData.fields.add(
-            MapEntry(key, value.toString()),
-          );
+        } else if (value is MultipartFile) {
+          formData.files.add(MapEntry(key, value));
+        } else {
+          formData.fields.add(MapEntry(key, value.toString()));
         }
       });
 
@@ -432,6 +426,25 @@ class RegisterProvider {
     } on DioException catch (error) {
       responseStatus = error.response?.statusCode ?? 0;
       return CreateResumeModel.fromJson(error.response?.data);
+    }
+  }
+
+  // CHAT RESUME CREATION
+
+  Future<TemplateRefreshModel> templateRefreshCredit() async {
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(AppApiUrls.templateRefresh)
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return TemplateRefreshModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return TemplateRefreshModel.fromJson(error.response?.data);
     }
   }
 }

@@ -47,6 +47,7 @@ class RecommentedData {
   String? locationLink;
   String? internshipDuration;
   String? internshipStipend;
+  String? days;
   String? recruiter;
   String? industry;
   String? createdAt;
@@ -79,6 +80,7 @@ class RecommentedData {
     this.internshipStipend,
     this.recruiter,
     this.industry,
+    this.days,
     this.createdAt,
     this.updatedAt,
     this.iV,

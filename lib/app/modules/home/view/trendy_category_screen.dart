@@ -102,7 +102,9 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
             ),
             Text(
               categoryName,
+              textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
+                lineSpace: 1.3,
                 size: 12,
                 color: AppColors.primaryColor,
                 weight: FontWeight.w700,

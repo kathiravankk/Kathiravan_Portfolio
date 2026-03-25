@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/student_profile_model.dart' hide Education;
+import 'package:internsharks/app/data/models/account/student_profile_model.dart'
+    hide Education;
 
 class ResumeAnalysisModel {
   bool? success;
@@ -52,9 +53,9 @@ class AnalysisData {
   factory AnalysisData.fromJson(Map<String, dynamic> json) {
     return AnalysisData(
       sections: Sections.fromJson(json['sections']),
-      overallScore: (json['overallScore'] as num).toDouble(),
-      atsScore: (json['atsScore'] as num).toDouble(),
-      grade: json['grade'],
+      overallScore: ((json['overallScore'] ?? 0) as num).toDouble(),
+      atsScore: ((json['atsScore'] ?? 0) as num).toDouble(),
+      grade: json['grade'] ?? "",
       strengths: List<String>.from(json['strengths'] ?? []),
       improvements: List<String>.from(json['improvements'] ?? []),
     );
@@ -74,7 +75,16 @@ class Sections {
     required this.experience,
   });
 
-  factory Sections.fromJson(Map<String, dynamic> json) {
+  factory Sections.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return Sections(
+        profileSummary: SectionDetail.empty(),
+        projects: SectionDetail.empty(),
+        internships: SectionDetail.empty(),
+        experience: SectionDetail.empty(),
+      );
+    }
+
     return Sections(
       profileSummary: SectionDetail.fromJson(json['profile_summary']),
       projects: SectionDetail.fromJson(json['projects']),
@@ -99,9 +109,17 @@ class SectionDetail {
 
   SectionDetail({required this.rating, required this.suggestions});
 
-  factory SectionDetail.fromJson(Map<String, dynamic> json) {
+  factory SectionDetail.empty() {
+    return SectionDetail(rating: 0.0, suggestions: []);
+  }
+
+  factory SectionDetail.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return SectionDetail.empty();
+    }
+
     return SectionDetail(
-      rating:  (json['rating'] ?? 0 as num).toDouble(),
+      rating: ((json['rating'] ?? 0) as num).toDouble(),
       suggestions: List<String>.from(json['suggestions'] ?? []),
     );
   }
@@ -180,7 +198,7 @@ class ExtractedResumeDataModel {
     personalInfo = json["personal_info"] != null
         ? PersonalInfoModel.fromJson(json["personal_info"])
         : null;
-    profileSummary = json['profile_summary'];
+    profileSummary = json['profile_summary'] ?? "";
     skills = List<String>.from(json['skills'] ?? []);
     projects = (json['projects'] ?? [])
         .map<Project>((e) => Project.fromJson(e))
@@ -287,8 +305,12 @@ class ExtractedResumeDataModel {
 
       "skills": jsonEncode(skills ?? []),
       "projects": jsonEncode(projects?.map((e) => e.toJson()).toList() ?? []),
-      "experience": jsonEncode(experience?.map((e) => e.toJson()).toList() ?? []),
-      "internships": jsonEncode(internships?.map((e) => e.toJson()).toList() ?? []),
+      "experience": jsonEncode(
+        experience?.map((e) => e.toJson()).toList() ?? [],
+      ),
+      "internships": jsonEncode(
+        internships?.map((e) => e.toJson()).toList() ?? [],
+      ),
       "trainings": jsonEncode(trainings?.map((e) => e.toJson()).toList() ?? []),
 
       "workshops": jsonEncode(workShops ?? []),
@@ -309,7 +331,9 @@ class ExtractedResumeDataModel {
       "higher_secondary": jsonEncode(higherSecondary?.toJson()),
 
       "college": jsonEncode(colleges?.map((e) => e.toJson()).toList() ?? []),
-      "institution": jsonEncode(institution?.map((e) => e.toJson()).toList() ?? []),
+      "institution": jsonEncode(
+        institution?.map((e) => e.toJson()).toList() ?? [],
+      ),
       "degree": jsonEncode(degree?.map((e) => e.toJson()).toList() ?? []),
 
       "updatedExperience": jsonEncode(updatedExperience ?? []),
@@ -322,7 +346,6 @@ class ExtractedResumeDataModel {
       "message": message ?? "",
     };
   }
-
 }
 
 class PersonalInfo {
@@ -386,8 +409,12 @@ class ExperienceData {
   dynamic description;
   String? id;
 
-
-  ExperienceData({this.company, this.role, this.duration, this.description,     this.id,
+  ExperienceData({
+    this.company,
+    this.role,
+    this.duration,
+    this.description,
+    this.id,
   });
 
   ExperienceData.fromJson(Map<String, dynamic> json) {
@@ -395,7 +422,7 @@ class ExperienceData {
     role = json['role'] ?? "";
     duration = json['duration'] ?? "";
     description = json['description'] ?? "";
-    id= json['_id']??"";
+    id = json['_id'] ?? "";
   }
 
   Map<String, dynamic> toJson() {
@@ -404,7 +431,7 @@ class ExperienceData {
       "role": role ?? "",
       "duration": duration ?? "",
       "description": description ?? "",
-      "_id": id
+      "_id": id,
     };
   }
 }

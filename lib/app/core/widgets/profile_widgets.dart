@@ -5,6 +5,8 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 
+import '../utils/asset_images.dart' show AssetImages;
+
 class ProfileWidgets {
 
   static List<String> parseSkills(String raw) {
@@ -181,6 +183,47 @@ class ProfileWidgets {
               const SizedBox(height: 10),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  static Widget creditContainer({ int? creditCount, VoidCallback? viewFunc}) {
+    return GestureDetector(
+      onTap: viewFunc,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.creditContColor,
+          borderRadius: BorderRadius.circular(50),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.secondaryColor,
+              blurRadius: 13,
+              spreadRadius: -2,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: Row(
+          spacing: 10,
+          children: [
+            Image.asset(
+              AssetImages.creditIcon,
+              height: 20,
+              width: 20,
+              color: AppColors.secondaryColor,
+            ),
+            Text(
+              (creditCount ?? 0)
+                  .toString(),
+              style: AppStyles.customTextStyle(
+                size: 12,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
       ),
     );

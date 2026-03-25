@@ -2,18 +2,18 @@ import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 
-class ProfileInformationModel{
+class ProfileInformationModel {
   String? message;
   ProfileDataModel? profileData;
 
-  ProfileInformationModel.fromJson(Map<String, dynamic>json){
-    message = json["message"]??"";
+  ProfileInformationModel.fromJson(Map<String, dynamic> json) {
+    message = json["message"] ?? "";
     profileData = json["student"] != null
         ? ProfileDataModel.fromJson(json["student"])
         : null;
   }
 
-  ProfileInformationModel({this.profileData,this.message});
+  ProfileInformationModel({this.profileData, this.message});
 }
 
 class ProfileDataModel {
@@ -26,7 +26,7 @@ class ProfileDataModel {
   List<dynamic>? studentCertificate;
   String? studentResume;
   String? profileSummary;
-  List<String>? studentAadhar;
+  List<String>? studentAadhaar;
   List<String>? studentId;
   List<String>? areasOfInterest;
   List<dynamic>? hobbies;
@@ -54,13 +54,23 @@ class ProfileDataModel {
   String? createdAt;
   String? updatedAt;
   int? vId;
+
   dynamic collegeStartYear;
   String? templateNumber;
   String? collegeName;
+  String? collegeLocation;
+  String? highSchoolName;
+  String? highSchoolPercentage;
+  String? secondarySchoolName;
+  String? secondarySchoolPercentage;
   String? studentDegree;
   String? fieldOfStudy;
   String? studProfile;
   String? studentBanner;
+  bool? freeBannerUsed;
+  //String? studentCreditIdString;
+  String? studentGender;
+  String? studentDob;
 
   ProfileDataModel({
     this.education,
@@ -71,7 +81,7 @@ class ProfileDataModel {
     this.studProgrammingLang,
     this.studentCertificate,
     this.studentResume,
-    this.studentAadhar,
+    this.studentAadhaar,
     this.studentId,
     this.areasOfInterest,
     this.hobbies,
@@ -106,7 +116,16 @@ class ProfileDataModel {
     this.collegeStartYear,
     this.fieldOfStudy,
     this.studentDegree,
-    this.profileSummary
+    this.profileSummary,
+    this.collegeLocation,
+    this.freeBannerUsed,
+    this.highSchoolName,
+    this.highSchoolPercentage,
+    this.secondarySchoolName,
+    this.secondarySchoolPercentage,
+    //this.studentCreditIdString,
+    this.studentDob,
+    this.studentGender,
   });
 
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
@@ -114,13 +133,13 @@ class ProfileDataModel {
       education: EducationModel.fromJson(json['education'] ?? {}),
       id: json['_id'],
       studentName: json['studname'],
-      profileSummary: json['profile_summary']??"",
+      profileSummary: json['profile_summary'] ?? "",
       studEmail: json['studemail'],
       studMobileNo: json['studmobileno'],
       studProgrammingLang: List<String>.from(json['studprogramminglang'] ?? []),
       studentCertificate: json['studentcertificate'] ?? [],
       studentResume: json['studentresume'],
-      studentAadhar: List<String>.from(json['studentAdhar'] ?? []),
+      studentAadhaar: List<String>.from(json['studentAdhar'] ?? []),
       studentId: List<String>.from(json['studentId'] ?? []),
       areasOfInterest: List<String>.from(json['areas_of_interest'] ?? []),
       hobbies: json['hobbies'] ?? [],
@@ -159,7 +178,7 @@ class ProfileDataModel {
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
       vId: json['__v'],
-      templateNumber: json['templateNumber']??"1",
+      templateNumber: json['templateNumber'] ?? "1",
       studProfile: json['studprofile'],
       studentBanner: json['student_banner'],
       studentCreditId: CreditData.fromJson(json['studentCreditId'] ?? {}),
@@ -167,6 +186,15 @@ class ProfileDataModel {
       collegeStartYear: json["studcollegestartyear"] ?? "",
       fieldOfStudy: json["studentfieldofstudy"] ?? "",
       studentDegree: json["studentdegree"] ?? "",
+      collegeLocation: json["studcollegelocation"] ?? "",
+      highSchoolName: json["studhighschollname"] ?? "",
+      highSchoolPercentage: json["studhighschoolpercentage"] ?? "",
+      secondarySchoolName: json["studentsecondaryschoolname"] ?? "",
+      secondarySchoolPercentage: json["studentsecondaryschoolpercentage"] ?? "",
+      freeBannerUsed: json["freeBannerUsed"] ?? false,
+      //studentCreditIdString: json["studentCreditId"] ?? "",
+      studentGender: json["studgender"] ?? "",
+      studentDob: json["studdob"] ?? "",
     );
   }
 }
@@ -187,6 +215,15 @@ class CreditData {
     totalUsed = json["totalUsed"] ?? 0;
     vId = json["__v"] ?? 0;
   }
+
+  Map<String, dynamic> toJson() => {
+    "_id": cId,
+    "createdAt": createdAt,
+    "updatedAt": updatedAt,
+    "balance": balance,
+    "totalUsed": totalUsed,
+    "__v": vId,
+  };
 
   CreditData({
     this.vId,
@@ -259,7 +296,6 @@ class Experience {
       "_id": id ?? "",
     };
   }
-
 }
 
 // class Internship {

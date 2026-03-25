@@ -52,44 +52,73 @@ class _RegisterResumeReportScreenState
 
   @override
   Widget build(BuildContext context) {
-    print(networkResumePath ?? "");
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.transparentColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          'Resume Report',
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        AppFunctions.showAppAlert(
+          context: context,
+          title: "Are you sure? ⚠️",
+          content:
+              "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
+
+          confirmText: "OK, Go Back",
+          onConfirm: () {
+            Get.offAllNamed(AppRoutes.dashBoardScreen);
+          },
+        );
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.appBgColor_2,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          title: Text(
+            'Resume Report',
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
           ),
         ),
-      ),
-      body: Obx(
-        () => registerController.resumeScoreLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
+        body: Obx(
+          () => registerController.resumeScoreLoading
+              ? Center(
+                  child: CupertinoActivityIndicator(
+                    color: AppColors.secondaryColor,
+                  ),
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    spacing: 15,
+                    children: [
+                      resumePreview(),
+                      buildScoreCard(),
+                      buildAllSections(),
+                      buildStrengthCard(
+                        isStrength: true,
+                        list: registerController
+                            .resumeAnalyzeModel
+                            .analysis!
+                            .strengths,
+                        title: "Strengths",
+                      ),
+                      buildStrengthCard(
+                        isStrength: false,
+                        list: registerController
+                            .resumeAnalyzeModel
+                            .analysis!
+                            .improvements,
+                        title: "Improvements",
+                      ),
+                      buildBottomButtons(),
+                    ],
+                  ),
                 ),
-              )
-            : SingleChildScrollView(
-                padding: EdgeInsets.all(15),
-                child: Column(
-                  spacing: 15,
-                  children: [
-                    resumePreview(),
-                    buildScoreCard(),
-                    buildAllSections(),
-                    buildBottomButtons(),
-                  ],
-                ),
-              ),
+        ),
       ),
     );
   }
@@ -165,6 +194,81 @@ class _RegisterResumeReportScreenState
           buildExtractedContent(title, extractedData),
           Divider(color: AppColors.contBorderColor),
           buildSuggestions(title, sectionData.suggestions),
+        ],
+      ),
+    );
+  }
+
+  Widget buildStrengthCard({
+    required List<String> list,
+    required String title,
+    bool? isStrength,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isStrength! ? AppColors.correctBg : AppColors.inCorrectBg,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(
+          color: isStrength
+              ? AppColors.correctBorder
+              : AppColors.inCorrectBorder,
+        ),
+      ),
+      padding: EdgeInsets.all(15),
+      child: Column(
+        spacing: 10,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w600,
+                ),
+              ),
+              Icon(
+                isStrength
+                    ? CupertinoIcons.arrow_up_right_square
+                    : CupertinoIcons.arrow_down_left_square,
+                color: isStrength
+                    ? AppColors.correctText
+                    : AppColors.inCorrectText,
+                size: 20,
+              ),
+            ],
+          ),
+          Column(
+            spacing: 10,
+            children: list
+                .map(
+                  (e) => Row(
+                    spacing: 5,
+                    children: [
+                      Icon(
+                        Icons.star_outline,
+                        color: isStrength
+                            ? AppColors.correctText
+                            : AppColors.inCorrectText,
+                        size: 15,
+                      ),
+                      Expanded(
+                        child: Text(
+                          e,
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                .toList(),
+          ),
         ],
       ),
     );
@@ -511,7 +615,17 @@ class _RegisterResumeReportScreenState
                   .updatedProfileSummary
                   .toString(),
             );
-            await updateResumeFunc();
+            AppFunctions.showAppAlert(
+              context: context,
+              title: "Update Resume",
+              content:
+                  "Updating your resume will consume 50 credits. Are you sure you want to continue?",
+              onConfirm: () async {
+                await updateResumeFunc();
+              },
+              confirmText: "Confirm",
+              cancelText: "Cancel",
+            );
           },
           isLoading: registerController.updateResumeLoading,
           buttonText: "Update",

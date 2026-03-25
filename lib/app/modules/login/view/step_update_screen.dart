@@ -129,7 +129,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                 step: "Step 3",
                 title: activeStep > 3
                     ? registerController.kycUpdateModel.name != "invalid" ||
-                              registerController.kycUpdateModel.aadhaar !=
+                              registerController.kycUpdateModel.aadhaarDocument !=
                                   "invalid" ||
                               registerController.kycUpdateModel.collegeId !=
                                   "invalid"

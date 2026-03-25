@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 import '../../../core/widgets/resume_thumbnail_card.dart';
@@ -179,6 +181,8 @@ class _ChatResumeTemplateScreenState
 
   final RegisterController registerController = Get.find<RegisterController>();
 
+  //final ProfileController profileController = Get.find<ProfileController>();
+
   int currentTemplateIndex = 0;
 
   final List<ResumeTemplateModel> templates = List.generate(
@@ -192,11 +196,27 @@ class _ChatResumeTemplateScreenState
     ),
   );
 
+  String studentId = "";
+
   @override
   void initState() {
     super.initState();
     resumeData = Get.arguments["resumeData"];
     isRegisterFlow = Get.arguments["isRegisterFlow"] ?? true;
+    getProfileData();
+  }
+
+  Future<void> getProfileData() async {
+    studentId = (await LocalStorageService.getStudentId())!;
+    await registerController.getStudentProfile(studentId: studentId);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, try again later!",
+      );
+    }
   }
 
   void nextTemplate() {
@@ -234,13 +254,22 @@ class _ChatResumeTemplateScreenState
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  "🎁 Credit: 100",
-                  style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: AppColors.whiteColor,
-                    weight: FontWeight.w500,
-                  ),
+                // Text(
+                //   "🎁 Credit: 100",
+                //   style: AppStyles.customTextStyle(
+                //     size: 14,
+                //     color: AppColors.whiteColor,
+                //     weight: FontWeight.w500,
+                //   ),
+                // ),
+                ProfileWidgets.creditContainer(
+                  viewFunc: () {},
+                  creditCount:
+                      registerController
+                          .studentProfileModel
+                          .studentCreditId!
+                          .balance ??
+                      0,
                 ),
                 SizedBox(width: 80),
               ],

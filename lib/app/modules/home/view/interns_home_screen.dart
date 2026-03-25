@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart'
     show CustomEmptyWidget;
 import 'package:internsharks/app/core/widgets/internship_card.dart';
+import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
@@ -93,6 +94,20 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                     weight: FontWeight.w600,
                   ),
                 ),
+                actions: [
+                  ProfileWidgets.creditContainer(
+                    creditCount:
+                    profileController
+                        .profileDataModel
+                        .studentCreditId!
+                        .balance ??
+                        0,
+                    viewFunc: (){}
+
+                  ),
+
+                  const SizedBox(width: 10,)
+                ],
                 // actions: [
                 //   Stack(
                 //     children: [

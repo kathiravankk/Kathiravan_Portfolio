@@ -68,6 +68,8 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             await LocalStorageService.getVerifiedValue() == true
                 ? await internshipApplyFunc()
                 : showAlertDialog();
+            //
+            // await internshipApplyFunc();
           },
           buttonText: "Apply Now",
         ),
@@ -95,7 +97,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      internship!.title ?? "",
+                      internship!.roleType ?? "",
                       style: AppStyles.customTextStyle(
                         size: 16,
                         weight: FontWeight.w700,
@@ -236,7 +238,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           Get.back();
         },
         onConfirm: () {
-          Get.close(2);
+          Get.close(1);
         },
       );
     } else {
