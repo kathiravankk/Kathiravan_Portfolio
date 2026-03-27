@@ -40,6 +40,9 @@
 
         </activity>
 
+        <activity android:name="com.cashfree.pg.ui.activity.CFPaymentActivity"
+            android:exported="true" />
+
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

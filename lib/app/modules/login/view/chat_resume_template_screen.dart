@@ -24,157 +24,7 @@ class ChatResumeTemplateScreen extends StatefulWidget {
 
 class _ChatResumeTemplateScreenState
     extends
-        State<ChatResumeTemplateScreen> // {
-//   ExtractedResumeDataModel? resumeData;
-//
-//   int currentTemplateIndex = 0;
-//
-//   final List<ResumeTemplateModel> templates = List.generate(
-//     8,
-//         (index) => ResumeTemplateModel(
-//       id: 1 + index,
-//       htmlPath:
-//       'assets/images/html_templates/resume_template_${index + 1}.html',
-//       thumbnailPath:
-//       'assets/images/templates_thumbnail/resume_thumbnail_${index + 1}.png',
-//     ),
-//   );
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     resumeData = Get.arguments["resumeData"];
-//   }
-//
-//   void nextTemplate() {
-//     setState(() {
-//       currentTemplateIndex =
-//           (currentTemplateIndex + 1) % templates.length;
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final template = templates[currentTemplateIndex];
-//
-//     return Scaffold(
-//       backgroundColor: AppColors.appBgColor,
-//       appBar: AppBar(
-//         backgroundColor: AppColors.transparentColor,
-//         elevation: 0,
-//         leading: IconButton(
-//           icon: const Icon(Icons.arrow_back,
-//               size: 25, color: Colors.white),
-//           onPressed: () => Get.back(),
-//         ),
-//         title: Text(
-//           "Resume",
-//           style: AppStyles.customTextStyle(
-//             size: 18,
-//             color: AppColors.whiteColor,
-//             weight: FontWeight.w600,
-//           ),
-//         ),
-//         actions: [
-//           Padding(
-//             padding: const EdgeInsets.only(right: 16),
-//             child: Row(
-//               children: [
-//                 const Icon(Icons.monetization_on,
-//                     color: Colors.amber, size: 18),
-//                 const SizedBox(width: 5),
-//                 Text(
-//                   "Credit : 100",
-//                   style: AppStyles.customTextStyle(
-//                     size: 14,
-//                     color: AppColors.whiteColor,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           )
-//         ],
-//       ),
-//
-//       body: Column(
-//         children: [
-//
-//           Expanded(
-//             child: Padding(
-//               padding: const EdgeInsets.all(16),
-//               child: Stack(
-//                 children: [
-//                   Container(
-//                     decoration: BoxDecoration(
-//                       color: Colors.white,
-//                       borderRadius: BorderRadius.circular(25),
-//                     ),
-//                     child: ClipRRect(
-//                       borderRadius: BorderRadius.circular(25),
-//                       child: ShowTemplateView(
-//                         htmlAssetPath: template.htmlPath,
-//                         resumeData: resumeData!,
-//                       ),
-//                     ),
-//                   ),
-//
-//                   Positioned(
-//                     bottom: 20,
-//                     right: 20,
-//                     child: FloatingActionButton(
-//                       mini: true,
-//                       backgroundColor: AppColors.primaryColor,
-//                       onPressed: nextTemplate,
-//                       child: const Icon(Icons.refresh),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//
-//           Padding(
-//             padding: const EdgeInsets.symmetric(horizontal: 20),
-//             child: Column(
-//               children: [
-//                 Text(
-//                   "Wow! Your Ready to Impress..!",
-//                   textAlign: TextAlign.center,
-//                   style: AppStyles.customTextStyle(
-//                     size: 18,
-//                     weight: FontWeight.w600,
-//                     color: Colors.yellow,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 10),
-//                 Text(
-//                   "Your resume shines! It's perfectly crafted to catch employers' eyes, highlighting your unique strengths and achievements. You're ready to make a powerful impression!",
-//                   textAlign: TextAlign.center,
-//                   style: AppStyles.customTextStyle(
-//                     size: 14,
-//                     color: AppColors.whiteColor,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 20),
-//               ],
-//             ),
-//           ),
-//
-//           Padding(
-//             padding: const EdgeInsets.all(20),
-//             child: CustomButtonWidget(
-//               width: double.infinity,
-//               height: 50,
-//               buttonText: "Continue",
-//               buttonFunction: () {
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+        State<ChatResumeTemplateScreen>
 {
   ExtractedResumeDataModel? resumeData;
   bool? isRegisterFlow;
@@ -186,7 +36,7 @@ class _ChatResumeTemplateScreenState
   int currentTemplateIndex = 0;
 
   final List<ResumeTemplateModel> templates = List.generate(
-    8,
+    10,
     (index) => ResumeTemplateModel(
       id: 1 + index,
       htmlPath:
@@ -211,6 +61,9 @@ class _ChatResumeTemplateScreenState
     await registerController.getStudentProfile(studentId: studentId);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
+      creditIdString =
+          registerController.studentProfileModel.studentCreditId!.cId ?? "";
+      await getCreditData(creditId: creditIdString);
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
@@ -219,14 +72,40 @@ class _ChatResumeTemplateScreenState
     }
   }
 
-  void nextTemplate() {
-    setState(() {
-      currentTemplateIndex = (currentTemplateIndex + 1) % templates.length;
-    });
+  String creditIdString = "";
+
+  Future<void> getCreditData({required String creditId}) async {
+    await registerController.getCreditData(creditId: creditId);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      creditIdString = registerController.creditDataModel.creditData!.id ?? "";
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later!",
+      );
+    }
+  }
+
+  Future<void> nextTemplate() async {
+    await registerController.templateRefreshCredit();
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      await getCreditData(creditId: creditIdString);
+      setState(() {
+        currentTemplateIndex = (currentTemplateIndex + 1) % templates.length;
+      });
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later!",
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    //print(registerController.studentProfileModel.studentCreditId!.cId);
     final template = templates[currentTemplateIndex];
 
     return Scaffold(
@@ -262,22 +141,36 @@ class _ChatResumeTemplateScreenState
                 //     weight: FontWeight.w500,
                 //   ),
                 // ),
-                ProfileWidgets.creditContainer(
-                  viewFunc: () {},
-                  creditCount:
-                      registerController
-                          .studentProfileModel
-                          .studentCreditId!
-                          .balance ??
-                      0,
-                ),
-                SizedBox(width: 80),
+                registerController.creditDataLoading
+                    ? Center(
+                        child: CupertinoActivityIndicator(
+                          color: AppColors.secondaryColor,
+                        ),
+                      )
+                    : ProfileWidgets.creditContainer(
+                        viewFunc: () {
+                          //getCreditData(creditId: creditIdString);
+                        },
+                        creditCount:
+                            registerController
+                                .studentProfileModel
+                                .studentCreditId!
+                                .balance ??
+                            0,
+                      ),
+                SizedBox(width: 50),
               ],
             ),
             SizedBox(
               height: 300,
               width: 250,
-              child: ResumeThumbnailCard(template: template, onTap: () {}),
+              child: registerController.templateRefreshLoading
+                  ? Center(
+                      child: CupertinoActivityIndicator(
+                        color: AppColors.primaryColor,
+                      ),
+                    )
+                  : ResumeThumbnailCard(template: template, onTap: () {}),
             ),
             Container(
               decoration: BoxDecoration(
@@ -347,7 +240,18 @@ class _ChatResumeTemplateScreenState
                       mini: true,
                       backgroundColor: AppColors.primaryColor,
                       onPressed: () {
-                        nextTemplate();
+                        AppFunctions.showAppAlert(
+                          context: context,
+                          title: "Update Resume",
+                          content:
+                              "Refresh the next template will consume 25 credits. Are you sure you want to continue?",
+                          onConfirm: () async {
+                            //await updateResumeFunc();
+                            await nextTemplate();
+                          },
+                          confirmText: "Confirm",
+                          cancelText: "Cancel",
+                        );
                       },
                       child: const Icon(
                         Icons.refresh,
@@ -375,6 +279,7 @@ class _ChatResumeTemplateScreenState
               textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
                 size: 14,
+                lineSpace: 1.3,
                 color: AppColors.whiteColor,
                 weight: FontWeight.w400,
               ),
@@ -432,7 +337,8 @@ class _ChatResumeTemplateScreenState
           arguments: {"activeStep": 2},
         );
       } else {
-        Get.close(2);
+       Get.back();
+       Get.back(result:  true);
       }
     } else {
       AppFunctions.showToast(

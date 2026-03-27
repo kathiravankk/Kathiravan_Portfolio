@@ -4,6 +4,7 @@ import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
+import 'package:internsharks/app/data/models/account/credit_data_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -429,15 +430,16 @@ class RegisterProvider {
     }
   }
 
-  // CHAT RESUME CREATION
+  // TEMPLATE REFRESH CREDIT
 
   Future<TemplateRefreshModel> templateRefreshCredit() async {
+    Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
       );
       Response response = await client!
-          .post(AppApiUrls.templateRefresh)
+          .post(AppApiUrls.templateRefresh, options: Options(headers: header))
           .timeout(const Duration(seconds: 60));
 
       responseStatus = response.statusCode!;
@@ -445,6 +447,46 @@ class RegisterProvider {
     } on DioException catch (error) {
       responseStatus = error.response?.statusCode ?? 0;
       return TemplateRefreshModel.fromJson(error.response?.data);
+    }
+  }
+
+  // CHAT RESUME CREDITS CONSUMPTION
+
+  Future<TemplateRefreshModel> chatResumeCreditUpdate() async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(AppApiUrls.chatResumeCredit, options: Options(headers: header))
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return TemplateRefreshModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return TemplateRefreshModel.fromJson(error.response?.data);
+    }
+  }
+
+  // GET CREDIT DATA
+
+  Future<CreditDataModel> fetchCreditData({required String creditId}) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .get(AppApiUrls.getCreditData(creditId), options: Options(headers: header))
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return CreditDataModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return CreditDataModel.fromJson(error.response?.data);
     }
   }
 }

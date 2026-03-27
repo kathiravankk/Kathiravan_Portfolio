@@ -27,6 +27,8 @@ class AppApiUrls {
   static const String verifyKycData = "${baseUrl}verify-kyc";
   static const String chatResumeCreation = "${baseUrl}chatbot";
   static const String templateRefresh = "${baseUrl}reduceresrefresh";
+  static const String chatResumeCredit = "${baseUrl}reduceresumecredit";
+  static  String getCreditData(String creditId) => "${baseUrl}credit/$creditId";
 
   //DASHBOARD FLOW
   static const String getCategoryList = "${baseUrl}industry/getindustrylist";
@@ -49,10 +51,10 @@ class AppApiUrls {
   static String getReviewData(String jobId) =>
       "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
-  static String updateChatResume =
-      "${baseUrl}updat"
-      ""
-      "emessage";
+  static String updateChatResume = "${baseUrl}updatemessage";
+  static String getCreditPlans = "${baseUrl}plans";
+  static String createCreditOrder = "${baseUrl}student/create-order";
+  static String verifyCreditOrder = "${baseUrl}student/verify";
 
   static String getAllInternship(
     String state,

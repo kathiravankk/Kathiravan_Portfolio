@@ -92,6 +92,9 @@ class ProfileController extends GetxController {
         LocalStorageService.saveVerifiedValue(
           isVerified: profileDataModel.isVerified ?? false,
         );
+        LocalStorageService.saveCreditId(
+          creditId: profileDataModel.studentCreditId!.cId ?? ""
+        );
       }
     } catch (err) {
       profileDataLoading = false;

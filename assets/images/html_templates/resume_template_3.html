@@ -606,28 +606,33 @@
         // Personal Info
         if (data.personal_info) {
             const pi = data.personal_info;
-            if (name) document.getElementById('fullName').textContent = pi.name;
+            if (pi.name) document.getElementById('fullName').textContent = pi.name;
             if (pi.email) {
                 document.getElementById('email').textContent = pi.email;
                 document.getElementById('emailLink').href = 'mailto:' + pi.email;
             }
             if (pi.phone) document.getElementById('phone').textContent = pi.phone;
-            if (pi.address) document.getElementById('location').textContent = pi.address;
-            if (pi.role) document.getElementById('jobTitle').textContent = pi.role;
+            if (pi.location) document.getElementById('location').textContent = pi.location;
+            if (pi.role) {
+    document.getElementById('jobTitle').textContent = pi.role;
+}
 
-            if (pi.linkedin) {
-                document.getElementById('linkedinLink').href = pi.linkedin;
-                document.getElementById('linkedinContact').style.display = 'flex';
-            } else {
-                document.getElementById('linkedinContact').style.display = 'none';
-            }
 
-            if (pi.github) {
-                document.getElementById('githubLink').href = pi.github;
-                document.getElementById('githubContact').style.display = 'flex';
-            } else {
-                document.getElementById('githubContact').style.display = 'none';
-            }
+        if (pi.linkedIn) {
+    document.getElementById('linkedinLink').href = pi.linkedIn;
+    document.getElementById('linkedinLink').textContent = pi.linkedIn;
+    document.getElementById('linkedinContact').style.display = 'flex';
+} else {
+    document.getElementById('linkedinContact').style.display = 'none';
+}
+
+if (pi.github) {
+    document.getElementById('githubLink').href = pi.github;
+    document.getElementById('githubLink').textContent = pi.github;
+    document.getElementById('githubContact').style.display = 'flex';
+} else {
+    document.getElementById('githubContact').style.display = 'none';
+}
         }
 
         // Profile Summary (About Me)
@@ -663,7 +668,7 @@
         eduList.innerHTML = '';
 
         // College/Degree Education
-        const colleges = data.colleges || data.institution || data.degree || [];
+        const colleges = data.college ||data.colleges || data.institution || data.degree || [];
         if (colleges.length > 0) {
             colleges.forEach(college => {
                 const eduDiv = document.createElement('div');

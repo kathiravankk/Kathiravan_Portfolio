@@ -4,8 +4,11 @@ import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
 import 'package:internsharks/app/data/models/home/category_wise_internship_model.dart';
+import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart';
+import 'package:internsharks/app/data/models/home/credit_plan_model.dart';
 import 'package:internsharks/app/data/models/home/internship_apply_model.dart';
 import 'package:internsharks/app/data/models/home/internship_detail_model.dart';
+import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/models/home/review_data_model.dart';
 import 'package:internsharks/app/data/models/home/similar_internship_model.dart';
@@ -528,6 +531,107 @@ class DashboardController extends GetxController {
     if (!success) {
       internship.isSaved = oldValue;
       _similarInternshipModel.refresh();
+    }
+  }
+
+  // GET CREDIT PLAN DATA
+
+  // Loading
+
+  final _creditPlanLoading = false.obs;
+
+  bool get creditPlanLoading => _creditPlanLoading.value;
+
+  set creditPlanLoading(bool value) => _creditPlanLoading.value = value;
+
+  // Model
+
+  final _creditPlanModel = CreditPlanModel().obs;
+
+  CreditPlanModel get creditPlanModel => _creditPlanModel.value;
+
+  set creditPlanModel(CreditPlanModel value) => _creditPlanModel.value = value;
+
+  Future<void> getCreditPlanData() async {
+    try {
+      creditPlanLoading = true;
+      creditPlanModel = await dashboardProvider!.fetchCreditPlanData();
+      creditPlanLoading = false;
+    } catch (err) {
+      creditPlanLoading = false;
+      rethrow;
+    }
+  }
+
+  // CREATE CREDIT ORDER
+
+  // Loading
+
+  final _createCreditLoading = false.obs;
+
+  bool get createCreditLoading => _createCreditLoading.value;
+
+  set createCreditLoading(bool value) => _createCreditLoading.value = value;
+
+  // Model
+
+  final _createCreditOrderModel = OrderCreateCreditModel().obs;
+
+  OrderCreateCreditModel get createCreditOrderModel =>
+      _createCreditOrderModel.value;
+
+  set createCreditOrderModel(OrderCreateCreditModel value) =>
+      _createCreditOrderModel.value = value;
+
+  Future<void> createCreditPlanOrder({
+    required String creditId,
+    required String planId,
+  }) async {
+    try {
+      createCreditLoading = true;
+      createCreditOrderModel = await dashboardProvider!.newCreditPlanOrder(
+        creditId: creditId,
+        planId: planId,
+      );
+      createCreditLoading = false;
+    } catch (err) {
+      createCreditLoading = false;
+      rethrow;
+    }
+  }
+
+  // VERIFY CREDIT ORDER
+
+  // Loading
+
+  final _verifyCreditLoading = false.obs;
+
+  bool get verifyCreditLoading => _verifyCreditLoading.value;
+
+  set verifyCreditLoading(bool value) => _verifyCreditLoading.value = value;
+
+  // Model
+
+  final _verifyCreditOrderModel = CreditOrderVerifyModel().obs;
+
+  CreditOrderVerifyModel get verifyCreditOrderModel =>
+      _verifyCreditOrderModel.value;
+
+  set verifyCreditOrderModel(CreditOrderVerifyModel value) =>
+      _verifyCreditOrderModel.value = value;
+
+  Future<void> verifyCreditPlanOrder({
+    required String orderId,
+  }) async {
+    try {
+      verifyCreditLoading = true;
+      verifyCreditOrderModel = await dashboardProvider!.verifyCreditPlanOrder(
+        orderId: orderId,
+      );
+      verifyCreditLoading = false;
+    } catch (err) {
+      verifyCreditLoading = false;
+      rethrow;
     }
   }
 }

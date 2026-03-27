@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
+import 'package:internsharks/app/data/models/account/credit_data_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -367,6 +368,9 @@ class RegisterController extends GetxController {
         await ResumeStorageService.saveNetworkResume(
           resumeFile: studentProfileModel.studentResume ?? "",
         );
+        await LocalStorageService.saveCreditId(
+          creditId: studentProfileModel.studentCreditId!.cId ?? ""
+        );
       }
       studentDetailsLoading = false;
     } catch (err) {
@@ -589,12 +593,66 @@ class RegisterController extends GetxController {
 
   Future<void> templateRefreshCredit() async {
     try {
-      updateProfileLoading = true;
+      templateRefreshLoading = true;
       templateRefreshModel = await registerProvider!.templateRefreshCredit(
       );
-      updateProfileLoading = false;
+      templateRefreshLoading = false;
     } catch (err) {
-      updateProfileLoading = false;
+      templateRefreshLoading = false;
+      rethrow;
+    }
+  }
+
+  // CHAT RESUME UPDATE CREDIT CONSUME
+
+  // Loading
+
+  final _chatResumeCreditLoading = false.obs;
+
+  bool get chatResumeCreditLoading => _chatResumeCreditLoading.value;
+
+  set chatResumeCreditLoading(bool value) => _chatResumeCreditLoading.value = value;
+
+  Future<void> chatResumeCreditUpdate() async {
+    try {
+      chatResumeCreditLoading = true;
+      templateRefreshModel = await registerProvider!.chatResumeCreditUpdate(
+      );
+      chatResumeCreditLoading = false;
+    } catch (err) {
+      chatResumeCreditLoading = false;
+      rethrow;
+    }
+  }
+
+  // GET CREDIT DATA
+
+  // Loading
+
+  final _creditDataLoading = false.obs;
+
+  bool get creditDataLoading => _creditDataLoading.value;
+
+  set creditDataLoading(bool value) => _creditDataLoading.value = value;
+
+  //Model
+
+  final _creditDataModel = CreditDataModel().obs;
+
+  CreditDataModel get creditDataModel => _creditDataModel.value;
+
+  set creditDataModel(CreditDataModel value) =>
+      _creditDataModel.value = value;
+
+  Future<void> getCreditData({required String creditId}) async {
+    try {
+      creditDataLoading = true;
+      creditDataModel = await registerProvider!.fetchCreditData(
+        creditId: creditId
+      );
+      creditDataLoading = false;
+    } catch (err) {
+      creditDataLoading = false;
       rethrow;
     }
   }

@@ -197,6 +197,76 @@ class ProfileDataModel {
       studentDob: json["studdob"] ?? "",
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'education': education?.toJson(),
+      '_id': id,
+      'studname': studentName,
+      'profile_summary': profileSummary,
+      'studemail': studEmail,
+      'studmobileno': studMobileNo,
+      'studprogramminglang': studProgrammingLang ?? [],
+      'studentcertificate': studentCertificate ?? [],
+      'studentresume': studentResume,
+      'studentAdhar': studentAadhaar ?? [],
+      'studentId': studentId ?? [],
+      'areas_of_interest': areasOfInterest ?? [],
+      'hobbies': hobbies ?? [],
+      'languages_known': languagesKnown ?? [],
+      'volunteer_experience': volunteerExperience ?? [],
+      'leadership': leadership ?? [],
+      'achievements': achievements ?? [],
+      'publications': publications ?? [],
+      'workshops': workshops ?? [],
+      'paper_presentations': paperPresentations ?? [],
+      'tools_and_technologies': toolsAndTechnologies ?? [],
+      'linkedIn': linkedIn,
+      'github': github,
+
+      'projects': projects?.map((e) => e.toJson()).toList() ?? [],
+      'experience': experience?.map((e) => e.toJson()).toList() ?? [],
+      'internships': internships?.map((e) => e.toJson()).toList() ?? [],
+
+      'industrial_visits': industrialVisits ?? [],
+      'trainings': trainings ?? [],
+      'parents': parents ?? [],
+
+      // IMPORTANT FIX (you used collegeData in model but 'college' in API)
+      'college': collegeData?.map((e) => e.toJson()).toList() ?? [],
+
+      'higher_secondary': higherSecondary?.map((e) => e.toJson()).toList() ?? [],
+      'secondary': secondary?.map((e) => e.toJson()).toList() ?? [],
+
+      'studentCreditId': studentCreditId?.toJson(),
+
+      'isVerified': isVerified,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      '__v': vId,
+
+      'templateNumber': templateNumber,
+      'studprofile': studProfile,
+      'student_banner': studentBanner,
+
+      // Additional fields
+      'studentcollegename': collegeName,
+      'studcollegestartyear': collegeStartYear,
+      'studentfieldofstudy': fieldOfStudy,
+      'studentdegree': studentDegree,
+      'studcollegelocation': collegeLocation,
+
+      'studhighschollname': highSchoolName,
+      'studhighschoolpercentage': highSchoolPercentage,
+      'studentsecondaryschoolname': secondarySchoolName,
+      'studentsecondaryschoolpercentage': secondarySchoolPercentage,
+
+      'freeBannerUsed': freeBannerUsed,
+
+      'studgender': studentGender,
+      'studdob': studentDob,
+    };
+  }
 }
 
 class CreditData {
@@ -353,6 +423,16 @@ class Secondary {
       yearOfPassing: json['year_of_passing'] ?? "",
       id: json['_id'] ?? "",
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'institution': institution,
+      'board': board,
+      'percentage': percentage,
+      'year_of_passing': yearOfPassing,
+      '_id': id,
+    };
   }
 }
 

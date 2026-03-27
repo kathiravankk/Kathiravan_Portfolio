@@ -14,6 +14,7 @@ import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
+import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -36,16 +37,32 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   final DashboardController dashboardController =
       Get.find<DashboardController>();
+  final RegisterController registerController = Get.find<RegisterController>();
 
   final ProfileController profileController = Get.find<ProfileController>();
 
   String? studentName;
   String? studentId;
+  String? creditId = "";
+  int? creditBalance;
 
   @override
   void initState() {
     super.initState();
     getHomeScreenData();
+    getCreditData();
+  }
+
+  Future<void> getCreditData() async {
+    creditId = await LocalStorageService.getStudentCreditId();
+    await registerController.getCreditData(creditId: creditId!);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      if (mounted) {
+        creditBalance =
+            registerController.creditDataModel.creditData?.balance ?? 0;
+      }
+    }
   }
 
   Future<void> getHomeScreenData() async {
@@ -54,7 +71,6 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
     studentName = await LocalStorageService.getStudentName();
     studentId = await LocalStorageService.getStudentId();
     await profileController.getProfileData(studentId: studentId ?? "");
-
     await dashboardController.getCategoryListData();
     await dashboardController.getRecommentedInternship();
   }
@@ -65,7 +81,8 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
       () =>
           profileController.profileDataLoading ||
               dashboardController.getCategoryLoading ||
-              dashboardController.recommentedInternshipLoading
+              dashboardController.recommentedInternshipLoading ||
+              registerController.creditDataLoading
           ? Center(
               child: CupertinoActivityIndicator(
                 color: AppColors.secondaryColor,
@@ -96,17 +113,16 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 ),
                 actions: [
                   ProfileWidgets.creditContainer(
-                    creditCount:
-                    profileController
-                        .profileDataModel
-                        .studentCreditId!
-                        .balance ??
-                        0,
-                    viewFunc: (){}
-
+                    creditCount: creditBalance ?? 0,
+                    viewFunc: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.buyCreditsScreen,
+                      );
+                    },
                   ),
 
-                  const SizedBox(width: 10,)
+                  const SizedBox(width: 10),
                 ],
                 // actions: [
                 //   Stack(
@@ -322,7 +338,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   Widget _buildRecommendedInternships() {
     return SizedBox(
-      height: 210,
+      height: 230,
       child:
           dashboardController.recommentedModel.internshipList != null &&
               dashboardController.recommentedModel.internshipList!.isNotEmpty
@@ -353,7 +369,8 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                     );
                   },
                   eligibility: recommentedList.eligibilityCriteria ?? "",
-                  qualification: recommentedList.studentQualification!.join(", ") ?? "",
+                  qualification:
+                      recommentedList.studentQualification!.join(", ") ?? "",
                   stipendRupees: recommentedList.internshipStipend ?? "",
                   description: recommentedList.internshipDescription ?? "",
                   imageUrl: recommentedList.companyLogo ?? "",

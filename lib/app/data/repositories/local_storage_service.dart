@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/update_profile_model.dart';
+import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
@@ -9,6 +11,7 @@ class LocalStorageService {
   static const _studentIdKey = 'student_id';
   static const studentNameKey = 'student_name';
   static const _isVerifiedKey = 'student_verified';
+  static const studentCreditId = 'student_creditId';
 
   /// Save student data after registration
   static Future<void> saveStudent({
@@ -24,7 +27,7 @@ class LocalStorageService {
   }
 
   static Future<void> saveUpdateStudent({
-    required StudentProfileModel student,
+    required UpdateProfileDataModel student,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_studentKey, jsonEncode(student.toJson()));
@@ -37,6 +40,18 @@ class LocalStorageService {
   static Future<void> saveName({String? studentName}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(studentNameKey, studentName ?? "");
+  }
+
+  /// Save student creditId
+  static Future<void> saveCreditId({String? creditId}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(studentCreditId, creditId ?? "");
+  }
+
+  ///Get student credit id
+  static Future<String?> getStudentCreditId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(studentCreditId);
   }
 
   /// Save verified value

@@ -1,14 +1,14 @@
-import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/update_profile_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 
 class ProfileUpdateModel {
   String? message;
-  StudentProfileModel? profileUpdateData;
+  UpdateProfileDataModel? profileUpdateData;
 
   ProfileUpdateModel.fromJson(Map<String, dynamic> json) {
     message = json["message"] ?? "";
     profileUpdateData = json["student"] != null
-        ? StudentProfileModel.fromJson(json["student"])
+        ? UpdateProfileDataModel.fromJson(json["student"])
         : null;
   }
 
@@ -17,12 +17,12 @@ class ProfileUpdateModel {
 
 class TemplateRefreshModel {
   bool? success;
-  ProfileDataModel? studentProfileData;
+  UpdateProfileDataModel? studentProfileData;
 
   TemplateRefreshModel.fromJson(Map<String, dynamic> json) {
     success = json["success"] ?? false;
     studentProfileData = json["student"] != null
-        ? ProfileDataModel.fromJson(json["student"])
+        ? UpdateProfileDataModel.fromJson(json["student"])
         : null;
   }
 

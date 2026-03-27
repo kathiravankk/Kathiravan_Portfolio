@@ -1,5 +1,6 @@
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 
 class StudentProfileModel {
   EducationModel? education;
@@ -33,8 +34,8 @@ class StudentProfileModel {
   List<CollegeData>? college;
   List<Secondary>? higherSecondary;
   List<Secondary>? secondary;
-  //CreditData? studentCreditId;
-  dynamic studentCreditId;
+  CreditData? studentCreditId;
+  //dynamic studentCreditId;
   bool? isVerified;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -130,8 +131,8 @@ class StudentProfileModel {
       secondary: (json['secondary'] ?? [])
           .map<Secondary>((e) => Secondary.fromJson(e))
           .toList(),
-      //studentCreditId: CreditData.fromJson(json['studentCreditId'] ?? {}),
-      studentCreditId: json['studentCreditId']?? "",
+      studentCreditId: CreditData.fromJson(json['studentCreditId'] ?? {}),
+      //studentCreditId: json['studentCreditId']?? "",
       isVerified: json['isVerified'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),

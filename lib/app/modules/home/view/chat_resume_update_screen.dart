@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
@@ -139,12 +140,25 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
           availableOptions.clear();
           selectedOptions.clear();
           updateStudentProfile();
+          updateChatCredit();
         });
       }
     } else {
       AppFunctions.apiErrorHandling(
         dashboardController.getResponseCode(),
         "Something went wrong!, try again later!",
+      );
+    }
+  }
+
+  Future<void> updateChatCredit() async {
+    await registerController.chatResumeCreditUpdate();
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something Went wrong!, Try again later!",
       );
     }
   }
@@ -160,7 +174,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "studname": profileData.personalInfo!.name,
       "studgender": profileData.personalInfo!.gender ?? "",
 
-      "studdob": "",
+      //"studdob": "",
 
       "studentaddress": profileData.personalInfo!.location,
 
@@ -234,16 +248,27 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
       "github": profileData.personalInfo!.github ?? "",
 
-      "portfolio_website": "",
+      //"portfolio_website": "",
 
-      "student_banner": "",
+      //"student_banner": "",
     };
     debugPrint(updateData.toString());
     await registerController.updateStudentProfileData(updateData: updateData);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      StudentProfileModel studentData =
-          registerController.updateProfileModel.profileUpdateData!;
+      await getProfileData();
+    }
+  }
+
+  String? studentId = "";
+
+  Future<void> getProfileData() async {
+    studentId = await LocalStorageService.getStudentId();
+
+    await registerController.getStudentProfile(studentId: studentId!);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      StudentProfileModel studentData = registerController.studentProfileModel;
       AppFunctions.navigateScreen(
         context,
         AppRoutes.chatResumeTemplateScreen,
@@ -286,6 +311,11 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
           ),
           "isRegisterFlow": false,
         },
+      );
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Failed to update your profile!",
       );
     }
   }
@@ -332,7 +362,9 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
         ),
       ),
       body: Obx(
-        () => dashboardController.getUpdateChatLoading
+        () =>
+            dashboardController.getUpdateChatLoading ||
+                registerController.updateProfileLoading
             ? Center(
                 child: CupertinoActivityIndicator(
                   color: AppColors.secondaryColor,
@@ -364,31 +396,33 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                       ],
                     ),
                   ),
-                  Visibility(
-                    visible: registerController.updateProfileLoading,
-                    child: Positioned(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CupertinoActivityIndicator(
-                              color: AppColors.secondaryColor,
-                            ),
-                            Text(
-                              "AI Updating your resume..!",
-                              textAlign: TextAlign.center,
-                              style: AppStyles.customTextStyle(
-                                size: 14,
-                                weight: FontWeight.w600,
-                                color: AppColors.secondaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Visibility(
+                  //   visible:
+                  //       registerController.updateProfileLoading ||
+                  //       registerController.updateProfileLoading,
+                  //   child: Positioned(
+                  //     child: Center(
+                  //       child: Column(
+                  //         mainAxisAlignment: MainAxisAlignment.center,
+                  //         crossAxisAlignment: CrossAxisAlignment.center,
+                  //         children: [
+                  //           CupertinoActivityIndicator(
+                  //             color: AppColors.secondaryColor,
+                  //           ),
+                  //           Text(
+                  //             "AI Updating your resume..!",
+                  //             textAlign: TextAlign.center,
+                  //             style: AppStyles.customTextStyle(
+                  //               size: 14,
+                  //               weight: FontWeight.w600,
+                  //               color: AppColors.secondaryColor,
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
       ),

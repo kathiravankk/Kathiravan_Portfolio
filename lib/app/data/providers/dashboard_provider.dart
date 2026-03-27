@@ -6,8 +6,11 @@ import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
 import 'package:internsharks/app/data/models/home/category_wise_internship_model.dart';
+import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart';
+import 'package:internsharks/app/data/models/home/credit_plan_model.dart';
 import 'package:internsharks/app/data/models/home/internship_apply_model.dart';
 import 'package:internsharks/app/data/models/home/internship_detail_model.dart';
+import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/models/home/review_data_model.dart';
 import 'package:internsharks/app/data/models/home/similar_internship_model.dart';
@@ -256,7 +259,7 @@ class DashboardProvider {
     required String internshipMode,
     required int page,
     required int limit,
-  required String roleType,
+    required String roleType,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
@@ -273,7 +276,7 @@ class DashboardProvider {
           internshipMode,
           roleType,
           page,
-          limit
+          limit,
         ),
         options: Options(headers: header),
       );
@@ -282,6 +285,73 @@ class DashboardProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return AllInternshipModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET CREDIT PLANS DATA
+
+  Future<CreditPlanModel> fetchCreditPlanData() async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getCreditPlans,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return CreditPlanModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CreditPlanModel.fromJson(err.response!.data);
+    }
+  }
+
+  // CREATE CREDIT ORDER
+
+  Future<OrderCreateCreditModel> newCreditPlanOrder({
+    required String creditId,
+    required String planId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.createCreditOrder,
+        options: Options(headers: header),
+        data: {"creditId": creditId, "planId": planId},
+      );
+      responseStatus = response.statusCode!;
+      return OrderCreateCreditModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return OrderCreateCreditModel.fromJson(err.response!.data);
+    }
+  }
+
+  // CREATE CREDIT ORDER
+
+  Future<CreditOrderVerifyModel> verifyCreditPlanOrder({
+    required String orderId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.verifyCreditOrder,
+        options: Options(headers: header),
+        data: {"orderId": orderId},
+      );
+      responseStatus = response.statusCode!;
+      return CreditOrderVerifyModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CreditOrderVerifyModel.fromJson(err.response!.data);
     }
   }
 }

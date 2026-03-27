@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
+import 'package:internsharks/app/modules/home/view/buy_credit_screen.dart';
 import 'package:internsharks/app/modules/internship/view/internship_syllabus_screen.dart';
 import 'package:internsharks/app/modules/internship/view/mcq_result_review_screen.dart';
 import 'package:internsharks/app/modules/internship/view/mcq_test_screen.dart';
@@ -231,6 +232,10 @@ class AppPages {
     appPage(
       name: AppRoutes.profileEditScreen,
       page: () => ProfileEditScreen(),
+    ),
+    appPage(
+      name: AppRoutes.buyCreditsScreen,
+      page: () => BuyCreditScreen(),
     ),
 
     // OTHER SCREEN

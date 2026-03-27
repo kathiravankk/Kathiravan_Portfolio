@@ -133,29 +133,22 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 10,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "${profileController.profileDataModel.studentName ?? "User"}, you aren't not verified!",
-                        style: AppStyles.customTextStyle(
-                          size: 13,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w500,
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => Get.back(),
-                          child: Icon(
-                            Icons.close_sharp,
-                            color: AppColors.primaryColor,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    "${profileController.profileDataModel.studentName ?? "User"}, you aren't not verified!",
+                    style: AppStyles.customTextStyle(
+                      size: 13,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w500,
+                    ),
                   ),
+                  // GestureDetector(
+                  //   onTap: () => Get.back(),
+                  //   child: Icon(
+                  //     Icons.close_sharp,
+                  //     color: AppColors.primaryColor,
+                  //     size: 20,
+                  //   ),
+                  // ),
                   Text(
                     "AI verification is a signal of trust, giving \nRecruiters more confidence to interact with you.",
                     style: AppStyles.customTextStyle(
@@ -223,13 +216,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
               _drawerItem(
                 icon: Icons.card_membership_sharp,
                 title: "Certificates",
-                onTap: () {
-                },
+                onTap: () {},
               ),
               _drawerItem(
                 icon: Icons.currency_exchange_sharp,
                 title: "Buy Credits",
                 onTap: () {
+                  AppFunctions.navigateScreen(
+                    context,
+                    AppRoutes.buyCreditsScreen,
+                  );
                 },
               ),
               _drawerItem(

@@ -23,15 +23,12 @@ class AppFunctions {
   }
 
   static Future<dynamic> navigateFutureScreen(
-      BuildContext context,
-      String screenName, {
-        dynamic arguments,
-      }) async {
+    BuildContext context,
+    String screenName, {
+    dynamic arguments,
+  }) async {
     FocusScope.of(context).unfocus();
-    return await Get.toNamed(
-      screenName,
-      arguments: arguments,
-    );
+    return await Get.toNamed(screenName, arguments: arguments);
   }
 
   static void navigateInitialScreen(
@@ -69,7 +66,11 @@ class AppFunctions {
       showToast(message: "Session expired, Please login again!", isError: true);
       Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 403) {
-      showToast(message: "Insufficient Balance!, Please Buy Credits!", isError: true);
+      showToast(
+        message: "Insufficient Balance!, Please Buy Credits!",
+        isError: true,
+      );
+      //AppFunctions.showAppAlert(context: context, content: content)
     } else if (responseCode == 404) {
       showToast(message: message, isError: true);
     } else if (responseCode == 500) {
@@ -202,31 +203,31 @@ class AppFunctions {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 spacing: 10,
                 children: [
-              Expanded(
-                child: CustomButtonWidget(
-                  buttonFunction: () {
-                    Get.back();
-                    onConfirm?.call();
-                  },
-                  buttonText: confirmText,
-                  //width: 130,
-                  height: 35,
-                ),
-              ),
-            Expanded(
-              child: CustomButtonWidget(
-                buttonFunction: () {
-                  Get.back();
-                  onCancel?.call();
-                },
-                buttonText: cancelText,
-                bgColor: AppColors.fieldBgColor,
-                //width: 130,
-                height: 35,
-              ),
-            )
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        Get.back();
+                        onConfirm?.call();
+                      },
+                      buttonText: confirmText,
+                      //width: 130,
+                      height: 35,
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        Get.back();
+                        onCancel?.call();
+                      },
+                      buttonText: cancelText,
+                      bgColor: AppColors.fieldBgColor,
+                      //width: 130,
+                      height: 35,
+                    ),
+                  ),
                 ],
-              )
+              ),
           ],
         );
       },
