@@ -1,3 +1,4 @@
+import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
@@ -23,7 +24,7 @@ class ProfileDataModel {
   String? studEmail;
   String? studMobileNo;
   List<String>? studProgrammingLang;
-  List<dynamic>? studentCertificate;
+  List<Certification>? studentCertificate;
   String? studentResume;
   String? profileSummary;
   List<String>? studentAadhaar;
@@ -137,7 +138,10 @@ class ProfileDataModel {
       studEmail: json['studemail'],
       studMobileNo: json['studmobileno'],
       studProgrammingLang: List<String>.from(json['studprogramminglang'] ?? []),
-      studentCertificate: json['studentcertificate'] ?? [],
+      //studentCertificate: json['studentcertificate'] ?? [],
+      studentCertificate: (json['studentcertificate'] ?? [])
+          .map<ExperienceData>((e) => Certification.fromJson(e))
+          .toList(),
       studentResume: json['studentresume'],
       studentAadhaar: List<String>.from(json['studentAdhar'] ?? []),
       studentId: List<String>.from(json['studentId'] ?? []),
@@ -207,7 +211,8 @@ class ProfileDataModel {
       'studemail': studEmail,
       'studmobileno': studMobileNo,
       'studprogramminglang': studProgrammingLang ?? [],
-      'studentcertificate': studentCertificate ?? [],
+      //'studentcertificate': studentCertificate ?? [],
+      'studentcertificate': studentCertificate?.map((e) => e.toJson()).toList() ?? [],
       'studentresume': studentResume,
       'studentAdhar': studentAadhaar ?? [],
       'studentId': studentId ?? [],

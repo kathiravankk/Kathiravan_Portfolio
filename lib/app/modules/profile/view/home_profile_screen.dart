@@ -126,9 +126,21 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          // onPageFinished: (_) async {
+          //   final jsonData = jsonEncode(resumeData!.toJson());
+          //   await webViewController!.runJavaScript("renderResume($jsonData);");
+          //   setState(() => isLoading = false);
+          // },
           onPageFinished: (_) async {
-            final jsonData = jsonEncode(resumeData!.toJson());
-            await webViewController!.runJavaScript("renderResume($jsonData);");
+            await Future.delayed(const Duration(milliseconds: 300));
+
+            final jsonData = jsonEncode(profileController.profileDataModel.toJson());
+            final safeJson = jsonEncode(jsonData);
+
+            await webViewController!.runJavaScript(
+              "renderResume(JSON.parse($safeJson));",
+            );
+
             setState(() => isLoading = false);
           },
         ),
@@ -146,7 +158,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   Future<String?> _getRenderedHtml() async {
     try {
       final result = await webViewController!.runJavaScriptReturningResult(
-        "document.documentElement.outerHTML",
+        "document.body.innerHTML",
       );
       String html = result.toString();
       if (html.startsWith('"') && html.endsWith('"')) {
@@ -422,7 +434,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     resumeData = ExtractedResumeDataModel(
       personalInfo: PersonalInfoModel(
         name: profileController.profileDataModel.studentName ?? '',
-        gender: "",
+        gender: profileController.profileDataModel.studentGender,
         email: profileController.profileDataModel.studEmail!,
         phone: profileController.profileDataModel.studMobileNo!,
         linkedIn: profileController.profileDataModel.linkedIn,
@@ -440,12 +452,12 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       publications: profileController.profileDataModel.publications,
       workShops: profileController.profileDataModel.workshops,
       paperPresentations: profileController.profileDataModel.paperPresentations,
-      certifications: [],
+      certifications: profileController.profileDataModel.studentCertificate,
       educationData: profileController.profileDataModel.education,
       industrialVisits: profileController.profileDataModel.industrialVisits,
       projects: profileController.profileDataModel.projects!,
       skills: profileController.profileDataModel.studProgrammingLang,
-      profileSummary: "",
+      profileSummary: profileController.profileDataModel.profileSummary,
       colleges: profileController.profileDataModel.collegeData!,
       degree: [],
       experience: profileController.profileDataModel.experience,
@@ -604,7 +616,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                         if (isLoading)
                           Container(
                             color: Colors.black45,
-                            child: const Center(
+                            child:  Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -615,8 +627,10 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                   SizedBox(height: 12),
                                   Text(
                                     "Processing...",
-                                    style: TextStyle(
-                                      color: Colors.white70,
+                                    style: AppStyles.customTextStyle(
+                                      size: 14,
+                                      color: AppColors.greyColor,
+                                      weight: FontWeight.w500
                                     ),
                                   ),
                                 ],
@@ -653,7 +667,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                             "resumeData": ExtractedResumeDataModel(
                               personalInfo: PersonalInfoModel(
                                 name: profileController.profileDataModel.studentName ?? '',
-                                gender: "",
+                                gender: profileController.profileDataModel.studentGender,
                                 email: profileController.profileDataModel.studEmail!,
                                 phone: profileController.profileDataModel.studMobileNo!,
                                 linkedIn: profileController.profileDataModel.linkedIn,
@@ -675,7 +689,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                               industrialVisits:profileController.profileDataModel.industrialVisits,
                               projects: profileController.profileDataModel.projects!,
                               skills: profileController.profileDataModel.studProgrammingLang,
-                              profileSummary: "",
+                              profileSummary: profileController.profileDataModel.profileSummary,
                               colleges: profileController.profileDataModel.collegeData!,
                               degree: [],
                               experience: profileController.profileDataModel.experience,

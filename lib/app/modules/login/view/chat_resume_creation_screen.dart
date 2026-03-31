@@ -241,7 +241,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
           "resumeData": ExtractedResumeDataModel(
             personalInfo: PersonalInfoModel(
               name: data.studentName!,
-              gender: "",
+              gender: data.studentGender,
               email: data.studEmail!,
               phone: data.studMobileNo!,
               linkedIn: data.linkedIn,
@@ -263,7 +263,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
             industrialVisits: data.industrialVisits,
             projects: data.projects,
             skills: data.studProgrammingLang,
-            profileSummary: "",
+            profileSummary: data.profileSummary,
             colleges: data.college,
             degree: [],
             experience: data.experience,
@@ -407,13 +407,13 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
               child: Icon(Icons.send_outlined, color: AppColors.whiteColor),
             ),
             onPressed: () async {
-              await createChatResume(
-                chatData: {
-                  "user_id": studentId,
-                  "message": chatTextController.text,
-                },
-              );
-              //registerNewStudent();
+              // await createChatResume(
+              //   chatData: {
+              //     "user_id": studentId,
+              //     "message": chatTextController.text,
+              //   },
+              // );
+              registerNewStudent();
             },
           ),
         ],

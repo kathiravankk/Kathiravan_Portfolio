@@ -124,84 +124,33 @@ class InternshipCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            spacing: 10,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Education: ",
-                                        style: AppStyles.customTextStyle(
-                                          size: 10,
-                                          weight: FontWeight.w400,
-                                          color: AppColors.primaryColor,
-                                        ),
-                                      ),
-                                      Text(
-                                        qualification,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: AppStyles.customTextStyle(
-                                          size: 10,
-                                          weight: FontWeight.w400,
-                                          color: AppColors.navBarColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(width: 20),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Available: ",
-                                        style: AppStyles.customTextStyle(
-                                          size: 10,
-                                          weight: FontWeight.w400,
-                                          color: AppColors.primaryColor,
-                                        ),
-                                      ),
-                                      Text(
-                                        eligibility,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: AppStyles.customTextStyle(
-                                          size: 10,
-                                          weight: FontWeight.w400,
-                                          color: AppColors.navBarColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              Text("Education: "),
+                              Expanded(
+                                child: Text(
+                                  qualification,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              // Row(
-                              //   children: [
-                              //     Text(
-                              //       "*Skills: ",
-                              //       style: AppStyles.customTextStyle(
-                              //         size: 8,
-                              //         weight: FontWeight.w400,
-                              //         color: AppColors.primaryColor,
-                              //       ),
-                              //     ),
-                              //     Text(
-                              //       skillList.join(', '),
-                              //       maxLines: 2,
-                              //       overflow: TextOverflow.ellipsis,
-                              //       style: AppStyles.customTextStyle(
-                              //         size: 8,
-                              //         lineSpace: 1.3,
-                              //         weight: FontWeight.w400,
-                              //         color: AppColors.navBarColor,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Text("Available: "),
+                              Expanded(
+                                child: Text(
+                                  skillList.join(", "),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ],
                           ),
                         ],

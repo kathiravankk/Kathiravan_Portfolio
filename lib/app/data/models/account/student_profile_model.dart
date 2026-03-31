@@ -6,6 +6,7 @@ class StudentProfileModel {
   EducationModel? education;
   String? id;
   String? studentName;
+  String? studentGender;
   String? studEmail;
   String? studMobileNo;
   List<String>? studProgrammingLang;
@@ -25,6 +26,7 @@ class StudentProfileModel {
   List<dynamic>? toolsAndTechnologies;
   String? linkedIn;
   String? github;
+  String? portfolioWebsite;
   List<Project>? projects;
   List<ExperienceData>? experience;
   List<Internship>? internships;
@@ -35,70 +37,95 @@ class StudentProfileModel {
   List<Secondary>? higherSecondary;
   List<Secondary>? secondary;
   CreditData? studentCreditId;
-  //dynamic studentCreditId;
   bool? isVerified;
+  bool? freeBannerUsed;
+  bool? syllabusStatus;
+  dynamic applicationStatus;
   DateTime? createdAt;
   DateTime? updatedAt;
   int? v;
   String? templateNumber;
   String? studProfile;
   String? studentBanner;
+  String? profileSummary;
 
   StudentProfileModel({
-     this.education,
-     this.id,
-     this.studentName,
-     this.studEmail,
-     this.studMobileNo,
-     this.studProgrammingLang,
-     this.studentCertificate,
-     this.studentResume,
-     this.studentAadhaar,
-     this.studentId,
-     this.areasOfInterest,
-     this.hobbies,
-     this.languagesKnown,
-     this.volunteerExperience,
-     this.leadership,
-     this.achievements,
-     this.publications,
-     this.workshops,
-     this.paperPresentations,
-     this.toolsAndTechnologies,
-     this.linkedIn,
-     this.github,
-     this.projects,
-     this.experience,
-     this.internships,
-     this.industrialVisits,
-     this.trainings,
-     this.parents,
-     this.college,
-     this.higherSecondary,
-     this.secondary,
-     this.studentCreditId,
-     this.isVerified,
-     this.createdAt,
-     this.updatedAt,
-     this.v,
-     this.templateNumber,
-     this.studProfile,
-     this.studentBanner,
+    this.education,
+    this.id,
+    this.studentName,
+    this.studentGender,
+    this.studEmail,
+    this.studMobileNo,
+    this.studProgrammingLang,
+    this.studentCertificate,
+    this.studentResume,
+    this.studentAadhaar,
+    this.studentId,
+    this.areasOfInterest,
+    this.hobbies,
+    this.languagesKnown,
+    this.volunteerExperience,
+    this.leadership,
+    this.achievements,
+    this.publications,
+    this.workshops,
+    this.paperPresentations,
+    this.toolsAndTechnologies,
+    this.linkedIn,
+    this.github,
+    this.portfolioWebsite,
+    this.projects,
+    this.experience,
+    this.internships,
+    this.industrialVisits,
+    this.trainings,
+    this.parents,
+    this.college,
+    this.higherSecondary,
+    this.secondary,
+    this.studentCreditId,
+    this.isVerified,
+    this.freeBannerUsed,
+    this.syllabusStatus,
+    this.applicationStatus,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+    this.templateNumber,
+    this.studProfile,
+    this.studentBanner,
+    this.profileSummary,
   });
 
   factory StudentProfileModel.fromJson(Map<String, dynamic> json) {
     return StudentProfileModel(
-      education: EducationModel.fromJson(json['education'] ?? {}),
+      education: json['education'] != null
+          ? EducationModel.fromJson(json['education'])
+          : null,
       id: json['_id'],
       studentName: json['studname'],
+      studentGender: json['studgender'],
       studEmail: json['studemail'],
       studMobileNo: json['studmobileno'],
-      studProgrammingLang: List<String>.from(json['studprogramminglang'] ?? []),
+      profileSummary: json['profile_summary'],
+      linkedIn: json['linkedIn'],
+      github: json['github'],
+      portfolioWebsite: json['portfolio_website'],
+      studProfile: json['studprofile'],
+      studentBanner: json['student_banner'],
+      templateNumber: json['templateNumber']?.toString(),
+
+      /// FIXED programming language parsing
+      studProgrammingLang: _parseProgrammingLanguages(
+        json['studprogramminglang'],
+      ),
+
       studentCertificate: json['studentcertificate'] ?? [],
       studentResume: json['studentresume'],
       studentAadhaar: List<String>.from(json['studentAdhar'] ?? []),
       studentId: List<String>.from(json['studentId'] ?? []),
       areasOfInterest: List<String>.from(json['areas_of_interest'] ?? []),
+
       hobbies: json['hobbies'] ?? [],
       languagesKnown: json['languages_known'] ?? [],
       volunteerExperience: json['volunteer_experience'] ?? [],
@@ -108,85 +135,83 @@ class StudentProfileModel {
       workshops: json['workshops'] ?? [],
       paperPresentations: json['paper_presentations'] ?? [],
       toolsAndTechnologies: json['tools_and_technologies'] ?? [],
-      linkedIn: json['linkedIn'],
-      github: json['github'],
-      projects: (json['projects'] ?? [])
-          .map<Project>((e) => Project.fromJson(e))
-          .toList(),
-      experience: (json['experience'] ?? [])
-          .map<ExperienceData>((e) => ExperienceData.fromJson(e))
-          .toList(),
-      internships: (json['internships'] ?? [])
-          .map<Internship>((e) => Internship.fromJson(e))
-          .toList(),
       industrialVisits: json['industrial_visits'] ?? [],
       trainings: json['trainings'] ?? [],
       parents: json['parents'] ?? [],
-      college: (json['college'] ?? [])
-          .map<CollegeData>((e) => CollegeData.fromJson(e))
-          .toList(),
-      higherSecondary: (json['higher_secondary'] ?? [])
-          .map<Secondary>((e) => Secondary.fromJson(e))
-          .toList(),
-      secondary: (json['secondary'] ?? [])
-          .map<Secondary>((e) => Secondary.fromJson(e))
-          .toList(),
-      studentCreditId: CreditData.fromJson(json['studentCreditId'] ?? {}),
-      //studentCreditId: json['studentCreditId']?? "",
+
+      projects: (json['projects'] as List?)
+          ?.map((e) => Project.fromJson(e))
+          .toList() ??
+          [],
+
+      experience: (json['experience'] as List?)
+          ?.map((e) => ExperienceData.fromJson(e))
+          .toList() ??
+          [],
+
+      internships: (json['internships'] as List?)
+          ?.map((e) => Internship.fromJson(e))
+          .toList() ??
+          [],
+
+      college: (json['college'] as List?)
+          ?.map((e) => CollegeData.fromJson(e))
+          .toList() ??
+          [],
+
+      higherSecondary: (json['higher_secondary'] as List?)
+          ?.map((e) => Secondary.fromJson(e))
+          .toList() ??
+          [],
+
+      secondary: (json['secondary'] as List?)
+          ?.map((e) => Secondary.fromJson(e))
+          .toList() ??
+          [],
+
+      studentCreditId: json['studentCreditId'] != null
+          ? CreditData.fromJson(json['studentCreditId'])
+          : null,
+
       isVerified: json['isVerified'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      freeBannerUsed: json['freeBannerUsed'],
+      syllabusStatus: json['syllabusstatus'],
+      applicationStatus: json['applicationstatus'],
+
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'])
+          : null,
+
       v: json['__v'],
-      templateNumber: json['templateNumber'],
-      studProfile: json['studprofile'],
-      studentBanner: json['student_banner'],
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'education': education?.toJson(),
-      '_id': id,
-      'studname': studentName,
-      'studemail': studEmail,
-      'studmobileno': studMobileNo,
-      'studprogramminglang': studProgrammingLang,
-      'studentcertificate': studentCertificate,
-      'studentresume': studentResume,
-      'studentAdhar': studentAadhaar,
-      'studentId': studentId,
-      'areas_of_interest': areasOfInterest,
-      'hobbies': hobbies,
-      'languages_known': languagesKnown,
-      'volunteer_experience': volunteerExperience,
-      'leadership': leadership,
-      'achievements': achievements,
-      'publications': publications,
-      'workshops': workshops,
-      'paper_presentations': paperPresentations,
-      'tools_and_technologies': toolsAndTechnologies,
-      'linkedIn': linkedIn,
-      'github': github,
-      'projects': projects?.map((e) => e.toJson()).toList(),
-      'experience': experience?.map((e) => e.toJson()).toList(),
-      'internships': internships?.map((e) => e.toJson()).toList(),
-      'industrial_visits': industrialVisits,
-      'trainings': trainings,
-      'parents': parents,
-      'college': college?.map((e) => e.toJson()).toList(),
-      'higher_secondary': higherSecondary?.map((e) => e.toJson()).toList(),
-      'secondary': secondary?.map((e) => e.toJson()).toList(),
-      'isVerified': isVerified,
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      '__v': v,
-      'templateNumber': templateNumber,
-      'studprofile': studProfile,
-      'student_banner': studentBanner,
-      'studentCreditId': studentCreditId,
-    };
-  }
+  static List<String> _parseProgrammingLanguages(dynamic value) {
+    if (value == null) return [];
 
+    if (value is List && value.isNotEmpty) {
+      final first = value.first;
+
+      if (first is String && first.startsWith('[')) {
+        try {
+          return List<String>.from(
+            (first
+                .replaceAll('[', '')
+                .replaceAll(']', '')
+                .replaceAll('"', '')
+                .split(',')),
+          );
+        } catch (_) {}
+      }
+
+      return List<String>.from(value.map((e) => e.toString()));
+    }
+
+    return [];
+  }
 }
 
 // class Education {
@@ -206,27 +231,24 @@ class StudentProfileModel {
 // }
 class Project {
   String? title;
-  dynamic description;
-  //String? id;
+  List<String>? description;
 
   Project({
-     this.title,
-     this.description,
-     //this.id,
+    this.title,
+    this.description,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
     return Project(
       title: json['title'] ?? "",
-      description: json['description'] ?? "",
-      //id: json['_id'] ?? "",
+      description: List<String>.from(json['description'] ?? []),
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'title': title,
       'description': description,
-      //'_id': id,
     };
   }
 }

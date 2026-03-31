@@ -380,7 +380,7 @@ class _RegisterResumeReportScreenState
       case "Projects":
         return Column(
           children: data.projects!.map((p) {
-            return buildBulletBlock(title: p.title!, points: p.description!);
+            return buildBulletBlock(title: p.title!, points: p.description!.toString());
           }).toList(),
         );
 

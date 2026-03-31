@@ -95,17 +95,27 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _mobileCtrl.text = p.studMobileNo ?? '';
     _linkedinCtrl.text = p.linkedIn ?? '';
     _websiteCtrl.text = p.github ?? '';
-    _bioCtrl.text = p.profileSummary ??"";
+    _bioCtrl.text = p.profileSummary ?? "";
     _profileImageUrl = p.studProfile;
+
+    // _certifications = (p.studentCertificate ?? [])
+    //     .map<Map<String, dynamic>>(
+    //       (e) => {
+    //         'name': e['name'] ?? '',
+    //         'issuer': e['issuer'] ?? '',
+    //         'date': e['date'] ?? '',
+    //       },
+    //     )
+    //     .toList();
 
     _certifications = (p.studentCertificate ?? [])
         .map<Map<String, dynamic>>(
           (e) => {
-            'name': e['name'] ?? '',
-            'issuer': e['issuer'] ?? '',
-            'date': e['date'] ?? '',
-          },
-        )
+        'name': e.name ?? '',
+        'issuer': e.issuer ?? '',
+        'date': e.date ?? '',
+      },
+    )
         .toList();
 
     _experiences = (p.experience ?? [])
@@ -125,15 +135,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           (proj) => {
             'title': proj.title ?? '',
             'description':
-                (proj.description is List && proj.description.isNotEmpty)
-                ? proj.description.first.toString()
+                (proj.description is List && proj.description!.isNotEmpty)
+                ? proj.description!.first.toString()
                 : proj.description?.toString() ?? '',
           },
         )
         .toList();
 
     _programmingSkills = p.studProgrammingLang?.isNotEmpty == true
-        ? ProfileWidgets.parseSkills(p.studProgrammingLang!.first)
+        ? p.studProgrammingLang!
         : [];
     _toolsSkills = (p.toolsAndTechnologies ?? [])
         .map<String>((e) => e.toString())
@@ -323,6 +333,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     setState(() => _isSaving = true);
     try {
       final payload = await _buildPayload();
+      debugPrint(payload.toString(), wrapWidth: 1024);
       await registerController.updateStudentProfileData(updateData: payload);
       final code = registerController.getResponseCode();
       if (code == 200 || code == 201) {
@@ -642,6 +653,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
+  List<List<String>> convertToNestedList(List<String> values) {
+    return values.map((e) => [e]).toList();
+  }
+
   Future<Map<String, dynamic>> _buildPayload() async {
     dynamic multipartFile;
     if (_pickedImage != null) {
@@ -728,7 +743,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'higher_secondary': jsonEncode(higherSecArray),
       'secondary': jsonEncode(secondaryArray),
       'education': jsonEncode(educationObject),
-      'studprogramminglang': jsonEncode(_programmingSkills),
+      'studprogramminglang':
+        convertToNestedList(_programmingSkills),
       'tools_and_technologies': jsonEncode(_toolsSkills),
       'projects': jsonEncode(
         _projects
