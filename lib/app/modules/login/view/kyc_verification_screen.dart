@@ -186,86 +186,90 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           ),
         ),
         body: Obx(
-          () => SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                spacing: 15,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Secure Your Account",
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      color: AppColors.secondaryColor,
-                      weight: FontWeight.w700,
-                    ),
+          () => Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              spacing: 15,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Secure Your Account",
+                  style: AppStyles.customTextStyle(
+                    size: 16,
+                    color: AppColors.secondaryColor,
+                    weight: FontWeight.w700,
                   ),
-                  Text(
-                    "Please upload the required documents \n to complete your KYC Verification!",
-                    textAlign: TextAlign.center,
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w300,
-                      lineSpace: 1.3,
-                    ),
+                ),
+                Text(
+                  "Please upload the required document \n to complete your KYC Verification!",
+                  textAlign: TextAlign.center,
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w300,
+                    lineSpace: 1.3,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Upload Your\nCollege ID Card & Aadhaar Card",
-                        style: AppStyles.customTextStyle(
-                          size: 18,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w700,
-                          lineSpace: 1.5,
-                        ),
+                ),
+                const SizedBox(height: 15,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      //"Upload Your\nCollege ID Card & Aadhaar Card",
+                      "Upload Your College ID Card",
+                      style: AppStyles.customTextStyle(
+                        size: 18,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w700,
+                        lineSpace: 1.5,
                       ),
-                    ],
-                  ),
-
-                  Text(
-                    "Kindly upload clear images of the front side of your College ID & Aadhaar card.",
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w300,
-                      lineSpace: 1.3,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  uploadBox(
-                    title: "Front side of College ID",
-                    file: collegeIdImg,
-                    onSelect: () async {
-                      File? f = await pickFromCameraGallery();
-                      if (f != null) setState(() => collegeIdImg = f);
-                    },
-                  ),
+                  ],
+                ),
 
-                  uploadBox(
-                    title: "Front side of Aadhaar",
-                    file: aadhaarImg,
-                    onSelect: () async {
-                      File? f = await pickFromCameraGallery();
-                      if (f != null) setState(() => aadhaarImg = f);
-                    },
+                Text(
+                  //"Kindly upload clear images of the front side of your College ID & Aadhaar card.",
+                  "Kindly upload clear image of the front side of your College ID.",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w300,
+                    lineSpace: 1.3,
                   ),
-                  const SizedBox(height: 40),
-                  CustomButtonWidget(
-                    width: 270,
-                    height: 45,
-                    isLoading: registerController.kycVerificationLoading,
-                    buttonFunction: () async {
-                      await updateKYC();
-                    },
-                    buttonText: "Submit",
-                    disable: !(collegeIdImg != null && aadhaarImg != null),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 10),
+                uploadBox(
+                  title: "Front side of College ID",
+                  file: collegeIdImg,
+                  onSelect: () async {
+                    File? f = await pickFromCameraGallery();
+                    if (f != null) setState(() => collegeIdImg = f);
+                  },
+                ),
+                //
+                // uploadBox(
+                //   title: "Front side of Aadhaar",
+                //   file: aadhaarImg,
+                //   onSelect: () async {
+                //     File? f = await pickFromCameraGallery();
+                //     if (f != null) setState(() => aadhaarImg = f);
+                //   },
+                // ),
+                //const SizedBox(height: 40),
+                const Spacer(),
+                CustomButtonWidget(
+                  width: 270,
+                  height: 45,
+                  isLoading: registerController.kycVerificationLoading,
+                  buttonFunction: () async {
+                    await updateKYC();
+                  },
+                  buttonText: "Submit",
+                  //disable: !(collegeIdImg != null && aadhaarImg != null),
+                  disable: !(collegeIdImg != null),
+                ),
+                const SizedBox(height: 25,)
+              ],
             ),
           ),
         ),
@@ -301,7 +305,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
 
     Map<String, dynamic> kycData = {
       "college_id": collegeIdFile,
-      "aadhaar": aadhaarFile,
+      //"aadhaar": aadhaarFile,
       //"name": "THENMOZHI. D",
       "name": studentName,
       "college": jsonEncode(

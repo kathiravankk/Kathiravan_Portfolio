@@ -59,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   "Secure access portal. Please enter your\ncredentials.",
                   style: AppStyles.customTextStyle(
+                    lineSpace: 1.4,
                     color: AppColors.whiteColor,
                     size: 15,
                     weight: FontWeight.w300,
@@ -284,6 +285,10 @@ class _LoginScreenState extends State<LoginScreen> {
         LocalStorageService.saveStudentId(
           studentId:
               loginController.studentRegisterModel.registerData!.id ?? "",
+        );
+        LocalStorageService.saveCreditId(
+          creditId:
+          loginController.studentRegisterModel.registerData!.studentCreditId ?? "",
         );
         AppFunctions.showToast(
           message:

@@ -70,16 +70,16 @@ class _KycResultDialog extends StatelessWidget {
         field: 'name',
         status: model.name ?? '',
       ),
-      _CheckItem(
-        label: 'Aadhaar Document',
-        field: 'aadhaar',
-        status: model.aadhaarDocument ?? '',
-      ),
-      _CheckItem(
-        label: 'Aadhaar Name Match',
-        field: 'aadhaarName',
-        status: model.aadhaarName ?? '',
-      ),
+      // _CheckItem(
+      //   label: 'Aadhaar Document',
+      //   field: 'aadhaar',
+      //   status: model.aadhaarDocument ?? '',
+      // ),
+      // _CheckItem(
+      //   label: 'Aadhaar Name Match',
+      //   field: 'aadhaarName',
+      //   status: model.aadhaarName ?? '',
+      // ),
       _CheckItem(
         label: 'College ID Document',
         field: 'collegeId',

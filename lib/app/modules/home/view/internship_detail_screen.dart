@@ -29,6 +29,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   final RegisterController registerController = Get.find<RegisterController>();
 
   String internshipId = "";
+  bool isStatusFlow = false;
   String? studentId = "";
   InternshipData? internship;
   List<ReviewData>? reviewList = [];
@@ -37,6 +38,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   void initState() {
     super.initState();
     internshipId = Get.arguments["internshipId"] ?? "";
+    isStatusFlow = Get.arguments["isStatusFlow"] ?? false;
     getDetailsData();
   }
 
@@ -60,18 +62,21 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     return Obx(
       () => Scaffold(
         backgroundColor: AppColors.blackColor,
-        floatingActionButton: CustomButtonWidget(
-          width: 350,
-          height: 40,
-          isLoading: dashboardController.internshipApplyLoading,
-          buttonFunction: () async {
-            await LocalStorageService.getVerifiedValue() == true
-                ? await internshipApplyFunc()
-                : showAlertDialog();
-            //
-            // await internshipApplyFunc();
-          },
-          buttonText: "Apply Now",
+        floatingActionButton: Visibility(
+          visible: !isStatusFlow,
+          child: CustomButtonWidget(
+            width: 350,
+            height: 40,
+            isLoading: dashboardController.internshipApplyLoading,
+            buttonFunction: () async {
+              await LocalStorageService.getVerifiedValue() == true
+                  ? await internshipApplyFunc()
+                  : showAlertDialog();
+              //
+              // await internshipApplyFunc();
+            },
+            buttonText: "Apply Now",
+          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         appBar: AppBar(

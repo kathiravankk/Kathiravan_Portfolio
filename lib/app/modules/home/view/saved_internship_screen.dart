@@ -34,6 +34,11 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       savedJobs = profileController.savedJobModel.jobData ?? [];
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.savedJobModel.message ?? "Something went wrong!",
+      );
     }
   }
 
@@ -87,7 +92,7 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
                           SizedBox(height: 10),
                       itemCount: savedJobs!.length,
                       itemBuilder: (context, index) => SavedInternshipCard(
-                        jobTitle: savedJobs![index].job!.title ?? "",
+                        jobTitle: savedJobs![index].job!.roleType ?? "",
                         companyLogo: savedJobs![index].job!.companyLogo ?? "",
                         postedDate: savedJobs![index].job!.createdAt ?? "",
                         companyName: savedJobs![index].job!.companyName ?? "",

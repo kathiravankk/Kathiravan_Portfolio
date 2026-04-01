@@ -9,7 +9,6 @@ import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
-import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 import '../../../core/widgets/resume_thumbnail_card.dart';
@@ -22,10 +21,7 @@ class ChatResumeTemplateScreen extends StatefulWidget {
       _ChatResumeTemplateScreenState();
 }
 
-class _ChatResumeTemplateScreenState
-    extends
-        State<ChatResumeTemplateScreen>
-{
+class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   ExtractedResumeDataModel? resumeData;
   bool? isRegisterFlow;
 
@@ -153,8 +149,8 @@ class _ChatResumeTemplateScreenState
                         },
                         creditCount:
                             registerController
-                                .studentProfileModel
-                                .studentCreditId!
+                                .creditDataModel
+                                .creditData!
                                 .balance ??
                             0,
                       ),
@@ -315,13 +311,14 @@ class _ChatResumeTemplateScreenState
     );
   }
 
+
   Future<void> updateResumeFunc(ResumeTemplateModel template) async {
-    print(registerController.studentRegisterModel.studentToken ?? "");
+
+    debugPrint(registerController.studentRegisterModel.studentToken ?? "");
     final studentId = await LocalStorageService.getStudentId();
 
     resumeData!.templateNumber = template.id.toString();
     resumeData!.studentId = studentId;
-
     await registerController.updateResumeProfileData(updateData: resumeData);
 
     if (registerController.getResponseCode() == 200 ||
@@ -330,6 +327,9 @@ class _ChatResumeTemplateScreenState
         message: "Resume updated successfully!",
         isError: false,
       );
+      await registerController.getStudentProfile(
+        studentId: resumeData!.studentId ?? "",
+      );
       if (isRegisterFlow!) {
         AppFunctions.navigateScreen(
           context,
@@ -337,8 +337,8 @@ class _ChatResumeTemplateScreenState
           arguments: {"activeStep": 2},
         );
       } else {
-       Get.back();
-       Get.back(result:  true);
+        Get.back();
+        Get.back(result: true);
       }
     } else {
       AppFunctions.showToast(

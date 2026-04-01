@@ -134,7 +134,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           onPageFinished: (_) async {
             await Future.delayed(const Duration(milliseconds: 300));
 
-            final jsonData = jsonEncode(profileController.profileDataModel.toJson());
+            final jsonData = jsonEncode(resumeData!.toJson());
             final safeJson = jsonEncode(jsonData);
 
             await webViewController!.runJavaScript(

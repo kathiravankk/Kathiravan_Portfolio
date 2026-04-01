@@ -124,37 +124,6 @@ class InternshipCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text("Education: "),
-                              Expanded(
-                                child: Text(
-                                  qualification,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Text("Available: "),
-                              Expanded(
-                                child: Text(
-                                  skillList.join(", "),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                   Container(
@@ -169,8 +138,8 @@ class InternshipCard extends StatelessWidget {
                     child: ClipOval(
                       child: Image.network(
                         imageUrl,
-                        height: 50,
-                        width: 50,
+                        height: 30,
+                        width: 30,
                         fit: BoxFit.cover,
                         //color: AppColors.whiteColor,
                         errorBuilder: (context, error, stackTrace) =>
@@ -196,6 +165,64 @@ class InternshipCard extends StatelessWidget {
                               ),
                             ),
                       ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                spacing: 5,
+                children: [
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 5,
+                      children: [
+                        Text("Education: ", style: AppStyles.customTextStyle(
+                          size: 10,
+                          weight: FontWeight.w400,
+                          color: AppColors.primaryColor,
+                        ),),
+                        SizedBox(
+                          width: 100,
+                          child: Text(
+                            qualification,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppStyles.customTextStyle(
+                              size: 10,
+                              weight: FontWeight.w400,
+                              color: AppColors.blackLight,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 5,
+                      children: [
+                        Text("Available: ",style:  AppStyles.customTextStyle(
+                          size: 10,
+                          weight: FontWeight.w400,
+                          color: AppColors.primaryColor,
+                        )),
+                        SizedBox(
+                          width: 100,
+                          child: Text(
+                            skillList.join(", "),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppStyles.customTextStyle(
+                              size: 10,
+                              weight: FontWeight.w400,
+                              color: AppColors.blackLight,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -289,12 +316,13 @@ class InternshipCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.selectedContColor,
                       shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.transparentColor)
                     ),
-                    padding: EdgeInsets.all(5),
+                    padding: EdgeInsets.all(3),
                     child: Icon(
                       Icons.arrow_forward_ios,
                       color: AppColors.whiteColor,
-                      size: 25,
+                      size: 20,
                     ),
                   ),
                 ],

@@ -821,6 +821,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
             ],
           ),
           CustomTextField(
+            isNumberKeyboard: false,
             prefixWidget: const Icon(
               Icons.assignment_outlined,
               color: AppColors.primaryColor,

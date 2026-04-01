@@ -62,7 +62,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
             onPressed: () => Get.back(),
           ),
           title: Text(
-            "Change Mobile Number",
+            "Change Email",
             style: AppStyles.customTextStyle(
               size: 18,
               color: AppColors.secondaryColor,
@@ -253,6 +253,7 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
             registerController.updateProfileModel.message ??
             "Your Email updated successfully!",
       );
+      await profileController.getProfileData(studentId: studentId);
       Get.back();
     } else {
       AppFunctions.apiErrorHandling(

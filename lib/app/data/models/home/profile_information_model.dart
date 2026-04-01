@@ -140,7 +140,7 @@ class ProfileDataModel {
       studProgrammingLang: List<String>.from(json['studprogramminglang'] ?? []),
       //studentCertificate: json['studentcertificate'] ?? [],
       studentCertificate: (json['studentcertificate'] ?? [])
-          .map<ExperienceData>((e) => Certification.fromJson(e))
+          .map<Certification>((e) => Certification.fromJson(e))
           .toList(),
       studentResume: json['studentresume'],
       studentAadhaar: List<String>.from(json['studentAdhar'] ?? []),

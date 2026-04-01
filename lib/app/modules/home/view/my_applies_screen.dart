@@ -99,6 +99,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                       companyLocation: item.jobData != null
                           ? item.jobData!.internshipMode
                           : "",
+                      duration: item.jobData !=null? item.jobData!.internshipDuration :"NA",
                       // companyDescription: item.jobData != null
                       //     ? item.jobData!.aboutCompany
                       //     : "",

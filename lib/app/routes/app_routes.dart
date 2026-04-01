@@ -34,6 +34,8 @@ class AppRoutes {
   static const resumeTemplatePreviewScreen = '/resumeTemplatePreviewScreen';
   static const profileEditScreen = '/profileEditScreen';
   static const buyCreditsScreen = '/buyCreditsScreen';
+  static const homeProfileScreen = '/homeProfileScreen';
+  static const myAppliesScreen = '/myAppliesScreen';
 
   // INTERNSHIP FLOW
 

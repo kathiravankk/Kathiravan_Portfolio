@@ -68,7 +68,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                appliedData!.jobData!.title ?? "",
+                appliedData!.jobData!.roleType ?? "",
                 style: AppStyles.customTextStyle(
                   size: 18,
                   color: AppColors.whiteColor,
@@ -84,22 +84,31 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                   weight: FontWeight.w400,
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.secondaryColor,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Text(
-                  appliedData!.jobData!.aboutCompany ?? "NA",
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppStyles.customTextStyle(
-                    size: 12,
-                    color: AppColors.lightBlackText2,
-                    weight: FontWeight.w400,
-                    //isUnderlined: true,
-                    //underlineColor: AppColors.lightBlackText2,
+              GestureDetector(
+                onTap: () {
+                  AppFunctions.navigateScreen(
+                    context,
+                    AppRoutes.internshipDetailScreen,
+                    arguments: {"internshipId": appliedData!.jobData!.sId, "isStatusFlow": true},
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryColor,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Text(
+                    "View Details",
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.customTextStyle(
+                      size: 12,
+                      color: AppColors.lightBlackText2,
+                      weight: FontWeight.w400,
+                      //isUnderlined: true,
+                      //underlineColor: AppColors.lightBlackText2,
+                    ),
                   ),
                 ),
               ),
@@ -193,7 +202,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                       ),
                     )
                   : SizedBox(
-                      height: 210,
+                      height: 220,
                       child:
                           dashboardController
                               .similarInternshipModel
@@ -237,8 +246,8 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                   //       ? removeToSaved(jobId: similar.sId!)
                                   //       : addToSaved(jobId: similar.sId!);
                                   // },
-                                  saveFunc: () =>
-                                      dashboardController.similarSaveFunc(index),
+                                  saveFunc: () => dashboardController
+                                      .similarSaveFunc(index),
                                   viewFunc: () {
                                     AppFunctions.navigateScreen(
                                       context,
@@ -261,7 +270,8 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                       dashboardController
                                           .similarInternshipModel
                                           .similarList![index]
-                                          .studentQualification!.join(", ") ??
+                                          .studentQualification!
+                                          .join(", ") ??
                                       "",
                                   stipendRupees:
                                       dashboardController
@@ -275,9 +285,12 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                           .similarList![index]
                                           .internshipDescription ??
                                       "",
-                                  imageUrl: dashboardController
-                                      .similarInternshipModel
-                                      .similarList![index].companyLogo ?? "",
+                                  imageUrl:
+                                      dashboardController
+                                          .similarInternshipModel
+                                          .similarList![index]
+                                          .companyLogo ??
+                                      "",
                                   internshipMode:
                                       dashboardController
                                           .similarInternshipModel

@@ -118,7 +118,7 @@ class JobModel {
   final String? aboutInternship;
   final String? internshipDescription;
   final String? internshipQualification;
-  final String? studentQualification;
+  final List<dynamic>? studentQualification;
   final String? fieldOfStudy;
   final List<String>? requiredSkills;
   final String? eligibilityCriteria;
@@ -176,7 +176,7 @@ class JobModel {
       aboutInternship: json['aboutinternship'] ?? "",
       internshipDescription: json['intershipdescription'] ?? "",
       internshipQualification: json['Internshipqualification'] ?? "",
-      studentQualification: json['studentqualification'] ?? "",
+      studentQualification: json['studentqualification'] ?? [],
       fieldOfStudy: json['fieldofstudy'] ?? "",
       requiredSkills: json['requiredskills'] != null
           ? List<String>.from(json['requiredskills'])

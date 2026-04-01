@@ -163,6 +163,10 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     }
   }
 
+  List<List<String>> convertToNestedList(List<String> values) {
+    return values.map((e) => [e]).toList();
+  }
+
   Future<void> updateStudentProfile() async {
     ReplyData? profileData =
         dashboardController.updateChatResumeModel.aiResponse!.finalUpdatedData;
@@ -242,7 +246,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
       "education": jsonEncode(profileData.education!.toJson()),
 
-      "studprogramminglang": jsonEncode(profileData.skills ?? []),
+      "studprogramminglang": convertToNestedList(profileData.skills ?? []),
 
       "linkedIn": profileData.personalInfo!.linkedIn ?? "",
 
@@ -262,6 +266,8 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
   String? studentId = "";
 
+
+
   Future<void> getProfileData() async {
     studentId = await LocalStorageService.getStudentId();
 
@@ -276,7 +282,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
           "resumeData": ExtractedResumeDataModel(
             personalInfo: PersonalInfoModel(
               name: studentData.studentName!,
-              gender: "",
+              gender: studentData.studentGender,
               email: studentData.studEmail!,
               phone: studentData.studMobileNo!,
               linkedIn: studentData.linkedIn,
@@ -298,7 +304,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             industrialVisits: studentData.industrialVisits,
             projects: studentData.projects,
             skills: studentData.studProgrammingLang,
-            profileSummary: "",
+            profileSummary: studentData.profileSummary,
             colleges: studentData.college,
             degree: [],
             experience: studentData.experience,

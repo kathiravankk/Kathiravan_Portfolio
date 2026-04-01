@@ -254,6 +254,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
             registerController.updateProfileModel.message ??
             "Your Mobile updated successfully!",
       );
+      await profileController.getProfileData(studentId: studentId);
       Get.back();
     } else {
       AppFunctions.apiErrorHandling(

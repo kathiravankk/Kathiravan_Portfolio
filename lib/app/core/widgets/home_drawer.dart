@@ -184,14 +184,16 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 onTap: () {
                   AppFunctions.navigateScreen(
                     context,
-                    AppRoutes.studentProfileScreen,
+                    AppRoutes.homeProfileScreen,
                   );
                 },
               ),
               _drawerItem(
                 icon: Icons.description_outlined,
                 title: "My Applications",
-                onTap: () {},
+                onTap: () {
+                  AppFunctions.navigateScreen(context, AppRoutes.myAppliesScreen);
+                },
               ),
               _drawerItem(
                 icon: Icons.bookmark_border_sharp,
