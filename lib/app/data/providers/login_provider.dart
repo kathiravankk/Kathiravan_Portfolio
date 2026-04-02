@@ -4,7 +4,6 @@ import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
 
-
 class LoginProvider {
   final Dio? client;
 
@@ -18,13 +17,11 @@ class LoginProvider {
 
   set responseStatus(int value) => _responseStatus = value;
 
-
-
-
   Future postLoginOtp({required String mobileNumber}) async {
     try {
-      client!.interceptors
-          .add(LogInterceptor(responseBody: true, requestBody: true));
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
 
       Response response = await client!
           .post(AppApiUrls.sendLoginOtp, data: {"mobile": mobileNumber})
@@ -44,13 +41,18 @@ class LoginProvider {
   Future loginVerifyOtp({
     required String mobileNumber,
     required String otpNumber,
+    required String userType
   }) async {
     try {
-      client!.interceptors
-          .add(LogInterceptor(responseBody: true, requestBody: true));
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
 
       Response response = await client!
-          .post(AppApiUrls.verifyLoginOtp, data: {"mobile": mobileNumber, "otp": otpNumber})
+          .post(
+            AppApiUrls.verifyLoginOtp,
+            data: {"mobile": mobileNumber, "otp": otpNumber, "userType": userType},
+          )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
       return StudentRegisterModel.fromJson(response.data);

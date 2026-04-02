@@ -244,12 +244,25 @@ class _LoginScreenState extends State<LoginScreen> {
       await loginController.sendLoginOtp(mobileNumber: mobileController.text);
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
-        AppFunctions.showToast(
-          message:
-              loginController.commonPostModel.message ??
-              "OTP successfully sent to your Mobile Number!",
-          isError: false,
-        );
+        if (loginController.commonPostModel.userType == "student") {
+          AppFunctions.showToast(
+            message:
+                loginController.commonPostModel.message ??
+                "OTP successfully sent to your Mobile Number!",
+            isError: false,
+          );
+        } else {
+          AppFunctions.showAppAlert(
+            context: context,
+            content:
+            "Mobile Number already registered as Recruiter. Please use another Number.",
+            confirmText: "OKAY",
+            onConfirm: () {
+              mobileController.text = "";
+              Get.back();
+            },
+          );
+        }
       } else {
         AppFunctions.apiErrorHandling(
           loginController.getResponseCode(),
@@ -269,6 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await loginController.verifyLoginOtp(
         mobileNumber: mobileController.text,
         otpNumber: otpController.text,
+        userType: loginController.commonPostModel.userType ?? "student",
       );
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
@@ -288,7 +302,11 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         LocalStorageService.saveCreditId(
           creditId:
-          loginController.studentRegisterModel.registerData!.studentCreditId ?? "",
+              loginController
+                  .studentRegisterModel
+                  .registerData!
+                  .studentCreditId ??
+              "",
         );
         AppFunctions.showToast(
           message:

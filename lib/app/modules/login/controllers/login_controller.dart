@@ -102,12 +102,14 @@ class LoginController extends GetxController {
   Future<void> verifyLoginOtp({
     required String mobileNumber,
     required String otpNumber,
+    required String userType,
   }) async {
     try {
       loginVerifyLoading = true;
       studentRegisterModel = await loginProvider!.loginVerifyOtp(
         mobileNumber: mobileNumber,
         otpNumber: otpNumber,
+        userType: userType
       );
       loginVerifyLoading = false;
     } catch (err) {
