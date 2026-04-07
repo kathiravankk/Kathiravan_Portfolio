@@ -72,7 +72,9 @@ class AppFunctions {
       );
       //AppFunctions.showAppAlert(context: context, content: content)
     } else if (responseCode == 404) {
-      showToast(message: message, isError: true);
+     // showToast(message: message, isError: true);
+      showToast(message: "Session expired, Please login again!", isError: true);
+      Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 500) {
       showToast(message: message, isError: true);
     } else if (responseCode == 502) {

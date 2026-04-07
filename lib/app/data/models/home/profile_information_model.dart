@@ -18,6 +18,7 @@ class ProfileInformationModel {
 }
 
 class ProfileDataModel {
+  String? message;
   EducationModel? education;
   String? id;
   String? studentName;
@@ -127,12 +128,14 @@ class ProfileDataModel {
     //this.studentCreditIdString,
     this.studentDob,
     this.studentGender,
+    this.message
   });
 
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
     return ProfileDataModel(
       education: EducationModel.fromJson(json['education'] ?? {}),
       id: json['_id'],
+      message: json['message'],
       studentName: json['studname'],
       profileSummary: json['profile_summary'] ?? "",
       studEmail: json['studemail'],
@@ -205,6 +208,7 @@ class ProfileDataModel {
   Map<String, dynamic> toJson() {
     return {
       'education': education?.toJson(),
+      'message': message,
       '_id': id,
       'studname': studentName,
       'profile_summary': profileSummary,

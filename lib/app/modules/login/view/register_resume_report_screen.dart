@@ -48,6 +48,28 @@ class _RegisterResumeReportScreenState
     print(networkResumePath!);
     print("******************");
     await registerController.checkResumeScore(resumeUrl: networkResumePath!);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      await getProfileData();
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later",
+      );
+    }
+  }
+
+  Future<void> getProfileData() async {
+    final studentId = await LocalStorageService.getStudentId();
+    await registerController.getStudentProfile(studentId: studentId!);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later",
+      );
+    }
   }
 
   @override
@@ -68,56 +90,61 @@ class _RegisterResumeReportScreenState
           },
         );
       },
-      child: Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          title: Text(
-            'Resume Report',
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w600,
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await getResumeScore();
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.appBgColor_2,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            title: Text(
+              'Resume Report',
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-        body: Obx(
-          () => registerController.resumeScoreLoading
-              ? Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
+          body: Obx(
+            () => registerController.resumeScoreLoading
+                ? Center(
+                    child: CupertinoActivityIndicator(
+                      color: AppColors.secondaryColor,
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      spacing: 15,
+                      children: [
+                        resumePreview(),
+                        buildScoreCard(),
+                        buildAllSections(),
+                        buildStrengthCard(
+                          isStrength: true,
+                          list: registerController
+                              .resumeAnalyzeModel
+                              .analysis!
+                              .strengths,
+                          title: "Strengths",
+                        ),
+                        buildStrengthCard(
+                          isStrength: false,
+                          list: registerController
+                              .resumeAnalyzeModel
+                              .analysis!
+                              .improvements,
+                          title: "Improvements",
+                        ),
+                        buildBottomButtons(),
+                      ],
+                    ),
                   ),
-                )
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    spacing: 15,
-                    children: [
-                      resumePreview(),
-                      buildScoreCard(),
-                      buildAllSections(),
-                      buildStrengthCard(
-                        isStrength: true,
-                        list: registerController
-                            .resumeAnalyzeModel
-                            .analysis!
-                            .strengths,
-                        title: "Strengths",
-                      ),
-                      buildStrengthCard(
-                        isStrength: false,
-                        list: registerController
-                            .resumeAnalyzeModel
-                            .analysis!
-                            .improvements,
-                        title: "Improvements",
-                      ),
-                      buildBottomButtons(),
-                    ],
-                  ),
-                ),
+          ),
         ),
       ),
     );
@@ -131,13 +158,19 @@ class _RegisterResumeReportScreenState
         color: Colors.white,
       ),
       clipBehavior: Clip.hardEdge,
-      child: SfPdfViewer.network(
-        networkResumePath ?? "",
-        canShowScrollHead: false,
-        canShowScrollStatus: false,
-        enableDoubleTapZooming: false,
-        pageLayoutMode: PdfPageLayoutMode.single,
-      ),
+      child: networkResumePath == null || networkResumePath!.isEmpty
+          ? Center(
+              child: CupertinoActivityIndicator(
+                color: AppColors.secondaryColor,
+              ),
+            )
+          : SfPdfViewer.network(
+              networkResumePath ?? "",
+              canShowScrollHead: false,
+              canShowScrollStatus: false,
+              enableDoubleTapZooming: false,
+              pageLayoutMode: PdfPageLayoutMode.single,
+            ),
     );
   }
 
@@ -145,9 +178,15 @@ class _RegisterResumeReportScreenState
     final analysis = registerController.resumeAnalyzeModel.analysis;
     final extracted = registerController.resumeAnalyzeModel.extractedData;
 
-    if (analysis == null || extracted == null) return const SizedBox();
+    if (analysis == null || extracted == null) {
+      return const SizedBox();
+    }
 
     final sections = analysis.sections.toMap();
+
+    if (sections.isEmpty) {
+      return const SizedBox();
+    }
 
     sections.forEach((sectionTitle, sectionDetail) {
       _suggestionSelection.putIfAbsent(sectionTitle, () {
@@ -160,12 +199,14 @@ class _RegisterResumeReportScreenState
     });
 
     return Column(
-      spacing: 15,
       children: sections.entries.map((entry) {
-        return buildSectionCard(
-          title: entry.key,
-          sectionData: entry.value,
-          extractedData: extracted,
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 15),
+          child: buildSectionCard(
+            title: entry.key,
+            sectionData: entry.value,
+            extractedData: extracted,
+          ),
         );
       }).toList(),
     );
@@ -176,6 +217,12 @@ class _RegisterResumeReportScreenState
     required SectionDetail sectionData,
     required ExtractedResumeDataModel extractedData,
   }) {
+    final extractedWidget = buildExtractedContent(title, extractedData);
+
+    if (extractedWidget is SizedBox && sectionData.suggestions.isEmpty) {
+      return const SizedBox();
+    }
+
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -186,12 +233,11 @@ class _RegisterResumeReportScreenState
         border: Border.all(color: AppColors.contBorderColor),
       ),
       child: Column(
-        spacing: 10,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           headerRow(title, sectionData.rating),
           Divider(color: AppColors.contBorderColor),
-          buildExtractedContent(title, extractedData),
+          extractedWidget,
           Divider(color: AppColors.contBorderColor),
           buildSuggestions(title, sectionData.suggestions),
         ],
@@ -311,86 +357,45 @@ class _RegisterResumeReportScreenState
   }
 
   Widget buildExtractedContent(String title, ExtractedResumeDataModel data) {
-    switch (title) {
-      case "Resume Profile":
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              data.personalInfo!.name!,
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: Colors.white,
-                weight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              data.personalInfo!.email!,
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: Colors.white,
-                weight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              "+91 ${data.personalInfo!.phone}",
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: Colors.white,
-                weight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              data.profileSummary!,
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: Colors.white,
-                weight: FontWeight.w600,
-              ),
-            ),
-          ],
+    final normalized = title.toLowerCase().replaceAll(" ", "_");
+
+    switch (normalized) {
+      case "profile_summary":
+        if ((data.profileSummary ?? "").isEmpty) {
+          return const SizedBox();
+        }
+        return Text(
+          data.profileSummary!,
+          style: AppStyles.customTextStyle(
+            size: 12,
+            color: Colors.white,
+            weight: FontWeight.w600,
+          ),
         );
 
-      case "Skills":
-        return Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: data.skills!
-              .map(
-                (e) => Chip(
-                  label: Text(e),
-                  backgroundColor: AppColors.secondaryColor,
-                ),
-              )
-              .toList(),
-        );
-
-      case "Experience":
+      case "projects":
+        if (data.projects == null || data.projects!.isEmpty) {
+          return const SizedBox();
+        }
         return Column(
-          children: data.experience!.map((exp) {
+          children: data.projects!.map((p) {
             return buildBulletBlock(
-              title: "${exp.role} • ${exp.company}",
-              subtitle: exp.duration,
-              points: exp.description!,
+              title: p.title ?? '',
+              points: p.description.toString(),
             );
           }).toList(),
         );
 
-      case "Projects":
-        return Column(
-          children: data.projects!.map((p) {
-            return buildBulletBlock(title: p.title!, points: p.description!.toString());
-          }).toList(),
-        );
-
-      case "Internships":
+      case "internships":
+        if (data.internships == null || data.internships!.isEmpty) {
+          return const SizedBox();
+        }
         return Column(
           children: data.internships!.map((i) {
             return buildBulletBlock(
-              title: i.company!,
+              title: "${i.role ?? ''} • ${i.company ?? ''}",
               subtitle: i.duration,
-              points: i.description!,
+              points: i.description.toString(),
             );
           }).toList(),
         );
@@ -646,10 +651,8 @@ class _RegisterResumeReportScreenState
 
   Future<void> updateSkipProfileFunc() async {
     final studentId = await LocalStorageService.getStudentId();
-    Map<String, dynamic> resumeData = {
-      registerController.extractedResumeModel.templateNumber!: 1.toString(),
-      registerController.extractedResumeModel.studentId!: studentId,
-    };
+    registerController.extractedResumeModel.templateNumber != 1.toString();
+    registerController.extractedResumeModel.studentId != studentId!;
     await registerController.updateResumeProfileData(
       updateData: registerController.extractedResumeModel,
     );
@@ -659,11 +662,11 @@ class _RegisterResumeReportScreenState
         message: "Resume updated successfully!",
         isError: false,
       );
-      AppFunctions.navigateScreen(
-        context,
-        AppRoutes.stepUpdateScreen,
-        arguments: {"activeStep": 2},
-      );
+      // AppFunctions.navigateScreen(
+      //   context,
+      //   AppRoutes.stepUpdateScreen,
+      //   arguments: {"activeStep": 2},
+      // );
     } else {
       AppFunctions.showToast(
         message:

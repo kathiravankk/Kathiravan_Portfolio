@@ -63,58 +63,54 @@ class AnalysisData {
 }
 
 class Sections {
-  dynamic profileSummary;
-  SectionDetail projects;
-  SectionDetail internships;
-  SectionDetail experience;
+  final Map<String, SectionDetail> data;
 
-  Sections({
-    required this.profileSummary,
-    required this.projects,
-    required this.internships,
-    required this.experience,
-  });
+  Sections({required this.data});
 
   factory Sections.fromJson(Map<String, dynamic>? json) {
     if (json == null) {
-      return Sections(
-        profileSummary: SectionDetail.empty(),
-        projects: SectionDetail.empty(),
-        internships: SectionDetail.empty(),
-        experience: SectionDetail.empty(),
-      );
+      return Sections(data: {});
     }
 
-    return Sections(
-      profileSummary: SectionDetail.fromJson(json['profile_summary']),
-      projects: SectionDetail.fromJson(json['projects']),
-      internships: SectionDetail.fromJson(json['internships']),
-      experience: SectionDetail.fromJson(json['experience']),
-    );
+    final Map<String, SectionDetail> parsed = {};
+
+    json.forEach((key, value) {
+      final detail = SectionDetail.fromJson(value);
+
+      // ✅ only include valid sections
+      if (detail.hasContent) {
+        parsed[_formatTitle(key)] = detail;
+      }
+    });
+
+    return Sections(data: parsed);
   }
 
-  Map<String, SectionDetail> toMap() {
-    return {
-      "Profile Summary": profileSummary,
-      "Projects": projects,
-      "Internships": internships,
-      "Experience": experience,
-    };
+  Map<String, SectionDetail> toMap() => data;
+
+  static String _formatTitle(String key) {
+    return key
+        .split('_')
+        .map((e) => e[0].toUpperCase() + e.substring(1))
+        .join(' ');
   }
 }
 
 class SectionDetail {
-  dynamic rating;
-  List<String> suggestions;
+  final double rating;
+  final List<String> suggestions;
 
-  SectionDetail({required this.rating, required this.suggestions});
+  SectionDetail({
+    required this.rating,
+    required this.suggestions,
+  });
 
   factory SectionDetail.empty() {
     return SectionDetail(rating: 0.0, suggestions: []);
   }
 
-  factory SectionDetail.fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
+  factory SectionDetail.fromJson(dynamic json) {
+    if (json == null || json is! Map || json.isEmpty) {
       return SectionDetail.empty();
     }
 
@@ -123,6 +119,8 @@ class SectionDetail {
       suggestions: List<String>.from(json['suggestions'] ?? []),
     );
   }
+
+  bool get hasContent => rating > 0 || suggestions.isNotEmpty;
 }
 
 class ExtractedResumeDataModel {

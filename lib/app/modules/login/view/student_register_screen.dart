@@ -39,13 +39,25 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
   Future<void> setInitialData() async {
     nameController.text =
-        registerController.resumeExtractModel.resumeData!.personalInfo!.name ??
+        registerController
+            .resumeExtractModel
+            .extractedData!
+            .personalInfo!
+            .name ??
         "";
     emailController.text =
-        registerController.resumeExtractModel.resumeData!.personalInfo!.email ??
+        registerController
+            .resumeExtractModel
+            .extractedData!
+            .personalInfo!
+            .email ??
         "";
     mobileController.text =
-        registerController.resumeExtractModel.resumeData!.personalInfo!.phone ??
+        registerController
+            .resumeExtractModel
+            .extractedData!
+            .personalInfo!
+            .phone ??
         "";
   }
 
@@ -400,7 +412,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   }
 
   Future<void> studentRegisterFunc() async {
-    print(registerController.resumeExtractModel.resumeData!);
+    debugPrint(registerController.resumeExtractModel.extractedData!.toString());
     final resumePath = await ResumeStorageService.getResumePath();
     Map<String, dynamic> registerData = {
       "studmobileno": mobileController.text,
@@ -408,236 +420,239 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       "studemail": emailController.text,
 
       "studname": nameController.text,
-      "studgender":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .gender ??
-          "",
-
-      "studdob": "",
-
-      "studentaddress":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .location ??
-          "",
-
       "studentdegree":
           registerController
                       .resumeExtractModel
-                      .resumeData!
+                      .extractedData!
                       .education!
                       .college !=
                   null &&
               registerController
                   .resumeExtractModel
-                  .resumeData!
+                  .extractedData!
                   .education!
                   .college!
                   .isNotEmpty
           ? registerController
                     .resumeExtractModel
-                    .resumeData!
+                    .extractedData!
                     .education!
                     .college!
                     .first
                     .degree ??
                 ""
           : "",
-
-      "studentfieldofstudy":
-          registerController
-                      .resumeExtractModel
-                      .resumeData!
-                      .education!
-                      .college !=
-                  null &&
-              registerController
-                  .resumeExtractModel
-                  .resumeData!
-                  .education!
-                  .college!
-                  .isNotEmpty
-          ? registerController
-                    .resumeExtractModel
-                    .resumeData!
-                    .education!
-                    .college!
-                    .first
-                    .department ??
-                ""
-          : "",
-
       "studentcollegename":
           registerController
                       .resumeExtractModel
-                      .resumeData!
+                      .extractedData!
                       .education!
                       .college !=
                   null &&
               registerController
                   .resumeExtractModel
-                  .resumeData!
+                  .extractedData!
                   .education!
                   .college!
                   .isNotEmpty
           ? registerController
                     .resumeExtractModel
-                    .resumeData!
+                    .extractedData!
                     .education!
                     .college!
                     .first
                     .institution ??
                 ""
           : "",
-
-      "studcollegestartyear":
-          registerController
-                      .resumeExtractModel
-                      .resumeData!
-                      .education!
-                      .college !=
-                  null &&
-              registerController
-                  .resumeExtractModel
-                  .resumeData!
-                  .education!
-                  .college!
-                  .isNotEmpty
-          ? registerController
-                    .resumeExtractModel
-                    .resumeData!
-                    .education!
-                    .college!
-                    .first
-                    .startYear
-                    ?.toString() ??
-                ""
-          : "",
-
-      "studcollegelocation": "",
-
-      "studhighschollname":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .higherSecondary
-              .institution ??
-          "",
-
-      "studhighschoolpercentage":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .higherSecondary
-              .percentage
-              ?.toString() ??
-          "",
-
-      "studentsecondaryschoolname":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .secondary
-              .institution ??
-          "",
-
-      "studentsecondaryschoolpercentage":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .education!
-              .school!
-              .secondary
-              .percentage
-              ?.toString() ??
-          "",
-
-      "projects": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.projects
-                ?.map((e) => e.toJson())
-                .toList() ??
-            [],
+      "studentresume": await MultipartFile.fromFile(
+        resumePath!,
+        filename: resumePath.split('/').last,
+        contentType: MediaType(
+          "application",
+          "pdf", // or doc/docx based on file
+        ),
       ),
+      "studprogramminglang":
+          registerController.resumeExtractModel.extractedData!.skills ?? [],
+      "college": jsonEncode(registerController.resumeExtractModel.extractedData!.education!.college ?? []),
+      // "studgender":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .personalInfo!
+      //         .gender ??
+      //     "",
+      //
+      // "studdob": "",
+      //
+      // "studentaddress":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .personalInfo!
+      //         .location ??
+      //     "",
 
-      "areas_of_interest": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.areasOfInterest ?? [],
-      ),
+      // "studentfieldofstudy":
+      //     registerController
+      //                 .resumeExtractModel
+      //                 .extractedData!
+      //                 .education!
+      //                 .college !=
+      //             null &&
+      //         registerController
+      //             .resumeExtractModel
+      //             .extractedData!
+      //             .education!
+      //             .college!
+      //             .isNotEmpty
+      //     ? registerController
+      //               .resumeExtractModel
+      //               .extractedData!
+      //               .education!
+      //               .college!
+      //               .first
+      //               .department ??
+      //           ""
+      //     : "",
+      //
+      //
+      // "studcollegestartyear":
+      //     registerController
+      //                 .resumeExtractModel
+      //                 .extractedData!
+      //                 .education!
+      //                 .college !=
+      //             null &&
+      //         registerController
+      //             .resumeExtractModel
+      //             .extractedData!
+      //             .education!
+      //             .college!
+      //             .isNotEmpty
+      //     ? registerController
+      //               .resumeExtractModel
+      //               .extractedData!
+      //               .education!
+      //               .college!
+      //               .first
+      //               .startYear
+      //               ?.toString() ??
+      //           ""
+      //     : "",
+      //
+      // "studcollegelocation": "",
 
-      "hobbies": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.hobbies ?? [],
-      ),
-
-      "languages_known": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.languages ?? [],
-      ),
-
-      "volunteer_experience": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.volunteerExperience ??
-            [],
-      ),
-
-      "leadership": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.leadership ?? [],
-      ),
-      "studentcertificate": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.certifications
-                ?.map((e) => e.toJson())
-                .toList() ??
-            [],
-      ),
-
-      "achievements": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.achievements ?? [],
-      ),
-
-      "publications": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.publications ?? [],
-      ),
-
-      "workshops": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.workshops ?? [],
-      ),
-
-      "paper_presentations": [],
-
-      "tools_and_technologies": jsonEncode([]),
-
-      "experience": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.experience
-                ?.map((e) => e.toJson())
-                .toList() ??
-            [],
-      ),
-
-      "internships": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.internships ?? [],
-      ),
-
-      "industrial_visits": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.industrialVisits ??
-            [],
-      ),
-
-      "trainings": jsonEncode([]),
-
-      "education": jsonEncode(
-        registerController.resumeExtractModel.resumeData!.education!.toJson(),
-      ),
-
-      // "studprogramminglang": jsonEncode(
-      //   registerController.resumeExtractModel.resumeData!.skills ?? [],
+      // "studhighschollname":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .education!
+      //         .school!
+      //         .higherSecondary
+      //         .institution ??
+      //     "",
+      //
+      // "studhighschoolpercentage":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .education!
+      //         .school!
+      //         .higherSecondary
+      //         .percentage
+      //         ?.toString() ??
+      //     "",
+      //
+      // "studentsecondaryschoolname":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .education!
+      //         .school!
+      //         .secondary
+      //         .institution ??
+      //     "",
+      //
+      // "studentsecondaryschoolpercentage":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .education!
+      //         .school!
+      //         .secondary
+      //         .percentage
+      //         ?.toString() ??
+      //     "",
+      //
+      // "projects": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.projects
+      //           ?.map((e) => e.toJson())
+      //           .toList() ??
+      //       [],
       // ),
+      //
+      // "areas_of_interest": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.areasOfInterest ?? [],
+      // ),
+      //
+      // "hobbies": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.hobbies ?? [],
+      // ),
+      //
+      // "languages_known": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.languages ?? [],
+      // ),
+      //
+      // "volunteer_experience": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.volunteerExperience ??
+      //       [],
+      // ),
+      //
+      // "leadership": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.leadership ?? [],
+      // ),
+      // "studentcertificate": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.certifications
+      //           ?.map((e) => e.toJson())
+      //           .toList() ??
+      //       [],
+      // ),
+      //
+      // "achievements": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.achievements ?? [],
+      // ),
+      //
+      // "publications": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.publications ?? [],
+      // ),
+      //
+      // "workshops": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.workshops ?? [],
+      // ),
+      //
+      // "paper_presentations": [],
+      //
+      // "tools_and_technologies": jsonEncode([]),
+      //
+      // "experience": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.experience
+      //           ?.map((e) => e.toJson())
+      //           .toList() ??
+      //       [],
+      // ),
+      //
+      // "internships": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.internships ?? [],
+      // ),
+      //
+      // "industrial_visits": jsonEncode(
+      //   registerController.resumeExtractModel.resumeData!.industrialVisits ??
+      //       [],
+      // ),
+      //
+      // "trainings": jsonEncode([]),
+
       // "studprogramminglang":
       //     registerController.resumeExtractModel.resumeData!.skills!.isEmpty
       //     ? "{}"
@@ -649,36 +664,26 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       // "studprogramminglang":
       //   (registerController.resumeExtractModel.resumeData?.skills ?? [])
       //       .map((skill) => [skill])
-      //       .toList(),
-      "studprogramminglang":
-          registerController.resumeExtractModel.resumeData?.skills ?? [],
-      "linkedIn":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .linkedIn ??
-          "",
-
-      "github":
-          registerController
-              .resumeExtractModel
-              .resumeData!
-              .personalInfo!
-              .github ??
-          "",
-
-      "portfolio_website": "",
-
-      "student_banner": "",
-      "studentresume": await MultipartFile.fromFile(
-        resumePath!,
-        filename: resumePath.split('/').last,
-        contentType: MediaType(
-          "application",
-          "pdf", // or doc/docx based on file
-        ),
-      ),
+      //       .toList(),////sample
+      // "linkedIn":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .personalInfo!
+      //         .linkedIn ??
+      //     "",
+      //
+      // "github":
+      //     registerController
+      //         .resumeExtractModel
+      //         .resumeData!
+      //         .personalInfo!
+      //         .github ??
+      //     "",
+      //
+      // "portfolio_website": "",
+      //
+      // "student_banner": "",
     };
 
     debugPrint(registerData.toString(), wrapWidth: 1024);
@@ -703,11 +708,10 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       // ResumeStorageService.saveNetworkResume(
       //   resumeFile: studentProfileModel.studentResume!,
       // );
-      // AppFunctions.navigateScreen(
-      //   context,
-      //   AppRoutes.registerResumeReportScreen,
-      // );
-      showAlertDialog();
+      AppFunctions.navigateScreen(
+        context,
+        AppRoutes.registerResumeReportScreen,
+      );
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),

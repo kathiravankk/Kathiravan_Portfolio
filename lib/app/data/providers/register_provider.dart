@@ -9,6 +9,7 @@ import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
+import 'package:internsharks/app/data/models/account/resume_extracted_data_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
 
@@ -25,7 +26,7 @@ class RegisterProvider {
 
   set responseStatus(int value) => _responseStatus = value;
 
-  Future<ResumeExtractModel> uploadExtractResume({
+  Future<ResumeExtractedDataModel> uploadExtractResume({
     required String filePath,
     required Function(int sent, int total) onProgress,
   }) async {
@@ -52,13 +53,13 @@ class RegisterProvider {
 
       responseStatus = response.statusCode!;
 
-      return ResumeExtractModel.fromJson(response.data);
+      return ResumeExtractedDataModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return ResumeExtractModel.fromJson(error.response!.data);
+        return ResumeExtractedDataModel.fromJson(error.response!.data);
       } else {
-        return ResumeExtractModel.fromJson(error.response!.data);
+        return ResumeExtractedDataModel.fromJson(error.response!.data);
       }
     }
   }

@@ -78,9 +78,7 @@ class _RegisterResumeUploadScreenState
     } else if (registerController.getResponseCode() == 200 &&
         registerController.resumeExtractModel.success == false) {
       AppFunctions.showToast(
-        message:
-            registerController.resumeExtractModel.message ??
-            "Failed to upload your resume",
+        message: "Failed to upload your resume",
         isError: true,
       );
     } else {

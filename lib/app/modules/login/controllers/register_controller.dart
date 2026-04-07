@@ -7,6 +7,7 @@ import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
+import 'package:internsharks/app/data/models/account/resume_extracted_data_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
 import 'package:internsharks/app/data/providers/register_provider.dart';
@@ -34,11 +35,11 @@ class RegisterController extends GetxController {
 
   //Model
 
-  final _resumeExtractModel = ResumeExtractModel().obs;
+  final _resumeExtractModel = ResumeExtractedDataModel().obs;
 
-  ResumeExtractModel get resumeExtractModel => _resumeExtractModel.value;
+  ResumeExtractedDataModel get resumeExtractModel => _resumeExtractModel.value;
 
-  set resumeExtractModel(ResumeExtractModel value) =>
+  set resumeExtractModel(ResumeExtractedDataModel value) =>
       _resumeExtractModel.value = value;
 
   final _commonPostModel = CommonPostModel().obs;

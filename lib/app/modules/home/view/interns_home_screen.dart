@@ -62,6 +62,11 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
         creditBalance =
             registerController.creditDataModel.creditData?.balance ?? 0;
       }
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later",
+      );
     }
   }
 
@@ -73,6 +78,14 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
     await profileController.getProfileData(studentId: studentId ?? "");
     await dashboardController.getCategoryListData();
     await dashboardController.getRecommentedInternship();
+    if (profileController.getResponseCode() == 200 ||
+        profileController.getResponseCode() == 201) {
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.profileDataModel.message ?? "",
+      );
+    }
   }
 
   @override
