@@ -75,16 +75,19 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
   // ── Scroll listener ──────────────────────────────────────────────────────────
 
   void _onScroll() {
-    // Trigger when user is within 200px of the bottom
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+    if (!_scrollController.hasClients) return;
+
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (currentScroll >= (maxScroll * 0.8)) {
       _loadNextPage();
     }
   }
 
   void _loadNextPage() {
-    if (_isPaginating) return; // already loading
-    if (_currentPage >= _totalPages) return; // no more pages
+    if (_isPaginating) return;
+    if (dashboardController.allInternshipLoading) return;
+    if (_currentPage >= _totalPages) return;
 
     _fetchPage(page: _currentPage + 1, isNewSearch: false);
   }
@@ -109,10 +112,11 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
     required bool isNewSearch,
   }) async {
     if (isNewSearch) {
-      // Full-screen loader is handled by dashboardController.allInternshipLoading
-      internshipList.clear();
-      _currentPage = 1;
-      _totalPages = 1;
+      setState(() {
+        internshipList.clear();
+        _currentPage = 1;
+        _totalPages = 1;
+      });
     } else {
       if (_isPaginating) return;
       setState(() => _isPaginating = true);
@@ -133,11 +137,15 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
     final model = dashboardController.internshipModel;
     final newItems = model.internship ?? [];
 
+    if (!mounted) return;
+
     setState(() {
       if (isNewSearch) {
-        internshipList.clear();
+        internshipList.assignAll(newItems);
+      } else {
+        internshipList.addAll(newItems);
       }
-      internshipList.addAll(newItems);
+
       _currentPage = model.page ?? page;
       _totalPages = model.totalPages ?? 1;
       _isPaginating = false;
@@ -213,17 +221,15 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
           ),
         ),
       ),
-      body: Obx(
-        () => Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            spacing: 10,
-            children: [
-              _buildSearchBar(),
-              if (_hasActiveFilters) _buildActiveFilterRow(),
-              Expanded(child: _buildBody()),
-            ],
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          spacing: 10,
+          children: [
+            _buildSearchBar(),
+            if (_hasActiveFilters) _buildActiveFilterRow(),
+            Expanded(child: _buildBody()),
+          ],
         ),
       ),
     );
@@ -232,81 +238,81 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
   // ── Body ─────────────────────────────────────────────────────────────────────
 
   Widget _buildBody() {
-    // Full-screen loader on first page load
-    if (dashboardController.allInternshipLoading ||
-        profileController.filterLoading) {
-      return Center(
-        child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
-      );
-    }
-
-    if (internshipList.isEmpty) {
-      return const CustomEmptyWidget();
-    }
-
-    final bool hasMore = _currentPage < _totalPages;
-
-    return ListView.builder(
-      controller: _scrollController,
-      padding: EdgeInsets.zero,
-      // +1 for the bottom loader/end indicator item
-      itemCount: internshipList.length + 1,
-      itemBuilder: (context, index) {
-        // Last item = pagination indicator
-        if (index == internshipList.length) {
-          if (_isPaginating) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: Center(child: CupertinoActivityIndicator()),
-            );
-          }
-          // if (!hasMore) {
-          //   return Padding(
-          //     padding: const EdgeInsets.symmetric(vertical: 20),
-          //     child: Center(
-          //       child: Text(
-          //         'No more internships',
-          //         style: AppStyles.customTextStyle(
-          //           size: 12,
-          //           color: AppColors.lightHintText,
-          //           weight: FontWeight.w400,
-          //         ),
-          //       ),
-          //     ),
-          //   );
-          // }
-          return const SizedBox.shrink();
-        }
-
-        final item = internshipList[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: InternshipCard(
-            viewFunc: () {
-              AppFunctions.navigateScreen(
-                context,
-                AppRoutes.internshipDetailScreen,
-                arguments: {"internshipId": item.id},
-              );
-            },
-            isSaved: item.isSaved ?? false,
-            saveFunc: () => dashboardController.searchFilterSaveFunc(index),
-            postedDate: item.createdAt!,
-            role: item.roleType ?? '',
-            companyName: item.companyName ?? '',
-            internshipMode: item.internshipMode ?? 'NA',
-            imageUrl: item.companyLogo ?? '',
-            description: item.internshipDescription ?? '',
-            duration: item.internshipDuration ?? 'NA',
-            stipendRupees: item.internshipStipend ?? 'NA',
-            qualification: item.studentQualification?.join(', ') ?? 'All',
-            eligibility: item.eligibilityCriteria ?? 'All',
-            skillList: item.requiredSkills ?? [],
-            isApplied: false,
-          ),
+    return Obx(() {
+      if ((dashboardController.allInternshipLoading &&
+              internshipList.isEmpty) ||
+          profileController.filterLoading) {
+        return Center(
+          child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
         );
-      },
-    );
+      }
+
+      if (internshipList.isEmpty) {
+        return const CustomEmptyWidget();
+      }
+
+      return ListView.builder(
+        controller: _scrollController,
+        padding: EdgeInsets.zero,
+        itemCount: internshipList.length + 1,
+        itemBuilder: (context, index) {
+          if (index == internshipList.length) {
+            return _isPaginating
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Center(child: CupertinoActivityIndicator()),
+                  )
+                : const SizedBox.shrink();
+          }
+
+          final item = internshipList[index];
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: InternshipCard(
+              viewFunc: () {
+                AppFunctions.navigateScreen(
+                  context,
+                  AppRoutes.internshipDetailScreen,
+                  arguments: {"internshipId": item.id},
+                );
+              },
+              isSaved: item.isSaved ?? false,
+              // saveFunc: () =>
+              //     dashboardController.searchFilterSaveFunc(index),
+              saveFunc: () async {
+                final oldValue = item.isSaved ?? false;
+
+                setState(() {
+                  item.isSaved = !oldValue;
+                });
+
+                await dashboardController.searchFilterSaveFunc(index);
+
+                if (dashboardController.getResponseCode() != 200 &&
+                    dashboardController.getResponseCode() != 201) {
+                  setState(() {
+                    item.isSaved = oldValue;
+                  });
+                }
+              },
+              postedDate: item.createdAt!,
+              role: item.roleType ?? '',
+              companyName: item.companyName ?? '',
+              internshipMode: item.internshipMode ?? 'NA',
+              imageUrl: item.companyLogo ?? '',
+              description: item.internshipDescription ?? '',
+              duration: item.internshipDuration ?? 'NA',
+              stipendRupees: item.internshipStipend ?? 'NA',
+              qualification: item.studentQualification?.join(', ') ?? 'All',
+              eligibility: item.eligibilityCriteria ?? 'All',
+              skillList: item.requiredSkills ?? [],
+              isApplied: false,
+            ),
+          );
+        },
+      );
+    });
   }
 
   // ── Search Bar ───────────────────────────────────────────────────────────────

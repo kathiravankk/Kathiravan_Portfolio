@@ -347,7 +347,7 @@
         <!-- Header Section -->
         <div class="header-section">
             <h1 id="fullName" class="name">John Doe</h1>
-            <div id="jobTitle" class="title">Full Stack Developer</div>
+            <div id="jobTitle" class="title">Student</div>
 
             <div class="contact-info">
                 <div class="contact-item">
@@ -582,8 +582,8 @@
             if (pi.address) document.getElementById('location').textContent = pi.address;
             if (pi.role) document.getElementById('jobTitle').textContent = pi.role;
 
-            if (pi.linkedin) {
-                document.getElementById('linkedinLink').href = pi.linkedin;
+            if (pi.linkedIn) {
+                document.getElementById('linkedinLink').href = pi.linkedIn;
                 document.getElementById('linkedinContact').style.display = 'flex';
             } else {
                 document.getElementById('linkedinContact').style.display = 'none';

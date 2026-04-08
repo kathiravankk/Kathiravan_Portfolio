@@ -245,7 +245,10 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
             size: 25,
             color: AppColors.whiteColor,
           ),
-          onPressed: () => Get.back(),
+          onPressed: (){
+            Get.back();
+            getCreditData();
+            },
         ),
         elevation: 0,
         title: Text(

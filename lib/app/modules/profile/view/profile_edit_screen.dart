@@ -372,7 +372,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               size: 25,
               color: AppColors.whiteColor,
             ),
-            onPressed: () => Get.back(),
+            onPressed: () { Get.back();
+             _loadProfile();
+            },
           ),
           title: Text(
             'Edit Profile',
@@ -725,6 +727,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'studmobileno': _mobileCtrl.text.trim(),
       'linkedIn': _linkedinCtrl.text.trim(),
       'github': _websiteCtrl.text.trim(),
+      //"role": "Software Developer",
       'portfolio_website': _websiteCtrl.text.trim(),
       'profile_summary': _bioCtrl.text.trim(),
       'studentdegree': _collegeData?['degree'] ?? '',

@@ -399,7 +399,7 @@
     <!-- Header Section -->
     <div class="header-section">
         <h1 id="fullName" class="resume-name">Alex Thompson</h1>
-        <div id="jobTitle" class="resume-role">UI/UX Designer | Creative Director</div>
+        <div id="jobTitle" class="resume-role">Student</div>
 
         <div class="contact-info">
             <div class="contact-item">
@@ -412,7 +412,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
                 </svg>
-                <span id="location">Portland, OR</span>
+                <span id="location">Location</span>
             </div>
             <div class="contact-item">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -559,11 +559,11 @@
         // Personal Info
         if (data.personal_info) {
             const pi = data.personal_info;
-            if (pi.full_name) document.getElementById('fullName').textContent = pi.full_name;
+            if (pi.name) document.getElementById('fullName').textContent = pi.name;
             if (pi.email) document.getElementById('email').textContent = pi.email;
-            if (pi.phone_number) document.getElementById('phone').textContent = pi.phone_number;
+            if (pi.phone) document.getElementById('phone').textContent = pi.phone;
             if (pi.address) document.getElementById('location').textContent = pi.address;
-            if (pi.job_title) document.getElementById('jobTitle').textContent = pi.job_title;
+            if (pi.role) document.getElementById('jobTitle').textContent = pi.role;
 
             if (pi.linkedin) {
                 document.getElementById('linkedinContact').href = pi.linkedin;

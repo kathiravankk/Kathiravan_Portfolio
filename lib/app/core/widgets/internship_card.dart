@@ -21,9 +21,9 @@ class InternshipCard extends StatelessWidget {
   final bool isApplied;
   final double width;
   final bool isSaved;
-  List<String> skillList;
+  final List<String> skillList;
 
-  InternshipCard({
+  const InternshipCard({
     super.key,
     this.viewFunc,
     this.duration = "0",
@@ -71,7 +71,7 @@ class InternshipCard extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: saveFunc!,
+                    onPressed: saveFunc,
                     icon: Container(
                       decoration: BoxDecoration(
                         color: AppColors.lightWhiteCont,

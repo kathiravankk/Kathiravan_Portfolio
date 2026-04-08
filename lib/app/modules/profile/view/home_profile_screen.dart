@@ -77,7 +77,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       if (profileController.resDpModel.status!.status == "error") {
         AppFunctions.showToast(
           message:
-          profileController.resDpModel.status!.message ??
+              profileController.resDpModel.status!.message ??
               "Failed to Generate your AI Banner",
         );
       } else {
@@ -87,7 +87,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         await registerController.updateStudentProfileData(
           updateData: {
             "student_banner":
-            profileController.resDpModel.status!.imageUrl ?? "",
+                profileController.resDpModel.status!.imageUrl ?? "",
           },
         );
         final code = registerController.getResponseCode();
@@ -106,7 +106,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         profileController.getResponseCode(),
         profileController.resDpModel.status != null
             ? profileController.resDpModel.status!.message ??
-            "Something Went Wrong!, Try Again Later!"
+                  "Something Went Wrong!, Try Again Later!"
             : "Something went wrong!, try again later!",
       );
     }
@@ -117,10 +117,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (templateNumber == null || resumeData == null) return;
 
     final template = templates.firstWhere(
-          (e) => e.id == templateNumber,
+      (e) => e.id == templateNumber,
       orElse: () => templates.first,
     );
-
 
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -195,80 +194,77 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
     return await showDialog<String>(
       context: context,
-      builder: (ctx) =>
-          AlertDialog(
-            backgroundColor: AppColors.appBgColor_2,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16)),
-            title: Text(
-              "Save Resume As",
-              style: AppStyles.customTextStyle(
-                color: AppColors.whiteColor,
-                size: 14,
-                weight: FontWeight.w500,
-              ),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.appBgColor_2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          "Save Resume As",
+          style: AppStyles.customTextStyle(
+            color: AppColors.whiteColor,
+            size: 14,
+            weight: FontWeight.w500,
+          ),
+        ),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: AppStyles.customTextStyle(
+            fontFamily: "Roboto",
+            color: AppColors.whiteColor,
+            size: 14,
+            weight: FontWeight.w500,
+          ),
+          decoration: InputDecoration(
+            hintText: "Enter file name",
+            hintStyle: AppStyles.customTextStyle(
+              fontFamily: "Roboto",
+              color: AppColors.greyColor,
+              size: 12,
+              weight: FontWeight.w200,
             ),
-            content: TextField(
-              controller: controller,
-              autofocus: true,
+            suffixText: ".pdf",
+            suffixStyle: AppStyles.customTextStyle(
+              fontFamily: "Roboto",
+              color: AppColors.whiteColor,
+              size: 14,
+              weight: FontWeight.w500,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(color: AppColors.fieldBorderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: const BorderSide(color: AppColors.primaryColor),
+            ),
+            filled: true,
+            fillColor: AppColors.fieldBgColor,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "Cancel",
               style: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
-                color: AppColors.whiteColor,
+                color: AppColors.greyColor,
                 size: 14,
-                weight: FontWeight.w500,
-              ),
-              decoration: InputDecoration(
-                hintText: "Enter file name",
-                hintStyle: AppStyles.customTextStyle(
-                  fontFamily: "Roboto",
-                  color: AppColors.greyColor,
-                  size: 12,
-                  weight: FontWeight.w200,
-                ),
-                suffixText: ".pdf",
-                suffixStyle: AppStyles.customTextStyle(
-                  fontFamily: "Roboto",
-                  color: AppColors.whiteColor,
-                  size: 14,
-                  weight: FontWeight.w500,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: const BorderSide(
-                      color: AppColors.fieldBorderColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: const BorderSide(color: AppColors.primaryColor),
-                ),
-                filled: true,
-                fillColor: AppColors.fieldBgColor,
+                weight: FontWeight.w200,
               ),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Get.back(),
-                child: Text(
-                  "Cancel",
-                  style: AppStyles.customTextStyle(
-                    fontFamily: "Roboto",
-                    color: AppColors.greyColor,
-                    size: 14,
-                    weight: FontWeight.w200,
-                  ),
-                ),
-              ),
-              CustomButtonWidget(
-                height: 35,
-                width: 100,
-                buttonFunction: () {
-                  final name = controller.text.trim();
-                  if (name.isNotEmpty) Navigator.pop(ctx, name);
-                },
-                buttonText: "Save",
-              ),
-            ],
           ),
+          CustomButtonWidget(
+            height: 35,
+            width: 100,
+            buttonFunction: () {
+              final name = controller.text.trim();
+              if (name.isNotEmpty) Navigator.pop(ctx, name);
+            },
+            buttonText: "Save",
+          ),
+        ],
+      ),
     );
   }
 
@@ -446,7 +442,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       areasOfInterest: profileController.profileDataModel.areasOfInterest,
       languages: profileController.profileDataModel.languagesKnown,
       volunteerExperience:
-      profileController.profileDataModel.volunteerExperience,
+          profileController.profileDataModel.volunteerExperience,
       leaderships: profileController.profileDataModel.leadership,
       achievements: profileController.profileDataModel.achievements,
       publications: profileController.profileDataModel.publications,
@@ -464,11 +460,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       trainings: [],
       studentId: profileController.profileDataModel.id,
       higherSecondary:
-      profileController.profileDataModel.education!.school!.higherSecondary,
+          profileController.profileDataModel.education!.school!.higherSecondary,
       institution: [],
       parents: [],
       secondary:
-      profileController.profileDataModel.education!.school!.secondary,
+          profileController.profileDataModel.education!.school!.secondary,
     );
     templateNumber = int.parse(
       profileController.profileDataModel.templateNumber!.isEmpty
@@ -481,250 +477,359 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Obx(
-            () =>
-        profileController.profileDataLoading
-            ? Center(
-          child: CupertinoActivityIndicator(
+    return Scaffold(
+      backgroundColor: AppColors.transparentColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.transparentColor,
+        elevation: 0,
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+        //   onPressed: () => Get.back(),
+        // ),
+        automaticallyImplyLeading: false,
+        title: Text(
+          "My Profile",
+          style: AppStyles.customTextStyle(
+            size: 18,
             color: AppColors.secondaryColor,
+            weight: FontWeight.w600,
           ),
-        )
-            : Scaffold(
-          backgroundColor: AppColors.transparentColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.transparentColor,
-            elevation: 0,
-            // leading: IconButton(
-            //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-            //   onPressed: () => Get.back(),
-            // ),
-            automaticallyImplyLeading: false,
-            title: Text(
-              "My Profile",
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.secondaryColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-            actions: [
-              ProfileWidgets.creditContainer(
-                creditCount:
-                profileController
-                    .profileDataModel
-                    .studentCreditId!
-                    .balance ??
-                    0,
-                viewFunc: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.buyCreditsScreen,
-                  );
-                },
-              ),
-              const SizedBox(width: 20),
-            ],
+        ),
+        actions: [
+          ProfileWidgets.creditContainer(
+            creditCount:
+                profileController.profileDataModel.studentCreditId!.balance ??
+                0,
+            viewFunc: () {
+              AppFunctions.navigateScreen(context, AppRoutes.buyCreditsScreen);
+            },
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              children: [
-                profileController.profileDataModel.studentBanner !=
-                    null &&
-                    profileController
-                        .profileDataModel
-                        .studentBanner!
-                        .isNotEmpty
-                    ? Stack(
-                  children: [
-                    profileController.resDpLoading
-                        ? Center(
-                      child: CupertinoActivityIndicator(
-                        color: AppColors.secondaryColor,
-                      ),
-                    )
-                        : ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                        profileController.profileDataModel.studentBanner ?? "",
-                        height: 180,
-                        fit: BoxFit.fill,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return Container(
-                            height: 180,
-                            color: AppColors.thirdColor,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                                value: loadingProgress.expectedTotalBytes !=
-                                    null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error,
-                            stackTrace) => const Icon(Icons.photo),
-                      ),
+          const SizedBox(width: 20),
+        ],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.loginBgImage),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: RefreshIndicator(
+          color: AppColors.primaryColor,
+          backgroundColor: AppColors.appBgColor_2,
+          onRefresh: () async {
+            await getProfileData();
+          },
+          child: Obx(
+            () => profileController.profileDataLoading
+                ? Center(
+                    child: CupertinoActivityIndicator(
+                      color: AppColors.secondaryColor,
                     ),
+                  )
+                : CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            children: [
+                              profileController
+                                              .profileDataModel
+                                              .studentBanner !=
+                                          null &&
+                                      profileController
+                                          .profileDataModel
+                                          .studentBanner!
+                                          .isNotEmpty
+                                  ? Stack(
+                                      children: [
+                                        profileController.resDpLoading
+                                            ? Center(
+                                                child:
+                                                    CupertinoActivityIndicator(
+                                                      color: AppColors
+                                                          .secondaryColor,
+                                                    ),
+                                              )
+                                            : ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                child: Image.network(
+                                                  profileController
+                                                          .profileDataModel
+                                                          .studentBanner ??
+                                                      "",
+                                                  height: 180,
+                                                  fit: BoxFit.fill,
+                                                  loadingBuilder: (context, child, loadingProgress) {
+                                                    if (loadingProgress ==
+                                                        null) {
+                                                      return child;
+                                                    }
+                                                    return Container(
+                                                      height: 180,
+                                                      color:
+                                                          AppColors.thirdColor,
+                                                      child: Center(
+                                                        child: CircularProgressIndicator(
+                                                          color: AppColors
+                                                              .primaryColor,
+                                                          value:
+                                                              loadingProgress
+                                                                      .expectedTotalBytes !=
+                                                                  null
+                                                              ? loadingProgress
+                                                                        .cumulativeBytesLoaded /
+                                                                    loadingProgress
+                                                                        .expectedTotalBytes!
+                                                              : null,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  errorBuilder:
+                                                      (
+                                                        context,
+                                                        error,
+                                                        stackTrace,
+                                                      ) => const Icon(
+                                                        Icons.photo,
+                                                      ),
+                                                ),
+                                              ),
 
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      left: 10,
-                      child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
-                        children: [
-                          aiPoweredContainer(),
-                          likeShareContainer(),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-                    : aiBannerContainer(),
-                SizedBox(height: 15),
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    // child: WebViewWidget(
-                    //   controller: profileController.webViewController!,
-                    // ),
-                    child:
-                    webViewController == null
-                        ? const Center(
-                      child: CupertinoActivityIndicator(
-                        color: AppColors.secondaryColor,
-                      ),
-                    )
-                        : Stack(
-                      children: [
-                        WebViewWidget(controller: webViewController!),
-                        if (isLoading)
-                          Container(
-                            color: Colors.black45,
-                            child:  Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CupertinoActivityIndicator(
-                                    color: AppColors.primaryColor,
-                                    radius: 16,
-                                  ),
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "Processing...",
-                                    style: AppStyles.customTextStyle(
-                                      size: 14,
-                                      color: AppColors.greyColor,
-                                      weight: FontWeight.w500
+                                        Positioned(
+                                          top: 10,
+                                          right: 10,
+                                          left: 10,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              aiPoweredContainer(),
+                                              likeShareContainer(),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : aiBannerContainer(),
+                              SizedBox(height: 15),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.5,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  // child: WebViewWidget(
+                                  //   controller: profileController.webViewController!,
+                                  // ),
+                                  child: webViewController == null
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator(
+                                            color: AppColors.secondaryColor,
+                                          ),
+                                        )
+                                      : Stack(
+                                          children: [
+                                            WebViewWidget(
+                                              controller: webViewController!,
+                                            ),
+                                            if (isLoading)
+                                              Container(
+                                                color: Colors.black45,
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      CupertinoActivityIndicator(
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                        radius: 16,
+                                                      ),
+                                                      SizedBox(height: 12),
+                                                      Text(
+                                                        "Processing...",
+                                                        style:
+                                                            AppStyles.customTextStyle(
+                                                              size: 14,
+                                                              color: AppColors
+                                                                  .greyColor,
+                                                              weight: FontWeight
+                                                                  .w500,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              Container(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.creditContColor,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _actionItem(
+                                      Icons.download,
+                                      "Download",
+                                      _handleDownload,
                                     ),
-                                  ),
-                                ],
+                                    _actionItem(
+                                      Icons.share,
+                                      "Share",
+                                      _handleShare,
+                                    ),
+                                    _actionItem(Icons.remove_red_eye, "View", () {
+                                      AppFunctions.navigateScreen(
+                                        context,
+                                        AppRoutes.resumeTemplatePreviewScreen,
+                                        arguments: {
+                                          "templateId": int.parse(
+                                            profileController
+                                                .profileDataModel
+                                                .templateNumber!,
+                                          ),
+                                          //"templateId": 8,
+                                          "resumeData":
+                                              ExtractedResumeDataModel(
+                                                personalInfo: PersonalInfoModel(
+                                                  name:
+                                                      profileController
+                                                          .profileDataModel
+                                                          .studentName ??
+                                                      '',
+                                                  gender: profileController
+                                                      .profileDataModel
+                                                      .studentGender,
+                                                  email: profileController
+                                                      .profileDataModel
+                                                      .studEmail!,
+                                                  phone: profileController
+                                                      .profileDataModel
+                                                      .studMobileNo!,
+                                                  linkedIn: profileController
+                                                      .profileDataModel
+                                                      .linkedIn,
+                                                  github: profileController
+                                                      .profileDataModel
+                                                      .github,
+                                                  location: "",
+                                                ),
+                                                internships: profileController
+                                                    .profileDataModel
+                                                    .internships!,
+                                                hobbies: profileController
+                                                    .profileDataModel
+                                                    .hobbies,
+                                                areasOfInterest:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .areasOfInterest,
+                                                languages: profileController
+                                                    .profileDataModel
+                                                    .languagesKnown,
+                                                volunteerExperience:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .volunteerExperience,
+                                                leaderships: profileController
+                                                    .profileDataModel
+                                                    .leadership,
+                                                achievements: profileController
+                                                    .profileDataModel
+                                                    .achievements,
+                                                publications: profileController
+                                                    .profileDataModel
+                                                    .publications,
+                                                workShops: profileController
+                                                    .profileDataModel
+                                                    .workshops,
+                                                paperPresentations:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .paperPresentations,
+                                                certifications: [],
+                                                educationData: profileController
+                                                    .profileDataModel
+                                                    .education,
+                                                industrialVisits:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .industrialVisits,
+                                                projects: profileController
+                                                    .profileDataModel
+                                                    .projects!,
+                                                skills: profileController
+                                                    .profileDataModel
+                                                    .studProgrammingLang,
+                                                profileSummary:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .profileSummary,
+                                                colleges: profileController
+                                                    .profileDataModel
+                                                    .collegeData!,
+                                                degree: [],
+                                                experience: profileController
+                                                    .profileDataModel
+                                                    .experience,
+                                                trainings: [],
+                                                studentId: profileController
+                                                    .profileDataModel
+                                                    .id,
+                                                higherSecondary:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .education!
+                                                        .school!
+                                                        .higherSecondary,
+                                                institution: [],
+                                                parents: [],
+                                                secondary: profileController
+                                                    .profileDataModel
+                                                    .education!
+                                                    .school!
+                                                    .secondary,
+                                              ),
+                                        },
+                                      );
+                                    }),
+                                    _actionItem2("Update", () {
+                                      AppFunctions.navigateScreen(
+                                        context,
+                                        AppRoutes.chatResumeUpdateScreen,
+                                      );
+                                    }),
+                                    //_actionItem(Icons.refresh, "Update", () {}),
+                                    _actionItem(
+                                      CupertinoIcons.create,
+                                      "Edit Profile",
+                                      () {
+                                        AppFunctions.navigateScreen(
+                                          context,
+                                          AppRoutes.profileEditScreen,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColors.creditContColor,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _actionItem(
-                        Icons.download,
-                        "Download",
-                        _handleDownload,
-                      ),
-                      _actionItem(Icons.share, "Share", _handleShare),
-                      _actionItem(Icons.remove_red_eye, "View", () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.resumeTemplatePreviewScreen,
-                          arguments: {
-                            "templateId": int.parse(profileController.profileDataModel.templateNumber!),
-                            //"templateId": 8,
-                            "resumeData": ExtractedResumeDataModel(
-                              personalInfo: PersonalInfoModel(
-                                name: profileController.profileDataModel.studentName ?? '',
-                                gender: profileController.profileDataModel.studentGender,
-                                email: profileController.profileDataModel.studEmail!,
-                                phone: profileController.profileDataModel.studMobileNo!,
-                                linkedIn: profileController.profileDataModel.linkedIn,
-                                github: profileController.profileDataModel.github,
-                                location: "",
-                              ),
-                              internships: profileController.profileDataModel.internships!,
-                              hobbies: profileController.profileDataModel.hobbies,
-                              areasOfInterest: profileController.profileDataModel.areasOfInterest,
-                              languages: profileController.profileDataModel.languagesKnown,
-                              volunteerExperience: profileController.profileDataModel.volunteerExperience,
-                              leaderships: profileController.profileDataModel.leadership,
-                              achievements: profileController.profileDataModel.achievements,
-                              publications: profileController.profileDataModel.publications,
-                              workShops:profileController.profileDataModel.workshops,
-                              paperPresentations:profileController.profileDataModel.paperPresentations,
-                              certifications: [],
-                              educationData: profileController.profileDataModel.education,
-                              industrialVisits:profileController.profileDataModel.industrialVisits,
-                              projects: profileController.profileDataModel.projects!,
-                              skills: profileController.profileDataModel.studProgrammingLang,
-                              profileSummary: profileController.profileDataModel.profileSummary,
-                              colleges: profileController.profileDataModel.collegeData!,
-                              degree: [],
-                              experience: profileController.profileDataModel.experience,
-                              trainings: [],
-                              studentId: profileController.profileDataModel.id,
-                              higherSecondary: profileController.profileDataModel.education!.school!.higherSecondary,
-                              institution: [],
-                              parents: [],
-                              secondary: profileController.profileDataModel.education!.school!.secondary,
-                            ),
-                          },
-                        );
-                      }),
-                      _actionItem2("Update", () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.chatResumeUpdateScreen,
-                        );
-                      }),
-                      //_actionItem(Icons.refresh, "Update", () {}),
-                      _actionItem(
-                        CupertinoIcons.create,
-                        "Edit Profile",
-                            () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.profileEditScreen,
-                          );
-                        },
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -956,7 +1061,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                 AppFunctions.showAppAlert(
                   context: context,
                   content:
-                  "✨ You've already used your free AI banner.\n\n🔁 Regenerating will cost 25 credits.\n\nProceed?",
+                      "✨ You've already used your free AI banner.\n\n🔁 Regenerating will cost 25 credits.\n\nProceed?",
                   title: "Regenerate AI Banner",
                   onCancel: () {
                     Get.back();
@@ -1017,9 +1122,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       }
 
       final file = File(
-        '${downloadDir.path}/banner_${DateTime
-            .now()
-            .millisecondsSinceEpoch}.png',
+        '${downloadDir.path}/banner_${DateTime.now().millisecondsSinceEpoch}.png',
       );
 
       await file.writeAsBytes(bytes);

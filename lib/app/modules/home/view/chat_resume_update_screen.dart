@@ -179,21 +179,23 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "studgender": profileData.personalInfo!.gender ?? "",
 
       //"studdob": "",
-
       "studentaddress": profileData.personalInfo!.location,
 
       "studentdegree": profileData.education!.college!.isNotEmpty
           ? profileData.education!.college!.first.degree ?? ""
           : "",
 
-      "studentfieldofstudy":
-          profileData.education!.college!.first.department ?? "",
+      "studentfieldofstudy": profileData.education!.college!.isNotEmpty
+          ? profileData.education!.college!.first.department ?? ""
+          : "",
 
-      "studentcollegename":
-          profileData.education!.college!.first.institution ?? "",
+      "studentcollegename": profileData.education!.college!.isNotEmpty
+          ? profileData.education!.college!.first.institution ?? ""
+          : "",
 
-      "studcollegestartyear":
-          profileData.education!.college!.first.startYear?.toString() ?? "",
+      "studcollegestartyear": profileData.education!.college!.isNotEmpty
+          ? profileData.education!.college!.first.startYear?.toString() ?? ""
+          : "",
       "studcollegelocation": "",
 
       "studhighschollname":
@@ -265,8 +267,6 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
   }
 
   String? studentId = "";
-
-
 
   Future<void> getProfileData() async {
     studentId = await LocalStorageService.getStudentId();

@@ -90,130 +90,138 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () =>
-          profileController.profileDataLoading ||
-              dashboardController.getCategoryLoading ||
-              dashboardController.recommentedInternshipLoading ||
-              registerController.creditDataLoading
-          ? Center(
-              child: CupertinoActivityIndicator(
-                color: AppColors.secondaryColor,
-              ),
-            )
-          : Scaffold(
-              key: _scaffoldKey,
-              drawer: HomeDrawer(),
-              backgroundColor: AppColors.blackColor,
-              appBar: AppBar(
-                backgroundColor: AppColors.transparentColor,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.menu_sharp,
-                    size: 30,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+    return RefreshIndicator(
+      color: AppColors.primaryColor,
+      backgroundColor: AppColors.appBgColor_2,
+      onRefresh: () async {
+        await getHomeScreenData();
+        await getCreditData();
+      },
+      child: Obx(
+        () =>
+            profileController.profileDataLoading ||
+                dashboardController.getCategoryLoading ||
+                dashboardController.recommentedInternshipLoading ||
+                registerController.creditDataLoading
+            ? Center(
+                child: CupertinoActivityIndicator(
+                  color: AppColors.secondaryColor,
                 ),
-                title: Text(
-                  "Welcome ${profileController.profileDataModel.studentName ?? "User"}!",
-                  style: AppStyles.customTextStyle(
-                    size: 17,
-                    color: AppColors.secondaryColor,
-                    weight: FontWeight.w600,
+              )
+            : Scaffold(
+                key: _scaffoldKey,
+                drawer: HomeDrawer(),
+                backgroundColor: AppColors.blackColor,
+                appBar: AppBar(
+                  backgroundColor: AppColors.transparentColor,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.menu_sharp,
+                      size: 30,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                   ),
-                ),
-                actions: [
-                  ProfileWidgets.creditContainer(
-                    creditCount: creditBalance ?? 0,
-                    viewFunc: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.buyCreditsScreen,
-                      );
-                    },
+                  title: Text(
+                    "Welcome ${profileController.profileDataModel.studentName ?? "User"}!",
+                    style: AppStyles.customTextStyle(
+                      size: 17,
+                      color: AppColors.secondaryColor,
+                      weight: FontWeight.w600,
+                    ),
                   ),
+                  actions: [
+                    ProfileWidgets.creditContainer(
+                      creditCount: creditBalance ?? 0,
+                      viewFunc: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.buyCreditsScreen,
+                        );
+                      },
+                    ),
 
-                  const SizedBox(width: 10),
-                ],
-                // actions: [
-                //   Stack(
-                //     children: [
-                //       Container(
-                //         padding: EdgeInsets.all(6),
-                //         decoration: BoxDecoration(
-                //           color: AppColors.appBgColor,
-                //           borderRadius: BorderRadius.circular(12),
-                //         ),
-                //         child: const Icon(
-                //           Icons.notifications_active_outlined,
-                //           color: AppColors.whiteColor,
-                //           size: 25,
-                //         ),
-                //       ),
-                //       Positioned(
-                //         right: 7,
-                //         top: 5,
-                //         child: Container(
-                //           width: 7,
-                //           height: 7,
-                //           decoration: const BoxDecoration(
-                //             color: Color(0xFFFF1493),
-                //             shape: BoxShape.circle,
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                //
-                //   SizedBox(width: 10),
-                // ],
-              ),
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
-                    children: [
-                      _buildSearchBar(),
-                      const SizedBox(height: 10),
-                      _buildBannerCarousel(),
-                      _buildSectionHeader(
-                        title: "Recommented Internship",
-                        onTabPage: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.recommentedInternshipScreen,
-                          );
-                        },
-                      ),
-                      _buildRecommendedInternships(),
-                      _buildSectionHeader(
-                        title: "Trendy Categories",
-                        onTabPage: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.trendyCategoryScreen,
-                          );
-                        },
-                      ),
-                      dashboardController.categoryListModel.categoryList ==
-                                  null ||
-                              dashboardController
-                                  .categoryListModel
-                                  .categoryList!
-                                  .isEmpty
-                          ? CustomEmptyWidget()
-                          : _buildTrendyCategories(),
+                    const SizedBox(width: 10),
+                  ],
+                  // actions: [
+                  //   Stack(
+                  //     children: [
+                  //       Container(
+                  //         padding: EdgeInsets.all(6),
+                  //         decoration: BoxDecoration(
+                  //           color: AppColors.appBgColor,
+                  //           borderRadius: BorderRadius.circular(12),
+                  //         ),
+                  //         child: const Icon(
+                  //           Icons.notifications_active_outlined,
+                  //           color: AppColors.whiteColor,
+                  //           size: 25,
+                  //         ),
+                  //       ),
+                  //       Positioned(
+                  //         right: 7,
+                  //         top: 5,
+                  //         child: Container(
+                  //           width: 7,
+                  //           height: 7,
+                  //           decoration: const BoxDecoration(
+                  //             color: Color(0xFFFF1493),
+                  //             shape: BoxShape.circle,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  //
+                  //   SizedBox(width: 10),
+                  // ],
+                ),
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
+                      children: [
+                        _buildSearchBar(),
+                        const SizedBox(height: 10),
+                        _buildBannerCarousel(),
+                        _buildSectionHeader(
+                          title: "Recommented Internship",
+                          onTabPage: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.recommentedInternshipScreen,
+                            );
+                          },
+                        ),
+                        _buildRecommendedInternships(),
+                        _buildSectionHeader(
+                          title: "Trendy Categories",
+                          onTabPage: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.trendyCategoryScreen,
+                            );
+                          },
+                        ),
+                        dashboardController.categoryListModel.categoryList ==
+                                    null ||
+                                dashboardController
+                                    .categoryListModel
+                                    .categoryList!
+                                    .isEmpty
+                            ? CustomEmptyWidget()
+                            : _buildTrendyCategories(),
 
-                      const SizedBox(height: 20),
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
+      ),
     );
   }
 
