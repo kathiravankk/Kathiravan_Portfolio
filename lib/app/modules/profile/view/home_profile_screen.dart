@@ -694,12 +694,12 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                         context,
                                         AppRoutes.resumeTemplatePreviewScreen,
                                         arguments: {
-                                          "templateId": int.parse(
-                                            profileController
-                                                .profileDataModel
-                                                .templateNumber!,
-                                          ),
-                                          //"templateId": 8,
+                                          // "templateId": int.parse(
+                                          //   profileController
+                                          //       .profileDataModel
+                                          //       .templateNumber!,
+                                          // ),
+                                          "templateId": 7,
                                           "resumeData":
                                               ExtractedResumeDataModel(
                                                 personalInfo: PersonalInfoModel(
@@ -758,7 +758,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                                     profileController
                                                         .profileDataModel
                                                         .paperPresentations,
-                                                certifications: [],
+                                                certifications:  profileController
+                                                    .profileDataModel
+                                                    .studentCertificate,
                                                 educationData: profileController
                                                     .profileDataModel
                                                     .education,
@@ -775,7 +777,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                                 profileSummary:
                                                     profileController
                                                         .profileDataModel
-                                                        .profileSummary,
+                                                        .profileSummary!.trim(),
                                                 colleges: profileController
                                                     .profileDataModel
                                                     .collegeData!,

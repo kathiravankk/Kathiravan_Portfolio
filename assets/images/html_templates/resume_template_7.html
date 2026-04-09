@@ -466,115 +466,211 @@
         }
     </script>
 
-
 <script>
     function renderResume(data) {
+        console.log("Final Template 7 data:", data);
 
-      // ===== BASIC INFO =====
-      document.getElementById("name").innerText =
-        data.personal_info?.name || "";
+        const pi = data.personal_info || {};
 
-      document.getElementById("role").innerText =
-        data.personal_info?.designation || "";
+        // ===== PERSONAL =====
+        setText("name", pi.name);
+        setText("role", pi.role || pi.designation);
+        setText("phone", pi.phone);
+        setText("email", pi.email);
+        setText("location", pi.address || pi.location);
 
-      // ===== CONTACT =====
-      setText("phone", data.personal_info?.phone);
-      setText("email", data.personal_info?.email);
-      setText("location", data.personal_info?.location);
+        setLink("linkedin", pi.linkedin || pi.linkedIn);
+        setLink("github", pi.github);
 
-      setLink("linkedin", data.personal_info?.linkedin);
-      setLink("github", data.personal_info?.github);
+        hideIfEmpty("contactSection",
+            pi.phone || pi.email || pi.address || pi.location || pi.linkedin || pi.linkedIn || pi.github
+        );
 
-      hideIfEmpty("contactSection",
-        data.personal_info?.phone ||
-        data.personal_info?.email ||
-        data.personal_info?.location ||
-        data.personal_info?.linkedin ||
-        data.personal_info?.github
-      );
+        // ===== SUMMARY =====
+        const summary =
+            data.profile_summary ||
+            (Array.isArray(data.updatedProfileSummary)
+                ? data.updatedProfileSummary.join(" ")
+                : data.updatedProfileSummary);
 
-      // ===== SUMMARY =====
-      setText("profileSummary", data.profile_summary);
-      hideIfEmpty("summarySection", data.profile_summary);
+        setText("profileSummary", summary);
+        hideIfEmpty("summarySection", summary);
 
-      // ===== EDUCATION =====
-      renderEducation(data.education);
-      hideIfEmpty("educationSection", data.education?.length);
+        // ===== EDUCATION =====
+        let educationData = [];
 
-      // ===== LIST SECTIONS =====
-      renderList("skillsList", data.skills);
-      hideIfEmpty("skillsSection", data.skills?.length);
+        if (Array.isArray(data.education)) educationData = data.education;
+        else if (Array.isArray(data.college)) educationData = data.college;
 
-      renderList("languagesList", data.languages);
-      hideIfEmpty("languagesSection", data.languages?.length);
+        if (data.higher_secondary) educationData.push(data.higher_secondary);
+        if (data.secondary) educationData.push(data.secondary);
 
-      renderList("interestsList", data.interests);
-      hideIfEmpty("interestsSection", data.interests?.length);
+        renderEducation(educationData);
+        hideIfEmpty("educationSection", educationData.length);
 
-      // ===== TIMELINE SECTIONS =====
-      renderTimeline("experienceList", data.experience);
-      hideIfEmpty("experienceSection", data.experience?.length);
+        // ===== SKILLS =====
+        renderSimpleList("skillsList", data.skills);
+        hideIfEmpty("skillsSection", data.skills?.length);
 
-      renderTimeline("projectsList", data.projects);
-      hideIfEmpty("projectsSection", data.projects?.length);
+        // ===== LANGUAGES =====
+        renderSimpleList("languagesList", data.languages);
+        hideIfEmpty("languagesSection", data.languages?.length);
 
-      renderTimeline("speakingList", data.speaking);
-      hideIfEmpty("speakingSection", data.speaking?.length);
+        // ===== INTERESTS =====
+        const interests = data.interests || data.areas_of_interest || data.hobbies;
+        renderSimpleList("interestsList", interests);
+        hideIfEmpty("interestsSection", interests?.length);
 
-      // ===== BULLET SECTIONS =====
-      renderList("certificationsList", data.certifications);
-      hideIfEmpty("certificationsSection", data.certifications?.length);
+        // ===== EXPERIENCE =====
+        const experienceData = data.experience || data.updatedExperience;
+        renderTimelineFlexible("experienceList", experienceData);
+        hideIfEmpty("experienceSection", experienceData?.length);
 
-      renderList("achievementsList", data.achievements);
-      hideIfEmpty("achievementsSection", data.achievements?.length);
+        // ===== PROJECTS =====
+        const projectsData = data.projects || data.updatedProjects;
+        renderTimelineFlexible("projectsList", projectsData, true);
+        hideIfEmpty("projectsSection", projectsData?.length);
+
+        // ===== SPEAKING =====
+        const speakingData = data.paper_presentations || data.speaking;
+        renderTimelineFlexible("speakingList", speakingData);
+        hideIfEmpty("speakingSection", speakingData?.length);
+
+        // ===== CERTIFICATIONS =====
+        renderSimpleList("certificationsList", data.certifications);
+        hideIfEmpty("certificationsSection", data.certifications?.length);
+
+        // ===== ACHIEVEMENTS =====
+        renderSimpleList("achievementsList", data.achievements);
+        hideIfEmpty("achievementsSection", data.achievements?.length);
     }
 
-    // ===== HELPERS =====
+    // ================= HELPERS =================
     function setText(id, value) {
-      if (!value) return;
-      document.getElementById(id).innerText = value;
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || "";
     }
 
     function setLink(id, value) {
-      if (!value) return;
-      const el = document.getElementById(id);
-      el.href = value;
-      el.innerText = value;
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        if (value) {
+            el.href = value;
+            el.textContent = value;
+            el.parentElement.style.display = "flex";
+        } else {
+            el.parentElement.style.display = "none";
+        }
     }
 
-    function renderList(id, items) {
-      const el = document.getElementById(id);
-      if (!el || !items) return;
-      el.innerHTML = items.map(i => `<li>• ${i}</li>`).join("");
+    function renderSimpleList(id, items) {
+        const el = document.getElementById(id);
+        if (!el || !items || !items.length) {
+            if (el) el.innerHTML = "";
+            return;
+        }
+
+        el.innerHTML = items.map(item => {
+            const text =
+                typeof item === "string"
+                    ? item
+                    : item.name ||
+                      item.title ||
+                      item.description ||
+                      item.role ||
+                      "";
+            return `<li>• ${text}</li>`;
+        }).join("");
     }
 
     function renderEducation(items) {
-      const el = document.getElementById("educationList");
-      if (!el || !items) return;
+        const el = document.getElementById("educationList");
+        if (!el) return;
 
-      el.innerHTML = items.map(e => `
-        <div class="education-item">
-          <strong>${e.institution}</strong>
-          <div>${e.degree}</div>
-          <div class="date-text">${e.duration}</div>
-          ${e.score ? `<div class="text-muted">${e.score}</div>` : ""}
-        </div>
-      `).join("");
+        if (!items || !items.length) {
+            el.innerHTML = "";
+            return;
+        }
+
+        el.innerHTML = items.map(e => `
+            <div class="education-item">
+                <strong>${e.institution || e.school_name || e.college_name || "Institution"}</strong>
+                <div>${e.degree || e.course || e.board || "Education"}</div>
+                <div class="date-text">
+                    ${formatDateRange(e.start_date, e.end_date) || e.duration || e.year || ""}
+                </div>
+                ${(e.percentage || e.cgpa || e.gpa || e.score)
+                    ? `<div class="text-muted">${e.percentage || e.cgpa || e.gpa || e.score}</div>`
+                    : ""}
+            </div>
+        `).join("");
     }
 
-    function renderTimeline(id, items) {
-      const el = document.getElementById(id);
-      if (!el || !items) return;
+    function renderTimelineFlexible(id, items, isProject = false) {
+        const el = document.getElementById(id);
+        if (!el) return;
 
-      el.innerHTML = items.map(i => `
-        <div class="timeline-item_dots">
-          <div class="timeline-title">${i.title}</div>
-          ${i.subtitle ? `<div class="text-primary">${i.subtitle}</div>` : ""}
-          <p class="timeline-desc">${i.description || ""}</p>
-        </div>
-      `).join("");
+        if (!items || !items.length) {
+            el.innerHTML = "";
+            return;
+        }
+
+        el.innerHTML = items.map(i => {
+            if (typeof i === "string") {
+                return `
+                    <div class="timeline-item_dots">
+                        <div class="timeline-title">${i}</div>
+                    </div>
+                `;
+            }
+
+            const title = isProject
+                ? i.title || i.project_name || "Project"
+                : i.job_title || i.position || i.role || i.title || "Title";
+
+            const subtitle =
+                i.company ||
+                i.organization ||
+                i.provider ||
+                i.venue ||
+                i.subtitle ||
+                "";
+
+            const description = Array.isArray(i.description)
+                ? i.description.join(" ")
+                : i.description || "";
+
+            const technologies = i.technologies
+                ? `<p class="timeline-desc"><strong>Tech:</strong> ${
+                    Array.isArray(i.technologies)
+                        ? i.technologies.join(", ")
+                        : i.technologies
+                  }</p>`
+                : "";
+
+            return `
+                <div class="timeline-item_dots">
+                    <div class="timeline-title">${title}</div>
+                    <div class="text-primary">
+                        ${subtitle} ${formatDateRange(i.start_date, i.end_date)}
+                    </div>
+                    <p class="timeline-desc">${description}</p>
+                    ${technologies}
+                </div>
+            `;
+        }).join("");
+    }
+
+    function formatDateRange(startDate, endDate) {
+        if (!startDate && !endDate) return "";
+        const start = startDate || "";
+        const end = endDate || "Present";
+        return `${start}${start && end ? " - " : ""}${end}`;
     }
 </script>
+
+
 
 </body>
 </html>

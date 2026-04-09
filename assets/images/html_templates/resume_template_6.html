@@ -715,7 +715,7 @@
         const eduList = document.getElementById('educationList');
         eduList.innerHTML = '';
 
-        const colleges = data.colleges || data.institution || data.degree || [];
+        const colleges = data.college || data.institution || data.degree || [];
         if (colleges.length > 0) {
             colleges.forEach(college => {
                 const eduDiv = document.createElement('div');
