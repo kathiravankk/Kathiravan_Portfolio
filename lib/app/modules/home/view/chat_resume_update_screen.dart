@@ -253,6 +253,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "linkedIn": profileData.personalInfo!.linkedIn ?? "",
 
       "github": profileData.personalInfo!.github ?? "",
+      "profile_summary": profileData.profileSummary ??"",
 
       //"portfolio_website": "",
 

@@ -241,11 +241,11 @@
         }
 
         // Experience
-        if (data.internships && data.internships.length > 0) {
+        if (data.experience && data.experience.length > 0) {
             const expList = document.getElementById('experienceList');
             expList.innerHTML = '';
 
-            data.internships.forEach(exp => {
+            data.experience.forEach(exp => {
                 const expDiv = document.createElement('div');
                 expDiv.className = 'mb-3 avoid-break';
                 expDiv.innerHTML = `

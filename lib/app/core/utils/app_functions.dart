@@ -152,6 +152,19 @@ class AppFunctions {
     }
   }
 
+  static String extractFilePathFromUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+
+      // Removes leading "/"
+      return uri.path.startsWith('/')
+          ? uri.path.substring(1)
+          : uri.path;
+    } catch (e) {
+      return "";
+    }
+  }
+
   static Future<void> showAppAlert({
     required BuildContext context,
     String? title,

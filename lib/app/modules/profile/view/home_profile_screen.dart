@@ -112,8 +112,50 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     }
   }
 
+  Future<void> removeWaterMark() async {
+    await profileController.removeWaterMark(
+      imageUrl: AppFunctions.extractFilePathFromUrl(profileController.profileDataModel.studentBanner ?? ""),
+    );
+    if (profileController.getResponseCode() == 200 ||
+        profileController.getResponseCode() == 201) {
+      if (profileController.waterMarkModel.status! == "error") {
+        AppFunctions.showToast(
+          message:
+              profileController.resDpModel.status!.message ??
+              "Failed to Generate your AI Banner",
+        );
+      } else {
+        AppFunctions.showToast(
+          message: "Successfully! removed Watermark  from your AI Banner ",
+        );
+        await registerController.updateStudentProfileData(
+          updateData: {
+            "student_banner": profileController.waterMarkModel.imageUrl ?? "",
+          },
+        );
+        final code = registerController.getResponseCode();
+        if (code == 200 || code == 201) {
+          AppFunctions.showToast(message: 'Profile updated successfully!');
+          await getProfileData();
+        } else {
+          AppFunctions.showToast(
+            message: 'Failed to update. Please try again.',
+            isError: true,
+          );
+        }
+      }
+    } else {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.resDpModel.status != null
+            ? profileController.resDpModel.status!.message ??
+                  "Something Went Wrong!, Try Again Later!"
+            : "Something went wrong!, try again later!",
+      );
+    }
+  }
+
   void _initWebview() {
-    //final template = templates.firstWhere((e) => e.id == templateNumber);
     if (templateNumber == null || resumeData == null) return;
 
     final template = templates.firstWhere(
@@ -125,17 +167,22 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          // onPageFinished: (_) async {
-          //   final jsonData = jsonEncode(resumeData!.toJson());
-          //   await webViewController!.runJavaScript("renderResume($jsonData);");
-          //   setState(() => isLoading = false);
-          // },
           onPageFinished: (_) async {
             await Future.delayed(const Duration(milliseconds: 300));
 
+            // ✅ Force proper viewport scaling
+            await webViewController!.runJavaScript("""
+            var meta = document.querySelector('meta[name="viewport"]');
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.name = 'viewport';
+              document.head.appendChild(meta);
+            }
+            meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+          """);
+
             final jsonData = jsonEncode(resumeData!.toJson());
             final safeJson = jsonEncode(jsonData);
-
             await webViewController!.runJavaScript(
               "renderResume(JSON.parse($safeJson));",
             );
@@ -148,8 +195,20 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     _loadHtml(template.htmlPath);
   }
 
+  // Future<void> _loadHtml(String path) async {
+  //   final html = await DefaultAssetBundle.of(context).loadString(path);
+  //   await webViewController!.loadHtmlString(html);
+  // }
+  // In _loadHtml, inject a wider viewport before loading
   Future<void> _loadHtml(String path) async {
-    final html = await DefaultAssetBundle.of(context).loadString(path);
+    String html = await DefaultAssetBundle.of(context).loadString(path);
+
+    // ✅ Replace viewport meta to force desktop-width rendering
+    html = html.replaceFirst(
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '<meta name="viewport" content="width=900, initial-scale=1.0, shrink-to-fit=no">',
+    );
+
     await webViewController!.loadHtmlString(html);
   }
 
@@ -545,7 +604,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                           .isNotEmpty
                                   ? Stack(
                                       children: [
-                                        profileController.resDpLoading
+                                        profileController.resDpLoading ||
+                                                profileController
+                                                    .waterMarkLoading
                                             ? Center(
                                                 child:
                                                     CupertinoActivityIndicator(
@@ -618,7 +679,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                   : aiBannerContainer(),
                               SizedBox(height: 15),
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.5,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15),
                                   // child: WebViewWidget(
@@ -694,12 +756,12 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                         context,
                                         AppRoutes.resumeTemplatePreviewScreen,
                                         arguments: {
-                                          // "templateId": int.parse(
-                                          //   profileController
-                                          //       .profileDataModel
-                                          //       .templateNumber!,
-                                          // ),
-                                          "templateId": 7,
+                                          "templateId": int.parse(
+                                            profileController
+                                                .profileDataModel
+                                                .templateNumber!,
+                                          ),
+                                          //"templateId": 6,
                                           "resumeData":
                                               ExtractedResumeDataModel(
                                                 personalInfo: PersonalInfoModel(
@@ -758,9 +820,10 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                                     profileController
                                                         .profileDataModel
                                                         .paperPresentations,
-                                                certifications:  profileController
-                                                    .profileDataModel
-                                                    .studentCertificate,
+                                                certifications:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .studentCertificate,
                                                 educationData: profileController
                                                     .profileDataModel
                                                     .education,
@@ -777,7 +840,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                                 profileSummary:
                                                     profileController
                                                         .profileDataModel
-                                                        .profileSummary!.trim(),
+                                                        .profileSummary!
+                                                        .trim(),
                                                 colleges: profileController
                                                     .profileDataModel
                                                     .collegeData!,
@@ -1070,6 +1134,28 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                   },
                   onConfirm: () async {
                     await generateAiBanner();
+                  },
+                  confirmText: "Continue",
+                  cancelText: "Cancel",
+                );
+              },
+            ),
+          ),
+          Visibility(
+            visible: bannerUrl.isNotEmpty,
+            child: iconWidget(
+              icon: CupertinoIcons.pencil_outline,
+              onTap: () async {
+                AppFunctions.showAppAlert(
+                  context: context,
+                  content:
+                      "✨ Remove the watermark from your image.\n\n🔓 This action will cost 20 credits.\n\nProceed?",
+                  title: "Remove Watermark",
+                  onCancel: () {
+                    Get.back();
+                  },
+                  onConfirm: () async {
+                    await removeWaterMark();
                   },
                   confirmText: "Continue",
                   cancelText: "Cancel",

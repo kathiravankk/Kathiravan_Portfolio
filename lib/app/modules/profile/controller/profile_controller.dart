@@ -8,6 +8,7 @@ import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
+import 'package:internsharks/app/data/models/home/remove_watermark_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 import 'package:internsharks/app/data/providers/profile_provider.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -344,6 +345,37 @@ class ProfileController extends GetxController {
       resDpLoading = true;
       resDpModel = await profileProvider!.resDpGeneration(
         bannerData: bannerData,
+      );
+      resDpLoading = false;
+    } catch (err) {
+      resDpLoading = false;
+      rethrow;
+    }
+  }
+
+  // REMOVE WATERMARK
+
+  // Loading
+
+  final _waterMarkLoading = false.obs;
+
+  bool get waterMarkLoading => _waterMarkLoading.value;
+
+  set waterMarkLoading(bool value) => _waterMarkLoading.value = value;
+
+  // Model
+
+  final _waterMarkModel = RemoveWatermarkModel().obs;
+
+  RemoveWatermarkModel get waterMarkModel => _waterMarkModel.value;
+
+  set waterMarkModel(RemoveWatermarkModel value) => _waterMarkModel.value = value;
+
+  Future<void> removeWaterMark({required String imageUrl}) async {
+    try {
+      resDpLoading = true;
+      waterMarkModel = await profileProvider!.deleteWaterMark(
+        imageUrl: imageUrl,
       );
       resDpLoading = false;
     } catch (err) {
