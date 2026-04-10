@@ -338,6 +338,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
         );
       } else {
         Get.back();
+        await getProfileData();
         Get.back(result: true);
       }
     } else {

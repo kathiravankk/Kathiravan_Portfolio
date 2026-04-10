@@ -382,7 +382,7 @@
         <!-- Header Section -->
         <div class="header-section">
             <h1 id="fullName" class="name">Michael Chen</h1>
-            <div id="jobTitle" class="title">Data Scientist | Machine Learning Engineer</div>
+            <div id="jobTitle" class="title">Student</div>
 
             <div class="contact-info">
                 <div class="contact-item">
@@ -401,7 +401,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                         <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
                     </svg>
-                    <span id="location">Boston, MA</span>
+                    <span id="location">Location</span>
                 </div>
                 <div id="linkedinContact" class="contact-item">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -619,17 +619,17 @@
         // Personal Info
         if (data.personal_info) {
             const pi = data.personal_info;
-            if (pi.full_name) document.getElementById('fullName').textContent = pi.full_name;
+            if (pi.name) document.getElementById('fullName').textContent = pi.name;
             if (pi.email) {
                 document.getElementById('email').textContent = pi.email;
                 document.getElementById('emailLink').href = 'mailto:' + pi.email;
             }
-            if (pi.phone_number) document.getElementById('phone').textContent = pi.phone_number;
+            if (pi.phone) document.getElementById('phone').textContent = pi.phone;
             if (pi.address) document.getElementById('location').textContent = pi.address;
-            if (pi.job_title) document.getElementById('jobTitle').textContent = pi.job_title;
+            if (pi.role) document.getElementById('jobTitle').textContent = pi.role;
 
-            if (pi.linkedin) {
-                document.getElementById('linkedinLink').href = pi.linkedin;
+            if (pi.linkedIn) {
+                document.getElementById('linkedinLink').href = pi.linkedIn;
                 document.getElementById('linkedinContact').style.display = 'flex';
             } else {
                 document.getElementById('linkedinContact').style.display = 'none';
@@ -666,7 +666,7 @@
         const eduList = document.getElementById('educationList');
         eduList.innerHTML = '';
 
-        const colleges = data.colleges || data.institution || data.degree || [];
+        const colleges = data.college || data.institution || data.degree || [];
         if (colleges.length > 0) {
             colleges.forEach(college => {
                 const eduDiv = document.createElement('div');
@@ -691,7 +691,7 @@
             hsDiv.className = 'education-item';
             hsDiv.innerHTML = `
                 <div class="education-degree">Higher Secondary ${hs.board ? `(${hs.board})` : ''}</div>
-                <div class="education-institution">${hs.school_name || 'School'}</div>
+                <div class="education-institution">${hs.institution || 'School'}</div>
                 <div class="education-details">
                     ${hs.year || ''}${hs.percentage ? ' | Percentage: ' + hs.percentage : ''}
                 </div>
@@ -705,7 +705,7 @@
             secDiv.className = 'education-item';
             secDiv.innerHTML = `
                 <div class="education-degree">Secondary ${sec.board ? `(${sec.board})` : ''}</div>
-                <div class="education-institution">${sec.school_name || 'School'}</div>
+                <div class="education-institution">${sec.institution || 'School'}</div>
                 <div class="education-details">
                     ${sec.year || ''}${sec.percentage ? ' | Percentage: ' + sec.percentage : ''}
                 </div>
@@ -763,7 +763,7 @@
                 const expDiv = document.createElement('div');
                 expDiv.className = 'experience-item';
                 expDiv.innerHTML = `
-                    <div class="experience-role">${exp.job_title || exp.position || 'Position'}</div>
+                    <div class="experience-role">${exp.role || exp.position || 'Position'}</div>
                     <div class="experience-company">${exp.company || exp.organization || 'Company'} | ${formatDateRange(exp.start_date, exp.end_date)}</div>
                     ${exp.description ? `
                         <div class="experience-description">

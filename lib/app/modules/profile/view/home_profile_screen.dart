@@ -71,6 +71,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       "profile_image": profileController.profileDataModel.studProfile ?? "",
       "skills": profileController.profileDataModel.studProgrammingLang ?? "",
     };
+    debugPrint(bannerData.toString(), wrapWidth: 1024);
     await profileController.generateResDp(bannerData: bannerData);
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
@@ -114,23 +115,23 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
   Future<void> removeWaterMark() async {
     await profileController.removeWaterMark(
-      imageUrl: AppFunctions.extractFilePathFromUrl(profileController.profileDataModel.studentBanner ?? ""),
+      imageUrl: AppFunctions.extractFilePathFromUrl(
+        profileController.profileDataModel.studentBanner ?? "",
+      ),
     );
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      if (profileController.waterMarkModel.status! == "error") {
-        AppFunctions.showToast(
-          message:
-              profileController.resDpModel.status!.message ??
-              "Failed to Generate your AI Banner",
-        );
+      if (profileController.waterMarkModel.watermarkData!.status! == "error") {
+        AppFunctions.showToast(message: "Failed to Generate your AI Banner");
       } else {
         AppFunctions.showToast(
           message: "Successfully! removed Watermark  from your AI Banner ",
         );
+        print(profileController.waterMarkModel.watermarkData!.imageUrl ?? "");
         await registerController.updateStudentProfileData(
           updateData: {
-            "student_banner": profileController.waterMarkModel.imageUrl ?? "",
+            "student_banner":
+                profileController.waterMarkModel.watermarkData!.imageUrl ?? "",
           },
         );
         final code = registerController.getResponseCode();
@@ -147,9 +148,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     } else {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),
-        profileController.resDpModel.status != null
-            ? profileController.resDpModel.status!.message ??
-                  "Something Went Wrong!, Try Again Later!"
+        profileController.waterMarkModel.watermarkData!.status != null
+            ? "Something Went Wrong!, Try Again Later!"
             : "Something went wrong!, try again later!",
       );
     }
@@ -756,12 +756,12 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                         context,
                                         AppRoutes.resumeTemplatePreviewScreen,
                                         arguments: {
-                                          "templateId": int.parse(
-                                            profileController
-                                                .profileDataModel
-                                                .templateNumber!,
-                                          ),
-                                          //"templateId": 6,
+                                          // "templateId": int.parse(
+                                          //   profileController
+                                          //       .profileDataModel
+                                          //       .templateNumber!,
+                                          // ),
+                                          "templateId": 10,
                                           "resumeData":
                                               ExtractedResumeDataModel(
                                                 personalInfo: PersonalInfoModel(

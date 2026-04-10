@@ -78,6 +78,11 @@
             text-decoration: underline;
         }
 
+        /* hide contact items that have no data */
+        .contact-item.hidden {
+            display: none;
+        }
+
         /* Content Area */
         .avery-content {
             padding: 40px;
@@ -198,17 +203,7 @@
             line-height: 1.6;
         }
 
-        /* Skills Grid */
-        .skills-row {
-            display: flex;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .skills-column {
-            flex: 1;
-        }
-
+        /* Skills */
         .skills-grid-simple {
             display: flex;
             flex-direction: column;
@@ -223,55 +218,9 @@
             line-height: 1.5;
         }
 
-        /* Spacing */
-        .mt-3 {
-            margin-top: 20px;
-        }
-
-        .mt-4 {
-            margin-top: 30px;
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
-            padding: 20px 0;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .btn-dark {
-            background-color: #2c3e50;
-            color: white;
-        }
-
-        .btn-dark:hover {
-            background-color: #34495e;
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: #2c3e50;
-            border: 1px solid #2c3e50;
-        }
-
-        .btn-outline:hover {
-            background-color: #2c3e50;
-            color: white;
+        /* Hidden sections */
+        .section-wrapper.hidden {
+            display: none;
         }
 
         /* Print Styles */
@@ -280,16 +229,12 @@
                 background: white;
                 padding: 0;
             }
-
             .container {
                 box-shadow: none;
             }
-
-            .action-buttons,
-            .no-print {
+            .action-buttons, .no-print {
                 display: none !important;
             }
-
             .timeline-item {
                 page-break-inside: avoid;
             }
@@ -300,239 +245,482 @@
             .avery-header {
                 padding: 35px 25px;
             }
-
             .avery-name {
                 font-size: 32px;
             }
-
             .avery-role {
                 font-size: 18px;
             }
-
             .avery-content {
                 padding: 25px;
             }
-
             .avery-contact {
                 flex-direction: column;
                 gap: 12px;
             }
-
-            .skills-row {
-                flex-direction: column;
-            }
-
             .item-header {
                 flex-direction: column;
                 gap: 5px;
             }
-
             .avery-timeline {
                 padding-left: 25px;
             }
-
             .timeline-item::before {
                 left: -20px;
             }
         }
     </style>
-    <script>
-        const RESUME_DATA = {{RESUME_DATA}};
-    </script>
 </head>
 <body>
-    <div class="container">
-        <!-- Header Section -->
-        <div class="avery-header">
-            <h1 class="avery-name" id="name"></h1>
-            <div class="avery-role" id="role"></div>
+<div class="container">
+    <!-- Header Section -->
+    <div class="avery-header">
+        <h1 class="avery-name" id="name">Your Name</h1>
+        <div class="avery-role" id="role">Student</div>
 
-            <div class="avery-contact">
-                <div class="contact-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
-                    </svg>
-                    <span id="phone"></span>
-                </div>
-                <div class="contact-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/>
-                    </svg>
-                    <span id="email"></span>
-                </div>
-                <div class="contact-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                        <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
-                    </svg>
-                    <span id="location"></span>
-                </div>
-                <div class="contact-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                        <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/>
-                    </svg>
-                    <a id="linkedin" href="#" target="_blank">LinkedIn</a>
-                </div>
-                <div class="contact-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
-                        <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
-                    </svg>
-                    <a id="github" href="#" target="_blank">GitHub</a>
-                </div>
+        <div class="avery-contact">
+            <div class="contact-item" id="phoneItem">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
+                </svg>
+                <span id="phone"></span>
             </div>
-        </div>
-
-        <!-- Content Section -->
-        <div class="avery-content">
-            <!-- Profile Summary -->
-            <div class="profile-summary">
-                <p id="profileSummary"></p>
+            <div class="contact-item" id="emailItem">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/>
+                </svg>
+                <span id="email"></span>
             </div>
-
-            <!-- Experience Section -->
-            <h2 class="avery-section-title">Professional Experience</h2>
-            <div class="avery-timeline" id="experience"></div>
-
-
-            <!-- Projects Section -->
-            <h2 class="avery-section-title">Projects</h2>
-            <div class="avery-timeline" id="projects"></div>
-
-            <!-- Paper Presentations Section -->
-<!--            <h2 class="avery-section-title">Speaking Engagements</h2>-->
-<!--            <div class="avery-timeline">-->
-<!--                <div class="timeline-item">-->
-<!--                    <div class="item-header">-->
-<!--                        <span class="item-main-title">Data-Driven Decision Making in Modern Business</span>-->
-<!--                        <span class="item-date">2024</span>-->
-<!--                    </div>-->
-<!--                    <p class="item-sub">Business Analytics Conference</p>-->
-<!--                    <p class="item-desc-text">-->
-<!--                        Presented case studies on leveraging data analytics to drive strategic business decisions. -->
-<!--                        Session attended by 300+ business professionals.-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--            </div>-->
-
-            <!-- Education Section -->
-            <h2 class="avery-section-title">Education</h2>
-            <div class="avery-timeline">
-                <div class="timeline-item">
-                    <div class="item-header">
-                        <span class="item-main-title">Northwestern University</span>
-                        <span class="item-date">2013 - 2017</span>
-                    </div>
-                    <p class="item-sub">Master of Business Administration (MBA)</p>
-                    <p class="item-desc-text">Concentration: Business Analytics & Strategy | GPA: 3.8/4.0</p>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="item-header">
-                        <span class="item-main-title">University of Illinois</span>
-                        <span class="item-date">2009 - 2013</span>
-                    </div>
-                    <p class="item-sub">Bachelor of Science in Business Administration</p>
-                    <p class="item-desc-text">Magna Cum Laude | Dean's List (8 semesters)</p>
-                </div>
+            <div class="contact-item" id="locationItem">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                    <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+                </svg>
+                <span id="location"></span>
             </div>
-
-            <!-- Skills, Languages, Certifications -->
-            <h2 class="avery-section-title">Skills</h2>
-            <div class="skills-grid-simple" id="skills"></div>
-
+            <div class="contact-item hidden" id="linkedinItem">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/>
+                </svg>
+                <a id="linkedin" href="#" target="_blank">LinkedIn</a>
+            </div>
+            <div class="contact-item hidden" id="githubItem">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+                    <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+                </svg>
+                <a id="github" href="#" target="_blank">GitHub</a>
+            </div>
         </div>
     </div>
 
-<!--    &lt;!&ndash; Action Buttons &ndash;&gt;-->
-<!--    <div class="action-buttons no-print">-->
-<!--        <button class="btn btn-dark" onclick="window.print()">-->
-<!--            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 384 512">-->
-<!--                <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 224H88c30.9 0 56 25.1 56 56s-25.1 56-56 56H80v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm24 80c13.3 0 24-10.7 24-24s-10.7-24-24-24H80v48h8zm72-64c0-8.8 7.2-16 16-16h24c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48H176c-8.8 0-16-7.2-16-16V240zm32 112h8c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16h-8v96zm96-112c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V240z"/>-->
-<!--            </svg>-->
-<!--            Download PDF-->
-<!--        </button>-->
-<!--        <button class="btn btn-outline" onclick="shareResume()">-->
-<!--            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512">-->
-<!--                <path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2v64H176C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96h96v64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"/>-->
-<!--            </svg>-->
-<!--            Share-->
-<!--        </button>-->
-<!--    </div>-->
+    <!-- Content Section -->
+    <div class="avery-content">
 
-    <script>
-        function renderResume(data) {
-          // Personal Info
-          document.getElementById("name").innerText =
-            data.personal_info?.name || "";
+        <!-- Profile Summary -->
+        <div class="profile-summary">
+            <p id="profileSummary"></p>
+        </div>
 
-          document.getElementById("role").innerText =
-            data.personal_info?.designation || "";
+        <!-- Experience Section -->
+        <div class="section-wrapper hidden" id="experienceSection">
+            <h2 class="avery-section-title">Professional Experience</h2>
+            <div class="avery-timeline" id="experienceList"></div>
+        </div>
 
-          document.getElementById("phone").innerText =
-            data.personal_info?.phone || "";
+        <!-- Internships Section -->
+        <div class="section-wrapper hidden" id="internshipsSection">
+            <h2 class="avery-section-title">Internships</h2>
+            <div class="avery-timeline" id="internshipsList"></div>
+        </div>
 
-          document.getElementById("email").innerText =
-            data.personal_info?.email || "";
+        <!-- Trainings Section -->
+        <div class="section-wrapper hidden" id="trainingsSection">
+            <h2 class="avery-section-title">Training</h2>
+            <div class="avery-timeline" id="trainingsList"></div>
+        </div>
 
-          document.getElementById("location").innerText =
-            data.personal_info?.location || "";
+        <!-- Projects Section -->
+        <div class="section-wrapper hidden" id="projectsSection">
+            <h2 class="avery-section-title">Projects</h2>
+            <div class="avery-timeline" id="projectsList"></div>
+        </div>
 
-          document.getElementById("linkedin").href =
-            data.personal_info?.linkedin || "#";
+        <!-- Paper Presentations Section -->
+        <div class="section-wrapper hidden" id="presentationsSection">
+            <h2 class="avery-section-title">Speaking Engagements</h2>
+            <div class="avery-timeline" id="presentationsList"></div>
+        </div>
 
-          document.getElementById("github").href =
-            data.personal_info?.github || "#";
+        <!-- Education Section -->
+        <div class="section-wrapper" id="educationSection">
+            <h2 class="avery-section-title">Education</h2>
+            <div class="avery-timeline" id="educationList"></div>
+        </div>
 
-          // Profile Summary
-          document.getElementById("profileSummary").innerText =
-            data.profile_summary || "";
+        <!-- Skills Section -->
+        <div class="section-wrapper hidden" id="skillsSection">
+            <h2 class="avery-section-title">Skills</h2>
+            <div class="skills-grid-simple" id="skillsList"></div>
+        </div>
 
-          // Skills
-          const skillsDiv = document.getElementById("skills");
-          skillsDiv.innerHTML = "";
-          (data.skills || []).forEach(skill => {
-            skillsDiv.innerHTML += `<div class="skill-pill">• ${skill}</div>`;
-          });
+        <!-- Certifications Section -->
+        <div class="section-wrapper hidden" id="certificationsSection">
+            <h2 class="avery-section-title">Certifications</h2>
+            <div class="avery-timeline" id="certificationsList"></div>
+        </div>
 
-          // Experience
-          const expDiv = document.getElementById("experience");
-          expDiv.innerHTML = "";
-          (data.experience || []).forEach(exp => {
-            expDiv.innerHTML += `
-              <div class="timeline-item">
-                <div class="item-header">
-                  <span class="item-main-title">${exp.title}</span>
-                  <span class="item-date">${exp.duration}</span>
-                </div>
-                <p class="item-sub">${exp.company}</p>
-                <ul class="item-list">
-                  ${(exp.description || [])
-                    .map(d => `<li>${d}</li>`)
-                    .join("")}
-                </ul>
-              </div>
-            `;
-          });
+        <!-- Achievements Section -->
+        <div class="section-wrapper hidden" id="achievementsSection">
+            <h2 class="avery-section-title">Achievements</h2>
+            <ul class="item-list" id="achievementsList"></ul>
+        </div>
 
-          // Projects
-          const projDiv = document.getElementById("projects");
-          projDiv.innerHTML = "";
-          (data.projects || []).forEach(project => {
-            projDiv.innerHTML += `
-              <div class="timeline-item">
-                <div class="item-header">
-                  <span class="item-main-title">${project.title}</span>
-                  <span class="item-date">${project.year}</span>
-                </div>
-                <ul class="item-list">
-                  ${(project.description || [])
-                    .map(d => `<li>${d}</li>`)
-                    .join("")}
-                </ul>
-              </div>
-            `;
-          });
+        <!-- Languages Section -->
+        <div class="section-wrapper hidden" id="languagesSection">
+            <h2 class="avery-section-title">Languages</h2>
+            <p id="languagesText" style="font-size:13px; color:#555;"></p>
+        </div>
+
+        <!-- Areas of Interest Section -->
+        <div class="section-wrapper hidden" id="interestsSection">
+            <h2 class="avery-section-title">Areas of Interest</h2>
+            <p id="interestsText" style="font-size:13px; color:#555;"></p>
+        </div>
+
+        <!-- Hobbies Section -->
+        <div class="section-wrapper hidden" id="hobbiesSection">
+            <h2 class="avery-section-title">Hobbies</h2>
+            <p id="hobbiesText" style="font-size:13px; color:#555;"></p>
+        </div>
+
+        <!-- Leadership Section -->
+        <div class="section-wrapper hidden" id="leadershipSection">
+            <h2 class="avery-section-title">Leadership</h2>
+            <ul class="item-list" id="leadershipList"></ul>
+        </div>
+
+        <!-- Volunteer Section -->
+        <div class="section-wrapper hidden" id="volunteerSection">
+            <h2 class="avery-section-title">Volunteer Experience</h2>
+            <ul class="item-list" id="volunteerList"></ul>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function show(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
+    }
+
+    function formatDateRange(startDate, endDate) {
+        if (!startDate && !endDate) return '';
+        const fmt = (d) => {
+            if (!d) return '';
+            if (d.toLowerCase() === 'present' || d.toLowerCase() === 'current') return 'Present';
+            return d;
+        };
+        const start = fmt(startDate);
+        const end = fmt(endDate);
+        if (!start && !end) return '';
+        if (!start) return end;
+        if (!end) return `${start} - Present`;
+        return `${start} - ${end}`;
+    }
+
+    function renderResume(data) {
+        console.log('Received data:', data);
+
+        // ── Personal Info ──────────────────────────────────────────────
+        if (data.personal_info) {
+            const pi = data.personal_info;
+
+            if (pi.name)  document.getElementById('name').textContent  = pi.name;
+            if (pi.role)  document.getElementById('role').textContent  = pi.role;
+            if (pi.phone) document.getElementById('phone').textContent = pi.phone;
+            if (pi.email) document.getElementById('email').textContent = pi.email;
+
+            const addr = pi.address || pi.location || '';
+            if (addr) document.getElementById('location').textContent = addr;
+
+            if (pi.linkedIn || pi.linkedin) {
+                const url = pi.linkedIn || pi.linkedin;
+                document.getElementById('linkedin').href = url;
+                document.getElementById('linkedinItem').classList.remove('hidden');
+            }
+
+            if (pi.github) {
+                document.getElementById('github').href = pi.github;
+                document.getElementById('githubItem').classList.remove('hidden');
+            }
         }
-    </script>
 
+        // ── Profile Summary ────────────────────────────────────────────
+        if (data.profile_summary) {
+            document.getElementById('profileSummary').textContent = data.profile_summary;
+        } else if (data.updatedProfileSummary && data.updatedProfileSummary.length > 0) {
+            document.getElementById('profileSummary').textContent = data.updatedProfileSummary.join(' ');
+        }
+
+        // ── Experience ─────────────────────────────────────────────────
+        if (data.experience && data.experience.length > 0) {
+            show('experienceSection');
+            const expList = document.getElementById('experienceList');
+            expList.innerHTML = '';
+            data.experience.forEach(exp => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                const desc = Array.isArray(exp.description)
+                    ? exp.description.map(d => `<li>${d}</li>`).join('')
+                    : exp.description ? `<li>${exp.description}</li>` : '';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-main-title">${exp.job_title || exp.role || exp.position || 'Position'}</span>
+                        <span class="item-date">${formatDateRange(exp.start_date, exp.end_date)}</span>
+                    </div>
+                    <p class="item-sub">${exp.company || exp.organization || ''}</p>
+                    ${desc ? `<ul class="item-list">${desc}</ul>` : ''}
+                `;
+                expList.appendChild(div);
+            });
+        }
+
+        // ── Internships ────────────────────────────────────────────────
+        if (data.internships && data.internships.length > 0) {
+            show('internshipsSection');
+            const internList = document.getElementById('internshipsList');
+            internList.innerHTML = '';
+            data.internships.forEach(intern => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                const desc = Array.isArray(intern.description)
+                    ? intern.description.map(d => `<li>${d}</li>`).join('')
+                    : intern.description ? `<li>${intern.description}</li>` : '';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-main-title">${intern.role || intern.position || 'Intern'}</span>
+                        <span class="item-date">${formatDateRange(intern.start_date, intern.end_date)}</span>
+                    </div>
+                    <p class="item-sub">${intern.company || intern.organization || ''}</p>
+                    ${desc ? `<ul class="item-list">${desc}</ul>` : ''}
+                `;
+                internList.appendChild(div);
+            });
+        }
+
+        // ── Trainings ──────────────────────────────────────────────────
+        if (data.trainings && data.trainings.length > 0) {
+            show('trainingsSection');
+            const trainList = document.getElementById('trainingsList');
+            trainList.innerHTML = '';
+            data.trainings.forEach(train => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-main-title">${train.title || train.course_name || 'Training'}</span>
+                        <span class="item-date">${train.year || formatDateRange(train.start_date, train.end_date)}</span>
+                    </div>
+                    <p class="item-sub">${train.organization || train.provider || ''}</p>
+                    ${train.description ? `<p class="item-desc-text">${train.description}</p>` : ''}
+                `;
+                trainList.appendChild(div);
+            });
+        }
+
+        // ── Projects ───────────────────────────────────────────────────
+        if (data.projects && data.projects.length > 0) {
+            show('projectsSection');
+            const projList = document.getElementById('projectsList');
+            projList.innerHTML = '';
+            data.projects.forEach(proj => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                const desc = Array.isArray(proj.description)
+                    ? proj.description.map(d => `<li>${d}</li>`).join('')
+                    : proj.description ? `<li>${proj.description}</li>` : '';
+                const techs = proj.technologies
+                    ? (Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies)
+                    : '';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-main-title">${proj.title || proj.project_name || 'Project'}</span>
+                        <span class="item-date">${proj.year || ''}</span>
+                    </div>
+                    ${techs ? `<p class="item-sub">${techs}</p>` : ''}
+                    ${desc ? `<ul class="item-list">${desc}</ul>` : ''}
+                `;
+                projList.appendChild(div);
+            });
+        }
+
+        // ── Paper Presentations ────────────────────────────────────────
+        if (data.paper_presentations && data.paper_presentations.length > 0) {
+            show('presentationsSection');
+            const presList = document.getElementById('presentationsList');
+            presList.innerHTML = '';
+            data.paper_presentations.forEach(pres => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-main-title">${typeof pres === 'string' ? pres : (pres.title || pres.name || 'Presentation')}</span>
+                        <span class="item-date">${pres.year || pres.date || ''}</span>
+                    </div>
+                    ${pres.venue ? `<p class="item-sub">${pres.venue}</p>` : ''}
+                    ${pres.description ? `<p class="item-desc-text">${pres.description}</p>` : ''}
+                `;
+                presList.appendChild(div);
+            });
+        }
+
+        // ── Education ──────────────────────────────────────────────────
+        const eduList = document.getElementById('educationList');
+        eduList.innerHTML = '';
+
+        const colleges = data.colleges || data.college || data.institution || data.degree || [];
+        if (colleges.length > 0) {
+            colleges.forEach(college => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                const grade = college.percentage
+                    ? `Percentage: ${college.percentage}`
+                    : college.cgpa ? `CGPA: ${college.cgpa}`
+                    : college.gpa ? `GPA: ${college.gpa}` : '';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-main-title">${college.institution || college.college_name || 'Institution'}</span>
+                        <span class="item-date">${formatDateRange(college.start_date, college.end_date) || college.year || ''}</span>
+                    </div>
+                    <p class="item-sub">${college.degree || college.course || 'Degree'}</p>
+                    ${grade ? `<p class="item-desc-text">${grade}</p>` : ''}
+                `;
+                eduList.appendChild(div);
+            });
+        }
+
+        if (data.higher_secondary) {
+            const hs = data.higher_secondary;
+            const div = document.createElement('div');
+            div.className = 'timeline-item';
+            div.innerHTML = `
+                <div class="item-header">
+                    <span class="item-main-title">${hs.institution || 'School'}</span>
+                    <span class="item-date">${hs.year || ''}</span>
+                </div>
+                <p class="item-sub">Higher Secondary${hs.board ? ` (${hs.board})` : ''}</p>
+                ${hs.percentage ? `<p class="item-desc-text">Percentage: ${hs.percentage}</p>` : ''}
+            `;
+            eduList.appendChild(div);
+        }
+
+        if (data.secondary) {
+            const sec = data.secondary;
+            const div = document.createElement('div');
+            div.className = 'timeline-item';
+            div.innerHTML = `
+                <div class="item-header">
+                    <span class="item-main-title">${sec.institution || 'School'}</span>
+                    <span class="item-date">${sec.year || ''}</span>
+                </div>
+                <p class="item-sub">Secondary${sec.board ? ` (${sec.board})` : ''}</p>
+                ${sec.percentage ? `<p class="item-desc-text">Percentage: ${sec.percentage}</p>` : ''}
+            `;
+            eduList.appendChild(div);
+        }
+
+        // ── Skills ─────────────────────────────────────────────────────
+        if (data.skills && data.skills.length > 0) {
+            show('skillsSection');
+            const skillsList = document.getElementById('skillsList');
+            skillsList.innerHTML = '';
+            data.skills.forEach(skill => {
+                const div = document.createElement('div');
+                div.className = 'skill-pill';
+                div.textContent = `• ${skill}`;
+                skillsList.appendChild(div);
+            });
+        }
+
+        // ── Certifications ─────────────────────────────────────────────
+        if (data.certifications && data.certifications.length > 0) {
+            show('certificationsSection');
+            const certList = document.getElementById('certificationsList');
+            certList.innerHTML = '';
+            data.certifications.forEach(cert => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.innerHTML = `
+                    <div class="item-header">
+                        <span class="item-main-title">${cert.name || cert.title || 'Certification'}</span>
+                        <span class="item-date">${cert.year || cert.date || ''}</span>
+                    </div>
+                    <p class="item-sub">${cert.issuing_organization || cert.provider || ''}</p>
+                `;
+                certList.appendChild(div);
+            });
+        }
+
+        // ── Achievements ───────────────────────────────────────────────
+        if (data.achievements && data.achievements.length > 0) {
+            show('achievementsSection');
+            const achList = document.getElementById('achievementsList');
+            achList.innerHTML = '';
+            data.achievements.forEach(ach => {
+                const li = document.createElement('li');
+                li.textContent = typeof ach === 'string' ? ach : (ach.description || ach.title || '');
+                achList.appendChild(li);
+            });
+        }
+
+        // ── Languages ──────────────────────────────────────────────────
+        if (data.languages && data.languages.length > 0) {
+            show('languagesSection');
+            const langText = data.languages.map(lang =>
+                typeof lang === 'string' ? lang
+                : lang.name ? `${lang.name}${lang.proficiency ? ` (${lang.proficiency})` : ''}` : ''
+            ).filter(Boolean).join(' • ');
+            document.getElementById('languagesText').textContent = langText;
+        }
+
+        // ── Areas of Interest ──────────────────────────────────────────
+        if (data.areas_of_interest && data.areas_of_interest.length > 0) {
+            show('interestsSection');
+            const interests = data.areas_of_interest.map(i => typeof i === 'string' ? i : i.name || i.title).filter(Boolean);
+            document.getElementById('interestsText').textContent = interests.join(', ');
+        }
+
+        // ── Hobbies ────────────────────────────────────────────────────
+        if (data.hobbies && data.hobbies.length > 0) {
+            show('hobbiesSection');
+            const hobbies = data.hobbies.map(h => typeof h === 'string' ? h : h.name || h.title).filter(Boolean);
+            document.getElementById('hobbiesText').textContent = hobbies.join(', ');
+        }
+
+        // ── Leadership ─────────────────────────────────────────────────
+        if (data.leadership && data.leadership.length > 0) {
+            show('leadershipSection');
+            const leadList = document.getElementById('leadershipList');
+            leadList.innerHTML = '';
+            data.leadership.forEach(lead => {
+                const li = document.createElement('li');
+                li.textContent = typeof lead === 'string' ? lead : (lead.description || lead.title || lead.position || '');
+                leadList.appendChild(li);
+            });
+        }
+
+        // ── Volunteer Experience ───────────────────────────────────────
+        if (data.volunteer_experience && data.volunteer_experience.length > 0) {
+            show('volunteerSection');
+            const volList = document.getElementById('volunteerList');
+            volList.innerHTML = '';
+            data.volunteer_experience.forEach(vol => {
+                const li = document.createElement('li');
+                li.textContent = typeof vol === 'string' ? vol : (vol.description || vol.role || '');
+                volList.appendChild(li);
+            });
+        }
+    }
+</script>
 </body>
 </html>
