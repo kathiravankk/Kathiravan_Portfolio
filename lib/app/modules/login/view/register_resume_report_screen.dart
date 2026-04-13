@@ -731,8 +731,8 @@ class _RegisterResumeReportScreenState
           ),
           Text(
             registerController.resumeAnalyzeModel.analysis != null
-                ? "${registerController.resumeAnalyzeModel.analysis!.overallScore ?? "8.0"} / 10"
-                : "8.0 / 10",
+                ? "${registerController.resumeAnalyzeModel.analysis!.overallScore ?? "0.0"} / 10"
+                : "0.0 / 10",
             style: AppStyles.customTextStyle(
               size: 30,
               color: AppColors.whiteColor,

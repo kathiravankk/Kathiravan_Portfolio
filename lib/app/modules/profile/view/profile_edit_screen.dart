@@ -19,7 +19,6 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
-import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 
@@ -54,9 +53,21 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   List<Map<String, dynamic>> _projects = [];
   List<String> _programmingSkills = [];
   List<String> _toolsSkills = [];
+
   Map<String, dynamic>? _collegeData;
   Map<String, dynamic>? _higherSecData;
   Map<String, dynamic>? _secondaryData;
+  List<String> _languagesKnown = [];
+  List<String> _hobbies = [];
+  List<String> _areasOfInterest = [];
+  List<String> _achievements = [];
+  List<String> _volunteerExperience = [];
+  List<String> _leadership = [];
+  List<String> _publications = [];
+  List<String> _workshops = [];
+  List<Map<String, dynamic>> _industrialVisits = [];
+  List<Map<String, dynamic>> _paperPresentations = [];
+  List<Map<String, dynamic>> _internships = [];
 
   @override
   void initState() {
@@ -111,11 +122,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _certifications = (p.studentCertificate ?? [])
         .map<Map<String, dynamic>>(
           (e) => {
-        'name': e.name ?? '',
-        'issuer': e.issuer ?? '',
-        'date': e.date ?? '',
-      },
-    )
+            'name': e.name ?? '',
+            'issuer': e.issuer ?? '',
+            'date': e.date ?? '',
+          },
+        )
         .toList();
 
     _experiences = (p.experience ?? [])
@@ -177,6 +188,45 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         'year': s.yearOfPassing ?? '',
       };
     }
+
+    _languagesKnown = (p.languagesKnown ?? []).cast<String>();
+    _hobbies = (p.hobbies ?? []).cast<String>();
+    _areasOfInterest = (p.areasOfInterest ?? []).cast<String>();
+    _achievements = (p.achievements ?? []).cast<String>();
+    _volunteerExperience = (p.volunteerExperience ?? []).cast<String>();
+    _leadership = (p.leadership ?? []).cast<String>();
+    _publications = (p.publications ?? []).cast<String>();
+    _workshops = (p.workshops ?? []).cast<String>();
+    _internships = (p.internships ?? [])
+        .map<Map<String, dynamic>>(
+          (e) => {
+            'company': e.company ?? '',
+            'duration': e.duration ?? '',
+            'description': e.description ?? '',
+          },
+        )
+        .toList();
+
+    _industrialVisits = (p.industrialVisits ?? [])
+        .map<Map<String, dynamic>>(
+          (e) => {
+            'company': e.company ?? '',
+            'location': e.location ?? '',
+            'date': e.date ?? '',
+          },
+        )
+        .toList();
+
+    _paperPresentations = (p.paperPresentations ?? [])
+        .map<Map<String, dynamic>>(
+          (e) => {
+            'title': e.title ?? '',
+            'event': e.event ?? '',
+            'year': e.year ?? '',
+            'description': e.description ?? '',
+          },
+        )
+        .toList();
 
     if (mounted) setState(() {});
   }
@@ -372,8 +422,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               size: 25,
               color: AppColors.whiteColor,
             ),
-            onPressed: () { Get.back();
-             _loadProfile();
+            onPressed: () {
+              Get.back();
+              _loadProfile();
             },
           ),
           title: Text(
@@ -636,7 +687,78 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     onEdit: () => _projectSheet(editIndex: e.key),
                   ),
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 20),
+                ProfileWidgets.sectionHeader(
+                  '💼',
+                  'Internships',
+                  onAdd: () => _internshipSheet(),
+                ),
+
+                ..._internships.asMap().entries.map(
+                  (e) => ItemCard(
+                    title: e.value['company'] ?? '',
+                    subtitle: e.value['duration'] ?? '',
+                    onEdit: () => _internshipSheet(editIndex: e.key),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                ProfileWidgets.sectionHeader(
+                  '🏭',
+                  'Industrial Visits',
+                  onAdd: () => _industrialVisitSheet(),
+                ),
+
+                ..._industrialVisits.asMap().entries.map(
+                  (e) => ItemCard(
+                    title: e.value['company'] ?? '',
+                    subtitle: '${e.value['location']} • ${e.value['date']}',
+                    onEdit: () => _industrialVisitSheet(editIndex: e.key),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+                ProfileWidgets.sectionHeader(
+                  '📄',
+                  'Paper Presentations',
+                  onAdd: () => _paperPresentationSheet(),
+                ),
+
+                ..._paperPresentations.asMap().entries.map(
+                  (e) => ItemCard(
+                    title: e.value['title'] ?? '',
+                    subtitle: '${e.value['event']} • ${e.value['year']}',
+                    onEdit: () => _paperPresentationSheet(editIndex: e.key),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                ProfileWidgets.sectionHeader(
+                  '📘',
+                  'Additional Information',
+                  onAdd: () => _additionalInfoSheet(),
+                ),
+
+                ProfileWidgets.infoCard(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoWrap('Languages Known', _languagesKnown),
+                      _buildInfoWrap('Hobbies', _hobbies),
+                      _buildInfoWrap('Areas of Interest', _areasOfInterest),
+                      _buildInfoWrap('Achievements', _achievements),
+                      _buildInfoWrap(
+                        'Volunteer Experience',
+                        _volunteerExperience,
+                      ),
+                      _buildInfoWrap('Leadership', _leadership),
+                      _buildInfoWrap('Publications', _publications),
+                      _buildInfoWrap('Workshops', _workshops),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
 
                 // ── Save ──────────────────────────────────────────────────
                 CustomButtonWidget(
@@ -746,8 +868,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'higher_secondary': jsonEncode(higherSecArray),
       'secondary': jsonEncode(secondaryArray),
       'education': jsonEncode(educationObject),
-      'studprogramminglang':
-        convertToNestedList(_programmingSkills),
+      'studprogramminglang': convertToNestedList(_programmingSkills),
       'tools_and_technologies': jsonEncode(_toolsSkills),
       'projects': jsonEncode(
         _projects
@@ -772,20 +893,352 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             .toList(),
       ),
       'studentcertificate': jsonEncode(_certifications),
-      'internships': jsonEncode([]),
-      'industrial_visits': jsonEncode([]),
-      'trainings': jsonEncode([]),
-      'paper_presentations': jsonEncode([]),
-      'areas_of_interest': jsonEncode([]),
-      'hobbies': jsonEncode([]),
-      'languages_known': jsonEncode([]),
-      'volunteer_experience': jsonEncode([]),
-      'leadership': jsonEncode([]),
-      'achievements': jsonEncode([]),
-      'publications': jsonEncode([]),
-      'workshops': jsonEncode([]),
-      //'student_banner': '',
+      'internships': jsonEncode(_internships),
+      'industrial_visits': jsonEncode(_industrialVisits),
+      'paper_presentations': jsonEncode(_paperPresentations),
+      'languages_known': jsonEncode(_languagesKnown),
+      'hobbies': jsonEncode(_hobbies),
+      'areas_of_interest': jsonEncode(_areasOfInterest),
+      'volunteer_experience': jsonEncode(_volunteerExperience),
+      'leadership': jsonEncode(_leadership),
+      'achievements': jsonEncode(_achievements),
+      'publications': jsonEncode(_publications),
+      'workshops': jsonEncode(_workshops),
     };
+  }
+
+  Widget _buildInfoWrap(String title, List<String> items) {
+    if (items.isEmpty) return const SizedBox();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppStyles.customTextStyle(
+            color: AppColors.whiteColor,
+            size: 14,
+            weight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: items
+              .asMap()
+              .entries
+              .map(
+                (e) => ProfileWidgets.chip(
+                  e.value,
+                  () => setState(() => items.removeAt(e.key)),
+                ),
+              )
+              .toList(),
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  void _internshipSheet({int? editIndex}) {
+    final companyCtrl = TextEditingController(
+      text: editIndex != null ? _internships[editIndex]['company'] : '',
+    );
+    final durationCtrl = TextEditingController(
+      text: editIndex != null ? _internships[editIndex]['duration'] : '',
+    );
+    final descCtrl = TextEditingController(
+      text: editIndex != null ? _internships[editIndex]['description'] : '',
+    );
+
+    ProfileWidgets.showBottomSheet(
+      context: context,
+      title: editIndex != null ? 'Edit Internship' : 'Add Internship',
+      content: Column(
+        spacing: 12,
+        children: [
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: companyCtrl,
+            labelText: 'Company',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: durationCtrl,
+            labelText: 'Duration',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: descCtrl,
+            labelText: 'Description',
+            maxLines: 3,
+            onChanged: (_) {},
+          ),
+        ],
+      ),
+      onSave: () {
+        final data = {
+          'company': companyCtrl.text.trim(),
+          'duration': durationCtrl.text.trim(),
+          'description': descCtrl.text.trim(),
+        };
+
+        setState(() {
+          editIndex != null
+              ? _internships[editIndex] = data
+              : _internships.add(data);
+        });
+
+        Get.back();
+      },
+    );
+  }
+
+  void _industrialVisitSheet({int? editIndex}) {
+    final companyCtrl = TextEditingController(
+      text: editIndex != null ? _industrialVisits[editIndex]['company'] : '',
+    );
+    final locationCtrl = TextEditingController(
+      text: editIndex != null ? _industrialVisits[editIndex]['location'] : '',
+    );
+    final dateCtrl = TextEditingController(
+      text: editIndex != null ? _industrialVisits[editIndex]['date'] : '',
+    );
+
+    ProfileWidgets.showBottomSheet(
+      context: context,
+      title: editIndex != null
+          ? 'Edit Industrial Visit'
+          : 'Add Industrial Visit',
+      content: Column(
+        spacing: 12,
+        children: [
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: companyCtrl,
+            labelText: 'Company',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: locationCtrl,
+            labelText: 'Location',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: dateCtrl,
+            labelText: 'Date',
+            onChanged: (_) {},
+          ),
+        ],
+      ),
+      onSave: () {
+        final data = {
+          'company': companyCtrl.text.trim(),
+          'location': locationCtrl.text.trim(),
+          'date': dateCtrl.text.trim(),
+        };
+
+        setState(() {
+          editIndex != null
+              ? _industrialVisits[editIndex] = data
+              : _industrialVisits.add(data);
+        });
+
+        Get.back();
+      },
+    );
+  }
+
+  void _paperPresentationSheet({int? editIndex}) {
+    final titleCtrl = TextEditingController(
+      text: editIndex != null ? _paperPresentations[editIndex]['title'] : '',
+    );
+    final eventCtrl = TextEditingController(
+      text: editIndex != null ? _paperPresentations[editIndex]['event'] : '',
+    );
+    final yearCtrl = TextEditingController(
+      text: editIndex != null ? _paperPresentations[editIndex]['year'] : '',
+    );
+    final descCtrl = TextEditingController(
+      text: editIndex != null
+          ? _paperPresentations[editIndex]['description']
+          : '',
+    );
+
+    ProfileWidgets.showBottomSheet(
+      context: context,
+      title: editIndex != null
+          ? 'Edit Paper Presentation'
+          : 'Add Paper Presentation',
+      content: Column(
+        spacing: 12,
+        children: [
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: titleCtrl,
+            labelText: 'Title',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: eventCtrl,
+            labelText: 'Event',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: true,
+            isProfileFlow: true,
+            controller: yearCtrl,
+            labelText: 'Year',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: descCtrl,
+            labelText: 'Description',
+            maxLines: 3,
+            onChanged: (_) {},
+          ),
+        ],
+      ),
+      onSave: () {
+        final data = {
+          'title': titleCtrl.text.trim(),
+          'event': eventCtrl.text.trim(),
+          'year': yearCtrl.text.trim(),
+          'description': descCtrl.text.trim(),
+        };
+
+        setState(() {
+          editIndex != null
+              ? _paperPresentations[editIndex] = data
+              : _paperPresentations.add(data);
+        });
+
+        Get.back();
+      },
+    );
+  }
+
+  void _additionalInfoSheet() {
+    final languageCtrl = TextEditingController();
+    final hobbyCtrl = TextEditingController();
+    final interestCtrl = TextEditingController();
+    final achievementCtrl = TextEditingController();
+    final volunteerCtrl = TextEditingController();
+    final leadershipCtrl = TextEditingController();
+    final publicationCtrl = TextEditingController();
+    final workshopCtrl = TextEditingController();
+
+    ProfileWidgets.showBottomSheet(
+      context: context,
+      title: 'Additional Information',
+      content: Column(
+        spacing: 12,
+        children: [
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: languageCtrl,
+            labelText: 'Languages Known',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: hobbyCtrl,
+            labelText: 'Hobbies',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: interestCtrl,
+            labelText: 'Areas of Interest',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: achievementCtrl,
+            labelText: 'Achievements',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: volunteerCtrl,
+            labelText: 'Volunteer Experience',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: leadershipCtrl,
+            labelText: 'Leadership',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: publicationCtrl,
+            labelText: 'Publications',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: workshopCtrl,
+            labelText: 'Workshops',
+            onChanged: (_) {},
+          ),
+        ],
+      ),
+      onSave: () {
+        setState(() {
+          if (languageCtrl.text.isNotEmpty) {
+            _languagesKnown.add(languageCtrl.text.trim());
+          }
+          if (hobbyCtrl.text.isNotEmpty) {
+            _hobbies.add(hobbyCtrl.text.trim());
+          }
+          if (interestCtrl.text.isNotEmpty) {
+            _areasOfInterest.add(interestCtrl.text.trim());
+          }
+          if (achievementCtrl.text.isNotEmpty) {
+            _achievements.add(achievementCtrl.text.trim());
+          }
+          if (volunteerCtrl.text.isNotEmpty) {
+            _volunteerExperience.add(volunteerCtrl.text.trim());
+          }
+          if (leadershipCtrl.text.isNotEmpty) {
+            _leadership.add(leadershipCtrl.text.trim());
+          }
+          if (publicationCtrl.text.isNotEmpty) {
+            _publications.add(publicationCtrl.text.trim());
+          }
+          if (workshopCtrl.text.isNotEmpty) {
+            _workshops.add(workshopCtrl.text.trim());
+          }
+        });
+
+        Get.back();
+      },
+    );
   }
 
   // helper for personal-info fields

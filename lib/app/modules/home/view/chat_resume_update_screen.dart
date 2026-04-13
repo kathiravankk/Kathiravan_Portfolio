@@ -39,45 +39,92 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
   List<String> availableOptions = [];
   List<String> selectedOptions = [];
 
+  int? templateId;
+
   @override
   void initState() {
     super.initState();
+    templateId = Get.arguments["templateId"] ?? 1;
     getInitialChatData();
   }
 
   // ================= INITIAL LOAD =================
 
   Future<void> getInitialChatData() async {
+    final profile = profileController.profileDataModel;
+
     Map<String, dynamic> resumeData = {
       "personal_info": {
-        "name": profileController.profileDataModel.studentName,
-        "gender": "",
-        "email": profileController.profileDataModel.studEmail,
-        "phone": profileController.profileDataModel.studMobileNo,
-        "linkedIn": profileController.profileDataModel.linkedIn,
-        "github": profileController.profileDataModel.github,
+        "name": profile.studentName ?? "",
+        "gender": profile.studentGender ?? "",
+        "email": profile.studEmail ?? "",
+        "phone": profile.studMobileNo ?? "",
+        "linkedIn": profile.linkedIn ?? "",
+        "github": profile.github ?? "",
+        "location": profile.collegeLocation ?? "",
       },
-      "profile_summary": profileController.profileDataModel.studProfile ?? "",
-      "skills": profileController.profileDataModel.studProgrammingLang ?? [],
-      "projects": profileController.profileDataModel.projects != null
-          ? profileController.profileDataModel.projects!
-                .map((e) => e.toJson())
-                .toList()
+
+      "profile_summary": profile.profileSummary ?? "",
+
+      "skills": profile.studProgrammingLang ?? [],
+
+      "areas_of_interest": profile.areasOfInterest ?? [],
+
+      "hobbies": List<String>.from(profile.hobbies ?? []),
+
+      "languages": List<String>.from(profile.languagesKnown ?? []),
+
+      "volunteer_experience":
+      List<String>.from(profile.volunteerExperience ?? []),
+
+      "leadership": List<String>.from(profile.leadership ?? []),
+
+      "achievements": List<String>.from(profile.achievements ?? []),
+
+      "publications": List<String>.from(profile.publications ?? []),
+
+      "workshops": List<String>.from(profile.workshops ?? []),
+
+      "paper_presentations": profile.paperPresentations != null
+          ? profile.paperPresentations!
+          .map((e) => e.toJson())
+          .toList()
           : [],
 
-      "experience": profileController.profileDataModel.experience != null
-          ? profileController.profileDataModel.experience!
-                .map((e) => e.toJson())
-                .toList()
+      "industrial_visits": profile.industrialVisits != null
+          ? profile.industrialVisits!
+          .map((e) => e.toJson())
+          .toList()
           : [],
 
-      "internships": profileController.profileDataModel.internships != null
-          ? profileController.profileDataModel.internships!
-                .map((e) => e.toJson())
-                .toList()
+      "projects": profile.projects != null
+          ? profile.projects!
+          .map((e) => e.toJson())
+          .toList()
           : [],
 
-      "education": profileController.profileDataModel.education?.toJson(),
+      "experience": profile.experience != null
+          ? profile.experience!
+          .map((e) => e.toJson())
+          .toList()
+          : [],
+
+      "internships": profile.internships != null
+          ? profile.internships!
+          .map((e) => e.toJson())
+          .toList()
+          : [],
+
+      "education": profile.education?.toJson(),
+
+      "certifications": profile.studentCertificate != null
+          ? profile.studentCertificate!
+          .map((e) => e.toJson())
+          .toList()
+          : [],
+
+      "tools_and_technologies":
+      List<String>.from(profile.toolsAndTechnologies ?? []),
     };
 
     await dashboardController.getUpdateResumeData(resumeData: resumeData);
@@ -94,7 +141,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     } else {
       AppFunctions.apiErrorHandling(
         dashboardController.getResponseCode(),
-        "Something went wrong!, Tyr again later!",
+        "Something went wrong!, Try again later!",
       );
     }
   }
@@ -170,97 +217,121 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
   Future<void> updateStudentProfile() async {
     ReplyData? profileData =
         dashboardController.updateChatResumeModel.aiResponse!.finalUpdatedData;
+
+    if (profileData == null) return;
+
+    final collegeArray =
+        profileData.education?.college?.map((e) => e.toJson()).toList() ?? [];
+
+    final higherSecondaryObject = {
+      "institution":
+          profileData.education?.school?.higherSecondary.institution ?? "",
+      "board": profileData.education?.school?.higherSecondary.board ?? "",
+      "percentage":
+          profileData.education?.school?.higherSecondary.percentage ?? "",
+      "year_of_passing":
+          profileData.education?.school?.higherSecondary.yearOfPassing ?? "",
+    };
+
+    final secondaryObject = {
+      "institution": profileData.education?.school?.secondary.institution ?? "",
+      "board": profileData.education?.school?.secondary.board ?? "",
+      "percentage": profileData.education?.school?.secondary.percentage ?? "",
+      "year_of_passing":
+          profileData.education?.school?.secondary.yearOfPassing ?? "",
+    };
+
+    final educationObject = {
+      "school": {
+        "higher_secondary": higherSecondaryObject,
+        "secondary": secondaryObject,
+      },
+      "college": collegeArray,
+    };
+
     Map<String, dynamic> updateData = {
-      "studmobileno": profileData!.personalInfo!.phone,
-
-      "studemail": profileData.personalInfo!.email,
-
-      "studname": profileData.personalInfo!.name,
-      "studgender": profileData.personalInfo!.gender ?? "",
-
-      //"studdob": "",
-      "studentaddress": profileData.personalInfo!.location,
-
-      "studentdegree": profileData.education!.college!.isNotEmpty
-          ? profileData.education!.college!.first.degree ?? ""
+      "studmobileno": profileData.personalInfo?.phone ?? "",
+      "studemail": profileData.personalInfo?.email ?? "",
+      "studname": profileData.personalInfo?.name ?? "",
+      "studgender": profileData.personalInfo?.gender ?? "",
+      "studentaddress": profileData.personalInfo?.location ?? "",
+      "studentdegree": collegeArray.isNotEmpty
+          ? collegeArray.first["degree"] ?? ""
           : "",
-
-      "studentfieldofstudy": profileData.education!.college!.isNotEmpty
-          ? profileData.education!.college!.first.department ?? ""
+      "studentfieldofstudy": collegeArray.isNotEmpty
+          ? collegeArray.first["department"] ?? ""
           : "",
-
-      "studentcollegename": profileData.education!.college!.isNotEmpty
-          ? profileData.education!.college!.first.institution ?? ""
+      "studentcollegename": collegeArray.isNotEmpty
+          ? collegeArray.first["institution"] ?? ""
           : "",
-
-      "studcollegestartyear": profileData.education!.college!.isNotEmpty
-          ? profileData.education!.college!.first.startYear?.toString() ?? ""
+      "studcollegestartyear": collegeArray.isNotEmpty
+          ? collegeArray.first["start_year"] ?? ""
+          : "",
+      "studcollegeendyear": collegeArray.isNotEmpty
+          ? collegeArray.first["end_year"] ?? ""
           : "",
       "studcollegelocation": "",
 
-      "studhighschollname":
-          profileData.education!.school!.higherSecondary.institution ?? "",
+      "studhighschollname": higherSecondaryObject["institution"],
+      "studhighschoolpercentage": higherSecondaryObject["percentage"],
+      "studhighschoollocation": "",
 
-      "studhighschoolpercentage":
-          profileData.education!.school!.higherSecondary.percentage
-              ?.toString() ??
-          "",
-
-      "studentsecondaryschoolname":
-          profileData.education!.school!.secondary.institution ?? "",
-
-      "studentsecondaryschoolpercentage":
-          profileData.education!.school!.secondary.percentage?.toString() ?? "",
+      "studentsecondaryschoolname": secondaryObject["institution"],
+      "studentsecondaryschoolpercentage": secondaryObject["percentage"],
+      "studsecondaryschoollocation": "",
+      "college": jsonEncode(collegeArray),
+      "higher_secondary": jsonEncode([higherSecondaryObject]),
+      "secondary": jsonEncode([secondaryObject]),
+      "education": jsonEncode(educationObject),
 
       "projects": jsonEncode(
         profileData.projects?.map((e) => e.toJson()).toList() ?? [],
       ),
 
       "areas_of_interest": jsonEncode(profileData.areasOfInterest ?? []),
-
       "hobbies": jsonEncode(profileData.hobbies ?? []),
-
       "languages_known": jsonEncode(profileData.languages ?? []),
-
       "volunteer_experience": jsonEncode(profileData.volunteerExperience ?? []),
-
       "leadership": jsonEncode(profileData.leadership ?? []),
-
       "achievements": jsonEncode(profileData.achievements ?? []),
-
       "publications": jsonEncode(profileData.publications ?? []),
-
       "workshops": jsonEncode(profileData.workshops ?? []),
+      "paper_presentations": jsonEncode(
+        profileData.paperPresentations ?? [],
+      ),
 
-      "paper_presentations": [],
+      "industrial_visits": jsonEncode(
+        profileData.industrialVisits ?? [],
+      ),
 
-      "tools_and_technologies": jsonEncode([]),
+      "tools_and_technologies": jsonEncode(
+        profileData.toolsAndTechnologies ?? [],
+      ),
 
       "experience": jsonEncode(
         profileData.experience?.map((e) => e.toJson()).toList() ?? [],
       ),
 
-      "internships": jsonEncode(profileData.internships ?? []),
+      "internships": jsonEncode(
+        profileData.internships?.map((e) => e.toJson()).toList() ?? [],
+      ),
 
-      "industrial_visits": jsonEncode(profileData.industrialVisits ?? []),
-
-      "trainings": jsonEncode([]),
-
-      "education": jsonEncode(profileData.education!.toJson()),
+      "studentcertificate": jsonEncode(
+        profileData.certifications?.map((e) => e.toJson()).toList() ?? [],
+      ),
 
       "studprogramminglang": convertToNestedList(profileData.skills ?? []),
 
-      "linkedIn": profileData.personalInfo!.linkedIn ?? "",
-
-      "github": profileData.personalInfo!.github ?? "",
-      "profile_summary": profileData.profileSummary ??"",
-
-      //"portfolio_website": "",
-
-      //"student_banner": "",
+      "linkedIn": profileData.personalInfo?.linkedIn ?? "",
+      "github": profileData.personalInfo?.github ?? "",
+      "portfolio_website": profileData.personalInfo?.github ?? "",
+      "profile_summary": profileData.profileSummary ?? "",
     };
+
     debugPrint(updateData.toString());
+
     await registerController.updateStudentProfileData(updateData: updateData);
+
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       await getProfileData();
@@ -300,7 +371,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             publications: studentData.publications,
             workShops: studentData.workshops,
             paperPresentations: studentData.paperPresentations,
-            certifications: [],
+            //certifications: studentData.studentCertificate,
             educationData: studentData.education,
             industrialVisits: studentData.industrialVisits,
             projects: studentData.projects,
@@ -316,6 +387,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             parents: [],
             secondary: studentData.education!.school!.secondary,
           ),
+          "templateId": templateId,
           "isRegisterFlow": false,
         },
       );

@@ -14,7 +14,7 @@ class Certification {
   factory Certification.fromJson(Map<String, dynamic> json) {
     return Certification(
       name: json['name'] ?? '',
-      issuer: json['issuer'] ?? "",
+      issuer: json["issuer"] ?? "",
       date: json['date']??"",
       type: json['type']??"",
     );

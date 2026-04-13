@@ -756,12 +756,12 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                         context,
                                         AppRoutes.resumeTemplatePreviewScreen,
                                         arguments: {
-                                          // "templateId": int.parse(
-                                          //   profileController
-                                          //       .profileDataModel
-                                          //       .templateNumber!,
-                                          // ),
-                                          "templateId": 10,
+                                          "templateId": int.parse(
+                                            profileController
+                                                .profileDataModel
+                                                .templateNumber!,
+                                          ),
+                                          //"templateId": 10,
                                           "resumeData":
                                               ExtractedResumeDataModel(
                                                 personalInfo: PersonalInfoModel(
@@ -874,6 +874,14 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                       AppFunctions.navigateScreen(
                                         context,
                                         AppRoutes.chatResumeUpdateScreen,
+                                        arguments:
+                                          {
+                                            "templateId": int.parse(
+                                              profileController
+                                                  .profileDataModel
+                                                  .templateNumber!,
+                                            ),
+                                          }
                                       );
                                     }),
                                     //_actionItem(Icons.refresh, "Update", () {}),

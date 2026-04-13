@@ -23,14 +23,14 @@ class UpdateProfileDataModel {
   List<dynamic>? achievements;
   List<dynamic>? publications;
   List<dynamic>? workshops;
-  List<dynamic>? paperPresentations;
-  List<dynamic>? toolsAndTechnologies;
+   List<dynamic>? toolsAndTechnologies;
   String? linkedIn;
   String? github;
   List<Project>? projects;
   List<ExperienceData>? experience;
   List<Internship>? internships;
-  List<dynamic>? industrialVisits;
+  List<PaperPresentation>? paperPresentations;
+  List<IndustrialVisit>? industrialVisits;
   List<dynamic>? trainings;
   List<dynamic>? parents;
   List<CollegeData>? collegeData;
@@ -135,7 +135,7 @@ class UpdateProfileDataModel {
       achievements: json['achievements'] ?? [],
       publications: json['publications'] ?? [],
       workshops: json['workshops'] ?? [],
-      paperPresentations: json['paper_presentations'] ?? [],
+      //paperPresentations: json['paper_presentations'] ?? [],
       toolsAndTechnologies: json['tools_and_technologies'] ?? [],
       linkedIn: json['linkedIn'],
       github: json['github'],
@@ -148,7 +148,7 @@ class UpdateProfileDataModel {
       internships: (json['internships'] ?? [])
           .map<Internship>((e) => Internship.fromJson(e))
           .toList(),
-      industrialVisits: json['industrial_visits'] ?? [],
+      //industrialVisits: json['industrial_visits'] ?? [],
       trainings: json['trainings'] ?? [],
       parents: json['parents'] ?? [],
       collegeData: (json['college'] ?? [])
@@ -180,6 +180,13 @@ class UpdateProfileDataModel {
       studentCreditId: json["studentCreditId"] ?? "",
       studentGender: json["studgender"] ?? "",
       studentDob: json["studdob"] ?? "",
+      paperPresentations: (json['paper_presentations'] ?? [])
+          .map<PaperPresentation>((e) => PaperPresentation.fromJson(e))
+          .toList(),
+
+      industrialVisits: (json['industrial_visits'] ?? [])
+          .map<IndustrialVisit>((e) => IndustrialVisit.fromJson(e))
+          .toList(),
     );
   }
 
@@ -250,6 +257,74 @@ class UpdateProfileDataModel {
 
       'studgender': studentGender,
       'studdob': studentDob,
+    };
+  }
+}
+
+class PaperPresentation {
+  String? title;
+  String? event;
+  String? year;
+  String? description;
+  String? id;
+
+  PaperPresentation({
+    this.title,
+    this.event,
+    this.year,
+    this.description,
+    this.id,
+  });
+
+  factory PaperPresentation.fromJson(Map<String, dynamic> json) {
+    return PaperPresentation(
+      title: json['title'] ?? "",
+      event: json['event'] ?? "",
+      year: json['year'] ?? "",
+      description: json['description'] ?? "",
+      id: json['_id'] ?? "",
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title ?? "",
+      "event": event ?? "",
+      "year": year ?? "",
+      "description": description ?? "",
+      "_id": id ?? "",
+    };
+  }
+}
+
+class IndustrialVisit {
+  String? company;
+  String? location;
+  String? date;
+  String? id;
+
+  IndustrialVisit({
+    this.company,
+    this.location,
+    this.date,
+    this.id,
+  });
+
+  factory IndustrialVisit.fromJson(Map<String, dynamic> json) {
+    return IndustrialVisit(
+      company: json['company'] ?? "",
+      location: json['location'] ?? "",
+      date: json['date'] ?? "",
+      id: json['_id'] ?? "",
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "company": company ?? "",
+      "location": location ?? "",
+      "date": date ?? "",
+      "_id": id ?? "",
     };
   }
 }

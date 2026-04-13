@@ -31,6 +31,8 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
   int currentTemplateIndex = 0;
 
+  int? templateId;
+
   final List<ResumeTemplateModel> templates = List.generate(
     10,
     (index) => ResumeTemplateModel(
@@ -47,9 +49,28 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   @override
   void initState() {
     super.initState();
+
     resumeData = Get.arguments["resumeData"];
+    templateId = Get.arguments["templateId"];
     isRegisterFlow = Get.arguments["isRegisterFlow"] ?? true;
+
+    setInitialTemplate();
     getProfileData();
+  }
+
+  void setInitialTemplate() {
+    if (isRegisterFlow == true) {
+      currentTemplateIndex = 0;
+      return;
+    }
+
+    if (templateId != null &&
+        templateId! > 0 &&
+        templateId! <= templates.length) {
+      currentTemplateIndex = templateId! - 1;
+    } else {
+      currentTemplateIndex = 0;
+    }
   }
 
   Future<void> getProfileData() async {
@@ -292,18 +313,18 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
               buttonText: "CONTINUE",
               bgColor: AppColors.appBgColor_2,
             ),
-            CustomButtonWidget(
-              width: 200,
-              height: 35,
-              buttonFunction: () async {
-                AppFunctions.navigateScreen(
-                  context,
-                  AppRoutes.chatResumeUpdateScreen,
-                );
-              },
-              buttonText: "Update with AI",
-              bgColor: AppColors.primaryColor,
-            ),
+            // CustomButtonWidget(
+            //   width: 200,
+            //   height: 35,
+            //   buttonFunction: () async {
+            //     AppFunctions.navigateScreen(
+            //       context,
+            //       AppRoutes.chatResumeUpdateScreen,
+            //     );
+            //   },
+            //   buttonText: "Update with AI",
+            //   bgColor: AppColors.primaryColor,
+            // ),
             SizedBox(height: 20),
           ],
         ),
@@ -311,9 +332,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     );
   }
 
-
   Future<void> updateResumeFunc(ResumeTemplateModel template) async {
-
     debugPrint(registerController.studentRegisterModel.studentToken ?? "");
     final studentId = await LocalStorageService.getStudentId();
 
@@ -337,9 +356,9 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
           arguments: {"activeStep": 2},
         );
       } else {
-        Get.back();
+        Get.close(2);
         await getProfileData();
-        Get.back(result: true);
+        //Get.back();
       }
     } else {
       AppFunctions.showToast(

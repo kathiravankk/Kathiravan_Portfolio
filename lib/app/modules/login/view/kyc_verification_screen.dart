@@ -319,7 +319,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       Map<String, dynamic> updateProfileData = {
-        "studentAdhar": collegeIdImg!.path,
+        //"studentAdhar": collegeIdImg!.path,
         "studentId": aadhaarImg!.path,
         //"stuid": "6979f45490869a0803c30be7",
         "stuid": studentId,

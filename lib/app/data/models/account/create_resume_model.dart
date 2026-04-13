@@ -1,8 +1,10 @@
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
-import 'package:internsharks/app/data/models/account/experience_model.dart' hide Experience;
+import 'package:internsharks/app/data/models/account/experience_model.dart'
+    hide Experience;
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/resume_analyze_model.dart' hide Project, ExperienceData;
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart'
+    hide Project, ExperienceData;
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart'
     show Experience;
@@ -20,8 +22,6 @@ class CreateResumeModel {
         : null;
   }
 }
-
-
 
 class ReplyData {
   String? userId;
@@ -41,6 +41,7 @@ class ReplyData {
   List<dynamic>? publications;
   List<dynamic>? parents;
   List<dynamic>? achievements;
+  List<dynamic>? toolsAndTechnologies;
   List<dynamic>? leadership;
   List<dynamic>? volunteerExperience;
   List<String>? languages;
@@ -51,7 +52,37 @@ class ReplyData {
   List<CollegeData>? colleges;
   List<Institution>? institution;
   List<Degree>? degree;
-  ReplyData({this.response, this.state, this.userId, this.personalInfo});
+
+  ReplyData({
+    this.response,
+    this.state,
+    this.userId,
+    this.personalInfo,
+    this.paperPresentations,
+    this.profileSummary,
+    this.achievements,
+    this.areasOfInterest,
+    this.certifications,
+    this.colleges,
+    this.degree,
+    this.education,
+    this.experience,
+    this.higherSecondary,
+    this.hobbies,
+    this.industrialVisits,
+    this.institution,
+    this.internships,
+    this.languages,
+    this.leadership,
+    this.parents,
+    this.projects,
+    this.publications,
+    this.secondary,
+    this.skills,
+    this.toolsAndTechnologies,
+    this.volunteerExperience,
+    this.workshops,
+  });
 
   ReplyData.fromJson(Map<String, dynamic> json) {
     userId = json["user_id"] ?? "";
@@ -88,6 +119,7 @@ class ReplyData {
         .map<Internship>((e) => Internship.fromJson(e))
         .toList();
     industrialVisits = json['industrial_visits'] ?? [];
+    toolsAndTechnologies: json['tools_and_technologies'] ?? [];
 
     education = json['education'] != null
         ? EducationModel.fromJson(json['education'])
@@ -176,14 +208,17 @@ class ReplyData {
     data["profile_summary"] = profileSummary;
     data["skills"] = skills ?? [];
 
-    data["projects"] =
-    projects != null ? projects!.map((e) => e.toJson()).toList() : [];
+    data["projects"] = projects != null
+        ? projects!.map((e) => e.toJson()).toList()
+        : [];
 
-    data["experience"] =
-    experience != null ? experience!.map((e) => e.toJson()).toList() : [];
+    data["experience"] = experience != null
+        ? experience!.map((e) => e.toJson()).toList()
+        : [];
 
-    data["internships"] =
-    internships != null ? internships!.map((e) => e.toJson()).toList() : [];
+    data["internships"] = internships != null
+        ? internships!.map((e) => e.toJson()).toList()
+        : [];
 
     data["industrial_visits"] = industrialVisits ?? [];
 
@@ -191,16 +226,18 @@ class ReplyData {
       data["education"] = education!.toJson();
     }
 
-    data["certifications"] =
-    certifications != null ? certifications!.map((e) => e.toJson()).toList() : [];
+    data["certifications"] = certifications != null
+        ? certifications!.map((e) => e.toJson()).toList()
+        : [];
 
-    data["paper_presentations"] =
-    paperPresentations != null
+    data["paper_presentations"] = paperPresentations != null
         ? paperPresentations!.map((e) => e.toJson()).toList()
         : [];
 
     data["workshops"] = workshops ?? [];
     data["publications"] = publications ?? [];
+    data['tools_and_technologies'] = toolsAndTechnologies ?? [];
+
     data["parents"] = parents ?? [];
     data["achievements"] = achievements ?? [];
     data["leadership"] = leadership ?? [];
@@ -218,20 +255,20 @@ class ReplyData {
       data["secondary"] = secondary!.toJson();
     }
 
-    data["colleges"] =
-    colleges != null ? colleges!.map((e) => e.toJson()).toList() : [];
+    data["colleges"] = colleges != null
+        ? colleges!.map((e) => e.toJson()).toList()
+        : [];
 
-    data["institution"] =
-    institution != null ? institution!.map((e) => e.toJson()).toList() : [];
+    data["institution"] = institution != null
+        ? institution!.map((e) => e.toJson()).toList()
+        : [];
 
-    data["degree"] =
-    degree != null ? degree!.map((e) => e.toJson()).toList() : [];
+    data["degree"] = degree != null
+        ? degree!.map((e) => e.toJson()).toList()
+        : [];
 
     return data;
   }
-
-
-
 }
 
 class ChatMessage {
@@ -240,4 +277,3 @@ class ChatMessage {
 
   ChatMessage({required this.text, required this.isBot});
 }
-

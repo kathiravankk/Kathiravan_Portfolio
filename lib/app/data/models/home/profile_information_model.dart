@@ -2,6 +2,7 @@ import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/update_profile_model.dart';
 
 class ProfileInformationModel {
   String? message;
@@ -38,14 +39,16 @@ class ProfileDataModel {
   List<dynamic>? achievements;
   List<dynamic>? publications;
   List<dynamic>? workshops;
-  List<dynamic>? paperPresentations;
+  //List<dynamic>? paperPresentations;
   List<dynamic>? toolsAndTechnologies;
   String? linkedIn;
   String? github;
   List<Project>? projects;
   List<ExperienceData>? experience;
   List<Internship>? internships;
-  List<dynamic>? industrialVisits;
+  //List<dynamic>? industrialVisits;
+  List<PaperPresentation>? paperPresentations;
+  List<IndustrialVisit>? industrialVisits;
   List<dynamic>? trainings;
   List<dynamic>? parents;
   List<CollegeData>? collegeData;
@@ -56,7 +59,14 @@ class ProfileDataModel {
   String? createdAt;
   String? updatedAt;
   int? vId;
-
+  String? portfolioWebsite;
+  String? location;
+  String? role;
+  String? collegeEndYear;
+  String? highSchoolLocation;
+  String? secondarySchoolLocation;
+  bool? syllabusStatus;
+  dynamic applicationStatus;
   dynamic collegeStartYear;
   String? templateNumber;
   String? collegeName;
@@ -70,6 +80,7 @@ class ProfileDataModel {
   String? studProfile;
   String? studentBanner;
   bool? freeBannerUsed;
+
   //String? studentCreditIdString;
   String? studentGender;
   String? studentDob;
@@ -128,12 +139,26 @@ class ProfileDataModel {
     //this.studentCreditIdString,
     this.studentDob,
     this.studentGender,
-    this.message
+    this.message,
+    this.portfolioWebsite,
+    this.location,
+    this.role,
+    this.collegeEndYear,
+    this.highSchoolLocation,
+    this.secondarySchoolLocation,
+    this.syllabusStatus,
+    this.applicationStatus,
   });
 
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
     return ProfileDataModel(
-      education: EducationModel.fromJson(json['education'] ?? {}),
+      education: json['education'] != null
+          ? EducationModel.fromJson(json['education'])
+          : null,
+
+      studentCreditId: json['studentCreditId'] != null
+          ? CreditData.fromJson(json['studentCreditId'])
+          : null,
       id: json['_id'],
       message: json['message'],
       studentName: json['studname'],
@@ -156,7 +181,7 @@ class ProfileDataModel {
       achievements: json['achievements'] ?? [],
       publications: json['publications'] ?? [],
       workshops: json['workshops'] ?? [],
-      paperPresentations: json['paper_presentations'] ?? [],
+      //paperPresentations: json['paper_presentations'] ?? [],
       toolsAndTechnologies: json['tools_and_technologies'] ?? [],
       linkedIn: json['linkedIn'],
       github: json['github'],
@@ -169,7 +194,14 @@ class ProfileDataModel {
       internships: (json['internships'] ?? [])
           .map<Internship>((e) => Internship.fromJson(e))
           .toList(),
-      industrialVisits: json['industrial_visits'] ?? [],
+      //industrialVisits: json['industrial_visits'] ?? [],
+      paperPresentations: (json['paper_presentations'] ?? [])
+          .map<PaperPresentation>((e) => PaperPresentation.fromJson(e))
+          .toList(),
+
+      industrialVisits: (json['industrial_visits'] ?? [])
+          .map<IndustrialVisit>((e) => IndustrialVisit.fromJson(e))
+          .toList(),
       trainings: json['trainings'] ?? [],
       parents: json['parents'] ?? [],
       collegeData: (json['college'] ?? [])
@@ -188,7 +220,6 @@ class ProfileDataModel {
       templateNumber: json['templateNumber'] ?? "1",
       studProfile: json['studprofile'],
       studentBanner: json['student_banner'],
-      studentCreditId: CreditData.fromJson(json['studentCreditId'] ?? {}),
       collegeName: json["studentcollegename"] ?? "",
       collegeStartYear: json["studcollegestartyear"] ?? "",
       fieldOfStudy: json["studentfieldofstudy"] ?? "",
@@ -201,7 +232,15 @@ class ProfileDataModel {
       freeBannerUsed: json["freeBannerUsed"] ?? false,
       //studentCreditIdString: json["studentCreditId"] ?? "",
       studentGender: json["studgender"] ?? "",
-      studentDob: json["studdob"] ?? "",
+      portfolioWebsite: json["portfolio_website"] ?? "",
+      location: json["location"] ?? "",
+      role: json["role"] ?? "",
+      collegeEndYear: json["studcollegeendyear"] ?? "",
+      highSchoolLocation: json["studhighschoollocation"] ?? "",
+      secondarySchoolLocation: json["studsecondaryschoollocation"] ?? "",
+      studentDob: json["studdob"]?.toString() ?? "",
+      syllabusStatus: json["syllabusstatus"] ?? false,
+      applicationStatus: json["applicationstatus"],
     );
   }
 
@@ -216,7 +255,8 @@ class ProfileDataModel {
       'studmobileno': studMobileNo,
       'studprogramminglang': studProgrammingLang ?? [],
       //'studentcertificate': studentCertificate ?? [],
-      'studentcertificate': studentCertificate?.map((e) => e.toJson()).toList() ?? [],
+      'studentcertificate':
+          studentCertificate?.map((e) => e.toJson()).toList() ?? [],
       'studentresume': studentResume,
       'studentAdhar': studentAadhaar ?? [],
       'studentId': studentId ?? [],
@@ -228,23 +268,36 @@ class ProfileDataModel {
       'achievements': achievements ?? [],
       'publications': publications ?? [],
       'workshops': workshops ?? [],
-      'paper_presentations': paperPresentations ?? [],
+      //'paper_presentations': paperPresentations ?? [],
       'tools_and_technologies': toolsAndTechnologies ?? [],
       'linkedIn': linkedIn,
       'github': github,
-
+      'portfolio_website': portfolioWebsite,
+      'location': location,
+      'role': role,
+      'studcollegeendyear': collegeEndYear,
+      'studhighschoollocation': highSchoolLocation,
+      'studsecondaryschoollocation': secondarySchoolLocation,
+      'syllabusstatus': syllabusStatus,
+      'applicationstatus': applicationStatus,
       'projects': projects?.map((e) => e.toJson()).toList() ?? [],
       'experience': experience?.map((e) => e.toJson()).toList() ?? [],
       'internships': internships?.map((e) => e.toJson()).toList() ?? [],
 
-      'industrial_visits': industrialVisits ?? [],
+      //'industrial_visits': industrialVisits ?? [],
+      'paper_presentations':
+      paperPresentations?.map((e) => e.toJson()).toList() ?? [],
+
+      'industrial_visits':
+      industrialVisits?.map((e) => e.toJson()).toList() ?? [],
       'trainings': trainings ?? [],
       'parents': parents ?? [],
 
       // IMPORTANT FIX (you used collegeData in model but 'college' in API)
       'college': collegeData?.map((e) => e.toJson()).toList() ?? [],
 
-      'higher_secondary': higherSecondary?.map((e) => e.toJson()).toList() ?? [],
+      'higher_secondary':
+          higherSecondary?.map((e) => e.toJson()).toList() ?? [],
       'secondary': secondary?.map((e) => e.toJson()).toList() ?? [],
 
       'studentCreditId': studentCreditId?.toJson(),
