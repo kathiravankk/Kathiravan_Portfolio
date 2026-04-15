@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';

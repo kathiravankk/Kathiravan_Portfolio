@@ -12,6 +12,7 @@ class LocalStorageService {
   static const studentNameKey = 'student_name';
   static const _isVerifiedKey = 'student_verified';
   static const studentCreditId = 'student_creditId';
+  static const waterMarkKey = 'isWaterMarkRemoved';
 
   /// Save student data after registration
   static Future<void> saveStudent({
@@ -59,10 +60,23 @@ class LocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_isVerifiedKey, isVerified ?? false);
   }
+
   /// Get verified value
   static Future<bool?> getVerifiedValue() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_isVerifiedKey);
+  }
+
+  /// Save watermark value
+  static Future<void> saveWatermarkValue({bool? waterMarkValue}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(waterMarkKey, waterMarkValue ?? false);
+  }
+
+  /// Get watermark value
+  static Future<bool?> getWatermarkValue() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(waterMarkKey);
   }
 
   /// Save student token

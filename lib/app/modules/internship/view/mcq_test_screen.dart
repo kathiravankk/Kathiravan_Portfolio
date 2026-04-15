@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
@@ -97,34 +98,48 @@ class _McqTestScreenState extends State<McqTestScreen> {
 
   Future<void> submitTest() async {
     stopTimer();
-    Map<String, dynamic> answerData = {
-      "answers": answers,
-      "questions": allQuestions,
-    };
-    debugPrint(answerData.toString());
-    await internController.validateMcqAnswer(answerData: answerData);
-    if (internController.getResponseCode() == 200 ||
-        internController.getResponseCode() == 201 ||
-        internController.testResultModel.success == true) {
-      Map<String, dynamic> testData = {
-        "jobId": jobId,
-        //"testresult": internController.testResultModel.testResult!.toJson(),
-        "testresult": {
-          "correct_answer":
-              internController.testResultModel.testResult!.correctAnswer,
-          "score": internController.testResultModel.testResult!.score,
-          "stars": internController.testResultModel.testResult!.stars,
-        },
-      };
-      debugPrint(testData.toString(), wrapWidth: 1024);
+    try {
+      /// ✅ show loader first
+      AiLoadingWidget.show(context, type: LoadingDialogType.mcqValidation);
 
-      await saveTestResult(testData: testData);
-      // AppFunctions.showToast(message: "Your Test Submitted Successfully!");
-    } else {
+      /// ✅ allow one frame to render loader
+      await Future.delayed(const Duration(milliseconds: 100));
+      Map<String, dynamic> answerData = {
+        "answers": answers,
+        "questions": allQuestions,
+      };
+      debugPrint(answerData.toString());
+      await internController.validateMcqAnswer(answerData: answerData);
+      if (internController.getResponseCode() == 200 ||
+          internController.getResponseCode() == 201 ||
+          internController.testResultModel.success == true) {
+        Map<String, dynamic> testData = {
+          "jobId": jobId,
+          //"testresult": internController.testResultModel.testResult!.toJson(),
+          "testresult": {
+            "correct_answer":
+                internController.testResultModel.testResult!.correctAnswer,
+            "score": internController.testResultModel.testResult!.score,
+            "stars": internController.testResultModel.testResult!.stars,
+          },
+        };
+        debugPrint(testData.toString(), wrapWidth: 1024);
+
+        await saveTestResult(testData: testData);
+        // AppFunctions.showToast(message: "Your Test Submitted Successfully!");
+      } else {
+        AppFunctions.apiErrorHandling(
+          internController.getResponseCode(),
+          "Something went wrong!, Try again later!",
+        );
+      }
+    } catch (error) {
       AppFunctions.apiErrorHandling(
         internController.getResponseCode(),
         "Something went wrong!, Try again later!",
       );
+    } finally {
+      AiLoadingWidget.hide(context);
     }
   }
 

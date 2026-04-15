@@ -455,16 +455,16 @@
 
                 <!-- Right Column -->
                 <div class="col-right">
-                    <!-- Experience Section -->
-                    <section id="experienceSection">
-                        <h5 class="section-title">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                                <path d="M184 48H328c4.4 0 8 3.6 8 8V96H176V56c0-4.4 3.6-8 8-8zm-56 8V96H64C28.7 96 0 124.7 0 160v96H192 320 512V160c0-35.3-28.7-64-64-64H384V56c0-30.9-25.1-56-56-56H184c-30.9 0-56 25.1-56 56zM512 288H320v32c0 17.7-14.3 32-32 32H224c-17.7 0-32-14.3-32-32V288H0V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V288z"/>
-                            </svg>
-                            Work Experience
-                        </h5>
-                        <div id="experienceList"></div>
-                    </section>
+<!--                    &lt;!&ndash; Experience Section &ndash;&gt;-->
+<!--                    <section id="experienceSection">-->
+<!--                        <h5 class="section-title">-->
+<!--                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">-->
+<!--                                <path d="M184 48H328c4.4 0 8 3.6 8 8V96H176V56c0-4.4 3.6-8 8-8zm-56 8V96H64C28.7 96 0 124.7 0 160v96H192 320 512V160c0-35.3-28.7-64-64-64H384V56c0-30.9-25.1-56-56-56H184c-30.9 0-56 25.1-56 56zM512 288H320v32c0 17.7-14.3 32-32 32H224c-17.7 0-32-14.3-32-32V288H0V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V288z"/>-->
+<!--                            </svg>-->
+<!--                            Work Experience-->
+<!--                        </h5>-->
+<!--                        <div id="experienceList"></div>-->
+<!--                    </section>-->
 
                     <!-- Internships Section -->
                     <section id="internshipsSection" class="hidden">
@@ -717,31 +717,31 @@ if (pi.github) {
             eduList.appendChild(secDiv);
         }
 
-        // Experience
-        if (data.experience && data.experience.length > 0) {
-            const expList = document.getElementById('experienceList');
-            expList.innerHTML = '';
+<!--        // Experience-->
+<!--        if (data.experience && data.experience.length > 0) {-->
+<!--            const expList = document.getElementById('experienceList');-->
+<!--            expList.innerHTML = '';-->
 
-            data.experience.forEach(exp => {
-                const expDiv = document.createElement('div');
-                expDiv.className = 'experience-item';
-                expDiv.innerHTML = `
-                    <div class="item-title">${exp.job_title || exp.position || 'Position'}</div>
-                    <div class="item-company">${exp.company || exp.organization || 'Company'} | ${formatDateRange(exp.start_date, exp.end_date)}</div>
-                    ${exp.description ? `
-                        <div class="item-description">
-                            ${Array.isArray(exp.description)
-                                ? exp.description.map(d => d).join(' ')
-                                : exp.description}
-                        </div>
-                    ` : ''}
-                `;
-                expList.appendChild(expDiv);
-            });
-        } else if (data.updatedExperience && data.updatedExperience.length > 0) {
-            const expList = document.getElementById('experienceList');
-            expList.innerHTML = '<div class="item-description">' + data.updatedExperience.join('. ') + '</div>';
-        }
+<!--            data.experience.forEach(exp => {-->
+<!--                const expDiv = document.createElement('div');-->
+<!--                expDiv.className = 'experience-item';-->
+<!--                expDiv.innerHTML = `-->
+<!--                    <div class="item-title">${exp.job_title || exp.position || 'Position'}</div>-->
+<!--                    <div class="item-company">${exp.company || exp.organization || 'Company'} | ${formatDateRange(exp.start_date, exp.end_date)}</div>-->
+<!--                    ${exp.description ? `-->
+<!--                        <div class="item-description">-->
+<!--                            ${Array.isArray(exp.description)-->
+<!--                                ? exp.description.map(d => d).join(' ')-->
+<!--                                : exp.description}-->
+<!--                        </div>-->
+<!--                    ` : ''}-->
+<!--                `;-->
+<!--                expList.appendChild(expDiv);-->
+<!--            });-->
+<!--        } else if (data.updatedExperience && data.updatedExperience.length > 0) {-->
+<!--            const expList = document.getElementById('experienceList');-->
+<!--            expList.innerHTML = '<div class="item-description">' + data.updatedExperience.join('. ') + '</div>';-->
+<!--        }-->
 
         // Internships
         if (data.internships && data.internships.length > 0) {

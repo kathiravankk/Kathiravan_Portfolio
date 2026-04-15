@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
@@ -849,30 +850,50 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
   // ─────────────────────────────────────────
 
   Future<void> _generateMcqQuestions() async {
-    // final allWeekData = syllabus?.isMonthBased == true
-    //     ? monthList.expand((m) => m.data ?? []).toList()
-    //     : <WeekData>[];
-    // await internController.getMcqQuestions(
-    //    weekData: internController.syllabusModel.syllabusViewData!.days ?? [],);
-    await internController.getMcqQuestions(
-      weekData: internController.syllabusModel.syllabusViewData!.isMonthBased
-          ? internController.syllabusModel.syllabusViewData!.monthData
-          : internController.syllabusModel.syllabusViewData!.daysData,
-    );
-    if (internController.getResponseCode() == 200 ||
-        internController.getResponseCode() == 201) {
-      AppFunctions.showToast(
-        message: "Successfully generate your MCQ test questions!",
+    try {
+      /// ✅ show loader first
+      AiLoadingWidget.show(context, type: LoadingDialogType.mcqTest);
+
+      /// ✅ allow one frame to render loader
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // final allWeekData = syllabus?.isMonthBased == true
+      //     ? monthList.expand((m) => m.data ?? []).toList()
+      //     : <WeekData>[];
+      // await internController.getMcqQuestions(
+      //    weekData: internController.syllabusModel.syllabusViewData!.days ?? [],);
+      await internController.getMcqQuestions(
+        weekData: internController.syllabusModel.syllabusViewData!.isMonthBased
+            ? internController.syllabusModel.syllabusViewData!.monthData
+            : internController.syllabusModel.syllabusViewData!.daysData,
       );
-      AppFunctions.navigateScreen(
-        context,
-        AppRoutes.mcqTestScreen,
-        arguments: {
-          "mockTestModel": internController.mcqQuesModel,
-          "jobId": syllabus?.job,
-          "studentId": syllabus?.student,
-        },
+      if (internController.getResponseCode() == 200 ||
+          internController.getResponseCode() == 201) {
+        AppFunctions.showToast(
+          message: "Successfully generate your MCQ test questions!",
+        );
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.mcqTestScreen,
+          arguments: {
+            "mockTestModel": internController.mcqQuesModel,
+            "jobId": syllabus?.job,
+            "studentId": syllabus?.student,
+          },
+        );
+      } else {
+        AppFunctions.apiErrorHandling(
+          internController.getResponseCode(),
+          "Failed to generate MCQ question!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        internController.getResponseCode(),
+        "Failed to generate MCQ question!",
       );
+    } finally {
+      AiLoadingWidget.hide(context);
     }
   }
 

@@ -454,11 +454,11 @@
     <div class="content-wrapper">
         <!-- Left Column -->
         <div class="left-column">
-            <!-- Experience Section -->
-            <section id="experienceSection" class="mb-5">
-                <h2 class="section-title">Experience</h2>
-                <div id="experienceList"></div>
-            </section>
+<!--            &lt;!&ndash; Experience Section &ndash;&gt;-->
+<!--            <section id="experienceSection" class="mb-5">-->
+<!--                <h2 class="section-title">Experience</h2>-->
+<!--                <div id="experienceList"></div>-->
+<!--            </section>-->
 
             <!-- Internships Section -->
             <section id="internshipsSection" class="mb-5 hidden">
@@ -608,31 +608,31 @@ if (pi.github) {
             });
         }
 
-        // Experience
-        if (data.experience && data.experience.length > 0) {
-            const expList = document.getElementById('experienceList');
-            expList.innerHTML = '';
+<!--        // Experience-->
+<!--        if (data.experience && data.experience.length > 0) {-->
+<!--            const expList = document.getElementById('experienceList');-->
+<!--            expList.innerHTML = '';-->
 
-            data.experience.forEach(exp => {
-                const expDiv = document.createElement('div');
-                expDiv.className = 'experience-item';
-                expDiv.innerHTML = `
-                    <div class="experience-role">${exp.job_title || exp.role || 'Position'}</div>
-                    <div class="experience-company">${exp.company || exp.organization || 'Company'} | ${formatDateRange(exp.start_date, exp.end_date)}</div>
-                    ${exp.description ? `
-                        <p class="experience-description">
-                            ${Array.isArray(exp.description)
-                                ? exp.description.join(' ')
-                                : exp.description}
-                        </p>
-                    ` : ''}
-                `;
-                expList.appendChild(expDiv);
-            });
-        } else if (data.updatedExperience && data.updatedExperience.length > 0) {
-            const expList = document.getElementById('experienceList');
-            expList.innerHTML = '<p class="experience-description">' + data.updatedExperience.join('. ') + '</p>';
-        }
+<!--            data.experience.forEach(exp => {-->
+<!--                const expDiv = document.createElement('div');-->
+<!--                expDiv.className = 'experience-item';-->
+<!--                expDiv.innerHTML = `-->
+<!--                    <div class="experience-role">${exp.job_title || exp.role || 'Position'}</div>-->
+<!--                    <div class="experience-company">${exp.company || exp.organization || 'Company'} | ${formatDateRange(exp.start_date, exp.end_date)}</div>-->
+<!--                    ${exp.description ? `-->
+<!--                        <p class="experience-description">-->
+<!--                            ${Array.isArray(exp.description)-->
+<!--                                ? exp.description.join(' ')-->
+<!--                                : exp.description}-->
+<!--                        </p>-->
+<!--                    ` : ''}-->
+<!--                `;-->
+<!--                expList.appendChild(expDiv);-->
+<!--            });-->
+<!--        } else if (data.updatedExperience && data.updatedExperience.length > 0) {-->
+<!--            const expList = document.getElementById('experienceList');-->
+<!--            expList.innerHTML = '<p class="experience-description">' + data.updatedExperience.join('. ') + '</p>';-->
+<!--        }-->
 
         // Internships
         if (data.internships && data.internships.length > 0) {

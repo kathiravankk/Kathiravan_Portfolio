@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/widgets/education_card.dart';
-import 'package:internsharks/app/core/widgets/experience_card.dart';
 import 'package:internsharks/app/core/widgets/item_card_widget.dart';
 import 'package:internsharks/app/core/widgets/profile_avatar.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
@@ -231,152 +230,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     if (mounted) setState(() {});
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    final permission = source == ImageSource.camera
-        ? Permission.camera
-        : Permission.photos;
-    final status = await permission.request();
-
-    if (status.isGranted) {
-      try {
-        final picked = await ImagePicker().pickImage(
-          source: source,
-          imageQuality: 80,
-          maxWidth: 800,
-        );
-        if (picked == null) return;
-        final file = File(picked.path);
-        if (await file.length() > 1_000_000) {
-          AppFunctions.showToast(
-            message: 'File too large (max 1 MB)',
-            isError: true,
-          );
-        } else {
-          setState(() => _pickedImage = file);
-        }
-      } catch (e) {
-        AppFunctions.showToast(
-          message: 'Could not open camera/gallery: $e',
-          isError: true,
-        );
-      }
-    } else if (status.isPermanentlyDenied) {
-      _showPermissionDialog(
-        source == ImageSource.camera ? 'Camera' : 'Photo Library',
-      );
-    } else {
-      AppFunctions.showToast(message: 'Permission denied', isError: true);
-    }
-  }
-
-  void _showPermissionDialog(String resource) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: AppColors.fieldBgColor,
-        title: Text(
-          '$resource Permission Required',
-          style: AppStyles.customTextStyle(
-            color: AppColors.whiteColor,
-            size: 16,
-            weight: FontWeight.w600,
-          ),
-        ),
-        content: Text(
-          '$resource access is needed. Please enable it in your device Settings.',
-          style: AppStyles.customTextStyle(
-            color: AppColors.lightText,
-            size: 13,
-            weight: FontWeight.w400,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: AppStyles.customTextStyle(
-                color: AppColors.lightText,
-                size: 13,
-                weight: FontWeight.w500,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              openAppSettings();
-            },
-            child: Text(
-              'Open Settings',
-              style: AppStyles.customTextStyle(
-                color: AppColors.primaryColor,
-                size: 13,
-                weight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showImageSourceSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.whiteColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(
-                Icons.photo_library,
-                color: AppColors.greyIcon,
-                size: 20,
-              ),
-              title: Text(
-                'Choose from Gallery',
-                style: AppStyles.customTextStyle(
-                  fontFamily: 'Roboto',
-                  color: AppColors.blackColor,
-                  size: 14,
-                  weight: FontWeight.w500,
-                ),
-              ),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.photo_camera,
-                color: AppColors.greyIcon,
-                size: 20,
-              ),
-              title: Text(
-                'Take a Photo',
-                style: AppStyles.customTextStyle(
-                  fontFamily: 'Roboto',
-                  color: AppColors.blackColor,
-                  size: 14,
-                  weight: FontWeight.w500,
-                ),
-              ),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.camera);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // ── Save ─────────────────────────────────────────────────────────────────
 
   Future<void> _saveAll() async {
@@ -518,37 +371,37 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // ── Work Experience ───────────────────────────────────────
-                ProfileWidgets.sectionHeader(
-                  '💼',
-                  'Work Experience',
-                  onAdd: () => _expSheet(),
-                ),
-                if (_experiences.isNotEmpty)
-                  ProfileWidgets.infoCard(
-                    Column(
-                      children: _experiences.asMap().entries.map((e) {
-                        final exp = e.value;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ExperienceCard(
-                              role: exp['role'] ?? '',
-                              company: exp['company'] ?? '',
-                              meta:
-                                  '${exp['type'] ?? ''} | ${exp['duration'] ?? ''}',
-                              onEdit: () => _expSheet(editIndex: e.key),
-                              onDelete: () =>
-                                  setState(() => _experiences.removeAt(e.key)),
-                            ),
-                            if (e.key < _experiences.length - 1)
-                              const Divider(color: Colors.white12),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                //
+                // // ── Work Experience ───────────────────────────────────────
+                // ProfileWidgets.sectionHeader(
+                //   '💼',
+                //   'Work Experience',
+                //   onAdd: () => _expSheet(),
+                // ),
+                // if (_experiences.isNotEmpty)
+                //   ProfileWidgets.infoCard(
+                //     Column(
+                //       children: _experiences.asMap().entries.map((e) {
+                //         final exp = e.value;
+                //         return Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             ExperienceCard(
+                //               role: exp['role'] ?? '',
+                //               company: exp['company'] ?? '',
+                //               meta:
+                //                   '${exp['type'] ?? ''} | ${exp['duration'] ?? ''}',
+                //               onEdit: () => _expSheet(editIndex: e.key),
+                //               onDelete: () =>
+                //                   setState(() => _experiences.removeAt(e.key)),
+                //             ),
+                //             if (e.key < _experiences.length - 1)
+                //               const Divider(color: Colors.white12),
+                //           ],
+                //         );
+                //       }).toList(),
+                //     ),
+                //   ),
                 const SizedBox(height: 20),
 
                 // ── Education ─────────────────────────────────────────────
@@ -777,6 +630,154 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
+  // Profile Image Widgets
+
+  Future<void> _pickImage(ImageSource source) async {
+    final permission = source == ImageSource.camera
+        ? Permission.camera
+        : Permission.photos;
+    final status = await permission.request();
+
+    if (status.isGranted) {
+      try {
+        final picked = await ImagePicker().pickImage(
+          source: source,
+          imageQuality: 80,
+          maxWidth: 800,
+        );
+        if (picked == null) return;
+        final file = File(picked.path);
+        if (await file.length() > 1_000_000) {
+          AppFunctions.showToast(
+            message: 'File too large (max 1 MB)',
+            isError: true,
+          );
+        } else {
+          setState(() => _pickedImage = file);
+        }
+      } catch (e) {
+        AppFunctions.showToast(
+          message: 'Could not open camera/gallery: $e',
+          isError: true,
+        );
+      }
+    } else if (status.isPermanentlyDenied) {
+      _showPermissionDialog(
+        source == ImageSource.camera ? 'Camera' : 'Photo Library',
+      );
+    } else {
+      AppFunctions.showToast(message: 'Permission denied', isError: true);
+    }
+  }
+
+  void _showPermissionDialog(String resource) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.fieldBgColor,
+        title: Text(
+          '$resource Permission Required',
+          style: AppStyles.customTextStyle(
+            color: AppColors.whiteColor,
+            size: 16,
+            weight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          '$resource access is needed. Please enable it in your device Settings.',
+          style: AppStyles.customTextStyle(
+            color: AppColors.lightText,
+            size: 13,
+            weight: FontWeight.w400,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel',
+              style: AppStyles.customTextStyle(
+                color: AppColors.lightText,
+                size: 13,
+                weight: FontWeight.w500,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              openAppSettings();
+            },
+            child: Text(
+              'Open Settings',
+              style: AppStyles.customTextStyle(
+                color: AppColors.primaryColor,
+                size: 13,
+                weight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showImageSourceSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(
+                Icons.photo_library,
+                color: AppColors.greyIcon,
+                size: 20,
+              ),
+              title: Text(
+                'Choose from Gallery',
+                style: AppStyles.customTextStyle(
+                  fontFamily: 'Roboto',
+                  color: AppColors.blackColor,
+                  size: 14,
+                  weight: FontWeight.w500,
+                ),
+              ),
+              onTap: () {
+                Get.back();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.photo_camera,
+                color: AppColors.greyIcon,
+                size: 20,
+              ),
+              title: Text(
+                'Take a Photo',
+                style: AppStyles.customTextStyle(
+                  fontFamily: 'Roboto',
+                  color: AppColors.blackColor,
+                  size: 14,
+                  weight: FontWeight.w500,
+                ),
+              ),
+              onTap: () {
+                Get.back();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   List<List<String>> convertToNestedList(List<String> values) {
     return values.map((e) => [e]).toList();
   }
@@ -941,306 +942,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  void _internshipSheet({int? editIndex}) {
-    final companyCtrl = TextEditingController(
-      text: editIndex != null ? _internships[editIndex]['company'] : '',
-    );
-    final durationCtrl = TextEditingController(
-      text: editIndex != null ? _internships[editIndex]['duration'] : '',
-    );
-    final descCtrl = TextEditingController(
-      text: editIndex != null ? _internships[editIndex]['description'] : '',
-    );
-
-    ProfileWidgets.showBottomSheet(
-      context: context,
-      title: editIndex != null ? 'Edit Internship' : 'Add Internship',
-      content: Column(
-        spacing: 12,
-        children: [
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: companyCtrl,
-            labelText: 'Company',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: durationCtrl,
-            labelText: 'Duration',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: descCtrl,
-            labelText: 'Description',
-            maxLines: 3,
-            onChanged: (_) {},
-          ),
-        ],
-      ),
-      onSave: () {
-        final data = {
-          'company': companyCtrl.text.trim(),
-          'duration': durationCtrl.text.trim(),
-          'description': descCtrl.text.trim(),
-        };
-
-        setState(() {
-          editIndex != null
-              ? _internships[editIndex] = data
-              : _internships.add(data);
-        });
-
-        Get.back();
-      },
-    );
-  }
-
-  void _industrialVisitSheet({int? editIndex}) {
-    final companyCtrl = TextEditingController(
-      text: editIndex != null ? _industrialVisits[editIndex]['company'] : '',
-    );
-    final locationCtrl = TextEditingController(
-      text: editIndex != null ? _industrialVisits[editIndex]['location'] : '',
-    );
-    final dateCtrl = TextEditingController(
-      text: editIndex != null ? _industrialVisits[editIndex]['date'] : '',
-    );
-
-    ProfileWidgets.showBottomSheet(
-      context: context,
-      title: editIndex != null
-          ? 'Edit Industrial Visit'
-          : 'Add Industrial Visit',
-      content: Column(
-        spacing: 12,
-        children: [
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: companyCtrl,
-            labelText: 'Company',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: locationCtrl,
-            labelText: 'Location',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: dateCtrl,
-            labelText: 'Date',
-            onChanged: (_) {},
-          ),
-        ],
-      ),
-      onSave: () {
-        final data = {
-          'company': companyCtrl.text.trim(),
-          'location': locationCtrl.text.trim(),
-          'date': dateCtrl.text.trim(),
-        };
-
-        setState(() {
-          editIndex != null
-              ? _industrialVisits[editIndex] = data
-              : _industrialVisits.add(data);
-        });
-
-        Get.back();
-      },
-    );
-  }
-
-  void _paperPresentationSheet({int? editIndex}) {
-    final titleCtrl = TextEditingController(
-      text: editIndex != null ? _paperPresentations[editIndex]['title'] : '',
-    );
-    final eventCtrl = TextEditingController(
-      text: editIndex != null ? _paperPresentations[editIndex]['event'] : '',
-    );
-    final yearCtrl = TextEditingController(
-      text: editIndex != null ? _paperPresentations[editIndex]['year'] : '',
-    );
-    final descCtrl = TextEditingController(
-      text: editIndex != null
-          ? _paperPresentations[editIndex]['description']
-          : '',
-    );
-
-    ProfileWidgets.showBottomSheet(
-      context: context,
-      title: editIndex != null
-          ? 'Edit Paper Presentation'
-          : 'Add Paper Presentation',
-      content: Column(
-        spacing: 12,
-        children: [
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: titleCtrl,
-            labelText: 'Title',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: eventCtrl,
-            labelText: 'Event',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: true,
-            isProfileFlow: true,
-            controller: yearCtrl,
-            labelText: 'Year',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: descCtrl,
-            labelText: 'Description',
-            maxLines: 3,
-            onChanged: (_) {},
-          ),
-        ],
-      ),
-      onSave: () {
-        final data = {
-          'title': titleCtrl.text.trim(),
-          'event': eventCtrl.text.trim(),
-          'year': yearCtrl.text.trim(),
-          'description': descCtrl.text.trim(),
-        };
-
-        setState(() {
-          editIndex != null
-              ? _paperPresentations[editIndex] = data
-              : _paperPresentations.add(data);
-        });
-
-        Get.back();
-      },
-    );
-  }
-
-  void _additionalInfoSheet() {
-    final languageCtrl = TextEditingController();
-    final hobbyCtrl = TextEditingController();
-    final interestCtrl = TextEditingController();
-    final achievementCtrl = TextEditingController();
-    final volunteerCtrl = TextEditingController();
-    final leadershipCtrl = TextEditingController();
-    final publicationCtrl = TextEditingController();
-    final workshopCtrl = TextEditingController();
-
-    ProfileWidgets.showBottomSheet(
-      context: context,
-      title: 'Additional Information',
-      content: Column(
-        spacing: 12,
-        children: [
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: languageCtrl,
-            labelText: 'Languages Known',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: hobbyCtrl,
-            labelText: 'Hobbies',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: interestCtrl,
-            labelText: 'Areas of Interest',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: achievementCtrl,
-            labelText: 'Achievements',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: volunteerCtrl,
-            labelText: 'Volunteer Experience',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: leadershipCtrl,
-            labelText: 'Leadership',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: publicationCtrl,
-            labelText: 'Publications',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: workshopCtrl,
-            labelText: 'Workshops',
-            onChanged: (_) {},
-          ),
-        ],
-      ),
-      onSave: () {
-        setState(() {
-          if (languageCtrl.text.isNotEmpty) {
-            _languagesKnown.add(languageCtrl.text.trim());
-          }
-          if (hobbyCtrl.text.isNotEmpty) {
-            _hobbies.add(hobbyCtrl.text.trim());
-          }
-          if (interestCtrl.text.isNotEmpty) {
-            _areasOfInterest.add(interestCtrl.text.trim());
-          }
-          if (achievementCtrl.text.isNotEmpty) {
-            _achievements.add(achievementCtrl.text.trim());
-          }
-          if (volunteerCtrl.text.isNotEmpty) {
-            _volunteerExperience.add(volunteerCtrl.text.trim());
-          }
-          if (leadershipCtrl.text.isNotEmpty) {
-            _leadership.add(leadershipCtrl.text.trim());
-          }
-          if (publicationCtrl.text.isNotEmpty) {
-            _publications.add(publicationCtrl.text.trim());
-          }
-          if (workshopCtrl.text.isNotEmpty) {
-            _workshops.add(workshopCtrl.text.trim());
-          }
-        });
-
-        Get.back();
-      },
-    );
-  }
-
   // helper for personal-info fields
   Widget _pfield(
     IconData icon,
@@ -1259,161 +960,126 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   // ─── Bottom sheet openers ────────────────────────────────────────────────
 
   void _certSheet({int? editIndex}) {
-    final nameCtrl = TextEditingController(
-      text: editIndex != null ? _certifications[editIndex]['name'] : '',
-    );
-    final issuerCtrl = TextEditingController(
-      text: editIndex != null ? _certifications[editIndex]['issuer'] : '',
-    );
-
-    ProfileWidgets.showBottomSheet(
-      context: context,
-      title: editIndex != null ? 'Edit Certification' : 'Add Certification',
-      content: Column(
-        spacing: 12,
-        children: [
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: nameCtrl,
-            labelText: 'Certificate Name',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: issuerCtrl,
-            labelText: 'Issuing Organization',
-            onChanged: (_) {},
-          ),
-        ],
-      ),
-      onSave: () {
-        if (nameCtrl.text.isEmpty) return;
-        final data = {
-          'name': nameCtrl.text.trim(),
-          'issuer': issuerCtrl.text.trim(),
-          'date': editIndex != null ? _certifications[editIndex]['date'] : '',
-        };
-        setState(
-          () => editIndex != null
-              ? _certifications[editIndex] = data
-              : _certifications.add(data),
-        );
-        Get.back();
-      },
+    _showDynamicFormSheet(
+      title: 'Certification',
+      editIndex: editIndex,
+      targetList: _certifications,
+      fields: const [
+        DynamicFieldConfig(key: 'name', label: 'Certificate Name'),
+        DynamicFieldConfig(key: 'issuer', label: 'Issuing Organization'),
+      ],
     );
   }
 
-  void _expSheet({int? editIndex}) {
-    final roleCtrl = TextEditingController(
-      text: editIndex != null ? _experiences[editIndex]['role'] : '',
-    );
-    final companyCtrl = TextEditingController(
-      text: editIndex != null ? _experiences[editIndex]['company'] : '',
-    );
-    final durationCtrl = TextEditingController(
-      text: editIndex != null ? _experiences[editIndex]['duration'] : '',
-    );
-    final descCtrl = TextEditingController(
-      text: editIndex != null ? _experiences[editIndex]['description'] : '',
-    );
-    String empType = editIndex != null
-        ? (_experiences[editIndex]['type'] ?? 'Full Time')
-        : 'Full Time';
-
-    ProfileWidgets.showBottomSheet(
-      context: context,
-      title: editIndex != null ? 'Edit Work Experience' : 'Add Work Experience',
-      content: StatefulBuilder(
-        builder: (ctx, setS) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 12,
-          children: [
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: roleCtrl,
-              labelText: 'Role / Position',
-              onChanged: (_) {},
-            ),
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: companyCtrl,
-              labelText: 'Company',
-              onChanged: (_) {},
-            ),
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: durationCtrl,
-              labelText: 'Duration (e.g. June 2024 - Present)',
-              onChanged: (_) {},
-            ),
-            Text(
-              'Employment Type',
-              style: AppStyles.customTextStyle(
-                color: AppColors.whiteColor,
-                size: 14,
-                weight: FontWeight.w500,
-              ),
-            ),
-            Row(
-              children: ['Full Time', 'Part Time']
-                  .map(
-                    (t) => Row(
-                      children: [
-                        Radio<String>(
-                          value: t,
-                          groupValue: empType,
-                          activeColor: AppColors.primaryColor,
-                          onChanged: (v) => setS(() => empType = v!),
-                        ),
-                        Text(
-                          t,
-                          style: AppStyles.customTextStyle(
-                            fontFamily: 'Roboto',
-                            color: AppColors.whiteColor,
-                            size: 14,
-                            weight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
-                  )
-                  .toList(),
-            ),
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: descCtrl,
-              labelText: 'Description',
-              maxLines: 3,
-              onChanged: (_) {},
-            ),
-          ],
-        ),
-      ),
-      onSave: () {
-        if (roleCtrl.text.isEmpty) return;
-        final data = {
-          'role': roleCtrl.text.trim(),
-          'company': companyCtrl.text.trim(),
-          'duration': durationCtrl.text.trim(),
-          'type': empType,
-          'description': descCtrl.text.trim(),
-        };
-        setState(
-          () => editIndex != null
-              ? _experiences[editIndex] = data
-              : _experiences.add(data),
-        );
-        Get.back();
-      },
-    );
-  }
+  // void _expSheet({int? editIndex}) {
+  //   final roleCtrl = TextEditingController(
+  //     text: editIndex != null ? _experiences[editIndex]['role'] : '',
+  //   );
+  //   final companyCtrl = TextEditingController(
+  //     text: editIndex != null ? _experiences[editIndex]['company'] : '',
+  //   );
+  //   final durationCtrl = TextEditingController(
+  //     text: editIndex != null ? _experiences[editIndex]['duration'] : '',
+  //   );
+  //   final descCtrl = TextEditingController(
+  //     text: editIndex != null ? _experiences[editIndex]['description'] : '',
+  //   );
+  //   String empType = editIndex != null
+  //       ? (_experiences[editIndex]['type'] ?? 'Full Time')
+  //       : 'Full Time';
+  //
+  //   ProfileWidgets.showBottomSheet(
+  //     context: context,
+  //     title: editIndex != null ? 'Edit Work Experience' : 'Add Work Experience',
+  //     content: StatefulBuilder(
+  //       builder: (ctx, setS) => Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         spacing: 12,
+  //         children: [
+  //           CustomTextField(
+  //             isNumberKeyboard: false,
+  //             isProfileFlow: true,
+  //             controller: roleCtrl,
+  //             labelText: 'Role / Position',
+  //             onChanged: (_) {},
+  //           ),
+  //           CustomTextField(
+  //             isNumberKeyboard: false,
+  //             isProfileFlow: true,
+  //             controller: companyCtrl,
+  //             labelText: 'Company',
+  //             onChanged: (_) {},
+  //           ),
+  //           CustomTextField(
+  //             isNumberKeyboard: false,
+  //             isProfileFlow: true,
+  //             controller: durationCtrl,
+  //             labelText: 'Duration (e.g. June 2024 - Present)',
+  //             onChanged: (_) {},
+  //           ),
+  //           Text(
+  //             'Employment Type',
+  //             style: AppStyles.customTextStyle(
+  //               color: AppColors.whiteColor,
+  //               size: 14,
+  //               weight: FontWeight.w500,
+  //             ),
+  //           ),
+  //           Row(
+  //             children: ['Full Time', 'Part Time']
+  //                 .map(
+  //                   (t) => Row(
+  //                     children: [
+  //                       Radio<String>(
+  //                         value: t,
+  //                         groupValue: empType,
+  //                         activeColor: AppColors.primaryColor,
+  //                         onChanged: (v) => setS(() => empType = v!),
+  //                       ),
+  //                       Text(
+  //                         t,
+  //                         style: AppStyles.customTextStyle(
+  //                           fontFamily: 'Roboto',
+  //                           color: AppColors.whiteColor,
+  //                           size: 14,
+  //                           weight: FontWeight.w500,
+  //                         ),
+  //                       ),
+  //                       const SizedBox(width: 16),
+  //                     ],
+  //                   ),
+  //                 )
+  //                 .toList(),
+  //           ),
+  //           CustomTextField(
+  //             isNumberKeyboard: false,
+  //             isProfileFlow: true,
+  //             controller: descCtrl,
+  //             labelText: 'Description',
+  //             maxLines: 3,
+  //             onChanged: (_) {},
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //     onSave: () {
+  //       if (roleCtrl.text.isEmpty) return;
+  //       final data = {
+  //         'role': roleCtrl.text.trim(),
+  //         'company': companyCtrl.text.trim(),
+  //         'duration': durationCtrl.text.trim(),
+  //         'type': empType,
+  //         'description': descCtrl.text.trim(),
+  //       };
+  //       setState(
+  //         () => editIndex != null
+  //             ? _experiences[editIndex] = data
+  //             : _experiences.add(data),
+  //       );
+  //       Get.back();
+  //     },
+  //   );
+  // }
 
   void _eduSheet({String type = 'College'}) {
     Map<String, dynamic>? existing;
@@ -1622,49 +1288,241 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   void _projectSheet({int? editIndex}) {
-    final titleCtrl = TextEditingController(
-      text: editIndex != null ? _projects[editIndex]['title'] : '',
+    _showDynamicFormSheet(
+      title: 'Project',
+      editIndex: editIndex,
+      targetList: _projects,
+      fields: const [
+        DynamicFieldConfig(key: 'title', label: 'Project Title'),
+        DynamicFieldConfig(
+          key: 'description',
+          label: 'Description',
+          maxLines: 4,
+        ),
+      ],
     );
-    final descCtrl = TextEditingController(
-      text: editIndex != null ? _projects[editIndex]['description'] : '',
+  }
+
+  void _internshipSheet({int? editIndex}) {
+    _showDynamicFormSheet(
+      title: 'Internship',
+      editIndex: editIndex,
+      targetList: _internships,
+      fields: const [
+        DynamicFieldConfig(key: 'company', label: 'Company'),
+        DynamicFieldConfig(key: 'duration', label: 'Duration'),
+        DynamicFieldConfig(
+          key: 'description',
+          label: 'Description',
+          maxLines: 3,
+        ),
+      ],
     );
+  }
+
+  void _industrialVisitSheet({int? editIndex}) {
+    _showDynamicFormSheet(
+      title: 'Industrial Visit',
+      editIndex: editIndex,
+      targetList: _industrialVisits,
+      fields: const [
+        DynamicFieldConfig(key: 'company', label: 'Company'),
+        DynamicFieldConfig(key: 'location', label: 'Location'),
+        DynamicFieldConfig(key: 'date', label: 'Date'),
+      ],
+    );
+  }
+
+  void _paperPresentationSheet({int? editIndex}) {
+    _showDynamicFormSheet(
+      title: 'Paper Presentation',
+      editIndex: editIndex,
+      targetList: _paperPresentations,
+      fields: const [
+        DynamicFieldConfig(key: 'title', label: 'Title'),
+        DynamicFieldConfig(key: 'event', label: 'Event'),
+        DynamicFieldConfig(key: 'year', label: 'Year', isNumber: true),
+        DynamicFieldConfig(
+          key: 'description',
+          label: 'Description',
+          maxLines: 3,
+        ),
+      ],
+    );
+  }
+
+  void _additionalInfoSheet() {
+    final languageCtrl = TextEditingController();
+    final hobbyCtrl = TextEditingController();
+    final interestCtrl = TextEditingController();
+    final achievementCtrl = TextEditingController();
+    final volunteerCtrl = TextEditingController();
+    final leadershipCtrl = TextEditingController();
+    final publicationCtrl = TextEditingController();
+    final workshopCtrl = TextEditingController();
 
     ProfileWidgets.showBottomSheet(
       context: context,
-      title: editIndex != null ? 'Edit Project' : 'Add Project',
+      title: 'Additional Information',
       content: Column(
         spacing: 12,
         children: [
           CustomTextField(
             isNumberKeyboard: false,
             isProfileFlow: true,
-            controller: titleCtrl,
-            labelText: 'Project Title',
+            controller: languageCtrl,
+            labelText: 'Languages Known',
             onChanged: (_) {},
           ),
           CustomTextField(
             isNumberKeyboard: false,
             isProfileFlow: true,
-            controller: descCtrl,
-            labelText: 'Description',
-            maxLines: 4,
+            controller: hobbyCtrl,
+            labelText: 'Hobbies',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: interestCtrl,
+            labelText: 'Areas of Interest',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: achievementCtrl,
+            labelText: 'Achievements',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: volunteerCtrl,
+            labelText: 'Volunteer Experience',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: leadershipCtrl,
+            labelText: 'Leadership',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: publicationCtrl,
+            labelText: 'Publications',
+            onChanged: (_) {},
+          ),
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: workshopCtrl,
+            labelText: 'Workshops',
             onChanged: (_) {},
           ),
         ],
       ),
       onSave: () {
-        if (titleCtrl.text.isEmpty) return;
-        final data = {
-          'title': titleCtrl.text.trim(),
-          'description': descCtrl.text.trim(),
-        };
-        setState(
-          () => editIndex != null
-              ? _projects[editIndex] = data
-              : _projects.add(data),
-        );
+        setState(() {
+          if (languageCtrl.text.isNotEmpty) {
+            _languagesKnown.add(languageCtrl.text.trim());
+          }
+          if (hobbyCtrl.text.isNotEmpty) {
+            _hobbies.add(hobbyCtrl.text.trim());
+          }
+          if (interestCtrl.text.isNotEmpty) {
+            _areasOfInterest.add(interestCtrl.text.trim());
+          }
+          if (achievementCtrl.text.isNotEmpty) {
+            _achievements.add(achievementCtrl.text.trim());
+          }
+          if (volunteerCtrl.text.isNotEmpty) {
+            _volunteerExperience.add(volunteerCtrl.text.trim());
+          }
+          if (leadershipCtrl.text.isNotEmpty) {
+            _leadership.add(leadershipCtrl.text.trim());
+          }
+          if (publicationCtrl.text.isNotEmpty) {
+            _publications.add(publicationCtrl.text.trim());
+          }
+          if (workshopCtrl.text.isNotEmpty) {
+            _workshops.add(workshopCtrl.text.trim());
+          }
+        });
+
         Get.back();
       },
     );
   }
+
+  // NEW WIDGETS
+
+  void _showDynamicFormSheet({
+    required String title,
+    required List<DynamicFieldConfig> fields,
+    required List<Map<String, dynamic>> targetList,
+    int? editIndex,
+  }) {
+    final controllers = <String, TextEditingController>{};
+
+    for (final field in fields) {
+      controllers[field.key] = TextEditingController(
+        text: editIndex != null
+            ? targetList[editIndex][field.key]?.toString() ?? ''
+            : '',
+      );
+    }
+
+    ProfileWidgets.showBottomSheet(
+      context: context,
+      title: editIndex != null ? 'Edit $title' : 'Add $title',
+      content: Column(
+        spacing: 12,
+        children: fields.map((field) {
+          return CustomTextField(
+            isNumberKeyboard: field.isNumber,
+            isProfileFlow: true,
+            controller: controllers[field.key]!,
+            labelText: field.label,
+            maxLines: field.maxLines,
+            onChanged: (_) {},
+          );
+        }).toList(),
+      ),
+      onSave: () {
+        final data = <String, dynamic>{};
+
+        for (final field in fields) {
+          data[field.key] = controllers[field.key]!.text.trim();
+        }
+
+        setState(() {
+          if (editIndex != null) {
+            targetList[editIndex] = data;
+          } else {
+            targetList.add(data);
+          }
+        });
+
+        Get.back();
+      },
+    );
+  }
+}
+
+class DynamicFieldConfig {
+  final String key;
+  final String label;
+  final bool isNumber;
+  final int maxLines;
+
+  const DynamicFieldConfig({
+    required this.key,
+    required this.label,
+    this.isNumber = false,
+    this.maxLines = 1,
+  });
 }

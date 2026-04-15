@@ -8,6 +8,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
@@ -60,32 +61,59 @@ class _RegisterResumeUploadScreenState
   }
 
   Future<void> extractResumeFunc(String filePath) async {
-    await registerController.extractResumeData(filePath);
-    if ((registerController.getResponseCode() == 200 ||
-            registerController.getResponseCode() == 201) &&
-        registerController.resumeExtractModel.success != false) {
-      final localPath = await ResumeStorageService.copyResumeToAppDir(filePath);
+    try {
+      /// ✅ show loader first
+      AiLoadingWidget.show(
+        context,
+        type: LoadingDialogType.resumeExtraction,
+      );
 
-      await ResumeStorageService.saveResume(
-        filePath: localPath,
-        fileName: fileName!,
-      );
+      /// ✅ give Flutter one frame to render loader
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      await registerController.extractResumeData(filePath);
+
+      if ((registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) &&
+          registerController.resumeExtractModel.success != false) {
+        final localPath = await ResumeStorageService.copyResumeToAppDir(filePath);
+
+        await ResumeStorageService.saveResume(
+          filePath: localPath,
+          fileName: fileName!,
+        );
+
+        AppFunctions.showToast(
+          message: "Resume uploaded & extracted successfully!",
+          isError: false,
+        );
+
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.studentRegisterScreen,
+        );
+      } else if (registerController.getResponseCode() == 200 &&
+          registerController.resumeExtractModel.success == false) {
+        AppFunctions.showToast(
+          message: "Failed to upload your resume",
+          isError: true,
+        );
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Failed to upload your resume",
+        );
+      }
+    } catch (e) {
+      debugPrint("Resume extract error: $e");
+
       AppFunctions.showToast(
-        message: "Resume upload & Extracted data successfully!",
-        isError: false,
-      );
-      AppFunctions.navigateScreen(context, AppRoutes.studentRegisterScreen);
-    } else if (registerController.getResponseCode() == 200 &&
-        registerController.resumeExtractModel.success == false) {
-      AppFunctions.showToast(
-        message: "Failed to upload your resume",
+        message: "Something went wrong while extracting resume",
         isError: true,
       );
-    } else {
-      AppFunctions.apiErrorHandling(
-        registerController.getResponseCode(),
-        "Failed to upload your resume",
-      );
+    } finally {
+      /// ✅ always hide loader
+      AiLoadingWidget.hide(context);
     }
   }
 

@@ -12,6 +12,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/kyc_response_dialog.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -210,7 +211,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                     lineSpace: 1.3,
                   ),
                 ),
-                const SizedBox(height: 15,),
+                const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -268,7 +269,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                   //disable: !(collegeIdImg != null && aadhaarImg != null),
                   disable: !(collegeIdImg != null),
                 ),
-                const SizedBox(height: 25,)
+                const SizedBox(height: 25),
               ],
             ),
           ),
@@ -278,93 +279,109 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
   }
 
   Future<void> updateKYC() async {
-    //final prefs = await SharedPreferences.getInstance();
-    //final studentName = prefs.getString('student_name');
     final studentName = await LocalStorageService.getStudentName();
-
-    // final studentId = prefs.getString('student_id');
     final studentId = await LocalStorageService.getStudentId();
-    if (!collegeIdImg!.existsSync() || !aadhaarImg!.existsSync()) {
+
+    if (!collegeIdImg!.existsSync()) {
       AppFunctions.showToast(message: "Both images are required!");
       return;
     }
 
-    final collegeIdFile = await MultipartFile.fromFile(
-      collegeIdImg!.path,
-      filename: "college_id_${DateTime.now().millisecondsSinceEpoch}.jpg",
-      contentType: MediaType("image", "jpeg"),
-    );
+    try {
+      /// ✅ show loader first
+      AiLoadingWidget.show(context, type: LoadingDialogType.kyc);
 
-    final aadhaarFile = await MultipartFile.fromFile(
-      aadhaarImg!.path,
-      filename: "aadhaar_${DateTime.now().millisecondsSinceEpoch}.jpg",
-      contentType: MediaType("image", "jpeg"),
-    );
+      /// ✅ allow dialog to render
+      await Future.delayed(const Duration(milliseconds: 100));
 
-    print(studentName);
+      final collegeIdFile = await MultipartFile.fromFile(
+        collegeIdImg!.path,
+        filename: "college_id_${DateTime.now().millisecondsSinceEpoch}.jpg",
+        contentType: MediaType("image", "jpeg"),
+      );
 
-    Map<String, dynamic> kycData = {
-      "college_id": collegeIdFile,
-      //"aadhaar": aadhaarFile,
-      //"name": "THENMOZHI. D",
-      "name": studentName,
-      "college": jsonEncode(
-        profileController.profileDataModel.education!=null? profileController.profileDataModel.education!.college ?? [] :[],
-      ),
-    };
-    debugPrint(kycData.toString());
-    print("******************");
-    await registerController.verifyKycData(kycData: kycData);
+      // final aadhaarFile = await MultipartFile.fromFile(
+      //   aadhaarImg!.path,
+      //   filename: "aadhaar_${DateTime.now().millisecondsSinceEpoch}.jpg",
+      //   contentType: MediaType("image", "jpeg"),
+      // );
 
-    if (registerController.getResponseCode() == 200 ||
-        registerController.getResponseCode() == 201) {
-      Map<String, dynamic> updateProfileData = {
-        //"studentAdhar": collegeIdImg!.path,
-        "studentId": aadhaarImg!.path,
-        //"stuid": "6979f45490869a0803c30be7",
-        "stuid": studentId,
-        //"studname": "THENMOZHI. D",
-        "studname": studentName,
-        "isVerified":
-            (registerController.kycUpdateModel.name != "invalid" &&
-                registerController.kycUpdateModel.aadhaarDocument != "invalid")
-            ? true
-            : false,
+      Map<String, dynamic> kycData = {
+        "college_id": collegeIdFile,
+        //"aadhaar": aadhaarFile,
+        "name": studentName,
+        "college": jsonEncode(
+          profileController.profileDataModel.education != null
+              ? profileController.profileDataModel.education!.college ?? []
+              : [],
+        ),
       };
-      await registerController.updateStudentProfileData(
-        updateData: updateProfileData,
-      );
-      if (registerController.kycUpdateModel.name != "invalid" &&
-          registerController.kycUpdateModel.aadhaarDocument != "invalid") {
-        AppFunctions.showToast(
-          message: "KYC details verified successfully!",
-          isError: false,
+
+      await registerController.verifyKycData(kycData: kycData);
+
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        Map<String, dynamic> updateProfileData = {
+          //"studentId": aadhaarImg!.path,
+          //"stuid": studentId,
+          //"studname": studentName,
+          "isVerified":
+              (registerController.kycUpdateModel.name == "valid" &&
+                  registerController.kycUpdateModel.collegeId == "valid" &&
+                  registerController.kycUpdateModel.collegeName == "valid")
+              ? true
+              : false,
+        };
+
+        await registerController.updateStudentProfileData(
+          updateData: updateProfileData,
         );
-        isRegisterFlow!
-            ? AppFunctions.navigateScreen(
-                context,
-                AppRoutes.stepUpdateScreen,
-                arguments: {"activeStep": 4},
-              )
-            : Get.close(2);
+
+        if (registerController.kycUpdateModel.name != "invalid" &&
+            registerController.kycUpdateModel.aadhaarDocument != "invalid") {
+          AppFunctions.showToast(
+            message: "KYC details verified successfully!",
+            isError: false,
+          );
+
+          if (isRegisterFlow!) {
+            AppFunctions.navigateScreen(
+              context,
+              AppRoutes.stepUpdateScreen,
+              arguments: {"activeStep": 4},
+            );
+          } else {
+            Get.close(2);
+          }
+        } else {
+          AppFunctions.showToast(
+            message:
+                registerController.kycUpdateModel.candidateDetails ??
+                "KYC Verification Pending..",
+            isError: true,
+          );
+
+          await showKycResultDialog(
+            context: context,
+            model: registerController.kycUpdateModel,
+            isRegisterFlow: isRegisterFlow,
+          );
+        }
       } else {
-        AppFunctions.showToast(
-          message:
-              registerController.kycUpdateModel.candidateDetails ??
-              "KYC Verification Pending..",
-          isError: true,
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Failed to verify your KYC details!",
         );
-           await showKycResultDialog(
-     context        : context,
-     model          : registerController.kycUpdateModel,
-     isRegisterFlow : isRegisterFlow,
-   );
       }
-    } else {
-      AppFunctions.apiErrorHandling(
-        registerController.getResponseCode(),
-        "Failed to verify your KYC details!",
+    } catch (e) {
+      debugPrint("KYC error: $e");
+      AppFunctions.showToast(
+        message: "Something went wrong. Try again.",
+        isError: true,
       );
+    } finally {
+      /// ✅ always hide loader
+      AiLoadingWidget.hide(context);
     }
   }
 

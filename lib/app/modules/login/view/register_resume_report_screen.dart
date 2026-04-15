@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -40,22 +41,35 @@ class _RegisterResumeReportScreenState
   }
 
   Future<void> getResumeScore() async {
-    networkResumePath = await ResumeStorageService.getNetworkResume();
-    // await registerController.checkResumeScore(
-    //   resumeUrl:
-    //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
-    // );
-    print(networkResumePath!);
-    print("******************");
-    await registerController.checkResumeScore(resumeUrl: networkResumePath!);
-    if (registerController.getResponseCode() == 200 ||
-        registerController.getResponseCode() == 201) {
-      await getProfileData();
-    } else {
+    try {
+      AiLoadingWidget.show(context, type: LoadingDialogType.atsJson);
+
+      /// ✅ allow one frame to render loader
+      await Future.delayed(const Duration(milliseconds: 100));
+      networkResumePath = await ResumeStorageService.getNetworkResume();
+      // await registerController.checkResumeScore(
+      //   resumeUrl:
+      //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
+      // );
+      print(networkResumePath!);
+      print("******************");
+      await registerController.checkResumeScore(resumeUrl: networkResumePath!);
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        await getProfileData();
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Something went wrong!, Try again later",
+        );
+      }
+    } catch (error) {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
         "Something went wrong!, Try again later",
       );
+    } finally {
+      AiLoadingWidget.hide(context);
     }
   }
 
@@ -678,32 +692,45 @@ class _RegisterResumeReportScreenState
   }
 
   Future<void> updateResumeFunc() async {
-    await registerController.updateResumeData(
-      updateData: registerController.resumeAnalyzeModel.extractedData!,
-    );
-    if (registerController.getResponseCode() == 200 ||
-        registerController.getResponseCode() == 201) {
+    try {
+      /// ✅ show loader first
+      AiLoadingWidget.show(context, type: LoadingDialogType.enhanceResume);
+
+      /// ✅ allow one frame to render loader
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      await registerController.updateResumeData(
+        updateData: registerController.resumeAnalyzeModel.extractedData!,
+      );
+
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        AppFunctions.showToast(
+          message: "Resume Updated Successfully!",
+          isError: false,
+        );
+
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.chatResumeTemplateScreen,
+          arguments: {"resumeData": registerController.extractedResumeModel},
+        );
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Failed to update your resume!",
+        );
+      }
+    } catch (e) {
+      debugPrint("Resume update error: $e");
+
       AppFunctions.showToast(
-        message: "Resume Updated Successfully!",
-        isError: false,
+        message: "Something went wrong while updating resume",
+        isError: true,
       );
-      // AppFunctions.navigateScreen(
-      //   context,
-      //   AppRoutes.resumeTemplateSelectionScreen,
-      //   arguments: {
-      //     "resumeData": registerController.extractedResumeModel
-      //   }
-      // );
-      AppFunctions.navigateScreen(
-        context,
-        AppRoutes.chatResumeTemplateScreen,
-        arguments: {"resumeData": registerController.extractedResumeModel},
-      );
-    } else {
-      AppFunctions.apiErrorHandling(
-        registerController.getResponseCode(),
-        "Failed to update your resume!",
-      );
+    } finally {
+      /// ✅ always hide loader
+      AiLoadingWidget.hide(context);
     }
   }
 

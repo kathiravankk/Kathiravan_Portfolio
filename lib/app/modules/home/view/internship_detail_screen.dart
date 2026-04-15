@@ -11,6 +11,7 @@ import 'package:internsharks/app/data/models/home/review_data_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import '../../../core/utils/asset_images.dart' show AssetImages;
 import '../../../data/models/home/category_wise_internship_model.dart';
@@ -27,6 +28,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   final DashboardController dashboardController =
       Get.find<DashboardController>();
   final RegisterController registerController = Get.find<RegisterController>();
+  final ProfileController profileController = Get.find<ProfileController>();
 
   String internshipId = "";
   bool isStatusFlow = false;
@@ -68,14 +70,30 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             width: 350,
             height: 40,
             isLoading: dashboardController.internshipApplyLoading,
-            buttonFunction: () async {
+          /*  buttonFunction: () async {
               await LocalStorageService.getVerifiedValue() == true
                   ? await internshipApplyFunc()
-                  : showAlertDialog();
+                  : showKycVerifyAlertDialog();
               //
               // await internshipApplyFunc();
+            },*/
+            buttonFunction: () async {
+              bool isVerified = await LocalStorageService.getVerifiedValue() ?? false;
+
+              if (!isVerified) {
+                showKycVerifyAlertDialog();
+              } else {
+                var banner = profileController.profileDataModel.studentBanner;
+                bool hasBanner = banner != null && banner.isNotEmpty;
+                if (!hasBanner) {
+                  showAiBannerRequirementDialog();
+                } else {
+                  await internshipApplyFunc();
+                }
+              }
             },
-            buttonText: "Apply Now",
+
+            buttonText: "Apply Now (10 Credits)",
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -632,7 +650,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     );
   }
 
-  void showAlertDialog() {
+  void showKycVerifyAlertDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -680,6 +698,54 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             buttonText: "Check Now",
             width: 150,
             height: 40,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showAiBannerRequirementDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.fieldBgColor,
+        title: Image.asset(AssetImages.alertImage, height: 40, width: 40),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 15,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "AI Banner Required!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              "To complete your application, you must first generate an AI Banner. This personalized visual is a required part of your profile submission!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w300,
+                lineSpace: 1.4,
+              ),
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          CustomButtonWidget(
+            buttonFunction: () {
+              Get.back();
+              AppFunctions.navigateScreen(context, AppRoutes.homeProfileScreen);
+            },
+            buttonText: "Generate Now",
+            width: 160,
+            height: 45,
           ),
         ],
       ),

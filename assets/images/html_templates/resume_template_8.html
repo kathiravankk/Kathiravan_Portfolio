@@ -320,11 +320,11 @@
             <p id="profileSummary"></p>
         </div>
 
-        <!-- Experience Section -->
-        <div class="section-wrapper hidden" id="experienceSection">
-            <h2 class="avery-section-title">Professional Experience</h2>
-            <div class="avery-timeline" id="experienceList"></div>
-        </div>
+<!--        &lt;!&ndash; Experience Section &ndash;&gt;-->
+<!--        <div class="section-wrapper hidden" id="experienceSection">-->
+<!--            <h2 class="avery-section-title">Professional Experience</h2>-->
+<!--            <div class="avery-timeline" id="experienceList"></div>-->
+<!--        </div>-->
 
         <!-- Internships Section -->
         <div class="section-wrapper hidden" id="internshipsSection">
@@ -462,28 +462,28 @@
             document.getElementById('profileSummary').textContent = data.updatedProfileSummary.join(' ');
         }
 
-        // ── Experience ─────────────────────────────────────────────────
-        if (data.experience && data.experience.length > 0) {
-            show('experienceSection');
-            const expList = document.getElementById('experienceList');
-            expList.innerHTML = '';
-            data.experience.forEach(exp => {
-                const div = document.createElement('div');
-                div.className = 'timeline-item';
-                const desc = Array.isArray(exp.description)
-                    ? exp.description.map(d => `<li>${d}</li>`).join('')
-                    : exp.description ? `<li>${exp.description}</li>` : '';
-                div.innerHTML = `
-                    <div class="item-header">
-                        <span class="item-main-title">${exp.job_title || exp.role || exp.position || 'Position'}</span>
-                        <span class="item-date">${formatDateRange(exp.start_date, exp.end_date)}</span>
-                    </div>
-                    <p class="item-sub">${exp.company || exp.organization || ''}</p>
-                    ${desc ? `<ul class="item-list">${desc}</ul>` : ''}
-                `;
-                expList.appendChild(div);
-            });
-        }
+<!--        // ── Experience ─────────────────────────────────────────────────-->
+<!--        if (data.experience && data.experience.length > 0) {-->
+<!--            show('experienceSection');-->
+<!--            const expList = document.getElementById('experienceList');-->
+<!--            expList.innerHTML = '';-->
+<!--            data.experience.forEach(exp => {-->
+<!--                const div = document.createElement('div');-->
+<!--                div.className = 'timeline-item';-->
+<!--                const desc = Array.isArray(exp.description)-->
+<!--                    ? exp.description.map(d => `<li>${d}</li>`).join('')-->
+<!--                    : exp.description ? `<li>${exp.description}</li>` : '';-->
+<!--                div.innerHTML = `-->
+<!--                    <div class="item-header">-->
+<!--                        <span class="item-main-title">${exp.job_title || exp.role || exp.position || 'Position'}</span>-->
+<!--                        <span class="item-date">${formatDateRange(exp.start_date, exp.end_date)}</span>-->
+<!--                    </div>-->
+<!--                    <p class="item-sub">${exp.company || exp.organization || ''}</p>-->
+<!--                    ${desc ? `<ul class="item-list">${desc}</ul>` : ''}-->
+<!--                `;-->
+<!--                expList.appendChild(div);-->
+<!--            });-->
+<!--        }-->
 
         // ── Internships ────────────────────────────────────────────────
         if (data.internships && data.internships.length > 0) {

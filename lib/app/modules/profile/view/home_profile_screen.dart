@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
@@ -50,9 +51,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   ExtractedResumeDataModel? resumeData;
   WebViewController? webViewController;
   bool isLoading = true;
+  bool waterMarkValue = false;
 
   Future<void> getProfileData() async {
     studentId = await LocalStorageService.getStudentId();
+    waterMarkValue = (await LocalStorageService.getWatermarkValue()) ?? false;
     await profileController.getProfileData(studentId: studentId ?? "");
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
@@ -66,50 +69,61 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   }
 
   Future<void> generateAiBanner() async {
-    Map<String, dynamic> bannerData = {
-      "languages": profileController.profileDataModel.languagesKnown ?? "",
-      "profile_image": profileController.profileDataModel.studProfile ?? "",
-      "skills": profileController.profileDataModel.studProgrammingLang ?? "",
-    };
-    debugPrint(bannerData.toString(), wrapWidth: 1024);
-    await profileController.generateResDp(bannerData: bannerData);
-    if (profileController.getResponseCode() == 200 ||
-        profileController.getResponseCode() == 201) {
-      if (profileController.resDpModel.status!.status == "error") {
-        AppFunctions.showToast(
-          message:
-              profileController.resDpModel.status!.message ??
-              "Failed to Generate your AI Banner",
-        );
-      } else {
-        AppFunctions.showToast(
-          message: "Your AI Banner Generated Successfully!",
-        );
-        await registerController.updateStudentProfileData(
-          updateData: {
-            "student_banner":
-                profileController.resDpModel.status!.imageUrl ?? "",
-          },
-        );
-        final code = registerController.getResponseCode();
-        if (code == 200 || code == 201) {
-          AppFunctions.showToast(message: 'Profile updated successfully!');
-          await getProfileData();
+    AiLoadingWidget.show(context, type: LoadingDialogType.resDp);
+
+    try {
+      Map<String, dynamic> bannerData = {
+        "languages": profileController.profileDataModel.languagesKnown ?? "",
+        "profile_image": profileController.profileDataModel.studProfile ?? "",
+        "skills": profileController.profileDataModel.studProgrammingLang ?? "",
+      };
+
+      debugPrint(bannerData.toString(), wrapWidth: 1024);
+
+      await profileController.generateResDp(bannerData: bannerData);
+
+      if (profileController.getResponseCode() == 200 ||
+          profileController.getResponseCode() == 201) {
+        if (profileController.resDpModel.status!.status == "error") {
+          AppFunctions.showToast(
+            message: profileController.resDpModel.status!.message ??
+                "Failed to Generate your AI Banner",
+          );
         } else {
           AppFunctions.showToast(
-            message: 'Failed to update. Please try again.',
-            isError: true,
+            message: "Your AI Banner Generated Successfully!",
           );
+
+          LocalStorageService.saveWatermarkValue(waterMarkValue: false);
+
+          await registerController.updateStudentProfileData(
+            updateData: {
+              "student_banner":
+              profileController.resDpModel.status!.imageUrl ?? "",
+            },
+          );
+
+          final code = registerController.getResponseCode();
+
+          if (code == 200 || code == 201) {
+            AppFunctions.showToast(message: 'Profile updated successfully!');
+            await getProfileData();
+          } else {
+            AppFunctions.showToast(
+              message: 'Failed to update. Please try again.',
+              isError: true,
+            );
+          }
         }
+      } else {
+        AppFunctions.apiErrorHandling(
+          profileController.getResponseCode(),
+          profileController.resDpModel.status?.message ??
+              "Something went wrong!, try again later!",
+        );
       }
-    } else {
-      AppFunctions.apiErrorHandling(
-        profileController.getResponseCode(),
-        profileController.resDpModel.status != null
-            ? profileController.resDpModel.status!.message ??
-                  "Something Went Wrong!, Try Again Later!"
-            : "Something went wrong!, try again later!",
-      );
+    } finally {
+      AiLoadingWidget.hide(context);
     }
   }
 
@@ -127,6 +141,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         AppFunctions.showToast(
           message: "Successfully! removed Watermark  from your AI Banner ",
         );
+        LocalStorageService.saveWatermarkValue(waterMarkValue: true);
         print(profileController.waterMarkModel.watermarkData!.imageUrl ?? "");
         await registerController.updateStudentProfileData(
           updateData: {
@@ -579,8 +594,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           onRefresh: () async {
             await getProfileData();
           },
-          child: Obx(
-            () => profileController.profileDataLoading
+          child: Obx(() {
+            return profileController.profileDataLoading
                 ? Center(
                     child: CupertinoActivityIndicator(
                       color: AppColors.secondaryColor,
@@ -604,9 +619,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                           .isNotEmpty
                                   ? Stack(
                                       children: [
-                                        profileController.resDpLoading ||
-                                                profileController
-                                                    .waterMarkLoading
+                                        profileController.waterMarkLoading
                                             ? Center(
                                                 child:
                                                     CupertinoActivityIndicator(
@@ -761,7 +774,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                                 .profileDataModel
                                                 .templateNumber!,
                                           ),
-                                          //"templateId": 10,
+                                          //"templateId": 1,
                                           "resumeData":
                                               ExtractedResumeDataModel(
                                                 personalInfo: PersonalInfoModel(
@@ -840,8 +853,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                                 profileSummary:
                                                     profileController
                                                         .profileDataModel
-                                                        .profileSummary!
-                                                        .trim(),
+                                                        .profileSummary!,
                                                 colleges: profileController
                                                     .profileDataModel
                                                     .collegeData!,
@@ -874,14 +886,13 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                       AppFunctions.navigateScreen(
                                         context,
                                         AppRoutes.chatResumeUpdateScreen,
-                                        arguments:
-                                          {
-                                            "templateId": int.parse(
-                                              profileController
-                                                  .profileDataModel
-                                                  .templateNumber!,
-                                            ),
-                                          }
+                                        arguments: {
+                                          "templateId": int.parse(
+                                            profileController
+                                                .profileDataModel
+                                                .templateNumber!,
+                                          ),
+                                        },
                                       );
                                     }),
                                     //_actionItem(Icons.refresh, "Update", () {}),
@@ -903,8 +914,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                         ),
                       ),
                     ],
-                  ),
-          ),
+                  );
+          }),
         ),
       ),
     );
@@ -922,75 +933,53 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         border: Border.all(color: AppColors.creditBorderColor),
       ),
       padding: const EdgeInsets.all(15),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  AppFunctions.showToast(
-                    message: "Generate your AI Banner First!",
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    aiPoweredContainer(),
-                    likeShareContainer(isBanner: true),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "Your Custom AI Banner",
-                style: AppStyles.customTextStyle(
-                  size: 16,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                "This is how your profile will look to \n recruiters and peers.",
-                style: AppStyles.customTextStyle(
-                  size: 12,
-                  color: AppColors.contLightText2,
-                  weight: FontWeight.w400,
-                  lineSpace: 1.3,
-                ),
-              ),
-              const Spacer(),
-
-              CustomButtonWidget(
-                width: 175,
-                height: 35,
-                buttonFunction: () async {
-                  await generateAiBanner();
-                },
-                buttonText: "Generate AI Banner",
-                buttonTextStyle: AppStyles.customTextStyle(
-                  size: 12,
-                  weight: FontWeight.w600,
-                  color: AppColors.whiteColor,
-                ),
-              ),
-            ],
+          GestureDetector(
+            onTap: () {
+              AppFunctions.showToast(message: "Generate your AI Banner First!");
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                aiPoweredContainer(),
+                likeShareContainer(isBanner: true),
+              ],
+            ),
           ),
+          const SizedBox(height: 10),
+          Text(
+            "Your Custom AI Banner",
+            style: AppStyles.customTextStyle(
+              size: 16,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "This is how your profile will look to \n recruiters and peers.",
+            style: AppStyles.customTextStyle(
+              size: 12,
+              color: AppColors.contLightText2,
+              weight: FontWeight.w400,
+              lineSpace: 1.3,
+            ),
+          ),
+          const Spacer(),
 
-          Visibility(
-            visible: profileController.resDpLoading,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black45,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.primaryColor,
-                  radius: 14,
-                ),
-              ),
+          CustomButtonWidget(
+            width: 175,
+            height: 35,
+            buttonFunction: () async {
+              await generateAiBanner();
+            },
+            buttonText: "Generate AI Banner",
+            buttonTextStyle: AppStyles.customTextStyle(
+              size: 12,
+              weight: FontWeight.w600,
+              color: AppColors.whiteColor,
             ),
           ),
         ],
@@ -1150,7 +1139,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             ),
           ),
           Visibility(
-            visible: bannerUrl.isNotEmpty,
+            visible: bannerUrl.isNotEmpty && !waterMarkValue!,
             child: iconWidget(
               icon: CupertinoIcons.pencil_outline,
               onTap: () async {

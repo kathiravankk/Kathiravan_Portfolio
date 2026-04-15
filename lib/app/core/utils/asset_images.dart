@@ -12,6 +12,7 @@ class AssetImages {
   static const String editIconImg = "assets/images/edit_icon_img.png";
   static const String resDpBannerImg = "assets/images/res_dp_banner_image.png";
   static const String creditIcon = "assets/images/credit_icon.png";
+  static const String aiLoadingGif = "assets/images/ai_loading.gif";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";
