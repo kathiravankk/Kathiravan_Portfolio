@@ -144,190 +144,199 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
         ),
       ),
       body: Obx(
-        () => Column(
-          spacing: 15,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // Text(
-                //   "🎁 Credit: 100",
-                //   style: AppStyles.customTextStyle(
-                //     size: 14,
-                //     color: AppColors.whiteColor,
-                //     weight: FontWeight.w500,
-                //   ),
-                // ),
-                registerController.creditDataLoading
-                    ? Center(
-                        child: CupertinoActivityIndicator(
-                          color: AppColors.secondaryColor,
-                        ),
-                      )
-                    : ProfileWidgets.creditContainer(
-                        viewFunc: () {
-                          //getCreditData(creditId: creditIdString);
-                        },
-                        creditCount:
-                            registerController
-                                .creditDataModel
-                                .creditData!
-                                .balance ??
-                            0,
-                      ),
-                SizedBox(width: 50),
-              ],
-            ),
-            SizedBox(
-              height: 300,
-              width: 250,
-              child: registerController.templateRefreshLoading
-                  ? Center(
-                      child: CupertinoActivityIndicator(
-                        color: AppColors.primaryColor,
-                      ),
-                    )
-                  : ResumeThumbnailCard(template: template, onTap: () {}),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.blackGradient1, AppColors.blackGradient2],
+        () => registerController.studentDetailsLoading
+            ? Center(
+                child: CupertinoActivityIndicator(
+                  color: AppColors.secondaryColor,
                 ),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 1),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+              )
+            : Column(
+                spacing: 15,
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      CupertinoIcons.heart,
-                      color: AppColors.whiteColor,
-                      size: 20,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Text(
+                      //   "🎁 Credit: 100",
+                      //   style: AppStyles.customTextStyle(
+                      //     size: 14,
+                      //     color: AppColors.whiteColor,
+                      //     weight: FontWeight.w500,
+                      //   ),
+                      // ),
+                      registerController.creditDataLoading
+                          ? Center(
+                              child: CupertinoActivityIndicator(
+                                color: AppColors.secondaryColor,
+                              ),
+                            )
+                          : ProfileWidgets.creditContainer(
+                              viewFunc: () {
+                                //getCreditData(creditId: creditIdString);
+                              },
+                              creditCount:
+                                  registerController
+                                      .creditDataModel
+                                      .creditData!
+                                      .balance ??
+                                  0,
+                            ),
+                      SizedBox(width: 50),
+                    ],
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      CupertinoIcons.share,
-                      color: AppColors.whiteColor,
-                      size: 20,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.resumeTemplateViewScreen,
-                        arguments: {
-                          "templateData": template,
-                          "resumeData": resumeData,
-                          "isChatFlow": true,
-                        },
-                      );
-                    },
-                    icon: Icon(
-                      CupertinoIcons.eye,
-                      color: AppColors.whiteColor,
-                      size: 20,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      CupertinoIcons.arrow_down_doc,
-                      color: AppColors.whiteColor,
-                      size: 20,
-                    ),
+                  SizedBox(
+                    height: 300,
+                    width: 250,
+                    child: registerController.templateRefreshLoading
+                        ? Center(
+                            child: CupertinoActivityIndicator(
+                              color: AppColors.primaryColor,
+                            ),
+                          )
+                        : ResumeThumbnailCard(template: template, onTap: () {}),
                   ),
                   Container(
-                    height: 20,
-                    width: 1.5,
-                    color: AppColors.fieldBorderColor,
-                  ),
-                  SizedBox(width: 10),
-                  SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: FloatingActionButton(
-                      elevation: 0,
-                      mini: true,
-                      backgroundColor: AppColors.primaryColor,
-                      onPressed: () {
-                        AppFunctions.showAppAlert(
-                          context: context,
-                          title: "Update Resume",
-                          content:
-                              "Refresh the next template will consume 25 credits. Are you sure you want to continue?",
-                          onConfirm: () async {
-                            //await updateResumeFunc();
-                            await nextTemplate();
-                          },
-                          confirmText: "Confirm",
-                          cancelText: "Cancel",
-                        );
-                      },
-                      child: const Icon(
-                        Icons.refresh,
-                        color: AppColors.whiteColor,
-                        size: 20,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.blackGradient1,
+                          AppColors.blackGradient2,
+                        ],
                       ),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            CupertinoIcons.heart,
+                            color: AppColors.whiteColor,
+                            size: 20,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            CupertinoIcons.share,
+                            color: AppColors.whiteColor,
+                            size: 20,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.resumeTemplateViewScreen,
+                              arguments: {
+                                "templateData": template,
+                                "resumeData": resumeData,
+                                "isChatFlow": true,
+                              },
+                            );
+                          },
+                          icon: Icon(
+                            CupertinoIcons.eye,
+                            color: AppColors.whiteColor,
+                            size: 20,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            CupertinoIcons.arrow_down_doc,
+                            color: AppColors.whiteColor,
+                            size: 20,
+                          ),
+                        ),
+                        Container(
+                          height: 20,
+                          width: 1.5,
+                          color: AppColors.fieldBorderColor,
+                        ),
+                        SizedBox(width: 10),
+                        SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: FloatingActionButton(
+                            elevation: 0,
+                            mini: true,
+                            backgroundColor: AppColors.primaryColor,
+                            onPressed: () {
+                              AppFunctions.showAppAlert(
+                                context: context,
+                                title: "Update Resume",
+                                content:
+                                    "Refresh the next template will consume 25 credits. Are you sure you want to continue?",
+                                onConfirm: () async {
+                                  //await updateResumeFunc();
+                                  await nextTemplate();
+                                },
+                                confirmText: "Confirm",
+                                cancelText: "Cancel",
+                              );
+                            },
+                            child: const Icon(
+                              Icons.refresh,
+                              color: AppColors.whiteColor,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  SizedBox(height: 15),
+
+                  Text(
+                    "Wow! Your Ready to Impress..!",
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 16,
+                      weight: FontWeight.w600,
+                      color: AppColors.secondaryColor,
+                    ),
+                  ),
+                  Text(
+                    "Your resume shines! It's perfectly crafted to catch employers' eyes.",
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      lineSpace: 1.3,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  CustomButtonWidget(
+                    width: 200,
+                    height: 35,
+                    isLoading: registerController.updateResumeTemplateLoading,
+                    buttonFunction: () async {
+                      await updateResumeFunc(template);
+                    },
+                    buttonText: "CONTINUE",
+                    bgColor: AppColors.appBgColor_2,
+                  ),
+                  // CustomButtonWidget(
+                  //   width: 200,
+                  //   height: 35,
+                  //   buttonFunction: () async {
+                  //     AppFunctions.navigateScreen(
+                  //       context,
+                  //       AppRoutes.chatResumeUpdateScreen,
+                  //     );
+                  //   },
+                  //   buttonText: "Update with AI",
+                  //   bgColor: AppColors.primaryColor,
+                  // ),
+                  SizedBox(height: 20),
                 ],
               ),
-            ),
-            SizedBox(height: 15),
-
-            Text(
-              "Wow! Your Ready to Impress..!",
-              textAlign: TextAlign.center,
-              style: AppStyles.customTextStyle(
-                size: 16,
-                weight: FontWeight.w600,
-                color: AppColors.secondaryColor,
-              ),
-            ),
-            Text(
-              "Your resume shines! It's perfectly crafted to catch employers' eyes.",
-              textAlign: TextAlign.center,
-              style: AppStyles.customTextStyle(
-                size: 14,
-                lineSpace: 1.3,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w400,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            CustomButtonWidget(
-              width: 200,
-              height: 35,
-              isLoading: registerController.updateResumeTemplateLoading,
-              buttonFunction: () async {
-                await updateResumeFunc(template);
-              },
-              buttonText: "CONTINUE",
-              bgColor: AppColors.appBgColor_2,
-            ),
-            // CustomButtonWidget(
-            //   width: 200,
-            //   height: 35,
-            //   buttonFunction: () async {
-            //     AppFunctions.navigateScreen(
-            //       context,
-            //       AppRoutes.chatResumeUpdateScreen,
-            //     );
-            //   },
-            //   buttonText: "Update with AI",
-            //   bgColor: AppColors.primaryColor,
-            // ),
-            SizedBox(height: 20),
-          ],
-        ),
       ),
     );
   }
@@ -356,8 +365,8 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
           arguments: {"activeStep": 2},
         );
       } else {
-        Get.close(2);
         await getProfileData();
+        Get.close(2);
         //Get.back();
       }
     } else {

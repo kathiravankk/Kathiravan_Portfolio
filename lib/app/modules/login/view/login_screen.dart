@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 50),
                 Image.asset(AssetImages.appLogoImage, height: 40),
                 Text(
-                  "Welcome Back!",
+                  "Welcome!",
                   style: AppStyles.customTextStyle(
                     color: AppColors.secondaryColor,
                     size: 25,
@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Text(
-                  "Secure access portal. Please enter your\ncredentials.",
+                  "Secure access portal. \nPlease enter your credentials.",
                   style: AppStyles.customTextStyle(
                     lineSpace: 1.4,
                     color: AppColors.whiteColor,
