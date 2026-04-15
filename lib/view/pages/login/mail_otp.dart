@@ -50,7 +50,7 @@
 // //         padding: EdgeInsets.all(16),
 // //         decoration: BoxDecoration(
 // //           image: DecorationImage(
-// //             image: AssetImage("lib/asset/images/login_bg.png"),
+// //             image: AssetImage("lib/assets/images/login_bg.png"),
 // //             fit: BoxFit.cover,
 // //           ),
 // //         ),
@@ -145,7 +145,7 @@
 // //         Container(width: 150,height: 60,
 // //           padding: EdgeInsets.all(8),
 // //           decoration: BoxDecoration(
-// //             image: DecorationImage(image: AssetImage("lib/asset/images/app_logo.png")),
+// //             image: DecorationImage(image: AssetImage("lib/assets/images/app_logo.png")),
 // //           ),
 // //         ),
 // //
@@ -330,7 +330,7 @@
 //         padding: EdgeInsets.all(16),
 //         decoration: BoxDecoration(
 //           image: DecorationImage(
-//             image: AssetImage("asset/images/login_bg.png"),
+//             image: AssetImage("assets/images/login_bg.png"),
 //             fit: BoxFit.cover,
 //           ),
 //         ),
@@ -453,7 +453,7 @@
 //           padding: EdgeInsets.all(8),
 //           decoration: BoxDecoration(
 //             image: DecorationImage(
-//                 image: AssetImage("asset/images/app_logo.png")),
+//                 image: AssetImage("assets/images/app_logo.png")),
 //           ),
 //         ),
 //       ],

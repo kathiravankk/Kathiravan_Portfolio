@@ -2,7 +2,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:internsharks/core/const_file/app_colors.dart';
 // import 'package:internsharks/core/routes/app_pages.dart';
-// import 'package:internsharks/pages/login/mail_otp.dart';
+// import 'package:internsharks/page/login/mail_otp.dart';
 // import 'dart:async';
 //
 // import '../../main.dart';
@@ -50,7 +50,7 @@
 //         padding: EdgeInsets.all(16),
 //         decoration: BoxDecoration(
 //           image: DecorationImage(
-//             image: AssetImage("lib/asset/images/login_bg.png"),
+//             image: AssetImage("lib/assets/images/login_bg.png"),
 //             fit: BoxFit.cover,
 //           ),
 //         ),

@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
-import 'package:internsharks/models/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/extracted_data_model.dart';
+import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
 import 'package:internsharks/provider/resume_provider.dart';
 
-import '../models/extracted_data_model.dart';
 
 class ResumeController extends GetxController {
   final ResumeProvider? resumeProvider;
@@ -20,11 +20,11 @@ class ResumeController extends GetxController {
   bool get resumeUploadSuccess => _resumeUploadSuccess.value;
   set resumeUploadSuccess(bool value) =>
       _resumeUploadSuccess.value = value;
-  final _resumeAnalyzeModel = ResumeAnalyzeModel().obs;
+  final _resumeAnalyzeModel = ResumeExtractModel().obs;
 
-  ResumeAnalyzeModel get resumeAnalyzeModel => _resumeAnalyzeModel.value;
+  ResumeExtractModel get resumeAnalyzeModel => _resumeAnalyzeModel.value;
 
-  set resumeAnalyzeModel(ResumeAnalyzeModel value) =>
+  set resumeAnalyzeModel(ResumeExtractModel value) =>
       _resumeAnalyzeModel.value = value;
 
   //Set loading
@@ -60,10 +60,10 @@ class ResumeController extends GetxController {
 
       // Personal Info
       final info = resumeData.personalInfo;
-      data['name'] = info.name ?? '';
-      data['email'] = info.email ?? '';
-      data['mobile'] = info.phone ?? ''; // Mapping phone to mobile
-      data['dob'] = info.location ?? ''; // No DOB in PersonalInfo, using location or empty? User used dob? PersonalInfo has no dob in model. checking...
+      data['name'] = info!.name ?? '';
+      data['email'] = info!.email ?? '';
+      data['mobile'] = info!.phone ?? ''; // Mapping phone to mobile
+      data['dob'] = info!.location ?? ''; // No DOB in PersonalInfo, using location or empty? User used dob? PersonalInfo has no dob in model. checking...
       // PersonalInfo model has: name, email, phone, location.
       // User code used: resume.personalInfo.dob ?? '' -> this implies they might have added it or assumed it.
       // I will use empty string for dob if not found, or check extracted_data_model again.
@@ -74,37 +74,37 @@ class ResumeController extends GetxController {
       data['profile_summary'] = resumeData.profileSummary;
 
       // Skills
-      for (int i = 0; i < resumeData.skills.length; i++) {
-        data['skills[$i]'] = resumeData.skills[i];
+      for (int i = 0; i < resumeData.skills!.length; i++) {
+        data['skills[$i]'] = resumeData.skills![i];
       }
 
       // Languages
-      for (int i = 0; i < resumeData.languages.length; i++) {
-        data['languages[$i]'] = resumeData.languages[i];
+      for (int i = 0; i < resumeData.languages!.length; i++) {
+        data['languages[$i]'] = resumeData.languages![i];
       }
 
       // Experience
-      for (int i = 0; i < resumeData.experience.length; i++) {
-        data['experience[$i][company]'] = resumeData.experience[i].company;
-        data['experience[$i][role]'] = resumeData.experience[i].role;
-        data['experience[$i][duration]'] = resumeData.experience[i].duration;
+      for (int i = 0; i < resumeData.experience!.length; i++) {
+        data['experience[$i][company]'] = resumeData.experience![i].company;
+        data['experience[$i][role]'] = resumeData.experience![i].role;
+        data['experience[$i][duration]'] = resumeData.experience![i].duration;
       }
 
       // Projects
-      for (int i = 0; i < resumeData.projects.length; i++) {
-        data['projects[$i][title]'] = resumeData.projects[i].title;
-        data['projects[$i][description]'] = resumeData.projects[i].description;
+      for (int i = 0; i < resumeData.projects!.length; i++) {
+        data['projects[$i][title]'] = resumeData.projects![i].title;
+        data['projects[$i][description]'] = resumeData.projects![i].description;
       }
 
       // Colleges
-      for (int i = 0; i < resumeData.colleges.length; i++) {
-        data['colleges[$i][name]'] = resumeData.colleges[i].institution;
+      for (int i = 0; i < resumeData.colleges!.length; i++) {
+        data['colleges[$i][name]'] = resumeData.colleges![i].institution;
         data['colleges[$i][location]'] = ''; // College model has no location
       }
 
       // Degrees
-      for (int i = 0; i < resumeData.degree.length; i++) {
-        data['degree[$i][name]'] = resumeData.degree[i].degree;
+      for (int i = 0; i < resumeData.degree!.length; i++) {
+        data['degree[$i][name]'] = resumeData.degree![i].degree;
         data['degree[$i][year]'] = ''; // Degree model has no year
       }
 

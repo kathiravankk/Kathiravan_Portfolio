@@ -2,17 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:internsharks/controllers/resigter_controller.dart';
 import 'package:internsharks/controllers/resume_controller.dart';
 import 'package:internsharks/core/const_file/app_button.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../controllers/login_controller.dart';
-import '../../../core/const_file/api_constants.dart';
 
 class RegisterPage extends StatefulWidget {
   final String? preFillMobile;
@@ -62,15 +58,15 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     name.text =
-        resumeController.resumeAnalyzeModel.resumeData!.personalInfo.name!;
+        resumeController.resumeAnalyzeModel.resumeData!.personalInfo!.name!;
 
     String rawMobile =
-        resumeController.resumeAnalyzeModel.resumeData!.personalInfo.phone!;
+        resumeController.resumeAnalyzeModel.resumeData!.personalInfo!.phone!;
 
     mobile.text = rawMobile.replaceAll("+91", "").replaceAll(" ", "").trim();
 
     email.text =
-        resumeController.resumeAnalyzeModel.resumeData!.personalInfo.email!;
+        resumeController.resumeAnalyzeModel.resumeData!.personalInfo!.email!;
   }
 
   @override
@@ -325,7 +321,7 @@ class _RegisterPageState extends State<RegisterPage> {
             height: double.infinity,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("asset/images/login_bg.png"),
+                image: AssetImage("assets/images/login_bg.png"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -409,7 +405,7 @@ class _RegisterPageState extends State<RegisterPage> {
           padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("asset/images/app_logo.png"),
+              image: AssetImage("assets/images/app_logo.png"),
             ),
           ),
         ),

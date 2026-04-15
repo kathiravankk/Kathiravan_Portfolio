@@ -3,7 +3,7 @@
 // import 'package:internsharks/const_file/app_colors.dart';
 // import 'package:internsharks/const_file/app_text_style.dart';
 // import 'package:internsharks/const_file/asset_image.dart';
-// import 'package:internsharks/pages/upload_resdp/resumeScreen.dart';
+// import 'package:internsharks/page/upload_resdp/resumeScreen.dart';
 //
 // class AnalyseResumePage extends StatefulWidget {
 //   const AnalyseResumePage({super.key});

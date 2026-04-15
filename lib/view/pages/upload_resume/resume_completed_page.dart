@@ -81,7 +81,7 @@
 // // //                       height: 180,
 // // //                       decoration: const BoxDecoration(
 // // //                         image: DecorationImage(
-// // //                           image: AssetImage("lib/asset/images/Frame 10.png"),
+// // //                           image: AssetImage("lib/assets/images/resume_upload_img.png"),
 // // //                           fit: BoxFit.cover,
 // // //                         ),
 // // //                       ),
@@ -231,8 +231,8 @@
 // //                 shape: BoxShape.circle,
 // //               ),
 // //               child: ClipOval(
-// //                 child: Image.asset(
-// //                   'lib/asset/images/icons/verified.gif',   // 🔥 your gif path
+// //                 child: Image.assets(
+// //                   'lib/assets/images/icons/verified.gif',   // 🔥 your gif path
 // //                   fit: BoxFit.cover,
 // //                 ),
 // //               ),
@@ -375,8 +375,8 @@
 //                   width: 200,
 //                   height: 150,
 //                   child: ClipOval(
-//                     child: Image.asset(
-//                       'lib/asset/images/icons/verified.gif',
+//                     child: Image.assets(
+//                       'lib/assets/images/icons/verified.gif',
 //                       fit: BoxFit.cover,
 //                     ),
 //                   ),

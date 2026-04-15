@@ -1,14 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/core/const_file/app_button.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
 import 'package:internsharks/core/const_file/asset_image.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-
 import 'bottom_screen.dart';
+
 
 
 class HomeScreen extends StatefulWidget {
@@ -84,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isCompleted: widget.activeStep > 1,
                 icon: _getStepIcon(1, widget.activeStep),
                 onTap: () {
-                  if (widget.activeStep == 1) {Get.toNamed(Routes.resumeReportPage);
+                  if (widget.activeStep == 1) {Get.toNamed(AppRoutes.resumeReportPage);
 
                   }
                 },
@@ -100,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isCompleted: widget.activeStep > 2,
                 icon: _getStepIcon(2, widget.activeStep),
                 onTap: () {
-                  if (widget.activeStep == 2) {Get.toNamed(Routes.uploadSelfiePage);
+                  if (widget.activeStep == 2) {Get.toNamed(AppRoutes.uploadSelfiePage);
 
 
                   }
@@ -117,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isCompleted: widget.activeStep > 3,
                 icon: _getStepIcon(3, widget.activeStep),
                 onTap: () {
-                  if (widget.activeStep == 3) {    Get.offNamed(Routes.kycCollegeIdPage);
+                  if (widget.activeStep == 3) {    Get.offNamed(AppRoutes.kycCollegeIdPage);
 
                   }
                 },
@@ -129,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (widget.activeStep > 3) {
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (_) => const Bottom_screen()),
+                      MaterialPageRoute(builder: (_) => const BottomScreen()),
                           (route) => false,   // <-- Removes ALL previous screens
                     );
                   }
@@ -159,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (currentActiveStep == 1) {
         // Active - Upload icon
         return Image.asset(
-          "asset/images/icons/upload icon.png",
+          "assets/images/icons/upload icon.png",
           height: 28,
           width: 28,
           color: Colors.white,
@@ -175,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (currentActiveStep == 2) {
         // Active - show image icon
         return Image.asset(
-          "asset/images/icons/upload icon.png",
+          "assets/images/icons/upload icon.png",
           height: 28,
           width: 28,
           color: Colors.white,
@@ -193,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       } else if (currentActiveStep == 3) {
         return Image.asset(
-          "lib/asset/images/icons/step3 .png",
+          "lib/assets/images/icons/step3 .png",
           height: 28,
           width: 28,
           color: Colors.white,

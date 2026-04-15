@@ -153,8 +153,8 @@
 //           /// Resume Display Picture (DP)
 //           ClipRRect(
 //             borderRadius: BorderRadius.circular(30),
-//             child: Image.asset(
-//               "lib/asset/images/Rectangle 144.png", // <-- put your image here
+//             child: Image.assets(
+//               "lib/assets/images/Rectangle 144.png", // <-- put your image here
 //               height: 180,
 //               width: 300,
 //               fit: BoxFit.cover,

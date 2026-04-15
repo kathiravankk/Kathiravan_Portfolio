@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Resume - Timeline Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #cbd5e1;
+            padding: 40px 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+        }
+
+        /* Left Sidebar */
+        .left-sidebar {
+            flex: 0 0 35%;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 40px 25px;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .profile-name {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-role {
+            font-size: 15px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Sidebar Sections */
+        .sidebar-label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Contact Section */
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .contact-row svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+            flex-shrink: 0;
+        }
+
+        .contact-row a {
+            color: #93c5fd;
+            text-decoration: none;
+        }
+
+        .contact-row a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sidebar Lists */
+        .v6-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .v6-list li {
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        /* Education in Sidebar */
+        .education-item {
+            margin-bottom: 20px;
+        }
+
+        .education-item strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .education-item div {
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .date-text {
+            color: #93c5fd;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .text-muted {
+            opacity: 0.7;
+            font-size: 12px;
+        }
+
+        /* Right Column */
+        .right-column {
+            flex: 1;
+            padding: 40px 30px;
+        }
+
+        /* Section Titles in Main Area */
+        .main-label {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3b82f6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Profile Summary */
+        .profile-summary {
+            font-size: 13px;
+            line-height: 1.7;
+            text-align: justify;
+            color: #475569;
+            margin-bottom: 30px;
+        }
+
+        /* Timeline Container */
+        .timeline-container {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        /* Timeline Items */
+        .timeline-item_dots {
+            position: relative;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+        }
+
+        .timeline-item_dots::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: #3b82f6;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #3b82f6;
+            z-index: 1;
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .text-primary {
+            color: #3b82f6;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Bullet Lists */
+        .summary-bullet-list {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .summary-bullet-list li {
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        /* Section Spacing */
+        section {
+            margin-bottom: 35px;
+        }
+
+        section:last-child {
+            margin-bottom: 0;
+        }
+
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+
+        .mb-4 {
+            margin-bottom: 30px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding: 20px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-dark {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background-color: #555;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #333;
+            border: 1px solid #333;
+        }
+
+        .btn-outline:hover {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .action-buttons,
+            .no-print {
+                display: none !important;
+            }
+
+            .timeline-item_dots {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-sidebar {
+                flex: 1;
+                padding: 30px 20px;
+            }
+
+            .right-column {
+                padding: 30px 20px;
+            }
+
+            .profile-name {
+                font-size: 24px;
+            }
+
+            .timeline-container {
+                padding-left: 25px;
+            }
+
+            .timeline-item_dots::before {
+                left: -21px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Left Sidebar -->
+    <div class="left-sidebar">
+        <!-- Profile Section -->
+        <div class="profile-section">
+            <h1 class="profile-name" id="name"></h1>
+            <div class="profile-role" id="role"></div>
+        </div>
+
+        <!-- Contact Section -->
+        <section class="mb-4" id="contactSection">
+            <h3 class="sidebar-label">Contact</h3>
+
+            <div class="contact-row" id="phoneRow">
+                <span id="phone"></span>
+            </div>
+
+            <div class="contact-row" id="emailRow">
+                <span id="email"></span>
+            </div>
+
+            <div class="contact-row" id="locationRow">
+                <span id="location"></span>
+            </div>
+
+            <div class="contact-row" id="linkedinRow">
+                <a id="linkedin" target="_blank">LinkedIn</a>
+            </div>
+
+            <div class="contact-row" id="githubRow">
+                <a id="github" target="_blank">GitHub</a>
+            </div>
+        </section>
+
+
+        <!-- Education Section -->
+        <section class="mb-4" id="educationSection">
+            <h3 class="sidebar-label">Education</h3>
+            <div id="educationList"></div>
+        </section>
+
+
+        <!-- Skills Section -->
+        <section class="mb-4" id="skillsSection">
+            <h3 class="sidebar-label">Skills</h3>
+            <ul class="v6-list" id="skillsList"></ul>
+        </section>
+
+        <!-- Languages Section -->
+        <section class="mb-4" id="languagesSection">
+            <h3 class="sidebar-label">Languages</h3>
+            <ul class="v6-list" id="languagesList"></ul>
+        </section>
+
+        <!-- Areas of Interest Section -->
+        <section class="mb-4" id="interestsSection">
+            <h3 class="sidebar-label">Areas of Interest</h3>
+            <ul class="v6-list" id="interestsList"></ul>
+        </section>
+    </div>
+
+    <!-- Right Column -->
+    <div class="right-column">
+        <!-- Profile Summary -->
+        <section id="summarySection">
+            <h3 class="main-label">Profile Summary</h3>
+            <p class="profile-summary" id="profileSummary"></p>
+        </section>
+
+
+<!--        &lt;!&ndash; Experience Section &ndash;&gt;-->
+<!--        <section id="experienceSection">-->
+<!--            <h3 class="main-label">Experience</h3>-->
+<!--            <div class="timeline-container" id="experienceList"></div>-->
+<!--        </section>-->
+
+        <!-- Projects Section -->
+
+        <section id="projectsSection">
+            <h3 class="main-label">Projects</h3>
+            <div class="timeline-container" id="projectsList"></div>
+        </section>
+
+        <!-- Paper Presentations Section -->
+
+        <section id="speakingSection">
+            <h3 class="main-label">Speaking Engagements</h3>
+            <div class="timeline-container" id="speakingList"></div>
+        </section>
+
+        <!-- Certifications Section -->
+        <section id="certificationsSection">
+            <h3 class="main-label">Certifications</h3>
+            <ul class="summary-bullet-list" id="certificationsList"></ul>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievementsSection">
+            <h3 class="main-label">Achievements</h3>
+            <ul class="summary-bullet-list" id="achievementsList"></ul>
+        </section>
+    </div>
+</div>
+
+<!--    &lt;!&ndash; Action Buttons &ndash;&gt;-->
+<!--    <div class="action-buttons no-print">-->
+<!--        <button class="btn btn-dark" onclick="window.print()">-->
+<!--            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 384 512">-->
+<!--                <path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM64 224H88c30.9 0 56 25.1 56 56s-25.1 56-56 56H80v32c0 8.8-7.2 16-16 16s-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm24 80c13.3 0 24-10.7 24-24s-10.7-24-24-24H80v48h8zm72-64c0-8.8 7.2-16 16-16h24c26.5 0 48 21.5 48 48v64c0 26.5-21.5 48-48 48H176c-8.8 0-16-7.2-16-16V240zm32 112h8c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16h-8v96zm96-112c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v32h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H336v48c0 8.8-7.2 16-16 16s-16-7.2-16-16V240z"/>-->
+<!--            </svg>-->
+<!--            Download PDF-->
+<!--        </button>-->
+<!--        <button class="btn btn-outline" onclick="shareResume()">-->
+<!--            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 512 512">-->
+<!--                <path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2v64H176C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96h96v64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"/>-->
+<!--            </svg>-->
+<!--            Share-->
+<!--        </button>-->
+<!--    </div>-->
+
+    <script>
+        function hideIfEmpty(sectionId, condition) {
+          if (!condition) {
+            const el = document.getElementById(sectionId);
+            if (el) el.style.display = "none";
+          }
+        }
+    </script>
+
+<script>
+    function renderResume(data) {
+        console.log("Final Template 7 data:", data);
+
+        const pi = data.personal_info || {};
+
+        // ===== PERSONAL =====
+        setText("name", pi.name);
+        setText("role", pi.role || pi.designation);
+        setText("phone", pi.phone);
+        setText("email", pi.email);
+        setText("location", pi.address || pi.location);
+
+        setLink("linkedin", pi.linkedin || pi.linkedIn);
+        setLink("github", pi.github);
+
+        hideIfEmpty("contactSection",
+            pi.phone || pi.email || pi.address || pi.location || pi.linkedin || pi.linkedIn || pi.github
+        );
+
+        // ===== SUMMARY =====
+        const summary =
+            data.profile_summary ||
+            (Array.isArray(data.updatedProfileSummary)
+                ? data.updatedProfileSummary.join(" ")
+                : data.updatedProfileSummary);
+
+        setText("profileSummary", summary);
+        hideIfEmpty("summarySection", summary);
+
+        // ===== EDUCATION =====
+        let educationData = [];
+
+        if (Array.isArray(data.education)) educationData = data.education;
+        else if (Array.isArray(data.college)) educationData = data.college;
+
+        if (data.higher_secondary) educationData.push(data.higher_secondary);
+        if (data.secondary) educationData.push(data.secondary);
+
+        renderEducation(educationData);
+        hideIfEmpty("educationSection", educationData.length);
+
+        // ===== SKILLS =====
+        renderSimpleList("skillsList", data.skills);
+        hideIfEmpty("skillsSection", data.skills?.length);
+
+        // ===== LANGUAGES =====
+        renderSimpleList("languagesList", data.languages);
+        hideIfEmpty("languagesSection", data.languages?.length);
+
+        // ===== INTERESTS =====
+        const interests = data.interests || data.areas_of_interest || data.hobbies;
+        renderSimpleList("interestsList", interests);
+        hideIfEmpty("interestsSection", interests?.length);
+
+<!--        // ===== EXPERIENCE =====-->
+<!--        const experienceData = data.experience || data.updatedExperience;-->
+<!--        renderTimelineFlexible("experienceList", experienceData);-->
+<!--        hideIfEmpty("experienceSection", experienceData?.length);-->
+
+        // ===== PROJECTS =====
+        const projectsData = data.projects || data.updatedProjects;
+        renderTimelineFlexible("projectsList", projectsData, true);
+        hideIfEmpty("projectsSection", projectsData?.length);
+
+        // ===== SPEAKING =====
+        const speakingData = data.paper_presentations || data.speaking;
+        renderTimelineFlexible("speakingList", speakingData);
+        hideIfEmpty("speakingSection", speakingData?.length);
+
+        // ===== CERTIFICATIONS =====
+        renderSimpleList("certificationsList", data.certifications);
+        hideIfEmpty("certificationsSection", data.certifications?.length);
+
+        // ===== ACHIEVEMENTS =====
+        renderSimpleList("achievementsList", data.achievements);
+        hideIfEmpty("achievementsSection", data.achievements?.length);
+    }
+
+    // ================= HELPERS =================
+    function setText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value || "";
+    }
+
+    function setLink(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        if (value) {
+            el.href = value;
+            el.textContent = value;
+            el.parentElement.style.display = "flex";
+        } else {
+            el.parentElement.style.display = "none";
+        }
+    }
+
+    function renderSimpleList(id, items) {
+        const el = document.getElementById(id);
+        if (!el || !items || !items.length) {
+            if (el) el.innerHTML = "";
+            return;
+        }
+
+        el.innerHTML = items.map(item => {
+            const text =
+                typeof item === "string"
+                    ? item
+                    : item.name ||
+                      item.title ||
+                      item.description ||
+                      item.role ||
+                      "";
+            return `<li>• ${text}</li>`;
+        }).join("");
+    }
+
+    function renderEducation(items) {
+        const el = document.getElementById("educationList");
+        if (!el) return;
+
+        if (!items || !items.length) {
+            el.innerHTML = "";
+            return;
+        }
+
+        el.innerHTML = items.map(e => `
+            <div class="education-item">
+                <strong>${e.institution || e.school_name || e.college_name || "Institution"}</strong>
+                <div>${e.degree || e.course || e.board || "Education"}</div>
+                <div class="date-text">
+                    ${formatDateRange(e.start_date, e.end_date) || e.duration || e.year || ""}
+                </div>
+                ${(e.percentage || e.cgpa || e.gpa || e.score)
+                    ? `<div class="text-muted">${e.percentage || e.cgpa || e.gpa || e.score}</div>`
+                    : ""}
+            </div>
+        `).join("");
+    }
+
+    function renderTimelineFlexible(id, items, isProject = false) {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        if (!items || !items.length) {
+            el.innerHTML = "";
+            return;
+        }
+
+        el.innerHTML = items.map(i => {
+            if (typeof i === "string") {
+                return `
+                    <div class="timeline-item_dots">
+                        <div class="timeline-title">${i}</div>
+                    </div>
+                `;
+            }
+
+            const title = isProject
+                ? i.title || i.project_name || "Project"
+                : i.job_title || i.position || i.role || i.title || "Title";
+
+            const subtitle =
+                i.company ||
+                i.organization ||
+                i.provider ||
+                i.venue ||
+                i.subtitle ||
+                "";
+
+            const description = Array.isArray(i.description)
+                ? i.description.join(" ")
+                : i.description || "";
+
+            const technologies = i.technologies
+                ? `<p class="timeline-desc"><strong>Tech:</strong> ${
+                    Array.isArray(i.technologies)
+                        ? i.technologies.join(", ")
+                        : i.technologies
+                  }</p>`
+                : "";
+
+            return `
+                <div class="timeline-item_dots">
+                    <div class="timeline-title">${title}</div>
+                    <div class="text-primary">
+                        ${subtitle} ${formatDateRange(i.start_date, i.end_date)}
+                    </div>
+                    <p class="timeline-desc">${description}</p>
+                    ${technologies}
+                </div>
+            `;
+        }).join("");
+    }
+
+    function formatDateRange(startDate, endDate) {
+        if (!startDate && !endDate) return "";
+        const start = startDate || "";
+        const end = endDate || "Present";
+        return `${start}${start && end ? " - " : ""}${end}`;
+    }
+</script>
+
+
+
+</body>
+</html>

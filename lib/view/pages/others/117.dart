@@ -1,20 +1,16 @@
-
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-import 'manage_resume_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool showBack;
-   ProfilePage({Key? key, this.showBack=false}) : super(key: key);
+   const ProfilePage({super.key, this.showBack=false});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -93,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
         width: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),
@@ -207,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     GestureDetector(
                       onTap: () {
                         Get.toNamed(
-                          Routes.manageResumePage,
+                          AppRoutes.manageResumePage,
 
                         );
 

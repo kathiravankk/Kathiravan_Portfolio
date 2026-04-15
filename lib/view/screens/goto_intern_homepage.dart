@@ -1,17 +1,13 @@
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:get_x/get_core/src/get_main.dart';
-import 'package:get_x/get_navigation/src/extension_navigation.dart';import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:get/get.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
-
-import '../pages/others/115.dart';
-import '../pages/others/applies_page.dart';
 import '../pages/others/recommended_Internships_page.dart';
 import '../pages/others/trendy_category_listing_page.dart';
-import 'drawer.dart';
+import '../../app/core/widgets/home_drawer.dart';
 import '../pages/others/internship_details_page.dart';
 
 class InternshipHomePage extends StatefulWidget {
@@ -25,7 +21,6 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int activeIndex = 0;
 
-  int _selectedNavIndex = 0;
 
   void callbackFunction(int index, CarouselPageChangedReason reason) {
     print("Current Page: $index");
@@ -35,9 +30,9 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Drawers(),
+      drawer: HomeDrawer(),
       backgroundColor: Colors.black,
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: Column(
@@ -186,9 +181,9 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
   // Banner Carousel
   Widget _buildBannerCarousel() {
     List<String> images = [
-      "lib/asset/images/banner 1.jpg",
-      "lib/asset/images/banner 1.jpg",
-      "lib/asset/images/banner 1.jpg",
+      "lib/assets/images/home_screen_banner.jpg",
+      "lib/assets/images/home_screen_banner.jpg",
+      "lib/assets/images/home_screen_banner.jpg",
     ];
 
     return Column(
@@ -389,7 +384,7 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
                 ),
                 child: Image(
                   width: 40,
-                  image: AssetImage("lib/asset/images/Ellipse 9.png"),
+                  image: AssetImage("lib/assets/images/Ellipse 9.png"),
                 ),
               ),
             ],
@@ -563,24 +558,24 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
       {
         // 'icon': Icons.computer,
         'title': 'IT/Software',
-        "image": "lib/asset/images/icons/Vector (4).png",
+        "image": "lib/assets/images/icons/Vector (4).png",
         'count': '52 Internship Available',
         'color': const Color(0xFF042e84),
       },
       {
-        "image": "lib/asset/images/icons/Vector (5).png",
+        "image": "lib/assets/images/icons/Vector (5).png",
         'title': 'Customer Service',
         'count': '70 Internship Available',
         'color': Colors.white,
       },
       {
-        "image": "lib/asset/images/icons/Vector (6).png",
+        "image": "lib/assets/images/icons/Vector (6).png",
         'title': 'Marketing',
         'count': '40 Internship Available',
         'color': Colors.white,
       },
       {
-        "image": "lib/asset/images/icons/Vector (4).png",
+        "image": "lib/assets/images/icons/Vector (4).png",
         'title': 'Design',
         'count': '35 Internship Available',
         'color': Colors.white,
@@ -596,7 +591,7 @@ class _InternshipHomePageState extends State<InternshipHomePage> {
         itemBuilder: (context, index) {
           final category = categories[index];
           return InkWell(
-            onTap: () {Get.toNamed(Routes.internshipListPage);
+            onTap: () {Get.toNamed(AppRoutes.internshipListPage);
 
             },
             child: Container(

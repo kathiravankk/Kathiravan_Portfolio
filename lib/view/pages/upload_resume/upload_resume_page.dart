@@ -1,24 +1,20 @@
-
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:internsharks/controllers/resigter_controller.dart';
 import 'package:internsharks/controllers/resume_controller.dart';
-import 'package:internsharks/core/const_file/api_constants.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
-
+import '../../../app/routes/app_pages.dart' show AppRoutes;
 import 'ResumeChat.dart';
 
 class UploadResumePage extends StatefulWidget {
-  const UploadResumePage({super.key});
+  const
+
+
+  UploadResumePage({super.key});
 
   @override
   State<UploadResumePage> createState() => _UploadResumePageState();
@@ -66,9 +62,9 @@ class _UploadResumePageState extends State<UploadResumePage> {
 
             // 🔹 STORE ALL DATA IN CONTROLLER
             registerController.resumeData = model.resumeData;
-            registerController.name.value = info.name ?? '';
-            registerController.email.value = info.email ?? '';
-            registerController.mobile.value = info.phone ?? '';
+            registerController.name.value = info!.name ?? '';
+            registerController.email.value = info!.email ?? '';
+            registerController.mobile.value = info!.phone ?? '';
              // Use location as fallback or empty string since DOB is not in PersonalInfo model
             registerController.dob.value = '';
 
@@ -91,7 +87,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
             await Future.delayed(const Duration(milliseconds: 500));
 
             // 🔹 NAVIGATE TO REGISTER PAGE
-            Get.toNamed(Routes.registerPage);
+            Get.toNamed(AppRoutes.registerPage);
           } else {
             throw Exception("Resume analysis failed");
           }
@@ -184,7 +180,7 @@ class _UploadResumePageState extends State<UploadResumePage> {
                       height: 180,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage("asset/images/Frame 10.png"),
+                          image: AssetImage("assets/images/resume_upload_img.png"),
                           fit: BoxFit.cover,
                         ),
                       ),

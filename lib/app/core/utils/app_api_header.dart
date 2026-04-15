@@ -1,0 +1,25 @@
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AppApiHeader {
+  static Future<Map<String, String>> header() async {
+    final token = await LocalStorageService.getToken();
+
+    return {
+      if (token != null && token.isNotEmpty)
+      "Authorization": "Bearer $token",
+      "timezone": "Asia/Kolkata",
+      "Content-Type": "application/json;charset=utf-8",
+    };
+  }
+
+  static Future<Map<String, String>> formDataHeader() async {
+    final token = await LocalStorageService.getToken();
+    return {
+      if (token != null && token.isNotEmpty)
+      "Authorization": "Bearer $token",
+      "timezone": "Asia/Kolkata",
+      "Content-Type": "multipart/form-data",
+    };
+  }
+}

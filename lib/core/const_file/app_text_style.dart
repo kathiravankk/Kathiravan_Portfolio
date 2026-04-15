@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 
 class AppTextStyles {
   /// grey font style
@@ -12,50 +12,50 @@ class AppTextStyles {
   /// white font style
   static const TextStyle white20bold = TextStyle(
     fontSize: 20,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle white24 = TextStyle(
     fontSize: 20,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
   static const TextStyle white14 = TextStyle(
     fontSize: 14,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
   );
   static const TextStyle white18 = TextStyle(
     fontSize: 18,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
   );
   static const TextStyle white14Bold = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.bold,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
   );
   static const TextStyle white12 = TextStyle(
     fontSize: 12,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
   );
   static const TextStyle showDialogTitleStyle = TextStyle(
     fontSize: 20,
     fontFamily: "recoleta-cufonfonts",
     fontWeight: FontWeight.bold,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
 
   static const TextStyle appBar = TextStyle(
     fontSize: 20,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
   );
   static const TextStyle appBarBold = TextStyle(
     fontSize: 20,
-    color: AppColors.black,
+    color: AppColors.blackColor,
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle white24Bold = TextStyle(
     fontSize: 24,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle yellow24Bold = TextStyle(
@@ -78,27 +78,27 @@ class AppTextStyles {
   );
   static const TextStyle white26Bold = TextStyle(
     fontSize: 26,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle white18bold = TextStyle(
     fontSize: 18,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle white22bold = TextStyle(
     fontSize: 22,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle white16 = TextStyle(
     fontSize: 16,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
   );
   static const TextStyle white16bold = TextStyle(
     fontSize: 16,
-    color: AppColors.white,
+    color: AppColors.whiteColor,
     fontWeight: FontWeight.bold,
   );
 
@@ -106,32 +106,32 @@ class AppTextStyles {
 
   static const TextStyle black20bold = TextStyle(
     fontSize: 20,
-    color: AppColors.black,
+    color: AppColors.blackColor,
     fontWeight: FontWeight.bold,
   );
 
   static const TextStyle black20 = TextStyle(
     fontSize: 20,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
 
   static const TextStyle black18 = TextStyle(
     fontSize: 18,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
   static const TextStyle black18bold = TextStyle(
     fontSize: 18,
-    color: AppColors.black,
+    color: AppColors.blackColor,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle black16 = TextStyle(
     fontSize: 16,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
 
   static const TextStyle black16bold = TextStyle(
     fontSize: 16,
-    color: AppColors.black,
+    color: AppColors.blackColor,
     fontWeight: FontWeight.bold,
   );
   static const TextStyle black4516bold = TextStyle(
@@ -142,20 +142,20 @@ class AppTextStyles {
 
   static const TextStyle black14 = TextStyle(
     fontSize: 14,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
   static const TextStyle black14bold = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.bold,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
   static const TextStyle black12 = TextStyle(
     fontSize: 12,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
   static const TextStyle black12Bold = TextStyle(
     fontSize: 12,
-    color: AppColors.black,
+    color: AppColors.blackColor,
   );
 
   /// show dialog title style

@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
+import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
 import 'package:internsharks/core/const_file/api_constants.dart';
-import 'package:internsharks/models/resume_analyze_model.dart';
 
-import '../models/resume_response.dart';
 
 class ResumeProvider {
   final Dio? client;
@@ -21,7 +17,7 @@ class ResumeProvider {
   set responseMessage(String value) => _responseMessage = value;
 
   /// Upload Resume PDF API
-  Future<ResumeAnalyzeModel> uploadResumePdf(String filePath) async {
+  Future<ResumeExtractModel> uploadResumePdf(String filePath) async {
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -44,14 +40,14 @@ class ResumeProvider {
         ),
       );
 
-      return ResumeAnalyzeModel.fromJson(response.data);
+      return ResumeExtractModel.fromJson(response.data);
     } on DioException catch (e) {
       throw Exception(e.response?.data ?? "Resume upload failed");
     }
   }
 
 
-  Future<ResumeAnalyzeModel> registerStudent(
+  Future<ResumeExtractModel> registerStudent(
       Map<String, dynamic> registerData) async {
     try {
       client!.interceptors.add(
@@ -66,7 +62,7 @@ class ResumeProvider {
       responseStatus = response.statusCode!;
       responseMessage = response.statusMessage!;
 
-      return ResumeAnalyzeModel.fromJson(response.data);
+      return ResumeExtractModel.fromJson(response.data);
 
     } on DioException catch (error) {
       responseStatus = error.response?.statusCode ?? 500;
@@ -74,7 +70,7 @@ class ResumeProvider {
           error.response?.statusMessage ?? "Registration failed";
 
       // ✅ FIX HERE
-      return ResumeAnalyzeModel.fromJson(
+      return ResumeExtractModel.fromJson(
         error.response?.data ?? {},
       );
     }

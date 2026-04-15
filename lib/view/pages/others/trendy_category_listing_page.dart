@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 
 class TrendyCategoryListingPage extends StatefulWidget {
   const TrendyCategoryListingPage({super.key});
@@ -12,40 +11,39 @@ class TrendyCategoryListingPage extends StatefulWidget {
 }
 
 class _TrendyCategoryListingPageState extends State<TrendyCategoryListingPage> {
-  @override
   final List<Map<String, dynamic>> categories = [
     {
-      "image": "lib/asset/images/icons/Vector (4).png",
+      "image": "lib/assets/images/icons/Vector (4).png",
       "title": "IT / Software",
       "count": "52 Internships Available",
       "color": Colors.white,
     },
     {
-      "image": "lib/asset/images/icons/Vector (5).png",
+      "image": "lib/assets/images/icons/Vector (5).png",
       "title": "Customer Service",
       "count": "70 Internships Available",
       "color": Colors.white,
     },
     {
-      "image": "lib/asset/images/icons/Vector (6).png",
+      "image": "lib/assets/images/icons/Vector (6).png",
       "title": "Marketing",
       "count": "40 Internships Available",
       "color": Colors.white,
     },
     {
-      "image": "lib/asset/images/icons/Vector (4).png",
+      "image": "lib/assets/images/icons/Vector (4).png",
       "title": "Design",
       "count": "35 Internships Available",
       "color": Colors.white,
     },
     {
-      "image": "lib/asset/images/icons/Vector (4).png",
+      "image": "lib/assets/images/icons/Vector (4).png",
       "title": "Business",
       "count": "25 Internships Available",
       "color": Colors.white,
     },
     {
-      "image": "lib/asset/images/icons/Vector (6).png",
+      "image": "lib/assets/images/icons/Vector (6).png",
       "title": "Sales",
       "count": "68 Internships Available",
       "color": Colors.white,
@@ -60,7 +58,7 @@ class _TrendyCategoryListingPageState extends State<TrendyCategoryListingPage> {
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("lib/asset/images/login_bg.png"),
+            image: AssetImage("lib/assets/images/login_bg.png"),
             fit: BoxFit.cover,
           ),
         ),

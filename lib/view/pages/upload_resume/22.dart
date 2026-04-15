@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';import 'package:internsharks/core/const_file/app_colors.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:internsharks/core/const_file/app_text_style.dart';
-import 'package:internsharks/core/routes/app_pages.dart';
 
 class ResumeViewPage extends StatefulWidget {
   final file;
