@@ -91,15 +91,19 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                           arguments: {"appliedData": item},
                         );
                       },
-                      role: item.jobData != null ? item.jobData!.roleType
-                          : "",
+                      role: item.jobData != null ? item.jobData!.roleType : "",
                       companyName: item.jobData != null
                           ? item.jobData!.companyName
                           : "",
                       companyLocation: item.jobData != null
                           ? item.jobData!.internshipMode
                           : "",
-                      duration: item.jobData !=null? item.jobData!.internshipDuration :"NA",
+                      duration: item.jobData != null
+                          ? item.jobData!.internshipDuration!.isNotEmpty &&
+                                    item.jobData!.internshipDuration != null
+                                ? item.jobData!.internshipDuration
+                                : "${item.jobData!.days} Days"
+                          : "Nuill",
                       // companyDescription: item.jobData != null
                       //     ? item.jobData!.aboutCompany
                       //     : "",
@@ -107,7 +111,6 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                       companyLogo: item.jobData != null
                           ? item.jobData!.companyLogo
                           : "",
-
                     );
                   },
                 )

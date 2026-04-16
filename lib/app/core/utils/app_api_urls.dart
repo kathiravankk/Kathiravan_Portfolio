@@ -52,6 +52,8 @@ class AppApiUrls {
       "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
   static String updateChatResume = "${baseUrl}updatemessage";
+
+  // BUY CREDITS
   static String getCreditPlans = "${baseUrl}plans";
   static String createCreditOrder = "${baseUrl}student/create-order";
   static String verifyCreditOrder = "${baseUrl}student/verify";
@@ -97,4 +99,11 @@ class AppApiUrls {
   static String validateMcqAnswer = "${baseUrl}checktestscore";
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
+
+  // INTERNSHIP PAYMENT
+
+  static String paymentCheck = "${baseUrl}checkinternpayment";
+  static String createPayment = "${baseUrl}createinternshipfee";
+  static String verifyPayment = "${baseUrl}verifyinternshipfee";
+
 }

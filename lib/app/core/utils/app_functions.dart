@@ -72,7 +72,7 @@ class AppFunctions {
       );
       //AppFunctions.showAppAlert(context: context, content: content)
     } else if (responseCode == 404) {
-     // showToast(message: message, isError: true);
+      // showToast(message: message, isError: true);
       showToast(message: "Session expired, Please login again!", isError: true);
       Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 500) {
@@ -157,9 +157,7 @@ class AppFunctions {
       final uri = Uri.parse(url);
 
       // Removes leading "/"
-      return uri.path.startsWith('/')
-          ? uri.path.substring(1)
-          : uri.path;
+      return uri.path.startsWith('/') ? uri.path.substring(1) : uri.path;
     } catch (e) {
       return "";
     }
@@ -374,6 +372,143 @@ class AppFunctions {
     }
 
     return fullName;
+  }
+
+  static Future<void> showPaymentRequiredDialog({
+    required BuildContext context,
+    required String courseName,
+    required String amount,
+    String cancelText = "CANCEL",
+    String confirmText = "PAY ₹",
+    VoidCallback? onCancel,
+    VoidCallback? onConfirm,
+    bool barrierDismissible = false,
+  }) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          title: Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.paymentContColor,
+            ),
+            child: const Icon(
+              Icons.account_balance_wallet_rounded,
+              color: AppColors.primaryColor,
+              size: 30,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Row(
+              spacing: 10,
+              children: [
+                Expanded(
+                  child: CustomButtonWidget(
+                    buttonFunction: () {
+                      Get.back();
+                      onConfirm?.call();
+                    },
+                    buttonText: confirmText,
+                    height: 35,
+                    bgColor: AppColors.primaryColor,
+                  ),
+                ),
+                Expanded(
+                  child: CustomButtonWidget(
+                    buttonFunction: () {
+                      Get.back();
+                      onCancel?.call();
+                    },
+                    buttonText: cancelText,
+                    height: 35,
+                    bgColor: AppColors.fieldBgColor,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 15,
+            children: [
+              Text(
+                "PAYMENT REQUIRED",
+                style: AppStyles.customTextStyle(
+                  size: 18,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                "To start this internship, you need to pay\nthe course fee.",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w300,
+                  lineSpace: 1.3,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: AppColors.paymentContColor,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  spacing: 5,
+                  children: [
+                    _paymentRow("COURSE", courseName),
+                    const Divider(color: AppColors.dividerContColor, thickness: 0.5,),
+                    _paymentRow(
+                      "AMOUNT",
+                      "₹ $amount",
+                      valueColor: AppColors.primaryColor,
+                      isAmount: true,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static Widget _paymentRow(
+    String title,
+    String value, {
+    Color valueColor = AppColors.whiteColor,
+    bool isAmount = false,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: AppStyles.customTextStyle(
+            size: 10,
+            color: AppColors.whiteColor,
+            weight: FontWeight.w300,
+          ),
+        ),
+        Text(
+          value,
+          style: AppStyles.customTextStyle(
+            size: 12,
+            color: valueColor,
+            weight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
   }
 }
 

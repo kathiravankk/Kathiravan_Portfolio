@@ -160,7 +160,7 @@ class AppliesInternshipCard extends StatelessWidget {
                       color: AppColors.blackColor,
                     ),
                     Text(
-                      'Duration : ${duration?.isNotEmpty == true ? duration : "N/A"}',
+                      'Duration : $duration',
                       style: AppStyles.customTextStyle(
                         size  : 10,
                         weight: FontWeight.w600,

@@ -317,13 +317,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 ProfileWidgets.sectionHeader('📋', 'Personal Information'),
                 _pfield(Icons.person_outline_sharp, _nameCtrl, 'Full Name'),
                 const SizedBox(height: 12),
-                _pfield(Icons.email_outlined, _emailCtrl, 'Email Address'),
+                _pfield(Icons.email_outlined, _emailCtrl, 'Email Address', isEnable: false, isProfileFlow: false),
                 const SizedBox(height: 12),
                 _pfield(
                   Icons.phone_outlined,
                   _mobileCtrl,
                   'Mobile Number',
                   isNum: true,
+                  isEnable: false,
+                  isProfileFlow: false
                 ),
                 const SizedBox(height: 12),
                 _pfield(
@@ -948,9 +950,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     TextEditingController ctrl,
     String label, {
     bool isNum = false,
+        bool isEnable = true,
+        bool isProfileFlow = true,
   }) => CustomTextField(
+    isEnabled: isEnable,
     isNumberKeyboard: isNum,
-    isProfileFlow: true,
+    isProfileFlow: isProfileFlow,
     prefixWidget: Icon(icon, color: AppColors.primaryColor, size: 23),
     controller: ctrl,
     labelText: label,
