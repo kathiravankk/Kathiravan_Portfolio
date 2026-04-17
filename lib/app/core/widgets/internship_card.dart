@@ -18,7 +18,8 @@ class InternshipCard extends StatelessWidget {
   final String stipendRupees;
   final String qualification;
   final String eligibility;
-  final bool isApplied;
+  final String internFees;
+  final String location;
   final double width;
   final bool isSaved;
   final List<String> skillList;
@@ -28,6 +29,8 @@ class InternshipCard extends StatelessWidget {
     this.viewFunc,
     this.duration = "0",
     this.role = "",
+    this.location = "NA",
+    this.internFees = "NA",
     this.companyName = "",
     this.internshipMode = "NA",
     this.imageUrl = "",
@@ -38,7 +41,6 @@ class InternshipCard extends StatelessWidget {
     this.eligibility = "All",
     this.skillList = const [],
     this.postedDate = "",
-    this.isApplied = false,
     this.width = double.infinity,
     this.isSaved = false,
   });
@@ -107,20 +109,43 @@ class InternshipCard extends StatelessWidget {
                         ),
                       ),
                       Row(
-                        spacing: 8,
+                        spacing: 10,
                         children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 15,
-                            color: AppColors.greyIcon,
+                          Row(
+                            spacing: 8,
+                            children: [
+                              Icon(
+                                Icons.work_history_outlined,
+                                size: 15,
+                                color: AppColors.greyIcon,
+                              ),
+                              Text(
+                                internshipMode,
+                                style: AppStyles.customTextStyle(
+                                  size: 12,
+                                  weight: FontWeight.w700,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            internshipMode,
-                            style: AppStyles.customTextStyle(
-                              size: 12,
-                              weight: FontWeight.w700,
-                              color: AppColors.primaryColor,
-                            ),
+                          Row(
+                            spacing: 8,
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 15,
+                                color: AppColors.greyIcon,
+                              ),
+                              Text(
+                                location,
+                                style: AppStyles.customTextStyle(
+                                  size: 12,
+                                  weight: FontWeight.w700,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -178,11 +203,14 @@ class InternshipCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       spacing: 5,
                       children: [
-                        Text("Education: ", style: AppStyles.customTextStyle(
-                          size: 10,
-                          weight: FontWeight.w400,
-                          color: AppColors.primaryColor,
-                        ),),
+                        Text(
+                          "Education: ",
+                          style: AppStyles.customTextStyle(
+                            size: 10,
+                            weight: FontWeight.w400,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
                         SizedBox(
                           width: 100,
                           child: Text(
@@ -204,11 +232,14 @@ class InternshipCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       spacing: 5,
                       children: [
-                        Text("Available: ",style:  AppStyles.customTextStyle(
-                          size: 10,
-                          weight: FontWeight.w400,
-                          color: AppColors.primaryColor,
-                        )),
+                        Text(
+                          "Available: ",
+                          style: AppStyles.customTextStyle(
+                            size: 10,
+                            weight: FontWeight.w400,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
                         SizedBox(
                           width: 100,
                           child: Text(
@@ -274,7 +305,7 @@ class InternshipCard extends StatelessWidget {
                     ),
                     padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                     child: Row(
-                      spacing: 6,
+                      spacing: 3,
                       children: [
                         const Icon(
                           Icons.currency_rupee,
@@ -282,7 +313,11 @@ class InternshipCard extends StatelessWidget {
                           color: AppColors.greyIcon,
                         ),
                         Text(
-                          "Stipend : $stipendRupees",
+                          stipendRupees != "N/A"
+                              ? "Stipend : $stipendRupees"
+                              : internFees != "0"
+                              ? "Fees : $internFees"
+                              : "Free Internship",
                           style: AppStyles.customTextStyle(
                             size: 10,
                             weight: FontWeight.w400,
@@ -316,7 +351,7 @@ class InternshipCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.selectedContColor,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.transparentColor)
+                      border: Border.all(color: AppColors.transparentColor),
                     ),
                     padding: EdgeInsets.all(3),
                     child: Icon(

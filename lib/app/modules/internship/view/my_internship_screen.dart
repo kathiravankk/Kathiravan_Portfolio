@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
-import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/internship_syllabus_card.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';

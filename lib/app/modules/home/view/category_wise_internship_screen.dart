@@ -150,7 +150,7 @@ class _CategoryWiseInternshipScreenState
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .internshipDescription ??
+                                .aboutInternship ??
                             "",
                         duration:
                             dashboardController
@@ -174,7 +174,7 @@ class _CategoryWiseInternshipScreenState
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .eligibilityCriteria ??
+                                .requiredSkills!.join(",") ??
                             "All",
                         skillList:
                             dashboardController
@@ -182,12 +182,6 @@ class _CategoryWiseInternshipScreenState
                                 .jobs![index]
                                 .requiredSkills ??
                             [],
-                        isApplied:
-                            dashboardController
-                                .categoryInternshipModel
-                                .jobs![index]
-                                .applied ??
-                            false,
                       ),
                     )
                   : CustomEmptyWidget(),

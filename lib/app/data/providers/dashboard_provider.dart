@@ -75,6 +75,7 @@ class DashboardProvider {
 
   Future<InternshipDetailModel> fetchInternshipViewData({
     required String internshipId,
+    required String studentId,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
@@ -82,7 +83,7 @@ class DashboardProvider {
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.get(
-        AppApiUrls.getInternshipViewData(internshipId),
+        AppApiUrls.getInternshipViewData(internshipId, studentId),
         options: Options(headers: header),
       );
       responseStatus = response.statusCode!;

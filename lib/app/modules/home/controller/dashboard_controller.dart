@@ -107,11 +107,12 @@ class DashboardController extends GetxController {
   set internshipDetailModel(InternshipDetailModel value) =>
       _internshipDetailModel.value = value;
 
-  Future<void> getInternshipViewData({required String internshipId}) async {
+  Future<void> getInternshipViewData({required String internshipId, required String studentId}) async {
     try {
       internshipDetailLoading = true;
       internshipDetailModel = await dashboardProvider!.fetchInternshipViewData(
         internshipId: internshipId,
+        studentId: studentId
       );
       internshipDetailLoading = false;
     } catch (err) {

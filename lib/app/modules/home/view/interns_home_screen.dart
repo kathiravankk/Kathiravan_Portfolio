@@ -399,7 +399,6 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   role: recommentedList.roleType ?? "",
                   postedDate: recommentedList.createdAt ?? "",
                   skillList: recommentedList.requiredSkills ?? [],
-                  isApplied: recommentedList.applied ?? false,
                 );
               },
             )

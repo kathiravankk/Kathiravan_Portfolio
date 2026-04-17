@@ -84,6 +84,9 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                   itemBuilder: (context, index) {
                     final item = appliedList![index];
                     return AppliesInternshipCard(
+                      internshipType: item.jobData != null
+                          ? item.jobType ?? "NA"
+                          : "NA",
                       viewFunc: () {
                         AppFunctions.navigateScreen(
                           context,
@@ -103,7 +106,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                                     item.jobData!.internshipDuration != null
                                 ? item.jobData!.internshipDuration
                                 : "${item.jobData!.days} Days"
-                          : "Nuill",
+                          : "N/A",
                       // companyDescription: item.jobData != null
                       //     ? item.jobData!.aboutCompany
                       //     : "",
@@ -119,4 +122,6 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
       ),
     );
   }
+
+
 }

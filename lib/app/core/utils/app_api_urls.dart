@@ -41,8 +41,8 @@ class AppApiUrls {
   static String getCategoryInternship(String categoryId) =>
       "${baseUrl}getjob/industry/$categoryId";
 
-  static String getInternshipViewData(String internshipId) =>
-      "${baseUrl}jobpost/jobbyid/$internshipId";
+  static String getInternshipViewData(String internshipId, String studentId) =>
+      "${baseUrl}jobpost/jobbyid/$internshipId?studentId=$studentId";
 
   static String getAppliedInternship(String studentId) =>
       "${baseUrl}getjob/appliedjob/$studentId";

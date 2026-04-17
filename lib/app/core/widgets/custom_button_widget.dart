@@ -43,7 +43,7 @@ class CustomButtonWidget extends StatelessWidget {
           maximumSize: WidgetStatePropertyAll(Size(double.infinity, 40)),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: disable ? AppColors.transparentColor :AppColors.primaryColor),
+              side: BorderSide(width: 1, color: disable ? AppColors.transparentColor :bgColor),
               borderRadius: BorderRadius.all(Radius.circular(25)),
             ),
           ),
