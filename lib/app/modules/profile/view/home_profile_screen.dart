@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
@@ -227,274 +228,36 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     await webViewController!.loadHtmlString(html);
   }
 
-  // ─── Get fully rendered HTML from WebView ───────────────────────────────────
-  Future<String?> _getRenderedHtml() async {
-    try {
-      final result = await webViewController!.runJavaScriptReturningResult(
-        "document.body.innerHTML",
-      );
-      String html = result.toString();
-      if (html.startsWith('"') && html.endsWith('"')) {
-        html = json.decode(html);
-      }
-      return html;
-    } catch (e) {
-      debugPrint("Error getting HTML: $e");
-      return null;
-    }
-  }
-
-  // ─── Convert HTML → Uint8List PDF bytes ─────────────────────────────────────
-  Future<Uint8List> _htmlToPdfBytes(String html) async {
-    // Printing.convertHtml returns Uint8List directly
-    final Uint8List bytes = await Printing.convertHtml(
-      format: const PdfPageFormat(
-        210 * PdfPageFormat.mm,
-        297 * PdfPageFormat.mm,
-        marginAll: 0,
-      ),
-      html: html,
-    );
-    return bytes;
-  }
-
-  // ─── Show editable filename dialog ──────────────────────────────────────────
-  Future<String?> _askFileName() async {
-    final firstName = (resumeData!.personalInfo?.name ?? 'resume')
-        .split(' ')
-        .first;
-    final defaultName = "${firstName}_resume";
-    final controller = TextEditingController(text: defaultName);
-
-    return await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.appBgColor_2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          "Save Resume As",
-          style: AppStyles.customTextStyle(
-            color: AppColors.whiteColor,
-            size: 14,
-            weight: FontWeight.w500,
-          ),
-        ),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          style: AppStyles.customTextStyle(
-            fontFamily: "Roboto",
-            color: AppColors.whiteColor,
-            size: 14,
-            weight: FontWeight.w500,
-          ),
-          decoration: InputDecoration(
-            hintText: "Enter file name",
-            hintStyle: AppStyles.customTextStyle(
-              fontFamily: "Roboto",
-              color: AppColors.greyColor,
-              size: 12,
-              weight: FontWeight.w200,
-            ),
-            suffixText: ".pdf",
-            suffixStyle: AppStyles.customTextStyle(
-              fontFamily: "Roboto",
-              color: AppColors.whiteColor,
-              size: 14,
-              weight: FontWeight.w500,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(color: AppColors.fieldBorderColor),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: const BorderSide(color: AppColors.primaryColor),
-            ),
-            filled: true,
-            fillColor: AppColors.fieldBgColor,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              "Cancel",
-              style: AppStyles.customTextStyle(
-                fontFamily: "Roboto",
-                color: AppColors.greyColor,
-                size: 14,
-                weight: FontWeight.w200,
-              ),
-            ),
-          ),
-          CustomButtonWidget(
-            height: 35,
-            width: 100,
-            buttonFunction: () {
-              final name = controller.text.trim();
-              if (name.isNotEmpty) Navigator.pop(ctx, name);
-            },
-            buttonText: "Save",
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─── Request storage permission based on Android version ────────────────────
-  Future<bool> _requestStoragePermission() async {
-    if (!Platform.isAndroid) return true;
-
-    // Get Android SDK version
-    final androidInfo = await _getAndroidSdkVersion();
-
-    if (androidInfo >= 33) {
-      // Android 13+ — no storage permission needed for Downloads via File API
-      // WRITE_EXTERNAL_STORAGE is ignored on 33+, but we can still write to
-      // /storage/emulated/0/Download directly without permission
-      return true;
-    } else if (androidInfo >= 29) {
-      // Android 10–12 — WRITE_EXTERNAL_STORAGE is restricted but
-      // /storage/emulated/0/Download is still accessible without it
-      return true;
-    } else {
-      // Android 9 and below — need WRITE_EXTERNAL_STORAGE
-      final status = await Permission.storage.request();
-      return status.isGranted;
-    }
-  }
-
-  /// Returns Android SDK int version, defaults to 33 if unavailable
-  Future<int> _getAndroidSdkVersion() async {
-    try {
-      // Use platform channel result from device_info_plus if available,
-      // otherwise fall back to a safe default (treat as modern Android)
-      return 33;
-    } catch (_) {
-      return 33;
-    }
-  }
-
-  // ─── Save Uint8List PDF to Downloads folder ──────────────────────────────────
-  Future<File?> _savePdfToDownloads(Uint8List bytes, String fileName) async {
-    try {
-      Directory downloadDir;
-
-      if (Platform.isAndroid) {
-        // Standard public Downloads directory — works on Android 9+
-        // without needing WRITE_EXTERNAL_STORAGE on Android 10+
-        const downloadsPath = '/storage/emulated/0/Download';
-        downloadDir = Directory(downloadsPath);
-
-        if (!await downloadDir.exists()) {
-          // Fallback via getExternalStorageDirectory
-          final extDir = await getExternalStorageDirectory();
-          if (extDir != null) {
-            final parts = extDir.path.split('Android');
-            downloadDir = Directory('${parts.first}Download');
-          }
-        }
-      } else {
-        // iOS: save to app Documents (visible in Files app)
-        downloadDir = await getApplicationDocumentsDirectory();
-      }
-
-      if (!await downloadDir.exists()) {
-        await downloadDir.create(recursive: true);
-      }
-
-      final filePath = '${downloadDir.path}/$fileName.pdf';
-      final file = File(filePath);
-      await file.writeAsBytes(bytes); // writeAsBytes accepts Uint8List ✅
-      return file;
-    } catch (e) {
-      debugPrint("Save error: $e");
-      return null;
-    }
-  }
-
-  // ─── Handle Download ──────────────────────────────────────────────────────────
+// ── Replace _handleDownload ────────────────────────────────────────────────────
   Future<void> _handleDownload() async {
-    final fileName = await _askFileName();
-    if (fileName == null) return; // user cancelled
-
+    if (webViewController == null) return;
     setState(() => isLoading = true);
-
     try {
-      final hasPermission = await _requestStoragePermission();
-      if (!hasPermission) {
-        AppFunctions.showToast(
-          message: "❌ Storage permission denied. Please allow in Settings.",
-          isError: true,
-        );
-        return;
-      }
+      final firstName =
+          (resumeData?.personalInfo?.name ?? 'resume').split(' ').first;
 
-      final html = await _getRenderedHtml();
-      if (html == null) {
-        AppFunctions.showToast(
-          message: "❌ Failed to capture resume content",
-          isError: true,
-        );
-        return;
-      }
-
-      final Uint8List pdfBytes = await _htmlToPdfBytes(html);
-      final file = await _savePdfToDownloads(pdfBytes, fileName);
-
-      if (file != null) {
-        AppFunctions.showToast(
-          message: "✅ Saved to Downloads: $fileName.pdf",
-          isError: false,
-        );
-      } else {
-        AppFunctions.showToast(
-          message: "❌ Download failed. Try again.",
-          isError: true,
-        );
-      }
-    } catch (e) {
-      debugPrint("Download error: $e");
-      AppFunctions.showToast(message: "❌ Download failed: $e", isError: true);
+      await ResumeFileUtils.handleDownload(
+        webViewController: webViewController!,
+        context: context,
+        defaultFileName: "${firstName}_resume",
+      );
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
   }
 
-  // ─── Handle Share ─────────────────────────────────────────────────────────────
+// ── Replace _handleShare ───────────────────────────────────────────────────────
   Future<void> _handleShare() async {
+    if (webViewController == null) return;
     setState(() => isLoading = true);
-
     try {
-      final html = await _getRenderedHtml();
-      if (html == null) {
-        AppFunctions.showToast(
-          message: "❌ Failed to capture resume content",
-          isError: true,
-        );
-        return;
-      }
+      final firstName =
+          (resumeData?.personalInfo?.name ?? 'resume').split(' ').first;
 
-      final Uint8List pdfBytes = await _htmlToPdfBytes(html);
-
-      // Save to temp dir for sharing (no permissions needed for temp dir)
-      final tempDir = await getTemporaryDirectory();
-      final firstName = (resumeData!.personalInfo?.name ?? 'resume')
-          .split(' ')
-          .first;
-      final name = "${firstName}_resume";
-      final tempFile = File('${tempDir.path}/$name.pdf');
-      await tempFile.writeAsBytes(pdfBytes);
-
-      await Share.shareXFiles(
-        [XFile(tempFile.path, mimeType: 'application/pdf')],
-        subject: "$name.pdf",
-        text: "Check out my resume!",
+      await ResumeFileUtils.handleShare(
+        webViewController: webViewController!,
+        defaultFileName: "${firstName}_resume",
       );
-    } catch (e) {
-      debugPrint("Share error: $e");
-      AppFunctions.showToast(message: "❌ Share failed", isError: true);
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
@@ -1179,6 +942,37 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       await Share.shareXFiles([XFile(file.path)]);
     } catch (e) {
       AppFunctions.showToast(message: "Share failed", isError: true);
+    }
+  }
+
+  Future<bool> _requestStoragePermission() async {
+    if (!Platform.isAndroid) return true;
+
+    // Get Android SDK version
+    final androidInfo = await _getAndroidSdkVersion();
+
+    if (androidInfo >= 33) {
+      // Android 13+ — no storage permission needed for Downloads via File API
+      // WRITE_EXTERNAL_STORAGE is ignored on 33+, but we can still write to
+      // /storage/emulated/0/Download directly without permission
+      return true;
+    } else if (androidInfo >= 29) {
+      // Android 10–12 — WRITE_EXTERNAL_STORAGE is restricted but
+      // /storage/emulated/0/Download is still accessible without it
+      return true;
+    } else {
+      // Android 9 and below — need WRITE_EXTERNAL_STORAGE
+      final status = await Permission.storage.request();
+      return status.isGranted;
+    }
+  }
+  Future<int> _getAndroidSdkVersion() async {
+    try {
+      // Use platform channel result from device_info_plus if available,
+      // otherwise fall back to a safe default (treat as modern Android)
+      return 33;
+    } catch (_) {
+      return 33;
     }
   }
 

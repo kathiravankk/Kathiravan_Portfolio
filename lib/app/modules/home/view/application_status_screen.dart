@@ -289,7 +289,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                       color: AppColors.failTextColor,
                                       size: 20,
                                     ),
-                              title: internController.paymentStatusModel.message!,
+                              title: internController.paymentStatusModel.message ?? "NA",
                               showLine: false,
                             ),
                           ),
