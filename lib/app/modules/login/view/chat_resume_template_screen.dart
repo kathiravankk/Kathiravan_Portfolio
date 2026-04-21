@@ -9,6 +9,7 @@ import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 import '../../../core/utils/resume_file_utils.dart'; // ← add this import
@@ -27,6 +28,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   bool? isRegisterFlow;
 
   final RegisterController registerController = Get.find<RegisterController>();
+  final ProfileController profileController = Get.find<ProfileController>();
 
   int currentTemplateIndex = 0;
   int? templateId;
@@ -47,6 +49,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   );
 
   String studentId = "";
+  bool isTemplateLiked = false;
 
   @override
   void initState() {
@@ -216,7 +219,12 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                               ),
                             )
                           : ProfileWidgets.creditContainer(
-                              viewFunc: () {},
+                              viewFunc: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.buyCreditsScreen,
+                                );
+                              },
                               creditCount:
                                   registerController
                                       .creditDataModel
@@ -262,10 +270,23 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                       children: [
                         // Heart
                         IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            CupertinoIcons.heart,
-                            color: AppColors.whiteColor,
+                          onPressed: () async {
+                            setState(() {
+                              isTemplateLiked = !isTemplateLiked;
+                            });
+
+                            await templateLikeDislike(
+                              templateId: template.id, // ✅ important
+                              isLike: isTemplateLiked,
+                            );
+                          },
+                          icon: Icon(
+                            isTemplateLiked
+                                ? CupertinoIcons.heart_fill
+                                : CupertinoIcons.heart,
+                            color: isTemplateLiked
+                                ? Colors.red
+                                : AppColors.whiteColor,
                             size: 20,
                           ),
                         ),
@@ -410,6 +431,35 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     );
   }
 
+  Future<void> templateLikeDislike({
+    required int templateId,
+    required bool isLike,
+  }) async {
+    try {
+      await profileController.aiBannerLike(
+        likeData: {
+          "studentId": studentId,
+          "templates": {"templateId": templateId, "liked": isLike},
+        },
+      );
+
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        AppFunctions.showToast(
+          message: isLike ? "❤️ Template Liked!" : "💔 Template Unliked!",
+        );
+      } else {
+        AppFunctions.showToast(
+          message: "Something went wrong!, Try again later!",
+        );
+      }
+    } catch (e) {
+      AppFunctions.showToast(
+        message: "Something went wrong!, Try again later!",
+      );
+    }
+  }
+
   Future<void> updateResumeFunc(ResumeTemplateModel template) async {
     debugPrint(registerController.studentRegisterModel.studentToken ?? "");
     final studentId = await LocalStorageService.getStudentId();
@@ -436,8 +486,14 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
           );
         }
       } else {
-        await getProfileData();
-        Get.close(2);
+        // await getProfileData();
+        // Get.close(2);
+        if (mounted) {
+          AppFunctions.navigateInitialScreen(
+            context,
+            AppRoutes.dashBoardScreen,
+          );
+        }
       }
     } else {
       AppFunctions.showToast(

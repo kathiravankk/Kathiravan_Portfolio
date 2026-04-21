@@ -87,7 +87,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           profileController.getResponseCode() == 201) {
         if (profileController.resDpModel.status!.status == "error") {
           AppFunctions.showToast(
-            message: profileController.resDpModel.status!.message ??
+            message:
+                profileController.resDpModel.status!.message ??
                 "Failed to Generate your AI Banner",
           );
         } else {
@@ -100,7 +101,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           await registerController.updateStudentProfileData(
             updateData: {
               "student_banner":
-              profileController.resDpModel.status!.imageUrl ?? "",
+                  profileController.resDpModel.status!.imageUrl ?? "",
             },
           );
 
@@ -228,13 +229,14 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     await webViewController!.loadHtmlString(html);
   }
 
-// ── Replace _handleDownload ────────────────────────────────────────────────────
+  // ── Replace _handleDownload ────────────────────────────────────────────────────
   Future<void> _handleDownload() async {
     if (webViewController == null) return;
     setState(() => isLoading = true);
     try {
-      final firstName =
-          (resumeData?.personalInfo?.name ?? 'resume').split(' ').first;
+      final firstName = (resumeData?.personalInfo?.name ?? 'resume')
+          .split(' ')
+          .first;
 
       await ResumeFileUtils.handleDownload(
         webViewController: webViewController!,
@@ -246,13 +248,14 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     }
   }
 
-// ── Replace _handleShare ───────────────────────────────────────────────────────
+  // ── Replace _handleShare ───────────────────────────────────────────────────────
   Future<void> _handleShare() async {
     if (webViewController == null) return;
     setState(() => isLoading = true);
     try {
-      final firstName =
-          (resumeData?.personalInfo?.name ?? 'resume').split(' ').first;
+      final firstName = (resumeData?.personalInfo?.name ?? 'resume')
+          .split(' ')
+          .first;
 
       await ResumeFileUtils.handleShare(
         webViewController: webViewController!,
@@ -382,7 +385,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                           .isNotEmpty
                                   ? Stack(
                                       children: [
-                                        profileController.waterMarkLoading
+                                        profileController.waterMarkLoading || profileController.aiBannerLikeLoading
                                             ? Center(
                                                 child:
                                                     CupertinoActivityIndicator(
@@ -809,7 +812,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   }
 
   Widget likeShareContainer({bool isBanner = false}) {
-    final bannerUrl = profileController.profileDataModel.studentBanner ?? "";
+    final bannerUrl =
+        profileController.profileDataModel.studentBanner ?? "";
 
     return Container(
       decoration: BoxDecoration(
@@ -819,11 +823,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       ),
       padding: const EdgeInsets.all(5),
       child: Row(
-        spacing: 5,
         children: [
+          /// 👍 LIKE BUTTON
           iconWidget(
             icon: isLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined,
-            onTap: () {
+            onTap: () async {
               if (isBanner) {
                 AppFunctions.showToast(
                   message: "Generate your AI Banner First!",
@@ -831,28 +835,25 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                 );
                 return;
               }
+
+              final previousState = isLiked;
+
               setState(() {
                 isLiked = !isLiked;
-                if (isLiked) isDisliked = false;
               });
+
+              final success = await likeDisLikeFunc(isLike: isLiked);
+
+              /// 🔥 rollback if API fails
+              if (!success) {
+                setState(() {
+                  isLiked = previousState;
+                });
+              }
             },
           ),
-          // iconWidget(
-          //   icon: isDisliked ? Icons.thumb_down : Icons.thumb_down_alt_outlined,
-          //   onTap: () {
-          //     if (isBanner) {
-          //       AppFunctions.showToast(
-          //         message: "Generate your AI Banner First!",
-          //         isError: true,
-          //       );
-          //       return;
-          //     }
-          //     setState(() {
-          //       isDisliked = !isDisliked;
-          //       if (isDisliked) isLiked = false;
-          //     });
-          //   },
-          // ),
+
+          /// 📤 SHARE
           iconWidget(
             icon: Icons.share_outlined,
             onTap: () async {
@@ -866,6 +867,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
               await _shareBannerImage(bannerUrl);
             },
           ),
+
+          /// ⬇ DOWNLOAD
           iconWidget(
             icon: Icons.download,
             onTap: () async {
@@ -879,19 +882,17 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
               await _downloadBannerImage(bannerUrl);
             },
           ),
-          Visibility(
-            visible: bannerUrl.isNotEmpty,
-            child: iconWidget(
+
+          /// 🔄 REGENERATE
+          if (bannerUrl.isNotEmpty)
+            iconWidget(
               icon: Icons.refresh,
               onTap: () async {
                 AppFunctions.showAppAlert(
                   context: context,
-                  content:
-                      "✨ You've already used your free AI banner.\n\n🔁 Regenerating will cost 25 credits.\n\nProceed?",
                   title: "Regenerate AI Banner",
-                  onCancel: () {
-                    Get.back();
-                  },
+                  content:
+                  "✨ You've already used your free AI banner.\n\n🔁 Regenerating will cost 25 credits.\n\nProceed?",
                   onConfirm: () async {
                     await generateAiBanner();
                   },
@@ -900,20 +901,17 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                 );
               },
             ),
-          ),
-          Visibility(
-            visible: bannerUrl.isNotEmpty && !waterMarkValue!,
-            child: iconWidget(
+
+          /// ✏ REMOVE WATERMARK
+          if (bannerUrl.isNotEmpty && !(waterMarkValue ?? false))
+            iconWidget(
               icon: CupertinoIcons.pencil_outline,
               onTap: () async {
                 AppFunctions.showAppAlert(
                   context: context,
-                  content:
-                      "✨ Remove the watermark from your image.\n\n🔓 This action will cost 20 credits.\n\nProceed?",
                   title: "Remove Watermark",
-                  onCancel: () {
-                    Get.back();
-                  },
+                  content:
+                  "✨ Remove the watermark from your image.\n\n🔓 This action will cost 20 credits.\n\nProceed?",
                   onConfirm: () async {
                     await removeWaterMark();
                   },
@@ -922,10 +920,43 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                 );
               },
             ),
-          ),
         ],
       ),
     );
+  }
+
+  Future<bool> likeDisLikeFunc({required bool isLike}) async {
+    try {
+      await profileController.aiBannerLike(
+        likeData: {
+          "studentId": studentId,
+          "resdb": isLike,
+        },
+      );
+
+      final code = profileController.getResponseCode();
+
+      if (code == 200 || code == 201) {
+        AppFunctions.showToast(
+          message: isLike
+              ? "You've liked this AI banner!"
+              : "Like removed this AI banner!",
+        );
+        return true;
+      } else {
+        AppFunctions.showToast(
+          message: "Something went wrong!",
+          isError: true,
+        );
+        return false;
+      }
+    } catch (e) {
+      AppFunctions.showToast(
+        message: "Something went wrong!",
+        isError: true,
+      );
+      return false;
+    }
   }
 
   Future<void> _shareBannerImage(String imageUrl) async {
@@ -966,6 +997,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       return status.isGranted;
     }
   }
+
   Future<int> _getAndroidSdkVersion() async {
     try {
       // Use platform channel result from device_info_plus if available,

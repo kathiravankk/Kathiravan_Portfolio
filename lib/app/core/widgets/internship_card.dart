@@ -22,6 +22,7 @@ class InternshipCard extends StatelessWidget {
   final String location;
   final double width;
   final bool isSaved;
+  final bool isCategoryFlow;
   final List<String> skillList;
 
   const InternshipCard({
@@ -43,6 +44,7 @@ class InternshipCard extends StatelessWidget {
     this.postedDate = "",
     this.width = double.infinity,
     this.isSaved = false,
+    this.isCategoryFlow = false,
   });
 
   @override
@@ -151,44 +153,47 @@ class InternshipCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.navBarColor,
-                        width: 0.5,
+                  Visibility(
+                    visible: !isCategoryFlow,
+                    child: Container(
+                      padding: EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.navBarColor,
+                          width: 0.5,
+                        ),
                       ),
-                    ),
-                    child: ClipOval(
-                      child: Image.network(
-                        imageUrl,
-                        height: 30,
-                        width: 30,
-                        fit: BoxFit.cover,
-                        //color: AppColors.whiteColor,
-                        errorBuilder: (context, error, stackTrace) =>
-                            CircleAvatar(
-                              backgroundColor: AppColors.whiteColor,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.photo_outlined,
-                                    color: AppColors.lightHintText,
-                                    size: 30,
-                                  ),
-                                  Text(
-                                    "Error!",
-                                    style: AppStyles.customTextStyle(
-                                      size: 5,
-                                      weight: FontWeight.w400,
-                                      color: AppColors.failTextColor,
+                      child: ClipOval(
+                        child: Image.network(
+                          imageUrl,
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.cover,
+                          //color: AppColors.whiteColor,
+                          errorBuilder: (context, error, stackTrace) =>
+                              CircleAvatar(
+                                backgroundColor: AppColors.whiteColor,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.photo_outlined,
+                                      color: AppColors.lightHintText,
+                                      size: 30,
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      "Error!",
+                                      style: AppStyles.customTextStyle(
+                                        size: 5,
+                                        weight: FontWeight.w400,
+                                        color: AppColors.failTextColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                        ),
                       ),
                     ),
                   ),

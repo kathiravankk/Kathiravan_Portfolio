@@ -85,6 +85,7 @@ class AppApiUrls {
   static String getFilterOption = "${baseUrl}jobpost/getvalue";
   static String generateResDp = "${baseUrl}generate-banner";
   static String removeWaterMark = "${baseUrl}removewater";
+  static String bannerLike = "${baseUrl}studentlike";
 
   // INTERNSHIP FLOW
 

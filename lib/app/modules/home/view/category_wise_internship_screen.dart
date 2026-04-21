@@ -89,6 +89,7 @@ class _CategoryWiseInternshipScreenState
                           .jobs!
                           .length,
                       itemBuilder: (context, index) => InternshipCard(
+                        isCategoryFlow: true,
                         viewFunc: () {
                           AppFunctions.navigateScreen(
                             context,

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
+import 'package:internsharks/app/data/models/home/banner_like_model.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/remove_watermark_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
-
 import '../models/account/common_post_model.dart';
 
 class ProfileProvider {
@@ -264,6 +264,27 @@ class ProfileProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return RemoveWatermarkModel.fromJson(err.response!.data);
+    }
+  }
+
+  // BANNER LIKE DISLIKE
+
+  Future<BannerLikeModel> aiBannerLike({required Map<String, dynamic> likeData}) async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+          AppApiUrls.bannerLike,
+          options: Options(headers: header),
+          data: likeData
+      );
+      responseStatus = response.statusCode!;
+      return BannerLikeModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return BannerLikeModel.fromJson(err.response!.data);
     }
   }
 }
