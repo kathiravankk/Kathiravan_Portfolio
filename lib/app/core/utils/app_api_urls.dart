@@ -41,8 +41,8 @@ class AppApiUrls {
   static String getCategoryInternship(String categoryId) =>
       "${baseUrl}getjob/industry/$categoryId";
 
-  static String getInternshipViewData(String internshipId) =>
-      "${baseUrl}jobpost/jobbyid/$internshipId";
+  static String getInternshipViewData(String internshipId, String studentId) =>
+      "${baseUrl}jobpost/jobbyid/$internshipId?studentId=$studentId";
 
   static String getAppliedInternship(String studentId) =>
       "${baseUrl}getjob/appliedjob/$studentId";
@@ -52,6 +52,8 @@ class AppApiUrls {
       "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
   static String updateChatResume = "${baseUrl}updatemessage";
+
+  // BUY CREDITS
   static String getCreditPlans = "${baseUrl}plans";
   static String createCreditOrder = "${baseUrl}student/create-order";
   static String verifyCreditOrder = "${baseUrl}student/verify";
@@ -83,6 +85,7 @@ class AppApiUrls {
   static String getFilterOption = "${baseUrl}jobpost/getvalue";
   static String generateResDp = "${baseUrl}generate-banner";
   static String removeWaterMark = "${baseUrl}removewater";
+  static String bannerLike = "${baseUrl}studentlike";
 
   // INTERNSHIP FLOW
 
@@ -97,4 +100,11 @@ class AppApiUrls {
   static String validateMcqAnswer = "${baseUrl}checktestscore";
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
+
+  // INTERNSHIP PAYMENT
+
+  static String paymentCheck = "${baseUrl}checkinternpayment";
+  static String createPayment = "${baseUrl}createinternshipfee";
+  static String verifyPayment = "${baseUrl}verifyinternshipfee";
+
 }

@@ -98,48 +98,67 @@ class _McqTestScreenState extends State<McqTestScreen> {
 
   Future<void> submitTest() async {
     stopTimer();
-    try {
-      /// ✅ show loader first
-      AiLoadingWidget.show(context, type: LoadingDialogType.mcqValidation);
 
-      /// ✅ allow one frame to render loader
+    bool isLoaderVisible = false;
+
+    try {
+      AiLoadingWidget.show(context, type: LoadingDialogType.mcqValidation);
+      isLoaderVisible = true;
+
       await Future.delayed(const Duration(milliseconds: 100));
+
       Map<String, dynamic> answerData = {
         "answers": answers,
         "questions": allQuestions,
       };
-      debugPrint(answerData.toString());
+
       await internController.validateMcqAnswer(answerData: answerData);
+
       if (internController.getResponseCode() == 200 ||
           internController.getResponseCode() == 201 ||
           internController.testResultModel.success == true) {
+
         Map<String, dynamic> testData = {
           "jobId": jobId,
-          //"testresult": internController.testResultModel.testResult!.toJson(),
           "testresult": {
             "correct_answer":
-                internController.testResultModel.testResult!.correctAnswer,
-            "score": internController.testResultModel.testResult!.score,
-            "stars": internController.testResultModel.testResult!.stars,
+            internController.testResultModel.testResult?.correctAnswer,
+            "score":
+            internController.testResultModel.testResult?.score,
+            "stars":
+            internController.testResultModel.testResult?.stars,
           },
         };
-        debugPrint(testData.toString(), wrapWidth: 1024);
 
+        /// ✅ HIDE loader BEFORE next async/navigation
+        if (isLoaderVisible) {
+          AiLoadingWidget.hide(context);
+          isLoaderVisible = false;
+        }
+
+        /// ⚠️ IMPORTANT: if this method navigates → loader must already be hidden
         await saveTestResult(testData: testData);
-        // AppFunctions.showToast(message: "Your Test Submitted Successfully!");
+
       } else {
-        AppFunctions.apiErrorHandling(
-          internController.getResponseCode(),
-          "Something went wrong!, Try again later!",
-        );
+        throw Exception("Validation failed");
       }
+
     } catch (error) {
+      if (isLoaderVisible) {
+        AiLoadingWidget.hide(context);
+        isLoaderVisible = false;
+      }
+
       AppFunctions.apiErrorHandling(
         internController.getResponseCode(),
         "Something went wrong!, Try again later!",
       );
+
     } finally {
-      AiLoadingWidget.hide(context);
+      /// safety fallback (won’t double hide)
+      if (isLoaderVisible) {
+        AiLoadingWidget.hide(context);
+      }
     }
   }
 

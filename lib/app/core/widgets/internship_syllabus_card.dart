@@ -9,12 +9,13 @@ class InternSyllabusCard extends StatelessWidget {
   final int totalWeeks;
   final int totalTopics;
   final VoidCallback viewFunc;
+  final bool isLoading;
 
   const InternSyllabusCard({
     super.key,
     this.title = "",
     this.subTitle = "",
-    this.totalWeeks = 0, required this.viewFunc,  this.totalTopics = 0,
+    this.totalWeeks = 0, required this.viewFunc,  this.totalTopics = 0,this.isLoading = false
   });
 
   @override
@@ -97,6 +98,7 @@ class InternSyllabusCard extends StatelessWidget {
             ],
           ),
           CustomButtonWidget(
+            isLoading: isLoading,
             height: 40,
             buttonFunction: viewFunc,
             buttonText: "Start Now",

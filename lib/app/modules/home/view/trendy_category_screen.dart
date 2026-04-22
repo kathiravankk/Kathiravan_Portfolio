@@ -57,7 +57,8 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
               "",
           categoryData:
               dashboardController.categoryListModel.categoryList![index],
-              categoryCount: dashboardController.categoryListModel.categoryList![index].count,
+          categoryCount:
+              dashboardController.categoryListModel.categoryList![index].count,
         ),
       ),
     );
@@ -88,17 +89,29 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
           spacing: 15,
           children: [
             Container(
+              height: 40,
+              width: 40,
               decoration: BoxDecoration(
                 color: AppColors.lightWhiteCont,
                 shape: BoxShape.circle,
               ),
               padding: EdgeInsets.all(10),
-              child: Image.asset(
-                AppFunctions.getCategoryImage(service: categoryName),
-                height: 40,
-                width: 40,
-                color: AppColors.blackColor,
+              child: Text(
+                textAlign: TextAlign.center,
+                categoryCount.toString(),
+                style: AppStyles.customTextStyle(
+                  size: 20,
+                  color: AppColors.blackColor,
+                  weight: FontWeight.w700,
+                ),
               ),
+
+              // Image.asset(
+              //   AppFunctions.getCategoryImage(service: categoryName),
+              //   height: 40,
+              //   width: 40,
+              //   color: AppColors.blackColor,
+              // ),
             ),
             Text(
               categoryName,

@@ -48,7 +48,10 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     // final prefs = await SharedPreferences.getInstance();
     // studentId = prefs.getString('student_id');
     studentId = await LocalStorageService.getStudentId();
-    await dashboardController.getInternshipViewData(internshipId: internshipId);
+    await dashboardController.getInternshipViewData(
+      internshipId: internshipId,
+      studentId: studentId!,
+    );
     if (dashboardController.getResponseCode() == 200 ||
         dashboardController.getResponseCode() == 201) {
       internship = dashboardController.internshipDetailModel.internshipData!;
@@ -62,58 +65,68 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Scaffold(
-        backgroundColor: AppColors.blackColor,
-        floatingActionButton: Visibility(
-          visible: !isStatusFlow,
-          child: CustomButtonWidget(
-            width: 350,
-            height: 40,
-            isLoading: dashboardController.internshipApplyLoading,
-          /*  buttonFunction: () async {
+      () =>
+          dashboardController.internshipDetailLoading ||
+              dashboardController.reviewDataLoading
+          ? Center(
+              child: CupertinoActivityIndicator(
+                color: AppColors.secondaryColor,
+              ),
+            )
+          : Scaffold(
+              backgroundColor: AppColors.blackColor,
+              floatingActionButton: Visibility(
+                visible: !isStatusFlow,
+                child: CustomButtonWidget(
+                  disable: internship!.status!.isNotEmpty,
+                  width: 350,
+                  height: 40,
+                  isLoading: dashboardController.internshipApplyLoading,
+                  /*  buttonFunction: () async {
               await LocalStorageService.getVerifiedValue() == true
                   ? await internshipApplyFunc()
                   : showKycVerifyAlertDialog();
               //
               // await internshipApplyFunc();
             },*/
-            buttonFunction: () async {
-              bool isVerified = await LocalStorageService.getVerifiedValue() ?? false;
+                  buttonFunction: () async {
+                    bool isVerified =
+                        await LocalStorageService.getVerifiedValue() ?? false;
 
-              if (!isVerified) {
-                showKycVerifyAlertDialog();
-              } else {
-                var banner = profileController.profileDataModel.studentBanner;
-                bool hasBanner = banner != null && banner.isNotEmpty;
-                if (!hasBanner) {
-                  showAiBannerRequirementDialog();
-                } else {
-                  await internshipApplyFunc();
-                }
-              }
-            },
+                    if (!isVerified) {
+                      showKycVerifyAlertDialog();
+                    } else {
+                      var banner =
+                          profileController.profileDataModel.studentBanner;
+                      bool hasBanner = banner != null && banner.isNotEmpty;
+                      if (!hasBanner) {
+                        showAiBannerRequirementDialog();
+                      } else {
+                        await internshipApplyFunc();
+                      }
+                    }
+                  },
 
-            buttonText: "Apply Now (10 Credits)",
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        appBar: AppBar(
-          backgroundColor: AppColors.blackColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-        ),
-        body:
-            dashboardController.internshipDetailLoading ||
-                dashboardController.reviewDataLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
+                  buttonText: internship!.status!.isNotEmpty
+                      ? "Applied"
+                      : "Apply Now (10 Credits)",
                 ),
-              )
-            : Padding(
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              appBar: AppBar(
+                backgroundColor: AppColors.blackColor,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    size: 25,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+              body: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   spacing: 15,
@@ -177,7 +190,11 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                                 color: AppColors.greyIcon,
                               ),
                               Text(
-                                "Duration : ${internship!.internshipDuration ?? "NA"}",
+                                "Duration : ${internship != null
+                                    ? internship!.internshipDuration!.isNotEmpty && internship!.internshipDuration != null
+                                          ? "${internship!.internshipDuration} Months"
+                                          : "${internship!.days} Days"
+                                    : "N/A"}",
                                 style: AppStyles.customTextStyle(
                                   size: 10,
                                   weight: FontWeight.w400,
@@ -204,7 +221,12 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                                 color: AppColors.greyIcon,
                               ),
                               Text(
-                                "Stipend : ${internship!.internshipStipend ?? "NA"}",
+                                internship!.internshipStipend != "N/A"
+                                    ? "Stipend : ${internship!.internshipStipend}"
+                                    : internship!.fee != "0"
+                                    ? "Fees : ${internship!.fee}"
+                                    : "Free Internship"
+                                          "Stipend : ${internship!.internshipStipend ?? "NA"}",
                                 style: AppStyles.customTextStyle(
                                   size: 10,
                                   weight: FontWeight.w400,
@@ -236,7 +258,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                   ],
                 ),
               ),
-      ),
+            ),
     );
   }
 
@@ -288,7 +310,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           ),
         ),
         Text(
-          internship!.internshipDescription ?? "",
+          internship!.aboutInternship ?? "",
           style: AppStyles.customTextStyle(
             size: 14,
             weight: FontWeight.w400,
@@ -378,7 +400,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           ),
         ),
         Text(
-          internship!.eligibilityCriteria ?? "All",
+          internship!.requiredSkills!.join(",") ?? "All",
           style: AppStyles.customTextStyle(
             size: 14,
             weight: FontWeight.w400,

@@ -61,14 +61,14 @@ class _RegisterResumeUploadScreenState
   }
 
   Future<void> extractResumeFunc(String filePath) async {
+    bool alreadyClosed = false;
+
     try {
-      /// ✅ show loader first
       AiLoadingWidget.show(
         context,
         type: LoadingDialogType.resumeExtraction,
       );
 
-      /// ✅ give Flutter one frame to render loader
       await Future.delayed(const Duration(milliseconds: 100));
 
       await registerController.extractResumeData(filePath);
@@ -83,37 +83,32 @@ class _RegisterResumeUploadScreenState
           fileName: fileName!,
         );
 
+        /// ✅ close loader safely
+        if (Get.isDialogOpen ?? false) {
+          AiLoadingWidget.hide(context);
+          alreadyClosed = true;
+        }
+
         AppFunctions.showToast(
           message: "Resume uploaded & extracted successfully!",
           isError: false,
         );
 
-        AppFunctions.navigateScreen(
-          context,
-          AppRoutes.studentRegisterScreen,
-        );
-      } else if (registerController.getResponseCode() == 200 &&
-          registerController.resumeExtractModel.success == false) {
+        Get.offNamed(AppRoutes.studentRegisterScreen);
+        return;
+      } else {
         AppFunctions.showToast(
           message: "Failed to upload your resume",
           isError: true,
         );
-      } else {
-        AppFunctions.apiErrorHandling(
-          registerController.getResponseCode(),
-          "Failed to upload your resume",
-        );
       }
     } catch (e) {
       debugPrint("Resume extract error: $e");
-
-      AppFunctions.showToast(
-        message: "Something went wrong while extracting resume",
-        isError: true,
-      );
     } finally {
-      /// ✅ always hide loader
-      AiLoadingWidget.hide(context);
+      /// ✅ prevent popping new route
+      if (!alreadyClosed && (Get.isDialogOpen ?? false)) {
+        AiLoadingWidget.hide(context);
+      }
     }
   }
 

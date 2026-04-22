@@ -302,12 +302,18 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
               internshipMode: item.internshipMode ?? 'NA',
               imageUrl: item.companyLogo ?? '',
               description: item.internshipDescription ?? '',
-              duration: item.internshipDuration ?? 'NA',
+              //duration: item.internshipDuration ?? 'NA',
+              duration:
+                  item.internshipDuration!.isNotEmpty &&
+                      item.internshipDuration != null
+                  ? "${item.internshipDuration!} Months"
+                  : "${item.days} Days",
               stipendRupees: item.internshipStipend ?? 'NA',
+              location: item.companyCity ?? 'NA',
+              internFees: item.fee ?? 'NA',
               qualification: item.studentQualification?.join(', ') ?? 'All',
               eligibility: item.eligibilityCriteria ?? 'All',
               skillList: item.requiredSkills ?? [],
-              isApplied: false,
             ),
           );
         },

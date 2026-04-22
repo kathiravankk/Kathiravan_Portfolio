@@ -17,7 +17,7 @@ class AppliesInternshipCard extends StatelessWidget {
     this.role           = '',
     this.companyName    = '',
     this.companyLocation= '',
-    this.internshipType = 'Internship',
+    this.internshipType = "NA",
     this.duration       = '',
     this.companyLogo    = '',
     this.viewFunc,
@@ -126,7 +126,7 @@ class AppliesInternshipCard extends StatelessWidget {
                       color: AppColors.fieldBorderColor, width: 0.5),
                 ),
                 child: Text(
-                  internshipType ?? 'Internship',
+                  internshipType ?? 'NA',
                   style: AppStyles.customTextStyle(
                     size  : 10,
                     weight: FontWeight.w500,
@@ -160,7 +160,7 @@ class AppliesInternshipCard extends StatelessWidget {
                       color: AppColors.blackColor,
                     ),
                     Text(
-                      'Duration : ${duration?.isNotEmpty == true ? duration : "N/A"}',
+                      'Duration : $duration',
                       style: AppStyles.customTextStyle(
                         size  : 10,
                         weight: FontWeight.w600,

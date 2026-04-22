@@ -399,7 +399,6 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   role: recommentedList.roleType ?? "",
                   postedDate: recommentedList.createdAt ?? "",
                   skillList: recommentedList.requiredSkills ?? [],
-                  isApplied: recommentedList.applied ?? false,
                 );
               },
             )
@@ -458,24 +457,47 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
               spacing: 15,
               children: [
                 Container(
+                  height: 35,
+                  width: 35,
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,
                     shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.whiteColor)
                   ),
+                  alignment: Alignment.center,
                   padding: EdgeInsets.all(5),
-                  child: Image.asset(
-                    AppFunctions.getCategoryImage(
-                      service:
-                          dashboardController
-                              .categoryListModel
-                              .categoryList![index]
-                              .categoryName ??
-                          "",
-                    ),
+                  child: SizedBox(
                     height: 35,
                     width: 35,
-                    color: AppColors.blackColor,
+                    child: Text(
+                      dashboardController
+                          .categoryListModel
+                          .categoryList![index]
+                          .count
+                          .toString(),
+                      textAlign: TextAlign.center,
+                      style: AppStyles.customTextStyle(
+                        size: 20,
+                        color: AppColors.selectedContColor,
+                        weight: FontWeight.w700,
+                        fontFamily: "Roboto"
+                      ),
+                    ),
                   ),
+
+                  // Image.asset(
+                  //   AppFunctions.getCategoryImage(
+                  //     service:
+                  //         dashboardController
+                  //             .categoryListModel
+                  //             .categoryList![index]
+                  //             .categoryName ??
+                  //         "",
+                  //   ),
+                  //   height: 35,
+                  //   width: 35,
+                  //   color: AppColors.blackColor,
+                  // ),
                 ),
                 Text(
                   dashboardController

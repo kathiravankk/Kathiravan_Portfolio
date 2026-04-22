@@ -116,6 +116,7 @@ class RecommentedData {
     industry = json['industry'] ?? "";
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
+    days = json['days'] ?? "";
     iV = json['__v'] ?? 0;
     applied = json['applied'] ?? false;
     internshipMode = json['internshipmode'] ?? "";
@@ -127,6 +128,7 @@ class RecommentedData {
     data['syllabusdata'] = syllabusData;
     data['internshipmode'] = internshipMode;
     data['_id'] = sId;
+    data['days'] = days;
     data['companyname'] = companyName;
     data['aboutcompany'] = aboutCompany;
     data['companywebsite'] = companyWebsite;

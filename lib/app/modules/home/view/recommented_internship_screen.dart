@@ -172,12 +172,6 @@ class _RecommentedInternshipScreenState
                               .internshipList![index]
                               .requiredSkills ??
                           [],
-                      isApplied:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .applied ??
-                          false,
                     ),
                   ),
                 ],
