@@ -377,7 +377,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             industrialVisits: studentData.industrialVisits,
             projects: studentData.projects,
             skills: studentData.studProgrammingLang,
-            profileSummary: studentData.profileSummary,
+            profileSummary: studentData.profileSummary!.replaceAll('"', ''),
             colleges: studentData.college,
             degree: [],
             experience: studentData.experience,

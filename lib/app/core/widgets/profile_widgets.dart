@@ -84,7 +84,9 @@ class ProfileWidgets {
       borderRadius: BorderRadius.circular(20),
     ),
     child: Row(mainAxisSize: MainAxisSize.min, children: [
-      Text(label,
+      Text(
+        overflow: TextOverflow.ellipsis,
+          label,
           style: AppStyles.customTextStyle(
               fontFamily: 'Roboto', color: AppColors.whiteColor, size: 14, weight: FontWeight.w500)),
       const SizedBox(width: 6),

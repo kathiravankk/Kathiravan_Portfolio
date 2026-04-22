@@ -478,7 +478,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                       textAlign: TextAlign.center,
                       style: AppStyles.customTextStyle(
                         size: 20,
-                        color: AppColors.blackColor,
+                        color: AppColors.selectedContColor,
                         weight: FontWeight.w700,
                         fontFamily: "Roboto"
                       ),
