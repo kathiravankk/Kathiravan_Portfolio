@@ -111,7 +111,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             : Scaffold(
                 key: _scaffoldKey,
                 drawer: HomeDrawer(),
-                backgroundColor: AppColors.blackColor,
+              backgroundColor: AppColors.appBgColor_2,
                 appBar: AppBar(
                   backgroundColor: AppColors.transparentColor,
                   elevation: 0,

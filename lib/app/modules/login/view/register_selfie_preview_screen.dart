@@ -11,7 +11,6 @@ import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterSelfiePreviewScreen extends StatefulWidget {
   const RegisterSelfiePreviewScreen({super.key});

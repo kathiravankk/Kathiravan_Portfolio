@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
 import 'package:internsharks/app/data/models/account/update_profile_model.dart';
-import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {

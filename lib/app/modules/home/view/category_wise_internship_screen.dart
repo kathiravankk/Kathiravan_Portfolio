@@ -183,6 +183,9 @@ class _CategoryWiseInternshipScreenState
                                 .jobs![index]
                                 .requiredSkills ??
                             [],
+                        internFees:  dashboardController
+                            .categoryInternshipModel
+                            .jobs![index].fee ?? 'NA',
                       ),
                     )
                   : CustomEmptyWidget(),

@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/student_profile_model.dart'
-    hide Education;
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 
 class ResumeAnalysisModel {
   bool? success;

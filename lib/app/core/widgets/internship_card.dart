@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
-import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 
 class InternshipCard extends StatelessWidget {
   final VoidCallback? viewFunc;

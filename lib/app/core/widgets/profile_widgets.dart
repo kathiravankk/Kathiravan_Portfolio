@@ -76,25 +76,43 @@ class ProfileWidgets {
     child: child,
   );
 
-  static Widget chip(String label, VoidCallback onRemove) => Container(
-    margin: const EdgeInsets.only(right: 8, bottom: 8),
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    decoration: BoxDecoration(
-      border: Border.all(color: AppColors.fieldBorderColor),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Row(mainAxisSize: MainAxisSize.min, children: [
-      Text(
-        overflow: TextOverflow.ellipsis,
-          label,
-          style: AppStyles.customTextStyle(
-              fontFamily: 'Roboto', color: AppColors.whiteColor, size: 14, weight: FontWeight.w500)),
-      const SizedBox(width: 6),
-      GestureDetector(
-          onTap: onRemove,
-          child: const Icon(Icons.close, color: AppColors.fieldBorderColor, size: 15)),
-    ]),
-  );
+  static Widget chip(String label, VoidCallback onRemove) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8, bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.fieldBorderColor),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppStyles.customTextStyle(
+                fontFamily: 'Roboto',
+                color: AppColors.whiteColor,
+                size: 14,
+                weight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          GestureDetector(
+            onTap: onRemove,
+            child: const Icon(
+              Icons.close,
+              color: AppColors.fieldBorderColor,
+              size: 15,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   static Widget bsDropdown({
     required String? value,

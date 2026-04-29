@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,8 +12,9 @@ import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
-import '../../../core/utils/resume_file_utils.dart'; // ← add this import
+import '../../../core/utils/resume_file_utils.dart';
 import '../../../core/widgets/resume_thumbnail_card.dart';
 
 class ChatResumeTemplateScreen extends StatefulWidget {
@@ -51,14 +53,50 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   String studentId = "";
   bool isTemplateLiked = false;
 
+  WebViewController? webViewController;
+  bool isWebLoaded = false;
+
   @override
   void initState() {
     super.initState();
     resumeData = Get.arguments["resumeData"];
     templateId = Get.arguments["templateId"];
     isRegisterFlow = Get.arguments["isRegisterFlow"] ?? true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initWebView(templates[currentTemplateIndex]);
+    });
     setInitialTemplate();
     getProfileData();
+  }
+
+  void _initWebView(ResumeTemplateModel template) async {
+    webViewController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (_) async {
+            final jsonData = jsonEncode(resumeData!.toJson());
+            final safeJson = jsonEncode(jsonData);
+
+            await webViewController!.runJavaScript(
+              "renderResume(JSON.parse($safeJson));",
+            );
+
+            isWebLoaded = true;
+          },
+        ),
+      );
+
+    String html = await DefaultAssetBundle.of(
+      context,
+    ).loadString(template.htmlPath);
+
+    html = html.replaceFirst(
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '<meta name="viewport" content="width=900, initial-scale=1.0, shrink-to-fit=no">',
+    );
+
+    await webViewController!.loadHtmlString(html);
   }
 
   void setInitialTemplate() {
@@ -138,42 +176,32 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   }
 
   // ── Download handler ─────────────────────────────────────────────────────────
-  Future<void> _handleDownload(ResumeTemplateModel template) async {
-    if (_isDownloading) return;
-    setState(() => _isDownloading = true);
-    try {
-      final html = await _buildResumeHtml(template);
-      final firstName = (resumeData?.personalInfo?.name ?? 'resume')
-          .split(' ')
-          .first;
+  Future<void> _handleDownload() async {
+    if (webViewController == null || !isWebLoaded) return;
 
-      await ResumeFileUtils.handleDownloadFromHtml(
-        html: html,
-        context: context,
-        defaultFileName: "${firstName}_resume",
-      );
-    } finally {
-      if (mounted) setState(() => _isDownloading = false);
-    }
+    final firstName = (resumeData?.personalInfo?.name ?? 'resume')
+        .split(' ')
+        .first;
+
+    await ResumeFileUtils.handleDownload(
+      webViewController: webViewController!,
+      context: context,
+      defaultFileName: "${firstName}_resume",
+    );
   }
 
   // ── Share handler ────────────────────────────────────────────────────────────
-  Future<void> _handleShare(ResumeTemplateModel template) async {
-    if (_isSharing) return;
-    setState(() => _isSharing = true);
-    try {
-      final html = await _buildResumeHtml(template);
-      final firstName = (resumeData?.personalInfo?.name ?? 'resume')
-          .split(' ')
-          .first;
+  Future<void> _handleShare() async {
+    if (webViewController == null || !isWebLoaded) return;
 
-      await ResumeFileUtils.handleShareFromHtml(
-        html: html,
-        defaultFileName: "${firstName}_resume",
-      );
-    } finally {
-      if (mounted) setState(() => _isSharing = false);
-    }
+    final firstName = (resumeData?.personalInfo?.name ?? 'resume')
+        .split(' ')
+        .first;
+
+    await ResumeFileUtils.handleShare(
+      webViewController: webViewController!,
+      defaultFileName: "${firstName}_resume",
+    );
   }
 
   @override
@@ -293,9 +321,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
                         // ── Share ──────────────────────────────────────────
                         IconButton(
-                          onPressed: _isSharing
-                              ? null
-                              : () => _handleShare(template),
+                          onPressed: _isSharing ? null : _handleShare,
                           icon: _isSharing
                               ? const SizedBox(
                                   width: 18,
@@ -333,9 +359,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
                         // ── Download ───────────────────────────────────────
                         IconButton(
-                          onPressed: _isDownloading
-                              ? null
-                              : () => _handleDownload(template),
+                          onPressed: _isDownloading ? null : _handleDownload,
                           icon: _isDownloading
                               ? const SizedBox(
                                   width: 18,
@@ -375,6 +399,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                                     "Refresh the next template will consume 25 credits. Are you sure you want to continue?",
                                 onConfirm: () async {
                                   await nextTemplate();
+                                  _initWebView(templates[currentTemplateIndex]);
                                 },
                                 confirmText: "Confirm",
                                 cancelText: "Cancel",

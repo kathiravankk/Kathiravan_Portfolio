@@ -7,7 +7,6 @@ import 'package:internsharks/app/data/models/internship/mcq_question_model.dart'
 import 'package:internsharks/app/data/models/internship/payment_create_model.dart';
 import 'package:internsharks/app/data/models/internship/payment_status_model.dart';
 import 'package:internsharks/app/data/models/internship/save_test_result_model.dart';
-import 'package:internsharks/app/data/models/internship/syllabus_data_model.dart';
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/weekly_update_model.dart';
 import 'package:internsharks/app/data/providers/internship_provider.dart';

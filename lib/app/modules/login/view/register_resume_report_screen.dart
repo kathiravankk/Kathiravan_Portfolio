@@ -47,13 +47,12 @@ class _RegisterResumeReportScreenState
       /// ✅ allow one frame to render loader
       await Future.delayed(const Duration(milliseconds: 100));
       networkResumePath = await ResumeStorageService.getNetworkResume();
-      // await registerController.checkResumeScore(
-      //   resumeUrl:
-      //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
-      // );
-      print(networkResumePath!);
-      print("******************");
+      debugPrint(networkResumePath!);
+      debugPrint("******************");
       await registerController.checkResumeScore(resumeUrl: networkResumePath!);
+      if (mounted) {
+        AiLoadingWidget.hide(context);
+      }
       if (registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201) {
         await getProfileData();
@@ -64,12 +63,17 @@ class _RegisterResumeReportScreenState
         );
       }
     } catch (error) {
+      if (mounted) {
+        AiLoadingWidget.hide(context);
+      }
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
         "Something went wrong!, Try again later",
       );
     } finally {
-      AiLoadingWidget.hide(context);
+      if (mounted) {
+        AiLoadingWidget.hide(context);
+      }
     }
   }
 

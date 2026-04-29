@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,13 +6,11 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/modules/login/controllers/login_controller.dart';
-import 'package:internsharks/app/modules/login/view/resume_template_selection_screen.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/core/const_file/app_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 
-import '../../../../core/const_file/app_text_style.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 import '../../../data/repositories/local_storage_service.dart';
 
@@ -80,8 +79,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: "Enter your mobile number",
                   controller: mobileController,
                   maxLength: 10,
+                  // onChanged: (val) {
+                  //   loginController.mobile.value = val;
+                  // },
                   onChanged: (val) {
                     loginController.mobile.value = val;
+
+                    final error = AppFunctions.validateIndianMobile(val);
+
+                    if (error != null && val.length == 10) {
+                      AppFunctions.showToast(message: error, isError: true);
+                    }
                   },
                 ),
 
@@ -90,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // ⏳ Loader
                   if (loginController.loginOtpLoading) {
                     return const Center(
-                      child: CircularProgressIndicator(
+                      child: CupertinoActivityIndicator(
                         color: AppColors.secondaryColor,
                       ),
                     );
@@ -178,15 +186,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     );
                   }
+                  final isValid =
+                      AppFunctions.validateIndianMobile(
+                        loginController.mobile.value,
+                      ) ==
+                      null;
 
                   // 📤 SEND OTP BUTTON (OTP NOT SENT)
                   return AppButton.AppContainerButton(
-                    onTap: loginController.mobile.value.length == 10
+                    onTap: isValid
                         ? () => sendOtpFunc(mobileNumber: mobileController.text)
                         : null,
-                    bgColor: loginController.mobile.value.length == 10
-                        ? AppColors.appBlue
-                        : Colors.grey.shade800,
+                    bgColor: isValid
+                        ? AppColors.primaryColor
+                        : AppColors.disableButtonColor,
                     borderRadius: 30,
                     text: "Send OTP",
                     verticalPadding: 12,
@@ -240,8 +253,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> sendOtpFunc({required String mobileNumber}) async {
+    final error = AppFunctions.validateIndianMobile(mobileNumber);
+
+    if (error != null) {
+      AppFunctions.showToast(message: error, isError: true);
+      return;
+    }
+
     try {
-      await loginController.sendLoginOtp(mobileNumber: mobileController.text);
+      await loginController.sendLoginOtp(mobileNumber: mobileNumber);
+
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
         if (loginController.commonPostModel.userType == "student") {
@@ -255,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
           AppFunctions.showAppAlert(
             context: context,
             content:
-            "Mobile Number already registered as Recruiter. Please use another Number.",
+                "Mobile Number already registered as Recruiter. Please use another Number.",
             confirmText: "OKAY",
             onConfirm: () {
               mobileController.text = "";

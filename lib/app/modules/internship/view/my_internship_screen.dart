@@ -78,9 +78,9 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
       color: AppColors.primaryColor,
       onRefresh: () => getInternshipData(),
       child: Scaffold(
-        backgroundColor: AppColors.blackColor,
+        backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
-          backgroundColor: AppColors.blackColor,
+          backgroundColor: AppColors.appBgColor_2,
           elevation: 0,
           automaticallyImplyActions: false,
           centerTitle: true,

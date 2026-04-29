@@ -89,13 +89,14 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
           spacing: 15,
           children: [
             Container(
-              height: 40,
-              width: 40,
+              height: 50,
+              width: 50,
               decoration: BoxDecoration(
                 color: AppColors.lightWhiteCont,
                 shape: BoxShape.circle,
               ),
-              padding: EdgeInsets.all(10),
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(5),
               child: Text(
                 textAlign: TextAlign.center,
                 categoryCount.toString(),
