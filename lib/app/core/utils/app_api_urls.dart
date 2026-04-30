@@ -1,8 +1,9 @@
 class AppApiUrls {
   // BASE URL
-  static const String baseUrl = newBaseUrl;
+  static const String baseUrl = newProdBaseUrl;
   static const String oldBaseUrl = "https://fulupo.selfietoons.com/api/";
   static const String newBaseUrl = "https://dev.api.internsharks.ai/api/";
+  static const String newProdBaseUrl = "https://api.internsharks.ai/api/";
   static const String devServer = "https://fulupo.selfietoons.com/";
   static const String prodServer = "https://fulupo.selfietoons.com/";
 

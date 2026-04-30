@@ -268,6 +268,25 @@ class ResumeFileUtils {
     return getApplicationDocumentsDirectory();
   }
 
+  static Future<String> _generateUniqueFilePath({
+    required Directory dir,
+    required String fileName,
+  }) async {
+    final safe = fileName.replaceAll(RegExp(r'[^\w\s\-]'), '_').trim();
+
+    String basePath = '${dir.path}/$safe';
+    String filePath = '$basePath.pdf';
+
+    int counter = 1;
+
+    while (await File(filePath).exists()) {
+      filePath = '${basePath}_$counter.pdf';
+      counter++;
+    }
+
+    return filePath;
+  }
+
   // ─────────────────────────────────────────────────────────────────────────────
   // 7. MEDIA SCAN — makes file appear immediately in Downloads UI on real devices
   // ─────────────────────────────────────────────────────────────────────────────
@@ -291,11 +310,19 @@ class ResumeFileUtils {
     try {
       final dir = await _resolveDownloadsDir();
       if (!await dir.exists()) await dir.create(recursive: true);
-      final safe = fileName.replaceAll(RegExp(r'[^\w\s\-]'), '_').trim();
-      final path = '${dir.path}/$safe.pdf';
-      await File(path).writeAsBytes(bytes, flush: true);
+
+      // ✅ Generate unique file path
+      final path = await _generateUniqueFilePath(
+        dir: dir,
+        fileName: fileName,
+      );
+
+      final file = File(path);
+      await file.writeAsBytes(bytes, flush: true);
+
       await _triggerMediaScan(path);
-      return File(path);
+
+      return file;
     } catch (e) {
       debugPrint("Save error: $e");
       return null;
@@ -323,8 +350,14 @@ class ResumeFileUtils {
         return;
       }
       final file = await savePdfToDownloads(await htmlToPdfBytes(html), fileName);
+      // AppFunctions.showToast(
+      //   message: file != null ? "✅ Saved: $fileName.pdf" : "❌ Download failed.",
+      //   isError: file == null,
+      // );
       AppFunctions.showToast(
-        message: file != null ? "✅ Saved: $fileName.pdf" : "❌ Download failed.",
+        message: file != null
+            ? "✅ Saved: ${file.path.split('/').last}"
+            : "❌ Download failed.",
         isError: file == null,
       );
     } catch (e) {

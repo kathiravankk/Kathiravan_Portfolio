@@ -40,40 +40,60 @@ class _RegisterResumeReportScreenState
     super.initState();
   }
 
-  Future<void> getResumeScore() async {
-    try {
-      AiLoadingWidget.show(context, type: LoadingDialogType.atsJson);
+  // Future<void> getResumeScore() async {
+  //   try {
+  //     AiLoadingWidget.show(context, type: LoadingDialogType.atsJson);
+  //
+  //     /// ✅ allow one frame to render loader
+  //     await Future.delayed(const Duration(milliseconds: 100));
+  //     networkResumePath = await ResumeStorageService.getNetworkResume();
+  //     debugPrint(networkResumePath!);
+  //     debugPrint("******************");
+  //     await registerController.checkResumeScore(resumeUrl: networkResumePath!);
+  //     if (mounted) {
+  //       AiLoadingWidget.hide(context);
+  //     }
+  //     if (registerController.getResponseCode() == 200 ||
+  //         registerController.getResponseCode() == 201) {
+  //       await getProfileData();
+  //     } else {
+  //       AppFunctions.apiErrorHandling(
+  //         registerController.getResponseCode(),
+  //         "Something went wrong!, Try again later",
+  //       );
+  //     }
+  //   } catch (error) {
+  //     if (mounted) {
+  //       AiLoadingWidget.hide(context);
+  //     }
+  //     AppFunctions.apiErrorHandling(
+  //       registerController.getResponseCode(),
+  //       "Something went wrong!, Try again later",
+  //     );
+  //   } finally {
+  //     if (mounted) {
+  //       AiLoadingWidget.hide(context);
+  //     }
+  //   }
+  // }
 
-      /// ✅ allow one frame to render loader
-      await Future.delayed(const Duration(milliseconds: 100));
-      networkResumePath = await ResumeStorageService.getNetworkResume();
-      debugPrint(networkResumePath!);
-      debugPrint("******************");
-      await registerController.checkResumeScore(resumeUrl: networkResumePath!);
-      if (mounted) {
-        AiLoadingWidget.hide(context);
-      }
-      if (registerController.getResponseCode() == 200 ||
-          registerController.getResponseCode() == 201) {
-        await getProfileData();
-      } else {
-        AppFunctions.apiErrorHandling(
-          registerController.getResponseCode(),
-          "Something went wrong!, Try again later",
-        );
-      }
-    } catch (error) {
-      if (mounted) {
-        AiLoadingWidget.hide(context);
-      }
+  Future<void> getResumeScore() async {
+    networkResumePath = await ResumeStorageService.getNetworkResume();
+    // await registerController.checkResumeScore(
+    //   resumeUrl:
+    //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
+    // );
+    print(networkResumePath!);
+    print("******************");
+    await registerController.checkResumeScore(resumeUrl: networkResumePath!);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      await getProfileData();
+    } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
         "Something went wrong!, Try again later",
       );
-    } finally {
-      if (mounted) {
-        AiLoadingWidget.hide(context);
-      }
     }
   }
 
@@ -128,7 +148,7 @@ class _RegisterResumeReportScreenState
             ),
           ),
           body: Obx(
-            () => registerController.resumeScoreLoading
+            () => registerController.resumeScoreLoading || registerController.studentDetailsLoading
                 ? Center(
                     child: CupertinoActivityIndicator(
                       color: AppColors.secondaryColor,
@@ -680,11 +700,13 @@ class _RegisterResumeReportScreenState
         message: "Resume updated successfully!",
         isError: false,
       );
-      // AppFunctions.navigateScreen(
-      //   context,
-      //   AppRoutes.stepUpdateScreen,
-      //   arguments: {"activeStep": 2},
-      // );
+      if(mounted) {
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.stepUpdateScreen,
+          arguments: {"activeStep": 2},
+        );
+      }
     } else {
       AppFunctions.showToast(
         message:

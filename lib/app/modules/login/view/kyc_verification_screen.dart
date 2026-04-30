@@ -290,7 +290,9 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     }
 
     try {
-      AiLoadingWidget.show(context, type: LoadingDialogType.kyc);
+      if(mounted) {
+        AiLoadingWidget.show(context, type: LoadingDialogType.kyc);
+      }
 
       await Future.delayed(const Duration(milliseconds: 100));
 
@@ -313,7 +315,9 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
       await registerController.verifyKycData(kycData: kycData);
 
       /// ✅ hide loader immediately after API
-      AiLoadingWidget.hide(context);
+      if(mounted) {
+        AiLoadingWidget.hide(context);
+      }
 
       if (registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201) {
@@ -342,21 +346,25 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           );
 
           if (isRegisterFlow == true) {
-            AppFunctions.navigateScreen(
-              context,
-              AppRoutes.stepUpdateScreen,
-              arguments: {"activeStep": 4},
-            );
+            if(mounted) {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.stepUpdateScreen,
+                arguments: {"activeStep": 4},
+              );
+            }
           } else {
             Get.close(2);
           }
         } else {
           /// ✅ now dialog opens without loader behind it
-          showKycResultDialog(
-            context: context,
-            model: registerController.kycUpdateModel,
-            isRegisterFlow: isRegisterFlow,
-          );
+          if(mounted) {
+            showKycResultDialog(
+              context: context,
+              model: registerController.kycUpdateModel,
+              isRegisterFlow: isRegisterFlow,
+            );
+          }
         }
       } else {
         AppFunctions.apiErrorHandling(
@@ -365,13 +373,15 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         );
       }
     } catch (e) {
-      AiLoadingWidget.hide(context);
+      if(mounted) {
+        AiLoadingWidget.hide(context);
 
-      debugPrint("KYC error: $e");
-      AppFunctions.showToast(
-        message: "Something went wrong. Try again.",
-        isError: true,
-      );
+        debugPrint("KYC error: $e");
+        AppFunctions.showToast(
+          message: "Something went wrong. Try again.",
+          isError: true,
+        );
+      }
     }
   }
 

@@ -192,7 +192,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
   }) {
     try {
       final session = CFSessionBuilder()
-          .setEnvironment(CFEnvironment.SANDBOX)
+          .setEnvironment(CFEnvironment.PRODUCTION) // Need to change to  PRODUCTION for live
           .setOrderId(orderId)
           .setPaymentSessionId(paymentSessionId)
           .build();

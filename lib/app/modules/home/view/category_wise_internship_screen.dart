@@ -102,8 +102,8 @@ class _CategoryWiseInternshipScreenState
                             },
                           );
                         },
-                        saveFunc: () =>
-                            dashboardController.internshipSaveFunc(index),
+                        saveFunc: () async{
+                            dashboardController.internshipSaveFunc(index);},
                         // saveFunc: () {
                         //   internshipList![index].isSaved!
                         //       ? removeToSaved(

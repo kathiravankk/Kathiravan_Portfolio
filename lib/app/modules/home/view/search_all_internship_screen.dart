@@ -280,21 +280,26 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
               isSaved: item.isSaved ?? false,
               // saveFunc: () =>
               //     dashboardController.searchFilterSaveFunc(index),
+              // saveFunc: () async {
+              //   final oldValue = item.isSaved ?? false;
+              //
+              //   setState(() {
+              //     item.isSaved = !oldValue;
+              //   });
+              //
+              //   await dashboardController.searchFilterSaveFunc(index);
+              //
+              //   if (dashboardController.getResponseCode() != 200 &&
+              //       dashboardController.getResponseCode() != 201) {
+              //     setState(() {
+              //       item.isSaved = oldValue;
+              //     });
+              //   }
+              // },
               saveFunc: () async {
-                final oldValue = item.isSaved ?? false;
-
-                setState(() {
-                  item.isSaved = !oldValue;
-                });
-
-                await dashboardController.searchFilterSaveFunc(index);
-
-                if (dashboardController.getResponseCode() != 200 &&
-                    dashboardController.getResponseCode() != 201) {
-                  setState(() {
-                    item.isSaved = oldValue;
-                  });
-                }
+                setState(() {});
+                await dashboardController.searchFilterSaveFunc(item);
+                setState(() {});
               },
               postedDate: item.createdAt!,
               role: item.roleType ?? '',

@@ -56,51 +56,58 @@ class InternshipCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
           color: AppColors.whiteColor,
         ),
-        padding: EdgeInsets.all(15),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    role.capitalize!,
+        padding: const EdgeInsets.all(15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            /// 🔹 ROLE + SAVE
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    role.capitalize ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppStyles.customTextStyle(
                       color: AppColors.disableButtonColor2,
                       size: 16,
                       weight: FontWeight.w700,
                     ),
                   ),
-                  IconButton(
-                    onPressed: saveFunc,
-                    icon: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.lightWhiteCont,
-                        shape: BoxShape.circle,
-                      ),
-                      padding: EdgeInsets.all(5),
-                      child: Icon(
-                        isSaved ? Icons.bookmark : Icons.bookmark_border,
-                        color: isSaved
-                            ? AppColors.secondaryColor
-                            : AppColors.greyIcon,
-                        size: 25,
-                      ),
+                ),
+                GestureDetector(
+                  onTap: saveFunc,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.lightWhiteCont,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: const EdgeInsets.all(5),
+                    child: Icon(
+                      isSaved ? Icons.bookmark : Icons.bookmark_border,
+                      color: isSaved
+                          ? AppColors.secondaryColor
+                          : AppColors.greyIcon,
+                      size: 25,
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    spacing: 10,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            /// 🔹 COMPANY + LOGO
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        companyName.capitalize!,
+                        companyName.capitalize ?? "",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppStyles.customTextStyle(
@@ -109,17 +116,19 @@ class InternshipCard extends StatelessWidget {
                           color: AppColors.selectedContColor,
                         ),
                       ),
-                      Row(
+                      const SizedBox(height: 8),
+
+                      /// 🔹 MODE + LOCATION
+                      Wrap(
                         spacing: 10,
+                        runSpacing: 5,
                         children: [
                           Row(
-                            spacing: 8,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Icons.work_history_outlined,
-                                size: 15,
-                                color: AppColors.greyIcon,
-                              ),
+                              Icon(Icons.work_history_outlined,
+                                  size: 15, color: AppColors.greyIcon),
+                              const SizedBox(width: 5),
                               Text(
                                 internshipMode,
                                 style: AppStyles.customTextStyle(
@@ -131,19 +140,23 @@ class InternshipCard extends StatelessWidget {
                             ],
                           ),
                           Row(
-                            spacing: 8,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Icons.location_on_outlined,
-                                size: 15,
-                                color: AppColors.greyIcon,
-                              ),
-                              Text(
-                                location,
-                                style: AppStyles.customTextStyle(
-                                  size: 12,
-                                  weight: FontWeight.w700,
-                                  color: AppColors.primaryColor,
+                              Icon(Icons.location_on_outlined,
+                                  size: 15, color: AppColors.greyIcon),
+                              const SizedBox(width: 5),
+                              ConstrainedBox(
+                                constraints:
+                                const BoxConstraints(maxWidth: 120),
+                                child: Text(
+                                  location,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppStyles.customTextStyle(
+                                    size: 12,
+                                    weight: FontWeight.w700,
+                                    color: AppColors.primaryColor,
+                                  ),
                                 ),
                               ),
                             ],
@@ -152,10 +165,14 @@ class InternshipCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Visibility(
-                    visible: !isCategoryFlow,
+                ),
+
+                /// 🔹 LOGO
+                if (!isCategoryFlow)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
                     child: Container(
-                      padding: EdgeInsets.all(3),
+                      padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
@@ -169,205 +186,140 @@ class InternshipCard extends StatelessWidget {
                           height: 30,
                           width: 30,
                           fit: BoxFit.cover,
-                          //color: AppColors.whiteColor,
-                          errorBuilder: (context, error, stackTrace) =>
-                              CircleAvatar(
-                                backgroundColor: AppColors.whiteColor,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.photo_outlined,
-                                      color: AppColors.lightHintText,
-                                      size: 30,
-                                    ),
-                                    Text(
-                                      "Error!",
-                                      style: AppStyles.customTextStyle(
-                                        size: 5,
-                                        weight: FontWeight.w400,
-                                        color: AppColors.failTextColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.photo_outlined,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                spacing: 5,
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: 5,
-                      children: [
-                        Text(
-                          "Education: ",
-                          style: AppStyles.customTextStyle(
-                            size: 10,
-                            weight: FontWeight.w400,
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 100,
-                          child: Text(
-                            qualification,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppStyles.customTextStyle(
-                              size: 10,
-                              weight: FontWeight.w400,
-                              color: AppColors.blackLight,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: 5,
-                      children: [
-                        Text(
-                          "Available: ",
-                          style: AppStyles.customTextStyle(
-                            size: 10,
-                            weight: FontWeight.w400,
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 100,
-                          child: Text(
-                            skillList.join(", "),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppStyles.customTextStyle(
-                              size: 10,
-                              weight: FontWeight.w400,
-                              color: AppColors.blackLight,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              ],
+            ),
 
-              // Text(
-              //   description,
-              //   maxLines: 2,
-              //   overflow: TextOverflow.ellipsis,
-              //   style: AppStyles.customTextStyle(
-              //     size: 8,
-              //     lineSpace: 1.3,
-              //     weight: FontWeight.w400,
-              //     color: AppColors.blackColor,
-              //   ),
-              // ),
-              Row(
-                spacing: 10,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    child: Row(
-                      spacing: 6,
-                      children: [
-                        const Icon(
-                          Icons.access_time,
-                          size: 12,
-                          color: AppColors.greyIcon,
-                        ),
-                        Text(
-                          "Duration : $duration",
-                          style: AppStyles.customTextStyle(
-                            size: 10,
-                            weight: FontWeight.w400,
-                            color: AppColors.blackLight,
-                          ),
-                        ),
-                      ],
+            const SizedBox(height: 10),
+
+            /// 🔹 EDUCATION + SKILLS
+            Wrap(
+              spacing: 10,
+              runSpacing: 5,
+              children: [
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  child: Text(
+                    "Education: $qualification",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      color: AppColors.primaryColor,
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.lightWhiteCont,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                    child: Row(
-                      spacing: 3,
-                      children: [
-                        const Icon(
-                          Icons.currency_rupee,
-                          size: 12,
-                          color: AppColors.greyIcon,
-                        ),
-                        Text(
-                          stipendRupees != "N/A"
-                              ? "Stipend : $stipendRupees"
-                              : internFees != "0"
-                              ? "Fees : $internFees"
-                              : "Free Internship",
-                          style: AppStyles.customTextStyle(
-                            size: 10,
-                            weight: FontWeight.w400,
-                            color: AppColors.blackLight,
-                          ),
-                        ),
-                      ],
+                ),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  child: Text(
+                    "Available: ${skillList.join(", ")}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      color: AppColors.primaryColor,
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.lightWhiteCont,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                    child: Text(
-                      "Posted ${AppFunctions.convertPostedDate(postedDate)}",
-                      style: AppStyles.customTextStyle(
-                        size: 10,
-                        weight: FontWeight.w500,
-                        color: AppColors.blackLight,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            /// 🔹 DURATION + STIPEND
+            Wrap(
+              spacing: 10,
+              runSpacing: 5,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.secondaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.access_time,
+                          size: 12, color: AppColors.greyIcon),
+                      const SizedBox(width: 5),
+                      Text(
+                        "Duration : $duration",
+                        style: AppStyles.customTextStyle(
+                          size: 10,
+                          color: AppColors.blackLight,
+                        ),
                       ),
+                    ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.lightWhiteCont,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.currency_rupee,
+                          size: 12, color: AppColors.greyIcon),
+                      const SizedBox(width: 5),
+                      Text(
+                        stipendRupees != "N/A"
+                            ? "Stipend : $stipendRupees"
+                            : internFees != "0"
+                            ? "Fees : $internFees"
+                            : "Free Internship",
+                        style: AppStyles.customTextStyle(
+                          size: 10,
+                          color: AppColors.blackLight,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            /// 🔹 FOOTER
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Posted ${AppFunctions.convertPostedDate(postedDate)}",
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      color: AppColors.blackLight,
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.selectedContColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.transparentColor),
-                    ),
-                    padding: EdgeInsets.all(3),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      color: AppColors.whiteColor,
-                      size: 20,
-                    ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.selectedContColor,
+                    shape: BoxShape.circle,
                   ),
-                ],
-              ),
-            ],
-          ),
+                  padding: const EdgeInsets.all(5),
+                  child: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -107,7 +107,7 @@ class _RecommentedInternshipScreenState
                       //       ? removeToSaved(jobId: internshipList![index].sId!)
                       //       : addToSaved(jobId: internshipList![index].sId!);
                       // },
-                      saveFunc: () => dashboardController.toggleSave(index),
+                      saveFunc: () async{ dashboardController.toggleSave(index);},
                       postedDate: dashboardController
                           .recommentedModel
                           .internshipList![index]

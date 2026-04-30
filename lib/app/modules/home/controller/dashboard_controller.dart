@@ -493,12 +493,12 @@ class DashboardController extends GetxController {
     }
   }
 
-  Future<void> searchFilterSaveFunc(int index) async {
-    final internship = internshipModel.internship![index];
-    bool oldValue = internship.isSaved ?? false;
+  Future<void> searchFilterSaveFunc(
+      InternshipModel internship,
+      ) async {
+    final oldValue = internship.isSaved ?? false;
 
     internship.isSaved = !oldValue;
-    _internshipModel.refresh();
 
     bool success;
 
@@ -510,7 +510,6 @@ class DashboardController extends GetxController {
 
     if (!success) {
       internship.isSaved = oldValue;
-      _internshipModel.refresh();
     }
   }
 
