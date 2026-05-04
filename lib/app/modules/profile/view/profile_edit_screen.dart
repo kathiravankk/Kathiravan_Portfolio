@@ -858,6 +858,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'studmobileno': _mobileCtrl.text.trim(),
       'linkedIn': _linkedinCtrl.text.trim(),
       'github': _websiteCtrl.text.trim(),
+      //'templateNumber': "2",
       //"role": "Software Developer",
       'portfolio_website': _websiteCtrl.text.trim(),
       'profile_summary': _bioCtrl.text.trim(),

@@ -374,7 +374,14 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 return InternshipCard(
                   width: 360,
                   companyName: recommentedList.companyName ?? "",
-                  duration: recommentedList.internshipDuration ?? "",
+                  //duration: recommentedList.internshipDuration ?? "",
+                  duration:
+                  recommentedList.internshipDuration!.isNotEmpty &&
+                      recommentedList.internshipDuration != null
+                      ? "${recommentedList.internshipDuration!} Months"
+                      : "${recommentedList.days} Days",
+                  internFees: recommentedList.internFees ?? "",
+                  location: recommentedList.companyCity ?? "",
                   isSaved: recommentedList.isSaved ?? false,
                   // saveFunc: () {
                   //   recommentedList.isSaved!

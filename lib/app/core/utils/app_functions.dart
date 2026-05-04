@@ -508,28 +508,41 @@ class AppFunctions {
   }
 
   static Widget _paymentRow(
-    String title,
-    String value, {
-    Color valueColor = AppColors.whiteColor,
-    bool isAmount = false,
-  }) {
+      String title,
+      String value, {
+        Color valueColor = AppColors.whiteColor,
+        bool isAmount = false,
+      }) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: AppStyles.customTextStyle(
-            size: 10,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w300,
+        /// LEFT TEXT
+        Expanded(
+          flex: 4,
+          child: Text(
+            title,
+            style: AppStyles.customTextStyle(
+              size: 10,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w300,
+            ),
           ),
         ),
-        Text(
-          value,
-          style: AppStyles.customTextStyle(
-            size: 12,
-            color: valueColor,
-            weight: FontWeight.w600,
+
+        const SizedBox(width: 10),
+
+        /// RIGHT TEXT (IMPORTANT)
+        Expanded(
+          flex: 6,
+          child: Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
+            style: AppStyles.customTextStyle(
+              size: 12,
+              color: valueColor,
+              weight: FontWeight.w600,
+            ),
           ),
         ),
       ],

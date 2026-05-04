@@ -525,7 +525,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                         "templateId": int.parse(
                                           profileController
                                               .profileDataModel
-                                              .templateNumber!,
+                                              .templateNumber != null && profileController
+                                              .profileDataModel
+                                              .templateNumber!.isNotEmpty ? profileController
+                                              .profileDataModel
+                                              .templateNumber! : "1",
                                         ),
                                         //"templateId": 1,
                                         "resumeData": ExtractedResumeDataModel(

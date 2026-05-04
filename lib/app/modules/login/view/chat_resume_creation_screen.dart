@@ -61,13 +61,13 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
 
       studentId = reply?.userId ?? "";
 
-      if (reply?.state == "MOBILE" ||
-          reply?.state == "MOBILE_OTP" ||
-          reply?.state == "EMAIL_OTP") {
-        currentKeyboard = TextInputType.phone;
-      } else {
-        currentKeyboard = TextInputType.text;
-      }
+      // if (reply?.state == "MOBILE" ||
+      //     reply?.state == "MOBILE_OTP" ||
+      //     reply?.state == "EMAIL_OTP") {
+      //   currentKeyboard = TextInputType.phone;
+      // } else {
+      //   currentKeyboard = TextInputType.text;
+      // }
 
       if (reply?.response != null) {
         messages.add(ChatMessage(text: reply!.response!, isBot: true));

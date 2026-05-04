@@ -354,7 +354,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
               );
             }
           } else {
-            Get.close(2);
+            Get.back();
           }
         } else {
           /// ✅ now dialog opens without loader behind it
