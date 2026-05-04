@@ -102,8 +102,8 @@ class _CategoryWiseInternshipScreenState
                             },
                           );
                         },
-                        saveFunc: () =>
-                            dashboardController.internshipSaveFunc(index),
+                        saveFunc: () async{
+                            dashboardController.internshipSaveFunc(index);},
                         // saveFunc: () {
                         //   internshipList![index].isSaved!
                         //       ? removeToSaved(
@@ -183,6 +183,9 @@ class _CategoryWiseInternshipScreenState
                                 .jobs![index]
                                 .requiredSkills ??
                             [],
+                        internFees:  dashboardController
+                            .categoryInternshipModel
+                            .jobs![index].fee ?? 'NA',
                       ),
                     )
                   : CustomEmptyWidget(),

@@ -111,7 +111,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             : Scaffold(
                 key: _scaffoldKey,
                 drawer: HomeDrawer(),
-                backgroundColor: AppColors.blackColor,
+                backgroundColor: AppColors.appBgColor_2,
                 appBar: AppBar(
                   backgroundColor: AppColors.transparentColor,
                   elevation: 0,
@@ -381,7 +381,9 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   //       ? removeToSaved(jobId: recommentedList.sId!)
                   //       : addToSaved(jobId: recommentedList.sId!);
                   // },
-                  saveFunc: () => dashboardController.toggleSave(index),
+                  saveFunc: () async {
+                    await dashboardController.toggleSave(index);
+                  },
                   viewFunc: () {
                     AppFunctions.navigateScreen(
                       context,
@@ -449,55 +451,38 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             width: 140,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.selectedContColor,
+              color: AppColors.transparentColor,
               borderRadius: BorderRadius.circular(23),
+              border: Border.all(color: AppColors.contBorderColor2),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 15,
               children: [
-                Container(
-                  height: 35,
-                  width: 35,
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.whiteColor)
-                  ),
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(5),
-                  child: SizedBox(
-                    height: 35,
-                    width: 35,
-                    child: Text(
-                      dashboardController
+                // SizedBox(
+                //   height: 35,
+                //   width: 35,
+                //   child: Text(
+                //     dashboardController
+                //         .categoryListModel
+                //         .categoryList![index]
+                //         .count
+                //         .toString(),
+                //     textAlign: TextAlign.center,
+                //     style: AppStyles.customTextStyle(
+                //       size: 20,
+                //       color: AppColors.whiteColor,
+                //       weight: FontWeight.w700,
+                //       fontFamily: "Roboto",
+                //     ),
+                //   ),
+                // ),
+                buildAnimatedCount(
+                  dashboardController
                           .categoryListModel
                           .categoryList![index]
-                          .count
-                          .toString(),
-                      textAlign: TextAlign.center,
-                      style: AppStyles.customTextStyle(
-                        size: 20,
-                        color: AppColors.selectedContColor,
-                        weight: FontWeight.w700,
-                        fontFamily: "Roboto"
-                      ),
-                    ),
-                  ),
-
-                  // Image.asset(
-                  //   AppFunctions.getCategoryImage(
-                  //     service:
-                  //         dashboardController
-                  //             .categoryListModel
-                  //             .categoryList![index]
-                  //             .categoryName ??
-                  //         "",
-                  //   ),
-                  //   height: 35,
-                  //   width: 35,
-                  //   color: AppColors.blackColor,
-                  // ),
+                          .count ??
+                      0,
                 ),
                 Text(
                   dashboardController
@@ -507,7 +492,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                       "",
                   style: AppStyles.customTextStyle(
                     size: 10,
-                    color: AppColors.secondaryColor,
+                    color: AppColors.primaryColor,
                     weight: FontWeight.w700,
                   ),
                 ),
@@ -516,6 +501,37 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildAnimatedCount(int count) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: count == 0 ? 1 : count.toDouble()),
+      duration: const Duration(milliseconds: 800),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.8 + (value / (count == 0 ? 1 : count)) * 0.2,
+          child: Opacity(
+            opacity: 0.5 + (value / (count == 0 ? 1 : count)) * 0.5,
+            child: Text(
+              count == 0 ? "0" : value.toInt().toString(),
+              style: AppStyles.customTextStyle(
+                      size: 20,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w700,
+                      fontFamily: "Roboto",
+                    ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatNumber(int number) {
+    return number.toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (match) => ',',
     );
   }
 

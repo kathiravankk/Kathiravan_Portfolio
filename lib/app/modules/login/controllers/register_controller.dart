@@ -6,7 +6,6 @@ import 'package:internsharks/app/data/models/account/credit_data_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/account/resume_extract_model.dart';
 import 'package:internsharks/app/data/models/account/resume_extracted_data_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';

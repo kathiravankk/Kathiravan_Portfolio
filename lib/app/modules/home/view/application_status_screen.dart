@@ -138,7 +138,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                 ),
               )
             : SingleChildScrollView(
-              child: Padding(
+                child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(
                     spacing: 15,
@@ -152,7 +152,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                           weight: FontWeight.w700,
                         ),
                       ),
-              
+
                       Text(
                         appliedData!.jobData!.companyName ?? "",
                         style: AppStyles.customTextStyle(
@@ -289,7 +289,9 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                       color: AppColors.failTextColor,
                                       size: 20,
                                     ),
-                              title: internController.paymentStatusModel.message ?? "NA",
+                              title:
+                                  internController.paymentStatusModel.message ??
+                                  "NA",
                               showLine: false,
                             ),
                           ),
@@ -298,7 +300,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                             _buildPaymentSection(),
                         ],
                       ),
-              
+
                       const SizedBox(height: 10),
                       Text(
                         'Similar Internship',
@@ -308,7 +310,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                           weight: FontWeight.w700,
                         ),
                       ),
-              
+
                       dashboardController.similarInternshipLoading
                           ? Center(
                               child: CupertinoActivityIndicator(
@@ -361,8 +363,11 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                           //       ? removeToSaved(jobId: similar.sId!)
                                           //       : addToSaved(jobId: similar.sId!);
                                           // },
-                                          saveFunc: () => dashboardController
-                                              .similarSaveFunc(index),
+                                          saveFunc: () async {
+                                            dashboardController.similarSaveFunc(
+                                              index,
+                                            );
+                                          },
                                           viewFunc: () {
                                             AppFunctions.navigateScreen(
                                               context,
@@ -439,7 +444,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                     ],
                   ),
                 ),
-            ),
+              ),
       ),
     );
   }
@@ -470,7 +475,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
   }) {
     try {
       final session = CFSessionBuilder()
-          .setEnvironment(CFEnvironment.SANDBOX)
+          .setEnvironment(CFEnvironment.PRODUCTION)  // need to make PRODUCTION for live
           .setOrderId(orderId)
           .setPaymentSessionId(paymentSessionId)
           .build();

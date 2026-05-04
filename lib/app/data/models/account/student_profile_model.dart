@@ -246,9 +246,21 @@ class Project {
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
+    final desc = json['description'];
+
+    List<String> parsedDescription = [];
+
+    if (desc is String) {
+      // ✅ If it's a single string → convert to list
+      parsedDescription = [desc];
+    } else if (desc is List) {
+      // ✅ If it's already a list → convert safely
+      parsedDescription = desc.map((e) => e.toString()).toList();
+    }
+
     return Project(
       title: json['title'] ?? "",
-      description: List<String>.from(json['description'] ?? []),
+      description: parsedDescription,
     );
   }
 

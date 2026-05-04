@@ -122,6 +122,7 @@ class AppPages {
     appPage(
       name: AppRoutes.chatResumeTemplateScreen,
       page: () => ChatResumeTemplateScreen(),
+      bindings: [ProfileBindings()]
     ),
     appPage(
       name: AppRoutes.chatResumeUpdateScreen,

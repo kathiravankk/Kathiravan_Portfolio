@@ -89,22 +89,24 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
           spacing: 15,
           children: [
             Container(
-              height: 40,
-              width: 40,
+              height: 50,
+              width: 50,
               decoration: BoxDecoration(
                 color: AppColors.lightWhiteCont,
                 shape: BoxShape.circle,
               ),
-              padding: EdgeInsets.all(10),
-              child: Text(
-                textAlign: TextAlign.center,
-                categoryCount.toString(),
-                style: AppStyles.customTextStyle(
-                  size: 20,
-                  color: AppColors.blackColor,
-                  weight: FontWeight.w700,
-                ),
-              ),
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(5),
+              child: buildAnimatedCount(categoryCount!),
+              // Text(
+              //   textAlign: TextAlign.center,
+              //   categoryCount.toString(),
+              //   style: AppStyles.customTextStyle(
+              //     size: 20,
+              //     color: AppColors.blackColor,
+              //     weight: FontWeight.w700,
+              //   ),
+              // ),
 
               // Image.asset(
               //   AppFunctions.getCategoryImage(service: categoryName),
@@ -137,6 +139,29 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildAnimatedCount(int count) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: count == 0 ? 1 : count.toDouble()),
+      duration: const Duration(milliseconds: 800),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.8 + (value / (count == 0 ? 1 : count)) * 0.2,
+          child: Opacity(
+            opacity: 0.5 + (value / (count == 0 ? 1 : count)) * 0.5,
+            child: Text(
+              count == 0 ? "0" : value.toInt().toString(),
+              style: AppStyles.customTextStyle(
+                size: 20,
+                color: AppColors.blackColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

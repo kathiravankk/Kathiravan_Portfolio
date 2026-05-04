@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
@@ -70,13 +71,14 @@ class _RegisterProfileUploadScreenState
     try {
       final image = await controller!.takePicture();
       if (mounted) {
-        Get.toNamed(
+        AppFunctions.navigateScreen(
+          context,
           AppRoutes.registerSelfiePreviewScreen,
           arguments: {"uploadedImage": image.path},
         );
       }
     } catch (e) {
-      print('Take photo error: $e');
+      debugPrint('Take photo error: $e');
     }
   }
 
@@ -89,10 +91,14 @@ class _RegisterProfileUploadScreenState
       );
 
       if (file != null && mounted) {
-        Get.toNamed(AppRoutes.reviewUploadSelfie, arguments: file.path);
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.registerSelfiePreviewScreen,
+          arguments: {"uploadedImage": file.path},
+        );
       }
     } catch (e) {
-      print('Pick gallery error: $e');
+      debugPrint('Pick gallery error: $e');
     }
   }
 

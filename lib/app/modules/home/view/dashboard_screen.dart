@@ -3,13 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
-import 'package:internsharks/app/core/widgets/home_drawer.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/internship/view/my_internship_screen.dart';
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
-import 'package:internsharks/app/modules/profile/view/profile_screen.dart';
-import 'package:internsharks/view/pages/upload_resume/ResumeChat.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

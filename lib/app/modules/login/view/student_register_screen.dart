@@ -180,9 +180,18 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                           ),
                           labelText: "Mobile Number",
                           isEnabled: isVerified ? false : true,
+                          // onChanged: (value) {
+                          //   mobileController.text = value;
+                          //   print(value);
+                          // },
                           onChanged: (value) {
-                            mobileController.text = value;
-                            print(value);
+                            if (value.isNotEmpty && RegExp(r'^[0-5]').hasMatch(value)) {
+                              AppFunctions.showToast(
+                                message: "Number must start from 6-9",
+                                isError: true,
+                              );
+                              mobileController.clear();
+                            }
                           },
                           suffixWidget: Visibility(
                             visible: isVerified,
@@ -708,10 +717,12 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       // ResumeStorageService.saveNetworkResume(
       //   resumeFile: studentProfileModel.studentResume!,
       // );
-      AppFunctions.navigateScreen(
-        context,
-        AppRoutes.registerResumeReportScreen,
-      );
+      if(mounted) {
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.registerResumeReportScreen,
+        );
+      }
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
@@ -722,11 +733,20 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   }
 
   Future<void> sendMobileOtp() async {
-    await registerController.sendMobileOtp(mobileNumber: mobileController.text);
+    final error = AppFunctions.validateIndianMobile(mobileController.text);
+
+    if (error != null) {
+      AppFunctions.showToast(message: error, isError: true);
+      return;
+    }
+
+    await registerController.sendMobileOtp(
+      mobileNumber: mobileController.text,
+    );
+
     if (registerController.getResponseCode() == 200) {
       AppFunctions.showToast(
-        message:
-            registerController.sendMobileOtpModel.message ??
+        message: registerController.sendMobileOtpModel.message ??
             "OTP sent to your mobile!",
         isError: false,
       );
@@ -740,7 +760,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   }
 
   Future<void> verifyMobileOtp() async {
-    registerController.verifyMobileOtp(
+    await registerController.verifyMobileOtp(
       mobileNumber: mobileController.text,
       otpNumber: mobileOtpController.text,
     );
@@ -779,7 +799,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   }
 
   Future<void> verifyEmailOtp() async {
-    registerController.verifyEmailOtp(
+    await registerController.verifyEmailOtp(
       emailAddress: emailController.text,
       otpNumber: emailOtpController.text,
     );

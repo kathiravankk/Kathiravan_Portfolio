@@ -94,8 +94,31 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
                       itemBuilder: (context, index) => SavedInternshipCard(
                         jobTitle: savedJobs![index].job!.roleType ?? "",
                         companyLogo: savedJobs![index].job!.companyLogo ?? "",
-                        postedDate: savedJobs![index].job!.createdAt ?? "",
+                        postedDate: savedJobs![index].updatedAt ?? "",
                         companyName: savedJobs![index].job!.companyName ?? "",
+                        qualification: savedJobs![index]
+                            .job!
+                            .studentQualification!
+                            .join(",")
+                            .toString(),
+                        duration:
+                            savedJobs![index]
+                                    .job!
+                                    .internshipDuration!
+                                    .isNotEmpty &&
+                                savedJobs![index].job!.internshipDuration !=
+                                    null
+                            ? "${savedJobs![index].job!.internshipDuration!} Months"
+                            : "${savedJobs![index].job!.days} Days",
+                        stipendRupees:
+                            savedJobs![index].job!.internshipStipend ?? "NA",
+
+                        skillList: savedJobs![index].job!.requiredSkills ?? [],
+                        internFees:
+                            savedJobs![index].job!.fees != null &&
+                                savedJobs![index].job!.fees!.isNotEmpty
+                            ? savedJobs![index].job!.fees!
+                            : 'NA',
                         isApplyFunc: () {
                           AppFunctions.navigateScreen(
                             context,

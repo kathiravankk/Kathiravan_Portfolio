@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -64,6 +63,7 @@ class AppFunctions {
       showToast(message: message, isError: true);
     } else if (responseCode == 401) {
       showToast(message: "Session expired, Please login again!", isError: true);
+      LocalStorageService.clearUser();
       Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 403) {
       showToast(
@@ -72,9 +72,9 @@ class AppFunctions {
       );
       //AppFunctions.showAppAlert(context: context, content: content)
     } else if (responseCode == 404) {
-      // showToast(message: message, isError: true);
-      showToast(message: "Session expired, Please login again!", isError: true);
-      Get.offAllNamed(AppRoutes.loginScreen);
+       showToast(message: message, isError: true);
+      //showToast(message: "Session expired, Please login again!", isError: true);
+      //Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 500) {
       showToast(message: message, isError: true);
     } else if (responseCode == 502) {
@@ -308,6 +308,31 @@ class AppFunctions {
     } catch (e) {
       return "NA";
     }
+  }
+
+  static String? validateIndianMobile(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Mobile number is required";
+    }
+
+    final mobile = value.trim();
+
+    /// must be exactly 10 digits
+    if (mobile.length != 10) {
+      return "Mobile number must be 10 digits";
+    }
+
+    /// must contain only digits
+    if (!RegExp(r'^[0-9]+$').hasMatch(mobile)) {
+      return "Only numbers are allowed";
+    }
+
+    /// should not start with 0–5
+    if (RegExp(r'^[0-5]').hasMatch(mobile)) {
+      return "Mobile number must start from 6-9";
+    }
+
+    return null; // ✅ valid
   }
 
   static String formatIsoDate(String isoString) {

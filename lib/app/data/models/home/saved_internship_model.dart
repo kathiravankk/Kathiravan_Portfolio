@@ -123,9 +123,11 @@ class JobModel {
   final List<String>? requiredSkills;
   final String? eligibilityCriteria;
   final String? companyState;
+  final String? fees;
   final String? companyCity;
   final String? locationLink;
   final String? internshipDuration;
+  final String? days;
   final String? internshipStipend;
   final String? internshipMode;
   final String? recruiter;
@@ -137,12 +139,14 @@ class JobModel {
 
   JobModel({
     this.id,
+    this.fees,
     this.companyName,
     this.aboutCompany,
     this.companyWebsite,
     this.companyLogo,
     this.roleType,
     this.title,
+    this.days,
     this.aboutInternship,
     this.internshipDescription,
     this.internshipQualification,
@@ -167,6 +171,8 @@ class JobModel {
   factory JobModel.fromJson(Map<String, dynamic> json) {
     return JobModel(
       id: json['_id'] ?? "",
+      days: json['days'] ?? "",
+      fees: json['fee'] ?? "",
       companyName: json['companyname'] ?? "",
       aboutCompany: json['aboutcompany'] ?? "",
       companyWebsite: json['companywebsite'] ?? "",
@@ -200,6 +206,8 @@ class JobModel {
   Map<String, dynamic> toJson() {
     return {
       "_id": id,
+      "fee": fees,
+      "days": days,
       "companyname": companyName,
       "aboutcompany": aboutCompany,
       "companywebsite": companyWebsite,
