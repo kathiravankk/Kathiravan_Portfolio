@@ -53,7 +53,6 @@ dependencies:
   dio: ^5.9.0
   syncfusion_flutter_pdfviewer: ^32.1.19
   get: ^4.7.3
-  upgrader: ^12.3.0
   fluttertoast: ^9.0.0
   pdfx: ^2.9.2
   crop_image: ^1.0.17
@@ -64,6 +63,7 @@ dependencies:
   connectivity_plus: ^6.0.3
   flutter_launcher_icons: ^0.14.4
   flutter_cashfree_pg_sdk: ^2.2.10+48
+  new_version_plus: ^0.1.2
 
 
 

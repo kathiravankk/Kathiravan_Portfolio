@@ -192,7 +192,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 icon: Icons.description_outlined,
                 title: "My Applications",
                 onTap: () {
-                  AppFunctions.navigateScreen(context, AppRoutes.myAppliesScreen);
+                  AppFunctions.navigateScreen(
+                    context,
+                    AppRoutes.myAppliesScreen,
+                  );
                 },
               ),
               _drawerItem(
@@ -218,7 +221,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
               _drawerItem(
                 icon: Icons.card_membership_sharp,
                 title: "Certificates",
-                onTap: () {},
+                onTap: () {
+                  AppFunctions.navigateScreen(
+                    context,
+                    AppRoutes.myCertificatesScreen,
+                  );
+                },
               ),
               _drawerItem(
                 icon: Icons.currency_exchange_sharp,

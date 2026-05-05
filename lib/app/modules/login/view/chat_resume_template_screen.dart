@@ -182,11 +182,9 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     final firstName = (resumeData?.personalInfo?.name ?? 'resume')
         .split(' ')
         .first;
-
     await ResumeFileUtils.handleDownload(
       webViewController: webViewController!,
-      context: context,
-      defaultFileName: "${firstName}_resume",
+      fileName: "${firstName}_resume",
     );
   }
 
@@ -200,7 +198,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
     await ResumeFileUtils.handleShare(
       webViewController: webViewController!,
-      defaultFileName: "${firstName}_resume",
+      fileName: "${firstName}_resume",
     );
   }
 

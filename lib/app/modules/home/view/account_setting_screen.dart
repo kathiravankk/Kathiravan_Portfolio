@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+
 
 class AccountSettingScreen extends StatefulWidget {
   const AccountSettingScreen({super.key});
@@ -49,6 +50,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
             spacing: 15,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Security ──────────────────────────────────────────────────
               Text(
                 "Security",
                 style: AppStyles.customTextStyle(
@@ -70,9 +72,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                       );
                     },
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   Divider(color: AppColors.contBorderColor),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   _settingsTile(
                     icon: CupertinoIcons.mail,
                     title: "Change Email",
@@ -85,14 +87,126 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10,),
+
+              // ── Privacy Policy & Terms ────────────────────────────────────
+              Text(
+                "Privacy Policy and Terms & Conditions",
+                style: AppStyles.customTextStyle(
+                  color: AppColors.whiteColor,
+                  size: 16,
+                  weight: FontWeight.w700,
+                ),
+              ),
+
+              _settingsCard(
+                children: [
+                  _settingsTile(
+                    icon: CupertinoIcons.lock_shield,
+                    title: "Privacy Policy",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.privacyPolicyScreen,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 5),
+                  Divider(color: AppColors.contBorderColor),
+                  const SizedBox(height: 5),
+                  _settingsTile(
+                    icon: CupertinoIcons.doc_text,
+                    title: "Terms and Conditions",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.termsAndConditionsScreen,
+                      );
+                    },
+                  ),
+                ],
+              ),
+
+              // ── Delete Account ────────────────────────────────────────────
+              const SizedBox(height: 10),
               _settingsCard(
                 children: [
                   _settingsTile(
                     isDelete: true,
                     icon: CupertinoIcons.delete,
                     title: "Delete Account",
-                    onTap: () {},
+                    onTap: () {
+                      AppFunctions.showAppAlert(
+                        context: context,
+                        title: "Delete Account",
+                        confirmText: "OKAY",
+                        customContent: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Please contact admin to Delete your Account!",
+                              textAlign: TextAlign.center,
+                              style: AppStyles.customTextStyle(
+                                lineSpace: 1.3,
+                                size: 14,
+                                color: AppColors.whiteColor,
+                                weight: FontWeight.w300,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            /// Copyable Email
+                            GestureDetector(
+                              onTap: () {
+                                Clipboard.setData(
+                                  const ClipboardData(
+                                    text: "info@internsharks.ai",
+                                  ),
+                                );
+                                AppFunctions.showToast(
+                                  message: "Email copied!",
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor.withOpacity(
+                                    0.2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "info@internsharks.ai",
+                                      style: AppStyles.customTextStyle(
+                                        size: 14,
+                                        color: AppColors.primaryColor,
+                                        weight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    const Icon(
+                                      Icons.copy,
+                                      size: 16,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        content: '',
+                      );
+                    },
                   ),
                 ],
               ),
@@ -154,9 +268,9 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
             ),
             InkWell(
               onTap: onTap,
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_forward_ios,
-                color: AppColors.whiteColor,
+                color: isDelete ? AppColors.redColor : AppColors.whiteColor,
                 size: 20,
               ),
             ),
@@ -165,5 +279,4 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       ),
     );
   }
-
 }

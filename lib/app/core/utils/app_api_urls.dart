@@ -101,6 +101,7 @@ class AppApiUrls {
   static String validateMcqAnswer = "${baseUrl}checktestscore";
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
+  static String getAllCertificates = "${baseUrl}getcertificate";
 
   // INTERNSHIP PAYMENT
 

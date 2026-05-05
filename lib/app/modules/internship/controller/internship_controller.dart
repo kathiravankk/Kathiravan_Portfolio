@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
+import 'package:internsharks/app/data/models/internship/all_cerifications_model.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_status_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
@@ -351,6 +352,35 @@ class InternshipController extends GetxController {
       paymentCreateLoading = false;
     } catch (err) {
       paymentCreateLoading = false;
+      rethrow;
+    }
+  }
+
+  // GET ALL CERTIFICATES
+
+  // Loading
+
+  final _certificateLoading = false.obs;
+
+  bool get certificateLoading => _certificateLoading.value;
+
+  set certificateLoading(bool value) => _certificateLoading.value = value;
+
+  //Model
+
+  final _certificateModel = AllCertificationsModel().obs;
+
+  AllCertificationsModel get certificateModel => _certificateModel.value;
+
+  set certificateModel(AllCertificationsModel value) => _certificateModel.value = value;
+
+  Future<void> getAllCertificates() async {
+    try {
+      certificateLoading = true;
+      certificateModel = await internshipProvider!.fetchAllCertificates();
+      certificateLoading = false;
+    } catch (err) {
+      certificateLoading = false;
       rethrow;
     }
   }

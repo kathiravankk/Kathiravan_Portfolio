@@ -240,8 +240,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
       await ResumeFileUtils.handleDownload(
         webViewController: webViewController!,
-        context: context,
-        defaultFileName: "${firstName}_resume",
+        fileName: "${firstName}_resume",
       );
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -256,10 +255,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       final firstName = (resumeData?.personalInfo?.name ?? 'resume')
           .split(' ')
           .first;
-
       await ResumeFileUtils.handleShare(
         webViewController: webViewController!,
-        defaultFileName: "${firstName}_resume",
+        fileName: "${firstName}_resume",
       );
     } finally {
       if (mounted) setState(() => isLoading = false);

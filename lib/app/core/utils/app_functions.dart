@@ -165,6 +165,7 @@ class AppFunctions {
 
   static Future<void> showAppAlert({
     required BuildContext context,
+    Widget? customContent,
     String? title,
     required String content,
     String cancelText = 'Cancel',
@@ -197,16 +198,17 @@ class AppFunctions {
                   textAlign: TextAlign.center,
                 ),
               ],
-              Text(
-                content,
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w300,
-                  lineSpace: 1.3,
-                ),
-              ),
+              customContent ??
+                  Text(
+                    content,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                      lineSpace: 1.3,
+                    ),
+                  ),
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -245,6 +247,180 @@ class AppFunctions {
         );
       },
     );
+  }
+
+  static Future<void> showAppUpdateAlert({
+    required BuildContext context,
+    Widget? customContent,
+    String? title,
+    required String content,
+    String cancelText = 'Cancel',
+    VoidCallback? onCancel,
+    String? confirmText,
+    VoidCallback? onConfirm,
+    bool isDestructive = false,
+    bool barrierDismissible = false,
+  }) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 15,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (title != null) ...[
+                Text(
+                  title,
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              customContent ??
+                  Text(
+                    content,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                      lineSpace: 1.3,
+                    ),
+                  ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            if (confirmText != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        Get.back();
+                        onConfirm?.call();
+                      },
+                      buttonText: confirmText,
+                      //width: 130,
+                      height: 35,
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        Get.back();
+                        onCancel?.call();
+                      },
+                      buttonText: cancelText,
+                      bgColor: AppColors.fieldBgColor,
+                      //width: 130,
+                      height: 35,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool> showAppExitAlert({
+    required BuildContext context,
+    Widget? customContent,
+    String? title,
+    required String content,
+    String cancelText = 'Cancel',
+    VoidCallback? onCancel,
+    String? confirmText,
+    VoidCallback? onConfirm,
+    bool isDestructive = false,
+    bool barrierDismissible = false,
+  }) async {
+    bool result = false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 15,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (title != null)
+                Text(
+                  title,
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              customContent ??
+                  Text(
+                    content,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                      lineSpace: 1.3,
+                    ),
+                  ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            if (confirmText != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        result = true; // ✅ Confirm → allow exit
+                        Get.back();
+                        onConfirm?.call();
+                      },
+                      buttonText: confirmText,
+                      height: 35,
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        result = false; // ❌ Cancel → prevent exit
+                        Get.back();
+                        onCancel?.call();
+                      },
+                      buttonText: cancelText,
+                      bgColor: AppColors.fieldBgColor,
+                      height: 35,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
+
+    return result;
   }
 
   static getCategoryImage({required String service}) {

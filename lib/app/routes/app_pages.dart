@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
 import 'package:internsharks/app/modules/home/view/buy_credit_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
+import 'package:internsharks/app/modules/home/view/privacy_policy_screen.dart';
+import 'package:internsharks/app/modules/home/view/terms_and_conditions_screen.dart';
 import 'package:internsharks/app/modules/internship/view/internship_syllabus_screen.dart';
 import 'package:internsharks/app/modules/internship/view/mcq_result_review_screen.dart';
 import 'package:internsharks/app/modules/internship/view/mcq_test_screen.dart';
@@ -12,6 +14,7 @@ import 'package:internsharks/app/modules/home/view/category_wise_internship_scre
 import 'package:internsharks/app/modules/home/view/chat_resume_update_screen.dart';
 import 'package:internsharks/app/modules/home/view/dashboard_screen.dart';
 import 'package:internsharks/app/modules/home/view/internship_detail_screen.dart';
+import 'package:internsharks/app/modules/internship/view/my_certificates_screen.dart';
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
 import 'package:internsharks/app/modules/profile/view/profile_edit_screen.dart';
 import 'package:internsharks/app/modules/profile/view/profile_screen.dart';
@@ -231,6 +234,18 @@ class AppPages {
     appPage(
       name: AppRoutes.mcqResultReviewScreen,
       page: () => McqResultReviewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.myCertificatesScreen,
+      page: () => MyCertificatesScreen(),
+    ),
+    appPage(
+      name: AppRoutes.privacyPolicyScreen,
+      page: () => PrivacyPolicyScreen(),
+    ),
+    appPage(
+      name: AppRoutes.termsAndConditionsScreen,
+      page: () => TermsAndConditionsScreen(),
     ),
     appPage(
       name: AppRoutes.profileEditScreen,

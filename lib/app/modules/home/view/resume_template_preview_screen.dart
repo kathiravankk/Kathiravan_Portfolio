@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:path_provider/path_provider.dart';
@@ -252,88 +253,65 @@ class _ResumeTemplatePreviewScreenState
   // ─── Handle Download ──────────────────────────────────────────────────────────
   Future<void> _handleDownload() async {
     final fileName = await _askFileName();
-    if (fileName == null) return; // user cancelled
+    if (fileName == null) return;
 
     setState(() => isLoading = true);
 
     try {
-      final hasPermission = await _requestStoragePermission();
-      if (!hasPermission) {
-        AppFunctions.showToast(
-          message: "❌ Storage permission denied. Please allow in Settings.",
-          isError: true,
-        );
-        return;
-      }
-
-      final html = await _getRenderedHtml();
-      if (html == null) {
-        AppFunctions.showToast(
-          message: "❌ Failed to capture resume content",
-          isError: true,
-        );
-        return;
-      }
-
-      final Uint8List pdfBytes = await _htmlToPdfBytes(html);
-      final file = await _savePdfToDownloads(pdfBytes, fileName);
-
-      if (file != null) {
-        AppFunctions.showToast(
-          message: "✅ Saved to Downloads: $fileName.pdf",
-          isError: false,
-        );
-      } else {
-        AppFunctions.showToast(
-          message: "❌ Download failed. Try again.",
-          isError: true,
-        );
-      }
-    } catch (e) {
-      debugPrint("Download error: $e");
-      AppFunctions.showToast(message: "❌ Download failed: $e", isError: true);
+      await ResumeFileUtils.handleDownload(
+        webViewController: _controller,
+        fileName: fileName,
+      );
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
   }
 
-  // ─── Handle Share ─────────────────────────────────────────────────────────────
   Future<void> _handleShare() async {
     setState(() => isLoading = true);
-
     try {
-      final html = await _getRenderedHtml();
-      if (html == null) {
-        AppFunctions.showToast(
-          message: "❌ Failed to capture resume content",
-          isError: true,
-        );
-        return;
-      }
-
-      final Uint8List pdfBytes = await _htmlToPdfBytes(html);
-
-      // Save to temp dir for sharing (no permissions needed for temp dir)
-      final tempDir = await getTemporaryDirectory();
       final firstName = (resumeData.personalInfo?.name ?? 'resume')
           .split(' ')
           .first;
-      final name = "${firstName}_resume";
-      final tempFile = File('${tempDir.path}/$name.pdf');
-      await tempFile.writeAsBytes(pdfBytes);
-
-      await Share.shareXFiles(
-        [XFile(tempFile.path, mimeType: 'application/pdf')],
-        subject: "$name.pdf",
-        text: "Check out my resume!",
+      await ResumeFileUtils.handleShare(
+        webViewController: _controller,
+        fileName: "${firstName}_resume",
       );
-    } catch (e) {
-      debugPrint("Share error: $e");
-      AppFunctions.showToast(message: "❌ Share failed", isError: true);
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
   }
+  // Future<void> _handleShare() async {
+  //   setState(() => isLoading = true);
+  //
+  //   try {
+  //     // ✅ Auto filename (no dialog)
+  //     final firstName = (resumeData.personalInfo?.name ?? 'resume')
+  //         .split(' ')
+  //         .first;
+  //     final fileName = "${firstName}_resume";
+  //
+  //     // ✅ Get rendered HTML
+  //     final html = await _getRenderedHtml();
+  //     if (html == null) throw Exception("Failed to get HTML");
+  //
+  //     // ✅ Convert to PDF
+  //     final pdfBytes = await _htmlToPdfBytes(html);
+  //
+  //     // ✅ Save to temp directory (NOT downloads)
+  //     final tempDir = await getTemporaryDirectory();
+  //     final file = File('${tempDir.path}/$fileName.pdf');
+  //     await file.writeAsBytes(pdfBytes);
+  //
+  //     // ✅ Direct share (no prompt before)
+  //     await Share.shareXFiles([XFile(file.path)], text: 'My Resume');
+  //   } catch (e) {
+  //     debugPrint("Share error: $e");
+  //     AppFunctions.showToast(message: "Failed to share resume", isError: true);
+  //   } finally {
+  //     if (mounted) setState(() => isLoading = false);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

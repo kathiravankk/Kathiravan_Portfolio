@@ -36,6 +36,8 @@ class AppRoutes {
   static const buyCreditsScreen = '/buyCreditsScreen';
   static const homeProfileScreen = '/homeProfileScreen';
   static const myAppliesScreen = '/myAppliesScreen';
+  static const privacyPolicyScreen = '/privacyPolicyScreen';
+  static const termsAndConditionsScreen = '/termsAndConditionsScreen';
 
   // INTERNSHIP FLOW
 
@@ -43,6 +45,7 @@ class AppRoutes {
   static const syllabusViewScreen = '/syllabusViewScreen';
   static const mcqTestScreen = '/mcqTestScreen';
   static const mcqResultReviewScreen = '/mcqResultReviewScreen';
+  static const myCertificatesScreen = '/myCertificatesScreen';
 
 
 

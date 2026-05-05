@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
+import 'package:internsharks/app/data/models/internship/all_cerifications_model.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_status_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
@@ -274,6 +275,26 @@ class InternshipProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return PaymentCreateModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET ALL CERTIFICATES
+
+  Future<AllCertificationsModel> fetchAllCertificates() async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getAllCertificates,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return AllCertificationsModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return AllCertificationsModel.fromJson(err.response!.data);
     }
   }
 }
