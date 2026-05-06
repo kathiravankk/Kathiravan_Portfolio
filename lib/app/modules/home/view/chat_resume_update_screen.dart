@@ -183,7 +183,8 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
       //if (botResponse.contains("Chat ended")) {
       if (ai?.status == "completed") {
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(const Duration(milliseconds: 800),
+                () {
           availableOptions.clear();
           selectedOptions.clear();
           updateStudentProfile();
@@ -376,7 +377,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             industrialVisits: studentData.industrialVisits,
             projects: studentData.projects,
             skills: studentData.studProgrammingLang,
-            profileSummary: studentData.profileSummary,
+            profileSummary: studentData.profileSummary!.replaceAll('"', ''),
             colleges: studentData.college,
             degree: [],
             experience: studentData.experience,

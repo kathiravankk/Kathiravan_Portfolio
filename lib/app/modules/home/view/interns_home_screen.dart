@@ -111,7 +111,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             : Scaffold(
                 key: _scaffoldKey,
                 drawer: HomeDrawer(),
-                backgroundColor: AppColors.blackColor,
+                backgroundColor: AppColors.appBgColor_2,
                 appBar: AppBar(
                   backgroundColor: AppColors.transparentColor,
                   elevation: 0,
@@ -374,14 +374,23 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 return InternshipCard(
                   width: 360,
                   companyName: recommentedList.companyName ?? "",
-                  duration: recommentedList.internshipDuration ?? "",
+                  //duration: recommentedList.internshipDuration ?? "",
+                  duration:
+                  recommentedList.internshipDuration!.isNotEmpty &&
+                      recommentedList.internshipDuration != null
+                      ? "${recommentedList.internshipDuration!} Months"
+                      : "${recommentedList.days} Days",
+                  internFees: recommentedList.internFees ?? "",
+                  location: recommentedList.companyCity ?? "",
                   isSaved: recommentedList.isSaved ?? false,
                   // saveFunc: () {
                   //   recommentedList.isSaved!
                   //       ? removeToSaved(jobId: recommentedList.sId!)
                   //       : addToSaved(jobId: recommentedList.sId!);
                   // },
-                  saveFunc: () => dashboardController.toggleSave(index),
+                  saveFunc: () async {
+                    await dashboardController.toggleSave(index);
+                  },
                   viewFunc: () {
                     AppFunctions.navigateScreen(
                       context,
@@ -391,7 +400,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   },
                   eligibility: recommentedList.eligibilityCriteria ?? "",
                   qualification:
-                      recommentedList.studentQualification!.join(", ") ?? "",
+                      recommentedList.studentQualification!.join(", "),
                   stipendRupees: recommentedList.internshipStipend ?? "",
                   description: recommentedList.internshipDescription ?? "",
                   imageUrl: recommentedList.companyLogo ?? "",
@@ -399,7 +408,6 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   role: recommentedList.roleType ?? "",
                   postedDate: recommentedList.createdAt ?? "",
                   skillList: recommentedList.requiredSkills ?? [],
-                  isApplied: recommentedList.applied ?? false,
                 );
               },
             )
@@ -450,32 +458,38 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             width: 140,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.selectedContColor,
+              color: AppColors.transparentColor,
               borderRadius: BorderRadius.circular(23),
+              border: Border.all(color: AppColors.contBorderColor2),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 15,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    shape: BoxShape.circle,
-                  ),
-                  padding: EdgeInsets.all(5),
-                  child: Image.asset(
-                    AppFunctions.getCategoryImage(
-                      service:
-                          dashboardController
-                              .categoryListModel
-                              .categoryList![index]
-                              .categoryName ??
-                          "",
-                    ),
-                    height: 35,
-                    width: 35,
-                    color: AppColors.blackColor,
-                  ),
+                // SizedBox(
+                //   height: 35,
+                //   width: 35,
+                //   child: Text(
+                //     dashboardController
+                //         .categoryListModel
+                //         .categoryList![index]
+                //         .count
+                //         .toString(),
+                //     textAlign: TextAlign.center,
+                //     style: AppStyles.customTextStyle(
+                //       size: 20,
+                //       color: AppColors.whiteColor,
+                //       weight: FontWeight.w700,
+                //       fontFamily: "Roboto",
+                //     ),
+                //   ),
+                // ),
+                buildAnimatedCount(
+                  dashboardController
+                          .categoryListModel
+                          .categoryList![index]
+                          .count ??
+                      0,
                 ),
                 Text(
                   dashboardController
@@ -485,7 +499,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                       "",
                   style: AppStyles.customTextStyle(
                     size: 10,
-                    color: AppColors.secondaryColor,
+                    color: AppColors.primaryColor,
                     weight: FontWeight.w700,
                   ),
                 ),
@@ -496,6 +510,37 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
       ),
     );
   }
+
+  Widget buildAnimatedCount(int count) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: count == 0 ? 1 : count.toDouble()),
+      duration: const Duration(milliseconds: 800),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.8 + (value / (count == 0 ? 1 : count)) * 0.2,
+          child: Opacity(
+            opacity: 0.5 + (value / (count == 0 ? 1 : count)) * 0.5,
+            child: Text(
+              count == 0 ? "0" : value.toInt().toString(),
+              style: AppStyles.customTextStyle(
+                      size: 20,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w700,
+                      fontFamily: "Roboto",
+                    ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // String _formatNumber(int number) {
+  //   return number.toString().replaceAllMapped(
+  //     RegExp(r'\B(?=(\d{3})+(?!\d))'),
+  //     (match) => ',',
+  //   );
+  // }
 
   Future<void> addToSaved({required String jobId}) async {
     await profileController.addSavedJobsData(jobId: jobId);

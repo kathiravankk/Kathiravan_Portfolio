@@ -1,8 +1,9 @@
 class AppApiUrls {
   // BASE URL
-  static const String baseUrl = newBaseUrl;
+  static const String baseUrl = newProdBaseUrl;
   static const String oldBaseUrl = "https://fulupo.selfietoons.com/api/";
   static const String newBaseUrl = "https://dev.api.internsharks.ai/api/";
+  static const String newProdBaseUrl = "https://api.internsharks.ai/api/";
   static const String devServer = "https://fulupo.selfietoons.com/";
   static const String prodServer = "https://fulupo.selfietoons.com/";
 
@@ -41,8 +42,8 @@ class AppApiUrls {
   static String getCategoryInternship(String categoryId) =>
       "${baseUrl}getjob/industry/$categoryId";
 
-  static String getInternshipViewData(String internshipId) =>
-      "${baseUrl}jobpost/jobbyid/$internshipId";
+  static String getInternshipViewData(String internshipId, String studentId) =>
+      "${baseUrl}jobpost/jobbyid/$internshipId?studentId=$studentId";
 
   static String getAppliedInternship(String studentId) =>
       "${baseUrl}getjob/appliedjob/$studentId";
@@ -52,6 +53,8 @@ class AppApiUrls {
       "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
   static String updateChatResume = "${baseUrl}updatemessage";
+
+  // BUY CREDITS
   static String getCreditPlans = "${baseUrl}plans";
   static String createCreditOrder = "${baseUrl}student/create-order";
   static String verifyCreditOrder = "${baseUrl}student/verify";
@@ -83,6 +86,7 @@ class AppApiUrls {
   static String getFilterOption = "${baseUrl}jobpost/getvalue";
   static String generateResDp = "${baseUrl}generate-banner";
   static String removeWaterMark = "${baseUrl}removewater";
+  static String bannerLike = "${baseUrl}studentlike";
 
   // INTERNSHIP FLOW
 
@@ -97,4 +101,12 @@ class AppApiUrls {
   static String validateMcqAnswer = "${baseUrl}checktestscore";
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
+  static String getAllCertificates = "${baseUrl}getcertificate";
+
+  // INTERNSHIP PAYMENT
+
+  static String paymentCheck = "${baseUrl}checkinternpayment";
+  static String createPayment = "${baseUrl}createinternshipfee";
+  static String verifyPayment = "${baseUrl}verifyinternshipfee";
+
 }

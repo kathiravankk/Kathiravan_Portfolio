@@ -61,19 +61,21 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
 
       studentId = reply?.userId ?? "";
 
-      if (reply?.state == "MOBILE" ||
-          reply?.state == "MOBILE_OTP" ||
-          reply?.state == "EMAIL_OTP") {
-        currentKeyboard = TextInputType.phone;
-      } else {
-        currentKeyboard = TextInputType.text;
-      }
+      // if (reply?.state == "MOBILE" ||
+      //     reply?.state == "MOBILE_OTP" ||
+      //     reply?.state == "EMAIL_OTP") {
+      //   currentKeyboard = TextInputType.phone;
+      // } else {
+      //   currentKeyboard = TextInputType.text;
+      // }
 
       if (reply?.response != null) {
         messages.add(ChatMessage(text: reply!.response!, isBot: true));
       }
       if (reply?.state == "COMPLETED") {
-        await registerNewStudent();
+        Future.delayed(const Duration(milliseconds: 800), () {
+          registerNewStudent();
+        });
       }
 
       scrollToBottom();
@@ -122,7 +124,9 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
         ),
       ),
       body: Obx(
-        () => registerController.studentDetailsLoading
+        () =>
+            registerController.studentDetailsLoading ||
+                registerController.studentRegisterLoading
             ? Center(
                 child: CupertinoActivityIndicator(
                   color: AppColors.secondaryColor,
@@ -159,25 +163,21 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
       "studemail": reply?.personalInfo?.email ?? "",
       "studmobileno": reply?.personalInfo?.phone ?? "",
       "profile_summary": reply?.profileSummary ?? "",
-      "studprogramminglang": jsonEncode(reply?.skills ?? []),
-
-      "projects": jsonEncode(reply?.projects?.map((e) => e.toJson()).toList() ?? []),
-
-      "paper_presentations":
-      jsonEncode(reply?.paperPresentations?.map((e) => e.toJson()).toList() ?? []),
-
-      "experience": jsonEncode(reply?.experience?.map((e) => e.toJson()).toList() ?? []),
-
-      "internships": jsonEncode(reply?.internships?.map((e) => e.toJson()).toList() ?? []),
-
-      "college": jsonEncode(reply?.education?.college!.map((e) => e.toJson()).toList() ?? []),
-
-      "studentcertificate":
-      jsonEncode(reply?.certifications?.map((e) => e.toJson()).toList() ?? []),
-
+      "studprogramminglang": reply?.skills ?? [],
+      "projects": jsonEncode(
+        reply?.projects?.map((e) => e.toJson()).toList() ?? [],
+      ),
+      "paper_presentations": jsonEncode(
+        reply?.paperPresentations?.map((e) => e.toJson()).toList() ?? [],
+      ),
+      "internships": jsonEncode(
+        reply?.internships?.map((e) => e.toJson()).toList() ?? [],
+      ),
+      "studentcertificate": jsonEncode(
+        reply?.certifications?.map((e) => e.toJson()).toList() ?? [],
+      ),
       "workshops": jsonEncode(reply?.workshops ?? []),
       "publications": jsonEncode(reply?.publications ?? []),
-      "parents": jsonEncode([]),
       "achievements": jsonEncode(reply?.achievements ?? []),
       "leadership": jsonEncode(reply?.leadership ?? []),
       "volunteer_experience": jsonEncode(reply?.volunteerExperience ?? []),
@@ -185,12 +185,23 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
       "areas_of_interest": jsonEncode(reply?.areasOfInterest ?? []),
       "hobbies": jsonEncode(reply?.hobbies ?? []),
       "industrial_visits": jsonEncode(reply?.industrialVisits ?? []),
-      "soft_skills": jsonEncode(["XXXXX"]),
       "linkedIn": reply?.personalInfo!.linkedIn ?? "XXXXX",
       "github": reply?.personalInfo!.github,
-
       "secondary": jsonEncode([reply?.education!.school?.secondary.toJson()]),
-      "higher_secondary": jsonEncode([reply?.education!.school?.higherSecondary.toJson()]),
+      "higher_secondary": jsonEncode([
+        reply?.education!.school?.higherSecondary.toJson(),
+      ]),
+      "college": jsonEncode(reply?.education!.college ?? []),
+      "studentdegree":
+          reply?.education!.college != null &&
+              reply!.education!.college!.isNotEmpty
+          ? reply.education!.college!.first.degree ?? ""
+          : "",
+      "studentcollegename":
+          reply?.education!.college != null &&
+              reply!.education!.college!.isNotEmpty
+          ? reply.education!.college!.first.institution ?? ""
+          : "",
     };
 
     debugPrint(registerData.toString(), wrapWidth: 1024);
@@ -216,7 +227,6 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
         LocalStorageService.tokenKey,
         registerController.studentRegisterModel.studentToken ?? "",
       );
-      await getStudentProfileData();
       showAlertDialog();
     } else {
       AppFunctions.apiErrorHandling(
@@ -234,7 +244,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       StudentProfileModel? data = registerController.studentProfileModel;
-      AppFunctions.navigateInitialScreen(
+      AppFunctions.navigateScreen(
         context,
         AppRoutes.chatResumeTemplateScreen,
         arguments: {
@@ -258,20 +268,20 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
             publications: data.publications,
             workShops: data.workshops,
             paperPresentations: data.paperPresentations,
-            certifications: [],
+            certifications: data.studentCertificate,
             educationData: data.education,
             industrialVisits: data.industrialVisits,
             projects: data.projects,
             skills: data.studProgrammingLang,
             profileSummary: data.profileSummary,
             colleges: data.college,
-            degree: [],
+            //degree: data.,
             experience: data.experience,
-            trainings: [],
+            trainings: data.trainings,
             studentId: data.id,
-            higherSecondary: data.education!.school!.higherSecondary ,
-            institution: [],
-            parents: [],
+            higherSecondary: data.education!.school!.higherSecondary,
+            //institution: [],
+            //parents: [],
             secondary: data.education!.school!.secondary,
           ),
         },
@@ -407,13 +417,13 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
               child: Icon(Icons.send_outlined, color: AppColors.whiteColor),
             ),
             onPressed: () async {
-              // await createChatResume(
-              //   chatData: {
-              //     "user_id": studentId,
-              //     "message": chatTextController.text,
-              //   },
-              // );
-              registerNewStudent();
+              await createChatResume(
+                chatData: {
+                  "user_id": studentId,
+                  "message": chatTextController.text,
+                },
+              );
+              //registerNewStudent();
             },
           ),
         ],
@@ -457,9 +467,9 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
         actionsAlignment: MainAxisAlignment.center,
         actions: [
           CustomButtonWidget(
-            buttonFunction: () {
+            buttonFunction: () async {
               Get.back();
-              Get.back();
+              await getStudentProfileData();
             },
             buttonText: "OKAY",
             width: 150,

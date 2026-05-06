@@ -107,7 +107,7 @@ class _RecommentedInternshipScreenState
                       //       ? removeToSaved(jobId: internshipList![index].sId!)
                       //       : addToSaved(jobId: internshipList![index].sId!);
                       // },
-                      saveFunc: () => dashboardController.toggleSave(index),
+                      saveFunc: () async{ dashboardController.toggleSave(index);},
                       postedDate: dashboardController
                           .recommentedModel
                           .internshipList![index]
@@ -158,8 +158,7 @@ class _RecommentedInternshipScreenState
                           dashboardController
                               .recommentedModel
                               .internshipList![index]
-                              .studentQualification!.join(", ") ??
-                          "All",
+                              .studentQualification!.join(", "),
                       eligibility:
                           dashboardController
                               .recommentedModel
@@ -172,12 +171,6 @@ class _RecommentedInternshipScreenState
                               .internshipList![index]
                               .requiredSkills ??
                           [],
-                      isApplied:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .applied ??
-                          false,
                     ),
                   ),
                 ],

@@ -5,76 +5,78 @@ class AppliedInternshipModel {
   int? count;
   List<ApplicationData>? applicationList;
 
-  AppliedInternshipModel({this.count, this.message, this.applicationList});
+  AppliedInternshipModel({
+    this.message,
+    this.count,
+    this.applicationList,
+  });
 
-  AppliedInternshipModel.fromJson(Map<String, dynamic> json) {
-    message = json["message"] ?? "";
-    count = json["count"] ?? 0;
-    if (json['applications'] != null) {
-      applicationList = <ApplicationData>[];
-      json['applications'].forEach((v) {
-        applicationList!.add(ApplicationData.fromJson(v));
-      });
-    }
+  factory AppliedInternshipModel.fromJson(Map<String, dynamic> json) {
+    return AppliedInternshipModel(
+      message: json["message"] ?? "",
+      count: json["count"] ?? 0,
+      applicationList: json['applications'] != null
+          ? List<ApplicationData>.from(
+        json['applications'].map((x) => ApplicationData.fromJson(x)),
+      )
+          : [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "message": message,
+      "count": count,
+      "applications":
+      applicationList?.map((x) => x.toJson()).toList() ?? [],
+    };
   }
 }
 
 class ApplicationData {
-  String? aId;
-  RecommentedData? jobData;
-  String? studentId;
-  String? recruiterId;
+  String? id;
   String? status;
-  int? currentWeek;
-  String? createdAt;
-  String? updatedAt;
-  int? vId;
-  List<ProgressData>? weeklyProgress;
+  RecommentedData? jobData;
 
-  ApplicationData.fromJson(Map<String, dynamic> json) {
-    aId = json["_id"] ?? "";
-    studentId = json["student"] ?? "";
-    recruiterId = json["recruiter"] ?? "";
-    status = json["status"] ?? "";
-    createdAt = json["createdAt"] ?? "";
-    jobData = json['job'] != null ? RecommentedData.fromJson(json['job']) : null;
-    updatedAt = json["updatedAt"] ?? "";
-    currentWeek = json["currentWeek"] ?? 0;
-    vId = json["__v"] ?? 0;
-    if (json['weeklyProgress'] != null) {
-      weeklyProgress = <ProgressData>[];
-      json['weeklyProgress'].forEach((v) {
-        weeklyProgress!.add(ProgressData.fromJson(v));
-      });
-    }
-  }
+  // NEW FIELDS
+  bool? hasFee;
+  bool? hasStipend;
+  bool? isFree;
+  String? jobType;
 
   ApplicationData({
+    this.id,
     this.status,
-    this.weeklyProgress,
-    this.studentId,
     this.jobData,
-    this.vId,
-    this.currentWeek,
-    this.updatedAt,
-    this.createdAt,
-    this.recruiterId,
-    this.aId,
+    this.hasFee,
+    this.hasStipend,
+    this.isFree,
+    this.jobType,
   });
-}
 
-class ProgressData {
-  String? status;
-  String? completedAt;
-  String? sId;
-  int? weekNumber;
-
-  ProgressData.fromJson(Map<String, dynamic> json) {
-    status = json["status"] ?? "";
-    completedAt = json["completedAt"] ?? "";
-    sId = json["_id"] ?? "";
-    weekNumber = json["weekNumber"] ?? 0;
+  factory ApplicationData.fromJson(Map<String, dynamic> json) {
+    return ApplicationData(
+      id: json["id"] ?? "", // ✅ FIXED (was _id)
+      status: json["status"] ?? "",
+      jobData: json['job'] != null
+          ? RecommentedData.fromJson(json['job'])
+          : null,
+      hasFee: json["hasFee"] ?? false,
+      hasStipend: json["hasStipend"] ?? false,
+      isFree: json["isFree"] ?? false,
+      jobType: json["jobType"] ?? "",
+    );
   }
 
-  ProgressData({this.weekNumber, this.sId, this.completedAt, this.status});
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "status": status,
+      "job": jobData?.toJson(),
+      "hasFee": hasFee,
+      "hasStipend": hasStipend,
+      "isFree": isFree,
+      "jobType": jobType,
+    };
+  }
 }

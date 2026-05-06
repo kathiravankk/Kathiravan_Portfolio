@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
@@ -40,36 +39,60 @@ class _RegisterResumeReportScreenState
     super.initState();
   }
 
-  Future<void> getResumeScore() async {
-    try {
-      AiLoadingWidget.show(context, type: LoadingDialogType.atsJson);
+  // Future<void> getResumeScore() async {
+  //   try {
+  //     AiLoadingWidget.show(context, type: LoadingDialogType.atsJson);
+  //
+  //     /// ✅ allow one frame to render loader
+  //     await Future.delayed(const Duration(milliseconds: 100));
+  //     networkResumePath = await ResumeStorageService.getNetworkResume();
+  //     debugPrint(networkResumePath!);
+  //     debugPrint("******************");
+  //     await registerController.checkResumeScore(resumeUrl: networkResumePath!);
+  //     if (mounted) {
+  //       AiLoadingWidget.hide(context);
+  //     }
+  //     if (registerController.getResponseCode() == 200 ||
+  //         registerController.getResponseCode() == 201) {
+  //       await getProfileData();
+  //     } else {
+  //       AppFunctions.apiErrorHandling(
+  //         registerController.getResponseCode(),
+  //         "Something went wrong!, Try again later",
+  //       );
+  //     }
+  //   } catch (error) {
+  //     if (mounted) {
+  //       AiLoadingWidget.hide(context);
+  //     }
+  //     AppFunctions.apiErrorHandling(
+  //       registerController.getResponseCode(),
+  //       "Something went wrong!, Try again later",
+  //     );
+  //   } finally {
+  //     if (mounted) {
+  //       AiLoadingWidget.hide(context);
+  //     }
+  //   }
+  // }
 
-      /// ✅ allow one frame to render loader
-      await Future.delayed(const Duration(milliseconds: 100));
-      networkResumePath = await ResumeStorageService.getNetworkResume();
-      // await registerController.checkResumeScore(
-      //   resumeUrl:
-      //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
-      // );
-      print(networkResumePath!);
-      print("******************");
-      await registerController.checkResumeScore(resumeUrl: networkResumePath!);
-      if (registerController.getResponseCode() == 200 ||
-          registerController.getResponseCode() == 201) {
-        await getProfileData();
-      } else {
-        AppFunctions.apiErrorHandling(
-          registerController.getResponseCode(),
-          "Something went wrong!, Try again later",
-        );
-      }
-    } catch (error) {
+  Future<void> getResumeScore() async {
+    networkResumePath = await ResumeStorageService.getNetworkResume();
+    // await registerController.checkResumeScore(
+    //   resumeUrl:
+    //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
+    // );
+    debugPrint(networkResumePath!);
+    debugPrint("******************");
+    await registerController.checkResumeScore(resumeUrl: networkResumePath!);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      await getProfileData();
+    } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
         "Something went wrong!, Try again later",
       );
-    } finally {
-      AiLoadingWidget.hide(context);
     }
   }
 
@@ -124,7 +147,7 @@ class _RegisterResumeReportScreenState
             ),
           ),
           body: Obx(
-            () => registerController.resumeScoreLoading
+            () => registerController.resumeScoreLoading || registerController.studentDetailsLoading
                 ? Center(
                     child: CupertinoActivityIndicator(
                       color: AppColors.secondaryColor,
@@ -676,11 +699,13 @@ class _RegisterResumeReportScreenState
         message: "Resume updated successfully!",
         isError: false,
       );
-      // AppFunctions.navigateScreen(
-      //   context,
-      //   AppRoutes.stepUpdateScreen,
-      //   arguments: {"activeStep": 2},
-      // );
+      if(mounted) {
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.stepUpdateScreen,
+          arguments: {"activeStep": 2},
+        );
+      }
     } else {
       AppFunctions.showToast(
         message:
@@ -692,19 +717,32 @@ class _RegisterResumeReportScreenState
   }
 
   Future<void> updateResumeFunc() async {
-    try {
-      /// ✅ show loader first
-      AiLoadingWidget.show(context, type: LoadingDialogType.enhanceResume);
+    bool alreadyClosed = false;
 
-      /// ✅ allow one frame to render loader
+    try {
+      /// ✅ show loader
+      AiLoadingWidget.show(
+        context,
+        type: LoadingDialogType.enhanceResume,
+      );
+
       await Future.delayed(const Duration(milliseconds: 100));
 
       await registerController.updateResumeData(
         updateData: registerController.resumeAnalyzeModel.extractedData!,
       );
 
-      if (registerController.getResponseCode() == 200 ||
-          registerController.getResponseCode() == 201) {
+      if ((registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201)) {
+
+        /// ✅ close loader BEFORE navigation
+        if (Get.isDialogOpen ?? false) {
+          if (mounted) {
+            AiLoadingWidget.hide(context);
+            alreadyClosed = true;
+          }
+        }
+
         AppFunctions.showToast(
           message: "Resume Updated Successfully!",
           isError: false,
@@ -713,8 +751,12 @@ class _RegisterResumeReportScreenState
         AppFunctions.navigateScreen(
           context,
           AppRoutes.chatResumeTemplateScreen,
-          arguments: {"resumeData": registerController.extractedResumeModel},
+          arguments: {
+            "resumeData": registerController.extractedResumeModel,
+          },
         );
+
+        return;
       } else {
         AppFunctions.apiErrorHandling(
           registerController.getResponseCode(),
@@ -729,8 +771,12 @@ class _RegisterResumeReportScreenState
         isError: true,
       );
     } finally {
-      /// ✅ always hide loader
-      AiLoadingWidget.hide(context);
+      /// ✅ prevent closing next screen
+      if (!alreadyClosed && (Get.isDialogOpen ?? false)) {
+        if (mounted) {
+          AiLoadingWidget.hide(context);
+        }
+      }
     }
   }
 

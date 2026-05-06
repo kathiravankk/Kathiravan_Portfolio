@@ -89,6 +89,7 @@ class _CategoryWiseInternshipScreenState
                           .jobs!
                           .length,
                       itemBuilder: (context, index) => InternshipCard(
+                        isCategoryFlow: true,
                         viewFunc: () {
                           AppFunctions.navigateScreen(
                             context,
@@ -101,8 +102,8 @@ class _CategoryWiseInternshipScreenState
                             },
                           );
                         },
-                        saveFunc: () =>
-                            dashboardController.internshipSaveFunc(index),
+                        saveFunc: () async{
+                            dashboardController.internshipSaveFunc(index);},
                         // saveFunc: () {
                         //   internshipList![index].isSaved!
                         //       ? removeToSaved(
@@ -150,7 +151,7 @@ class _CategoryWiseInternshipScreenState
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .internshipDescription ??
+                                .aboutInternship ??
                             "",
                         duration:
                             dashboardController
@@ -168,26 +169,21 @@ class _CategoryWiseInternshipScreenState
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .studentQualification!.join(", ") ??
-                            "All",
+                                .studentQualification!.join(", "),
                         eligibility:
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .eligibilityCriteria ??
-                            "All",
+                                .requiredSkills!.join(","),
                         skillList:
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
                                 .requiredSkills ??
                             [],
-                        isApplied:
-                            dashboardController
-                                .categoryInternshipModel
-                                .jobs![index]
-                                .applied ??
-                            false,
+                        internFees:  dashboardController
+                            .categoryInternshipModel
+                            .jobs![index].fee ?? 'NA',
                       ),
                     )
                   : CustomEmptyWidget(),

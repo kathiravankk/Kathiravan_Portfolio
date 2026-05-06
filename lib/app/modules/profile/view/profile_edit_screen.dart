@@ -317,13 +317,21 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 ProfileWidgets.sectionHeader('📋', 'Personal Information'),
                 _pfield(Icons.person_outline_sharp, _nameCtrl, 'Full Name'),
                 const SizedBox(height: 12),
-                _pfield(Icons.email_outlined, _emailCtrl, 'Email Address'),
+                _pfield(
+                  Icons.email_outlined,
+                  _emailCtrl,
+                  'Email Address',
+                  isEnable: false,
+                  isProfileFlow: false,
+                ),
                 const SizedBox(height: 12),
                 _pfield(
                   Icons.phone_outlined,
                   _mobileCtrl,
                   'Mobile Number',
                   isNum: true,
+                  isEnable: false,
+                  isProfileFlow: false,
                 ),
                 const SizedBox(height: 12),
                 _pfield(
@@ -850,7 +858,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'studmobileno': _mobileCtrl.text.trim(),
       'linkedIn': _linkedinCtrl.text.trim(),
       'github': _websiteCtrl.text.trim(),
+      //'isVerified': true,
       //"role": "Software Developer",
+      //"templateNumber": "1",
       'portfolio_website': _websiteCtrl.text.trim(),
       'profile_summary': _bioCtrl.text.trim(),
       'studentdegree': _collegeData?['degree'] ?? '',
@@ -909,8 +919,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Widget _buildInfoWrap(String title, List<String> items) {
-    if (items.isEmpty) return const SizedBox();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -923,20 +931,40 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: items
-              .asMap()
-              .entries
-              .map(
-                (e) => ProfileWidgets.chip(
-                  e.value,
-                  () => setState(() => items.removeAt(e.key)),
+        items.isEmpty
+            ? Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.file_copy_outlined,
+                      color: AppColors.secondaryColor,
+                      size: 15,
+                    ),
+                    Text(
+                      "No data found!",
+                      style: AppStyles.customTextStyle(
+                        size: 8,
+                        weight: FontWeight.w300,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ],
                 ),
               )
-              .toList(),
-        ),
+            : Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: items
+                    .asMap()
+                    .entries
+                    .map(
+                      (e) => ProfileWidgets.chip(
+                        e.value,
+                        () => setState(() => items.removeAt(e.key)),
+                      ),
+                    )
+                    .toList(),
+              ),
         const SizedBox(height: 12),
       ],
     );
@@ -948,9 +976,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     TextEditingController ctrl,
     String label, {
     bool isNum = false,
+    bool isEnable = true,
+    bool isProfileFlow = true,
   }) => CustomTextField(
+    isEnabled: isEnable,
     isNumberKeyboard: isNum,
-    isProfileFlow: true,
+    isProfileFlow: isProfileFlow,
     prefixWidget: Icon(icon, color: AppColors.primaryColor, size: 23),
     controller: ctrl,
     labelText: label,

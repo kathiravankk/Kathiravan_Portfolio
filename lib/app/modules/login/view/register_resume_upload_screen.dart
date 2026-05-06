@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +8,6 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
-import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
@@ -61,14 +57,14 @@ class _RegisterResumeUploadScreenState
   }
 
   Future<void> extractResumeFunc(String filePath) async {
+    bool alreadyClosed = false;
+
     try {
-      /// ✅ show loader first
       AiLoadingWidget.show(
         context,
         type: LoadingDialogType.resumeExtraction,
       );
 
-      /// ✅ give Flutter one frame to render loader
       await Future.delayed(const Duration(milliseconds: 100));
 
       await registerController.extractResumeData(filePath);
@@ -83,37 +79,32 @@ class _RegisterResumeUploadScreenState
           fileName: fileName!,
         );
 
+        /// ✅ close loader safely
+        if (Get.isDialogOpen ?? false) {
+          AiLoadingWidget.hide(context);
+          alreadyClosed = true;
+        }
+
         AppFunctions.showToast(
           message: "Resume uploaded & extracted successfully!",
           isError: false,
         );
 
-        AppFunctions.navigateScreen(
-          context,
-          AppRoutes.studentRegisterScreen,
-        );
-      } else if (registerController.getResponseCode() == 200 &&
-          registerController.resumeExtractModel.success == false) {
+        Get.offNamed(AppRoutes.studentRegisterScreen);
+        return;
+      } else {
         AppFunctions.showToast(
           message: "Failed to upload your resume",
           isError: true,
         );
-      } else {
-        AppFunctions.apiErrorHandling(
-          registerController.getResponseCode(),
-          "Failed to upload your resume",
-        );
       }
     } catch (e) {
       debugPrint("Resume extract error: $e");
-
-      AppFunctions.showToast(
-        message: "Something went wrong while extracting resume",
-        isError: true,
-      );
     } finally {
-      /// ✅ always hide loader
-      AiLoadingWidget.hide(context);
+      /// ✅ prevent popping new route
+      if (!alreadyClosed && (Get.isDialogOpen ?? false)) {
+        AiLoadingWidget.hide(context);
+      }
     }
   }
 
@@ -277,7 +268,7 @@ class _RegisterResumeUploadScreenState
 
                 //final progress = registerController.uploadProgress.value;
                 final progress = registerController.uploadProgress.value;
-                final isExtracting = registerController.isExtracting.value;
+                //final isExtracting = registerController.isExtracting.value;
 
                 String statusText;
 

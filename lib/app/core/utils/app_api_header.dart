@@ -1,5 +1,4 @@
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AppApiHeader {
   static Future<Map<String, String>> header() async {

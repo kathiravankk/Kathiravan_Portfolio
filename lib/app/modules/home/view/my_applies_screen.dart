@@ -10,7 +10,6 @@ import 'package:internsharks/app/data/models/home/applied_internship_model.dart'
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import '../../../core/utils/asset_images.dart';
 
 class MyAppliesScreen extends StatefulWidget {
   final bool showBack;
@@ -53,9 +52,9 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
       color: AppColors.primaryColor,
       onRefresh: () => getInternshipData(),
       child: Scaffold(
-        backgroundColor: AppColors.blackColor,
+        backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
-          backgroundColor: AppColors.blackColor,
+          backgroundColor: AppColors.appBgColor_2,
           elevation: 0,
           automaticallyImplyActions: false,
           centerTitle: true,
@@ -84,6 +83,9 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                   itemBuilder: (context, index) {
                     final item = appliedList![index];
                     return AppliesInternshipCard(
+                      internshipType: item.jobData != null
+                          ? item.jobType ?? "NA"
+                          : "NA",
                       viewFunc: () {
                         AppFunctions.navigateScreen(
                           context,
@@ -91,15 +93,19 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                           arguments: {"appliedData": item},
                         );
                       },
-                      role: item.jobData != null ? item.jobData!.roleType
-                          : "",
+                      role: item.jobData != null ? item.jobData!.roleType : "",
                       companyName: item.jobData != null
                           ? item.jobData!.companyName
                           : "",
                       companyLocation: item.jobData != null
                           ? item.jobData!.internshipMode
                           : "",
-                      duration: item.jobData !=null? item.jobData!.internshipDuration :"NA",
+                      duration: item.jobData != null
+                          ? item.jobData!.internshipDuration!.isNotEmpty &&
+                                    item.jobData!.internshipDuration != null
+                                ? item.jobData!.internshipDuration
+                                : "${item.jobData!.days} Days"
+                          : "N/A",
                       // companyDescription: item.jobData != null
                       //     ? item.jobData!.aboutCompany
                       //     : "",
@@ -107,7 +113,6 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                       companyLogo: item.jobData != null
                           ? item.jobData!.companyLogo
                           : "",
-
                     );
                   },
                 )
@@ -116,4 +121,6 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
       ),
     );
   }
+
+
 }

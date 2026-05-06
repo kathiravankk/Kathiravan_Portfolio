@@ -25,7 +25,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
   void initState() {
     super.initState();
     activeStep = Get.arguments["activeStep"] ?? 1;
-    print(activeStep);
+    debugPrint(activeStep.toString());
   }
 
   @override

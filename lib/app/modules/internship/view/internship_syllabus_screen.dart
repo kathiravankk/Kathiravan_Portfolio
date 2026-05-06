@@ -74,7 +74,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       // Project link
       final links = statusData?.internProjectLink ?? [];
       isProjectSubmitted = links.isNotEmpty;
-      projectController.text = links.isNotEmpty ? (links.first ?? "") : "";
+      projectController.text = links.isNotEmpty ? (links.first) : "";
 
       // Build dayProgressMap from dailyProgress list
       dayProgressMap.clear();
@@ -851,49 +851,52 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
   Future<void> _generateMcqQuestions() async {
     try {
-      /// ✅ show loader first
       AiLoadingWidget.show(context, type: LoadingDialogType.mcqTest);
 
-      /// ✅ allow one frame to render loader
       await Future.delayed(const Duration(milliseconds: 100));
 
-      // final allWeekData = syllabus?.isMonthBased == true
-      //     ? monthList.expand((m) => m.data ?? []).toList()
-      //     : <WeekData>[];
-      // await internController.getMcqQuestions(
-      //    weekData: internController.syllabusModel.syllabusViewData!.days ?? [],);
       await internController.getMcqQuestions(
         weekData: internController.syllabusModel.syllabusViewData!.isMonthBased
             ? internController.syllabusModel.syllabusViewData!.monthData
             : internController.syllabusModel.syllabusViewData!.daysData,
       );
+
       if (internController.getResponseCode() == 200 ||
           internController.getResponseCode() == 201) {
-        AppFunctions.showToast(
-          message: "Successfully generate your MCQ test questions!",
-        );
-        AppFunctions.navigateScreen(
-          context,
-          AppRoutes.mcqTestScreen,
-          arguments: {
-            "mockTestModel": internController.mcqQuesModel,
-            "jobId": syllabus?.job,
-            "studentId": syllabus?.student,
-          },
-        );
+        if (mounted) {
+          AiLoadingWidget.hide(context);
+
+          AppFunctions.navigateScreen(
+            context,
+            AppRoutes.mcqTestScreen,
+            arguments: {
+              "mockTestModel": internController.mcqQuesModel,
+              "jobId": syllabus?.job,
+              "studentId": syllabus?.student,
+            },
+          );
+        }
+
+        AppFunctions.showToast(message: "Successfully generated MCQ test!");
       } else {
+        if (mounted) {
+          AiLoadingWidget.hide(context);
+
+          AppFunctions.apiErrorHandling(
+            internController.getResponseCode(),
+            "Failed to generate MCQ question!",
+          );
+        }
+      }
+    } catch (error) {
+      if (mounted) {
+        AiLoadingWidget.hide(context);
+
         AppFunctions.apiErrorHandling(
           internController.getResponseCode(),
           "Failed to generate MCQ question!",
         );
       }
-    } catch (error) {
-      AppFunctions.apiErrorHandling(
-        internController.getResponseCode(),
-        "Failed to generate MCQ question!",
-      );
-    } finally {
-      AiLoadingWidget.hide(context);
     }
   }
 
@@ -907,6 +910,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
     if (internController.getResponseCode() == 200 ||
         internController.getResponseCode() == 201) {
       await getInitialData();
+      await getStatusData();
       AppFunctions.showToast(
         message:
             internController.weeklyUpdateModel.message ??

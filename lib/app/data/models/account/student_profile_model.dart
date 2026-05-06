@@ -1,3 +1,4 @@
+import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
@@ -10,7 +11,7 @@ class StudentProfileModel {
   String? studEmail;
   String? studMobileNo;
   List<String>? studProgrammingLang;
-  List<dynamic>? studentCertificate;
+  List<Certification>? studentCertificate;
   String? studentResume;
   List<String>? studentAadhaar;
   List<String>? studentId;
@@ -31,7 +32,7 @@ class StudentProfileModel {
   List<ExperienceData>? experience;
   List<Internship>? internships;
   List<dynamic>? industrialVisits;
-  List<dynamic>? trainings;
+  List<Training>? trainings;
   List<dynamic>? parents;
   List<CollegeData>? college;
   List<Secondary>? higherSecondary;
@@ -120,7 +121,10 @@ class StudentProfileModel {
         json['studprogramminglang'],
       ),
 
-      studentCertificate: json['studentcertificate'] ?? [],
+      //studentCertificate: json['studentcertificate'] ?? [],
+      studentCertificate : (json['studentcertificate'] ?? [])
+          .map<Certification>((e) => Certification.fromJson(e))
+          .toList(),
       studentResume: json['studentresume'],
       studentAadhaar: List<String>.from(json['studentAdhar'] ?? []),
       studentId: List<String>.from(json['studentId'] ?? []),
@@ -136,7 +140,10 @@ class StudentProfileModel {
       paperPresentations: json['paper_presentations'] ?? [],
       toolsAndTechnologies: json['tools_and_technologies'] ?? [],
       industrialVisits: json['industrial_visits'] ?? [],
-      trainings: json['trainings'] ?? [],
+      //trainings: json['trainings'] ?? [],
+      trainings :(json['trainings'] ?? [])
+          .map<Training>((e) => Training.fromJson(e))
+          .toList(),
       parents: json['parents'] ?? [],
 
       projects: (json['projects'] as List?)
@@ -239,9 +246,21 @@ class Project {
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
+    final desc = json['description'];
+
+    List<String> parsedDescription = [];
+
+    if (desc is String) {
+      // ✅ If it's a single string → convert to list
+      parsedDescription = [desc];
+    } else if (desc is List) {
+      // ✅ If it's already a list → convert safely
+      parsedDescription = desc.map((e) => e.toString()).toList();
+    }
+
     return Project(
       title: json['title'] ?? "",
-      description: List<String>.from(json['description'] ?? []),
+      description: parsedDescription,
     );
   }
 

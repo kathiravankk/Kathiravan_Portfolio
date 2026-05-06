@@ -33,7 +33,8 @@ class InternshipSyllabusModel {
   }
 }
 
-class SyllabusData {
+class
+SyllabusData {
   String? sId;
   String? student;
   String? job;

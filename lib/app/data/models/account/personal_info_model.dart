@@ -31,13 +31,13 @@ class PersonalInfoModel {
 
   Map<String, dynamic> toJson() {
     return {
-      "name": name ?? "",
+      "name": name,
       "gender": gender ?? "",
-      "email": email ?? "",
-      "phone": phone ?? "",
+      "email": email,
+      "phone": phone,
       "linkedIn": linkedIn ?? "",
       "github": github ?? "",
-      "location": location ?? "",
+      "location": location,
     };
   }
 }

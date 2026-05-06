@@ -1,10 +1,6 @@
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
-import 'package:internsharks/app/data/models/account/experience_model.dart'
-    hide Experience;
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/resume_analyze_model.dart'
-    hide Project, ExperienceData;
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart'
     show Experience;

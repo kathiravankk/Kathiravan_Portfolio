@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
+import 'package:internsharks/app/data/models/internship/all_cerifications_model.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_status_model.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
 import 'package:internsharks/app/data/models/internship/mcq_question_model.dart';
+import 'package:internsharks/app/data/models/internship/payment_create_model.dart';
+import 'package:internsharks/app/data/models/internship/payment_status_model.dart';
 import 'package:internsharks/app/data/models/internship/save_test_result_model.dart';
-import 'package:internsharks/app/data/models/internship/syllabus_data_model.dart';
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/weekly_update_model.dart';
 import 'package:internsharks/app/data/providers/internship_provider.dart';
@@ -273,4 +275,115 @@ class InternshipController extends GetxController {
       rethrow;
     }
   }
+
+  // CHECK PAYMENT STATUS
+
+  // Loading
+
+  final _paymentStatusCheckLoading = false.obs;
+
+  bool get paymentStatusCheckLoading => _paymentStatusCheckLoading.value;
+
+  set paymentStatusCheckLoading(bool value) => _paymentStatusCheckLoading.value = value;
+
+  //Model
+
+  final _paymentStatusModel = PaymentStatusModel().obs;
+
+  PaymentStatusModel get paymentStatusModel => _paymentStatusModel.value;
+
+  set paymentStatusModel(PaymentStatusModel value) => _paymentStatusModel.value = value;
+
+  Future<void> checkPaymentStatus({required Map<String, dynamic> jobData}) async {
+    try {
+      paymentStatusCheckLoading = true;
+      paymentStatusModel = await internshipProvider!.checkPaymentStatus(jobData : jobData);
+      paymentStatusCheckLoading = false;
+    } catch (err) {
+      paymentStatusCheckLoading = false;
+      rethrow;
+    }
+  }
+
+  // CREATE PAYMENT ORDER
+
+  // Loading
+
+  final _paymentCreateLoading = false.obs;
+
+  bool get paymentCreateLoading => _paymentCreateLoading.value;
+
+  set paymentCreateLoading(bool value) => _paymentCreateLoading.value = value;
+
+  //Model
+
+  final _paymentCreateModel = PaymentCreateModel().obs;
+
+  PaymentCreateModel get paymentCreateModel => _paymentCreateModel.value;
+
+  set paymentCreateModel(PaymentCreateModel value) => _paymentCreateModel.value = value;
+
+  Future<void> createPaymentOrder({required Map<String, dynamic> jobData}) async {
+    try {
+      paymentCreateLoading = true;
+      paymentCreateModel = await internshipProvider!.createPaymentOrder(jobData : jobData);
+      paymentCreateLoading = false;
+    } catch (err) {
+      paymentCreateLoading = false;
+      rethrow;
+    }
+  }
+
+  // VERIFY PAYMENT ORDER
+
+  // Loading
+
+  final _paymentVerifyLoading = false.obs;
+
+  bool get paymentVerifyLoading => _paymentVerifyLoading.value;
+
+  set paymentVerifyLoading(bool value) => _paymentVerifyLoading.value = value;
+
+
+  Future<void> verifyPaymentOrder({required Map<String, dynamic> jobData}) async {
+    try {
+      paymentCreateLoading = true;
+      paymentCreateModel = await internshipProvider!.verifyPaymentOrder(jobData : jobData);
+      paymentCreateLoading = false;
+    } catch (err) {
+      paymentCreateLoading = false;
+      rethrow;
+    }
+  }
+
+  // GET ALL CERTIFICATES
+
+  // Loading
+
+  final _certificateLoading = false.obs;
+
+  bool get certificateLoading => _certificateLoading.value;
+
+  set certificateLoading(bool value) => _certificateLoading.value = value;
+
+  //Model
+
+  final _certificateModel = AllCertificationsModel().obs;
+
+  AllCertificationsModel get certificateModel => _certificateModel.value;
+
+  set certificateModel(AllCertificationsModel value) => _certificateModel.value = value;
+
+  Future<void> getAllCertificates() async {
+    try {
+      certificateLoading = true;
+      certificateModel = await internshipProvider!.fetchAllCertificates();
+      certificateLoading = false;
+    } catch (err) {
+      certificateLoading = false;
+      rethrow;
+    }
+  }
+
+
 }

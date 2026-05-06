@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
@@ -40,7 +41,7 @@ class _RegisterProfileUploadScreenState
       await controller!.initialize();
       if (mounted) setState(() {});
     } catch (e) {
-      print('Camera init error: $e');
+      debugPrint('Camera init error: $e');
     }
   }
 
@@ -60,7 +61,7 @@ class _RegisterProfileUploadScreenState
       );
       if (mounted) setState(() {});
     } catch (e) {
-      print('Flash toggle error: $e');
+      debugPrint('Flash toggle error: $e');
     }
   }
 
@@ -70,13 +71,14 @@ class _RegisterProfileUploadScreenState
     try {
       final image = await controller!.takePicture();
       if (mounted) {
-        Get.toNamed(
+        AppFunctions.navigateScreen(
+          context,
           AppRoutes.registerSelfiePreviewScreen,
           arguments: {"uploadedImage": image.path},
         );
       }
     } catch (e) {
-      print('Take photo error: $e');
+      debugPrint('Take photo error: $e');
     }
   }
 
@@ -89,10 +91,14 @@ class _RegisterProfileUploadScreenState
       );
 
       if (file != null && mounted) {
-        Get.toNamed(AppRoutes.reviewUploadSelfie, arguments: file.path);
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.registerSelfiePreviewScreen,
+          arguments: {"uploadedImage": file.path},
+        );
       }
     } catch (e) {
-      print('Pick gallery error: $e');
+      debugPrint('Pick gallery error: $e');
     }
   }
 
@@ -391,10 +397,10 @@ class _RegisterProfileUploadScreenState
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 2,
               ),
             ),
@@ -433,7 +439,7 @@ class _RegisterProfileUploadScreenState
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.appBlue.withOpacity(0.5),
+                  color: AppColors.appBlue.withValues(alpha: 0.5),
                   blurRadius: 20,
                   spreadRadius: 2,
                 ),

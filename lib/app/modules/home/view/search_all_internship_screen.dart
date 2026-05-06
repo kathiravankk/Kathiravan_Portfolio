@@ -280,21 +280,26 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
               isSaved: item.isSaved ?? false,
               // saveFunc: () =>
               //     dashboardController.searchFilterSaveFunc(index),
+              // saveFunc: () async {
+              //   final oldValue = item.isSaved ?? false;
+              //
+              //   setState(() {
+              //     item.isSaved = !oldValue;
+              //   });
+              //
+              //   await dashboardController.searchFilterSaveFunc(index);
+              //
+              //   if (dashboardController.getResponseCode() != 200 &&
+              //       dashboardController.getResponseCode() != 201) {
+              //     setState(() {
+              //       item.isSaved = oldValue;
+              //     });
+              //   }
+              // },
               saveFunc: () async {
-                final oldValue = item.isSaved ?? false;
-
-                setState(() {
-                  item.isSaved = !oldValue;
-                });
-
-                await dashboardController.searchFilterSaveFunc(index);
-
-                if (dashboardController.getResponseCode() != 200 &&
-                    dashboardController.getResponseCode() != 201) {
-                  setState(() {
-                    item.isSaved = oldValue;
-                  });
-                }
+                setState(() {});
+                await dashboardController.searchFilterSaveFunc(item);
+                setState(() {});
               },
               postedDate: item.createdAt!,
               role: item.roleType ?? '',
@@ -302,12 +307,18 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
               internshipMode: item.internshipMode ?? 'NA',
               imageUrl: item.companyLogo ?? '',
               description: item.internshipDescription ?? '',
-              duration: item.internshipDuration ?? 'NA',
+              //duration: item.internshipDuration ?? 'NA',
+              duration:
+                  item.internshipDuration!.isNotEmpty &&
+                      item.internshipDuration != null
+                  ? "${item.internshipDuration!} Months"
+                  : "${item.days} Days",
               stipendRupees: item.internshipStipend ?? 'NA',
+              location: item.companyCity ?? 'NA',
+              internFees: item.fee ?? 'NA',
               qualification: item.studentQualification?.join(', ') ?? 'All',
               eligibility: item.eligibilityCriteria ?? 'All',
               skillList: item.requiredSkills ?? [],
-              isApplied: false,
             ),
           );
         },

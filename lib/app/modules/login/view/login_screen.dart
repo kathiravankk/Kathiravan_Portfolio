@@ -1,17 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/modules/login/controllers/login_controller.dart';
-import 'package:internsharks/app/modules/login/view/resume_template_selection_screen.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:internsharks/core/const_file/app_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-
-import '../../../../core/const_file/app_text_style.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 import '../../../data/repositories/local_storage_service.dart';
 
@@ -49,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 50),
                 Image.asset(AssetImages.appLogoImage, height: 40),
                 Text(
-                  "Welcome Back!",
+                  "Welcome!",
                   style: AppStyles.customTextStyle(
                     color: AppColors.secondaryColor,
                     size: 25,
@@ -57,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Text(
-                  "Secure access portal. Please enter your\ncredentials.",
+                  "Secure access portal. \nPlease enter your credentials.",
                   style: AppStyles.customTextStyle(
                     lineSpace: 1.4,
                     color: AppColors.whiteColor,
@@ -80,8 +78,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: "Enter your mobile number",
                   controller: mobileController,
                   maxLength: 10,
+                  // onChanged: (val) {
+                  //   loginController.mobile.value = val;
+                  // },
                   onChanged: (val) {
                     loginController.mobile.value = val;
+
+                    final error = AppFunctions.validateIndianMobile(val);
+
+                    if (error != null && val.length == 10) {
+                      AppFunctions.showToast(message: error, isError: true);
+                    }
                   },
                 ),
 
@@ -90,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // ⏳ Loader
                   if (loginController.loginOtpLoading) {
                     return const Center(
-                      child: CircularProgressIndicator(
+                      child: CupertinoActivityIndicator(
                         color: AppColors.secondaryColor,
                       ),
                     );
@@ -152,49 +159,36 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
 
                         const SizedBox(height: 30),
-
-                        AppButton.AppContainerButton(
-                          onTap: loginController.loginVerifyLoading
-                              ? null
+                        CustomButtonWidget(
+                          height: 40,
+                          buttonFunction: loginController.loginVerifyLoading
+                              ? () {}
                               : () async {
                                   await verifyOtpFunc();
                                 },
-                          bgColor: loginController.loginVerifyLoading
-                              ? Colors.grey.shade800
-                              : AppColors.appBlue,
-                          borderRadius: 30,
-                          borderColor: Colors.white24,
-                          borderWidth: 1,
-                          text: loginController.loginVerifyLoading
+                          buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
-                          verticalPadding: 12,
-                          textStyle: AppStyles.customTextStyle(
-                            size: 18,
-                            weight: FontWeight.w600,
-                            color: AppColors.whiteColor,
-                          ),
+                          disable: loginController.loginVerifyLoading,
                         ),
+                        const SizedBox(height: 10,)
                       ],
                     );
                   }
+                  final isValid =
+                      AppFunctions.validateIndianMobile(
+                        loginController.mobile.value,
+                      ) ==
+                      null;
 
                   // 📤 SEND OTP BUTTON (OTP NOT SENT)
-                  return AppButton.AppContainerButton(
-                    onTap: loginController.mobile.value.length == 10
+                  return CustomButtonWidget(
+                    height: 40,
+                    buttonFunction: isValid
                         ? () => sendOtpFunc(mobileNumber: mobileController.text)
-                        : null,
-                    bgColor: loginController.mobile.value.length == 10
-                        ? AppColors.appBlue
-                        : Colors.grey.shade800,
-                    borderRadius: 30,
-                    text: "Send OTP",
-                    verticalPadding: 12,
-                    textStyle: AppStyles.customTextStyle(
-                      size: 18,
-                      weight: FontWeight.w600,
-                      color: AppColors.whiteColor,
-                    ),
+                        : () {},
+                    buttonText: "Send OTP",
+                    disable: !isValid,
                   );
                 }),
 
@@ -240,8 +234,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> sendOtpFunc({required String mobileNumber}) async {
+    final error = AppFunctions.validateIndianMobile(mobileNumber);
+
+    if (error != null) {
+      AppFunctions.showToast(message: error, isError: true);
+      return;
+    }
+
     try {
-      await loginController.sendLoginOtp(mobileNumber: mobileController.text);
+      await loginController.sendLoginOtp(mobileNumber: mobileNumber);
+
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
         if (loginController.commonPostModel.userType == "student") {
@@ -255,7 +257,7 @@ class _LoginScreenState extends State<LoginScreen> {
           AppFunctions.showAppAlert(
             context: context,
             content:
-            "Mobile Number already registered as Recruiter. Please use another Number.",
+                "Mobile Number already registered as Recruiter. Please use another Number.",
             confirmText: "OKAY",
             onConfirm: () {
               mobileController.text = "";
@@ -315,7 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
           isError: false,
         );
         final token = await LocalStorageService.getToken();
-        print(token);
+        debugPrint(token);
         Get.offAllNamed(AppRoutes.dashBoardScreen);
       } else {
         AppFunctions.apiErrorHandling(

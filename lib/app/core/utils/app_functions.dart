@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -64,6 +63,7 @@ class AppFunctions {
       showToast(message: message, isError: true);
     } else if (responseCode == 401) {
       showToast(message: "Session expired, Please login again!", isError: true);
+      LocalStorageService.clearUser();
       Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 403) {
       showToast(
@@ -72,9 +72,9 @@ class AppFunctions {
       );
       //AppFunctions.showAppAlert(context: context, content: content)
     } else if (responseCode == 404) {
-     // showToast(message: message, isError: true);
-      showToast(message: "Session expired, Please login again!", isError: true);
-      Get.offAllNamed(AppRoutes.loginScreen);
+       showToast(message: message, isError: true);
+      //showToast(message: "Session expired, Please login again!", isError: true);
+      //Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 500) {
       showToast(message: message, isError: true);
     } else if (responseCode == 502) {
@@ -157,9 +157,7 @@ class AppFunctions {
       final uri = Uri.parse(url);
 
       // Removes leading "/"
-      return uri.path.startsWith('/')
-          ? uri.path.substring(1)
-          : uri.path;
+      return uri.path.startsWith('/') ? uri.path.substring(1) : uri.path;
     } catch (e) {
       return "";
     }
@@ -167,6 +165,7 @@ class AppFunctions {
 
   static Future<void> showAppAlert({
     required BuildContext context,
+    Widget? customContent,
     String? title,
     required String content,
     String cancelText = 'Cancel',
@@ -199,16 +198,17 @@ class AppFunctions {
                   textAlign: TextAlign.center,
                 ),
               ],
-              Text(
-                content,
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w300,
-                  lineSpace: 1.3,
-                ),
-              ),
+              customContent ??
+                  Text(
+                    content,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                      lineSpace: 1.3,
+                    ),
+                  ),
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -247,6 +247,180 @@ class AppFunctions {
         );
       },
     );
+  }
+
+  static Future<void> showAppUpdateAlert({
+    required BuildContext context,
+    Widget? customContent,
+    String? title,
+    required String content,
+    String cancelText = 'Cancel',
+    VoidCallback? onCancel,
+    String? confirmText,
+    VoidCallback? onConfirm,
+    bool isDestructive = false,
+    bool barrierDismissible = false,
+  }) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 15,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (title != null) ...[
+                Text(
+                  title,
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+              customContent ??
+                  Text(
+                    content,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                      lineSpace: 1.3,
+                    ),
+                  ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            if (confirmText != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        Get.back();
+                        onConfirm?.call();
+                      },
+                      buttonText: confirmText,
+                      //width: 130,
+                      height: 35,
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        Get.back();
+                        onCancel?.call();
+                      },
+                      buttonText: cancelText,
+                      bgColor: AppColors.fieldBgColor,
+                      //width: 130,
+                      height: 35,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool> showAppExitAlert({
+    required BuildContext context,
+    Widget? customContent,
+    String? title,
+    required String content,
+    String cancelText = 'Cancel',
+    VoidCallback? onCancel,
+    String? confirmText,
+    VoidCallback? onConfirm,
+    bool isDestructive = false,
+    bool barrierDismissible = false,
+  }) async {
+    bool result = false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 15,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (title != null)
+                Text(
+                  title,
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              customContent ??
+                  Text(
+                    content,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                      lineSpace: 1.3,
+                    ),
+                  ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            if (confirmText != null)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        result = true; // ✅ Confirm → allow exit
+                        Get.back();
+                        onConfirm?.call();
+                      },
+                      buttonText: confirmText,
+                      height: 35,
+                    ),
+                  ),
+                  Expanded(
+                    child: CustomButtonWidget(
+                      buttonFunction: () {
+                        result = false; // ❌ Cancel → prevent exit
+                        Get.back();
+                        onCancel?.call();
+                      },
+                      buttonText: cancelText,
+                      bgColor: AppColors.fieldBgColor,
+                      height: 35,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
+
+    return result;
   }
 
   static getCategoryImage({required String service}) {
@@ -312,6 +486,31 @@ class AppFunctions {
     }
   }
 
+  static String? validateIndianMobile(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Mobile number is required";
+    }
+
+    final mobile = value.trim();
+
+    /// must be exactly 10 digits
+    if (mobile.length != 10) {
+      return "Mobile number must be 10 digits";
+    }
+
+    /// must contain only digits
+    if (!RegExp(r'^[0-9]+$').hasMatch(mobile)) {
+      return "Only numbers are allowed";
+    }
+
+    /// should not start with 0–5
+    if (RegExp(r'^[0-5]').hasMatch(mobile)) {
+      return "Mobile number must start from 6-9";
+    }
+
+    return null; // ✅ valid
+  }
+
   static String formatIsoDate(String isoString) {
     try {
       DateTime dateTime = DateTime.parse(isoString);
@@ -374,6 +573,156 @@ class AppFunctions {
     }
 
     return fullName;
+  }
+
+  static Future<void> showPaymentRequiredDialog({
+    required BuildContext context,
+    required String courseName,
+    required String amount,
+    String cancelText = "CANCEL",
+    String confirmText = "PAY ₹",
+    VoidCallback? onCancel,
+    VoidCallback? onConfirm,
+    bool barrierDismissible = false,
+  }) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          title: Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.paymentContColor,
+            ),
+            child: const Icon(
+              Icons.account_balance_wallet_rounded,
+              color: AppColors.primaryColor,
+              size: 30,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            Row(
+              spacing: 10,
+              children: [
+                Expanded(
+                  child: CustomButtonWidget(
+                    buttonFunction: () {
+                      Get.back();
+                      onConfirm?.call();
+                    },
+                    buttonText: confirmText,
+                    height: 35,
+                    bgColor: AppColors.primaryColor,
+                  ),
+                ),
+                Expanded(
+                  child: CustomButtonWidget(
+                    buttonFunction: () {
+                      Get.back();
+                      onCancel?.call();
+                    },
+                    buttonText: cancelText,
+                    height: 35,
+                    bgColor: AppColors.fieldBgColor,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 15,
+            children: [
+              Text(
+                "PAYMENT REQUIRED",
+                style: AppStyles.customTextStyle(
+                  size: 18,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                "To start this internship, you need to pay\nthe course fee.",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w300,
+                  lineSpace: 1.3,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: AppColors.paymentContColor,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  spacing: 5,
+                  children: [
+                    _paymentRow("COURSE", courseName),
+                    const Divider(color: AppColors.dividerContColor, thickness: 0.5,),
+                    _paymentRow(
+                      "AMOUNT",
+                      "₹ $amount",
+                      valueColor: AppColors.primaryColor,
+                      isAmount: true,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static Widget _paymentRow(
+      String title,
+      String value, {
+        Color valueColor = AppColors.whiteColor,
+        bool isAmount = false,
+      }) {
+    return Row(
+      children: [
+        /// LEFT TEXT
+        Expanded(
+          flex: 4,
+          child: Text(
+            title,
+            style: AppStyles.customTextStyle(
+              size: 10,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w300,
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 10),
+
+        /// RIGHT TEXT (IMPORTANT)
+        Expanded(
+          flex: 6,
+          child: Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.end,
+            style: AppStyles.customTextStyle(
+              size: 12,
+              color: valueColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

@@ -30,7 +30,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines= 1,
     this.width,
     this.prefixText,
-    this.maxLength = 300,
+    this.maxLength = 1000,
     this.labelText = "",
     this.suffixWidget,
     this.prefixWidget,

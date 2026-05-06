@@ -35,27 +35,26 @@ class InternshipData {
   String? companyWebsite;
   String? companyLogo;
   String? roleType;
-  String? title;
   String? aboutInternship;
-  String? internshipDescription;
-  String? internshipQualification;
   List<String>? studentQualification;
-  String? fieldOfStudy;
   List<String>? requiredSkills;
-  String? eligibilityCriteria;
   String? companyState;
   String? companyCity;
   String? locationLink;
   String? internshipDuration;
   String? internshipStipend;
+  String? fee;
+  List<String>? projectDescription;
+  String? internshipMode;
+  String? days;
   RecruiterData? recruiter;
-  RecruiterData? industry;
+  IndustryData? industry;
   String? createdAt;
   String? updatedAt;
-  String? internshipMode;
-  int? iV;
-  bool? applied;
+  int? v;
   bool? isSaved;
+  bool? isSyllabusGenerated;
+  bool? isCertificateGenerated;
   int? totalApplication;
   int? totalReviews;
   dynamic averageRating;
@@ -69,110 +68,133 @@ class InternshipData {
     this.companyWebsite,
     this.companyLogo,
     this.roleType,
-    this.title,
     this.aboutInternship,
-    this.internshipDescription,
-    this.internshipQualification,
     this.studentQualification,
-    this.fieldOfStudy,
     this.requiredSkills,
-    this.eligibilityCriteria,
     this.companyState,
     this.companyCity,
     this.locationLink,
     this.internshipDuration,
     this.internshipStipend,
+    this.fee,
+    this.projectDescription,
+    this.internshipMode,
+    this.days,
     this.recruiter,
     this.industry,
     this.createdAt,
     this.updatedAt,
-    this.iV,
-    this.applied,
-    this.internshipMode,
+    this.v,
     this.isSaved,
+    this.isSyllabusGenerated,
+    this.isCertificateGenerated,
     this.totalApplication,
-    this.averageRating,
     this.totalReviews,
+    this.averageRating,
     this.status,
   });
 
-  InternshipData.fromJson(Map<String, dynamic> json) {
-    syllabusData = json['syllabusdata'] ?? "";
-    sId = json['_id'] ?? "";
-    companyName = json['companyname'] ?? "";
-    aboutCompany = json['aboutcompany'] ?? "";
-    companyWebsite = json['companywebsite'] ?? "";
-    companyLogo = json['companylogo'] ?? "";
-    roleType = json['roletype'] ?? "";
-    title = json['title'] ?? "";
-    aboutInternship = json['aboutinternship'] ?? "";
-    internshipDescription = json['intershipdescription'] ?? "";
-    internshipQualification = json['Internshipqualification'] ?? "";
-    //studentQualification = json['studentqualification'] ?? "";
-    studentQualification = json['studentqualification'].cast<String>();
-    fieldOfStudy = json['fieldofstudy'] ?? "";
-    requiredSkills = json['requiredskills'].cast<String>();
-    eligibilityCriteria = json['eligibilitycriteria'] ?? "";
-    companyState = json['companystate'] ?? "";
-    companyCity = json['companycity'] ?? "";
-    locationLink = json['locationlink'] ?? "";
-    internshipDuration = json['internshipduration'] ?? "";
-    internshipStipend = json['internshipstipend'] ?? "";
-    recruiter = json['recruiter'] != null
-        ? RecruiterData.fromJson(json['recruiter'])
-        : null;
-    industry = json['industry'] != null
-        ? RecruiterData.fromJson(json['industry'])
-        : null;
-    createdAt = json['createdAt'] ?? "";
-    updatedAt = json['updatedAt'] ?? "";
-    iV = json['__v'] ?? 0;
-    applied = json['applied'] ?? false;
-    internshipMode = json['internshipmode'] ?? "";
-    isSaved = json['isSaved'] ?? false;
-    totalApplication = json['totalapplication'] ?? 0;
-    totalReviews = json['totalReviews'] ?? 0;
-    averageRating = json['averageRating'] ?? 0;
-    status = json['status'] ?? '';
+  factory InternshipData.fromJson(Map<String, dynamic> json) {
+    return InternshipData(
+      syllabusData: json['syllabusdata'],
+      sId: json['_id'],
+      companyName: json['companyname'],
+      aboutCompany: json['aboutcompany'],
+      companyWebsite: json['companywebsite'],
+      companyLogo: json['companylogo'],
+      roleType: json['roletype'],
+      aboutInternship: json['aboutinternship'],
+      studentQualification: json['studentqualification'] != null
+          ? List<String>.from(json['studentqualification'])
+          : [],
+      requiredSkills: json['requiredskills'] != null
+          ? List<String>.from(json['requiredskills'])
+          : [],
+      companyState: json['companystate'],
+      companyCity: json['companycity'],
+      locationLink: json['locationlink'],
+      internshipDuration: json['internshipduration'],
+      internshipStipend: json['internshipstipend'],
+      fee: json['fee'],
+      projectDescription: json['project_description'] != null
+          ? List<String>.from(json['project_description'])
+          : [],
+      internshipMode: json['internshipmode'],
+      days: json['days'],
+      recruiter: json['recruiter'] != null
+          ? RecruiterData.fromJson(json['recruiter'])
+          : null,
+      industry: json['industry'] != null
+          ? IndustryData.fromJson(json['industry'])
+          : null,
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
+      v: json['__v'],
+      isSaved: json['isSaved'] ?? false,
+      isSyllabusGenerated: json['issyllabusgenerated'] ?? false,
+      isCertificateGenerated: json['iscertificategenerated'] ?? false,
+      totalApplication: json['totalapplication'] ?? 0,
+      totalReviews: json['totalReviews'] ?? 0,
+      averageRating: json['averageRating'],
+      status: json['status']??"", // can be null
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['syllabusdata'] = syllabusData;
-    data['internshipmode'] = internshipMode;
-    data['_id'] = sId;
-    data['companyname'] = companyName;
-    data['aboutcompany'] = aboutCompany;
-    data['companywebsite'] = companyWebsite;
-    data['companylogo'] = companyLogo;
-    data['roletype'] = roleType;
-    data['title'] = title;
-    data['aboutinternship'] = aboutInternship;
-    data['intershipdescription'] = internshipDescription;
-    data['Internshipqualification'] = internshipQualification;
-    data['studentqualification'] = studentQualification;
-    data['fieldofstudy'] = fieldOfStudy;
-    data['requiredskills'] = requiredSkills;
-    data['eligibilitycriteria'] = eligibilityCriteria;
-    data['companystate'] = companyState;
-    data['companycity'] = companyCity;
-    data['locationlink'] = locationLink;
-    data['internshipduration'] = internshipDuration;
-    data['internshipstipend'] = internshipStipend;
-    if (recruiter != null) {
-      data['recruiter'] = recruiter!.toJson();
-    }
-    if (industry != null) {
-      data['industry'] = industry!.toJson();
-    }
-    data['createdAt'] = createdAt;
-    data['updatedAt'] = updatedAt;
-    data['__v'] = iV;
-    data['applied'] = applied;
-    data['isSaved'] = isSaved;
-    data['totalapplication'] = totalApplication;
-    data['status'] = status;
-    return data;
+    return {
+      "syllabusdata": syllabusData,
+      "_id": sId,
+      "companyname": companyName,
+      "aboutcompany": aboutCompany,
+      "companywebsite": companyWebsite,
+      "companylogo": companyLogo,
+      "roletype": roleType,
+      "aboutinternship": aboutInternship,
+      "studentqualification": studentQualification,
+      "requiredskills": requiredSkills,
+      "companystate": companyState,
+      "companycity": companyCity,
+      "locationlink": locationLink,
+      "internshipduration": internshipDuration,
+      "internshipstipend": internshipStipend,
+      "fee": fee,
+      "project_description": projectDescription,
+      "internshipmode": internshipMode,
+      "days": days,
+      "recruiter": recruiter?.toJson(),
+      "industry": industry?.toJson(),
+      "createdAt": createdAt,
+      "updatedAt": updatedAt,
+      "__v": v,
+      "isSaved": isSaved,
+      "issyllabusgenerated": isSyllabusGenerated,
+      "iscertificategenerated": isCertificateGenerated,
+      "totalapplication": totalApplication,
+      "totalReviews": totalReviews,
+      "averageRating": averageRating,
+      "status": status,
+    };
+  }
+}
+
+class IndustryData {
+  String? id;
+  String? name;
+
+  IndustryData({this.id, this.name});
+
+  factory IndustryData.fromJson(Map<String, dynamic> json) {
+    return IndustryData(
+      id: json['_id'],
+      name: json['name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "_id": id,
+      "name": name,
+    };
   }
 }
 

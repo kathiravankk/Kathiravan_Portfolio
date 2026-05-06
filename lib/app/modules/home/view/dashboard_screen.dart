@@ -1,15 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
-import 'package:internsharks/app/core/widgets/home_drawer.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/internship/view/my_internship_screen.dart';
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
-import 'package:internsharks/app/modules/profile/view/profile_screen.dart';
-import 'package:internsharks/view/pages/upload_resume/ResumeChat.dart';
+import '../../../core/utils/app_functions.dart' show AppFunctions;
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -21,10 +18,22 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        bool exit = await showExitAlert(context);
-        return exit;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+
+        final shouldExit = await AppFunctions.showAppExitAlert(
+          context: context,
+          title: "Exit ?",
+          content: "Are you sure you want to Exit the app?",
+          confirmText: "Confirm",
+          cancelText: "Cancel",
+        );
+
+        if (shouldExit) {
+          Get.back(); // ✅ Actually exit app/screen
+        }
       },
       child: Scaffold(
         backgroundColor: AppColors.transparentColor,
@@ -38,38 +47,5 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     );
-  }
-
-  Future<bool> showExitAlert(BuildContext context) async {
-    bool result = false;
-    await showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          title: const Text("Exit"),
-          content: const Text("Are you sure you want to go back?"),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text(
-                "Confirm",
-                style: TextStyle(color: AppColors.primaryColor),
-              ),
-              onPressed: () {
-                result = true;
-                Get.back();
-              },
-            ),
-            CupertinoDialogAction(
-              isDestructiveAction: true,
-              child: const Text("Cancel"),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    return result;
   }
 }

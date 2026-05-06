@@ -1,12 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
+import 'package:internsharks/app/data/models/home/banner_like_model.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/remove_watermark_model.dart';
@@ -59,10 +58,10 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> _loadHtml(String path) async {
-    final html = await rootBundle.loadString(path);
-    await webViewController!.loadHtmlString(html);
-  }
+  // Future<void> _loadHtml(String path) async {
+  //   final html = await rootBundle.loadString(path);
+  //   await webViewController!.loadHtmlString(html);
+  // }
 
   // GET STUDENT PROFILE DATA
 
@@ -381,6 +380,37 @@ class ProfileController extends GetxController {
       resDpLoading = false;
     } catch (err) {
       resDpLoading = false;
+      rethrow;
+    }
+  }
+
+  // LIKE ? DISLIKE BANNER
+
+  // Loading
+
+  final _aiBannerLikeLoading = false.obs;
+
+  bool get aiBannerLikeLoading => _aiBannerLikeLoading.value;
+
+  set aiBannerLikeLoading(bool value) => _aiBannerLikeLoading.value = value;
+
+  // Model
+
+  final _bannerLikeModel = BannerLikeModel().obs;
+
+  BannerLikeModel get bannerLikeModel => _bannerLikeModel.value;
+
+  set bannerLikeModel(BannerLikeModel value) => _bannerLikeModel.value = value;
+
+  Future<void> aiBannerLike({required Map<String, dynamic>likeData}) async {
+    try {
+      aiBannerLikeLoading = true;
+      bannerLikeModel = await profileProvider!.aiBannerLike(
+        likeData: likeData,
+      );
+      aiBannerLikeLoading = false;
+    } catch (err) {
+      aiBannerLikeLoading = false;
       rethrow;
     }
   }
