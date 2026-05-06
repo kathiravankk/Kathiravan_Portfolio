@@ -334,10 +334,10 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                           .similarList!
                                           .length,
                                       itemBuilder: (context, index) {
-                                        RecommentedData similar =
-                                            dashboardController
-                                                .similarInternshipModel
-                                                .similarList![index];
+                                        // RecommentedData similar =
+                                        //     dashboardController
+                                        //         .similarInternshipModel
+                                        //         .similarList![index];
                                         return InternshipCard(
                                           width: 360,
                                           companyName:
@@ -392,8 +392,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                                   .similarInternshipModel
                                                   .similarList![index]
                                                   .studentQualification!
-                                                  .join(", ") ??
-                                              "",
+                                                  .join(", "),
                                           stipendRupees:
                                               dashboardController
                                                   .similarInternshipModel

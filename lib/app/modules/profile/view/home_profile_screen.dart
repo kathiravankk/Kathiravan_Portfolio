@@ -144,7 +144,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           message: "Successfully! removed Watermark  from your AI Banner ",
         );
         LocalStorageService.saveWatermarkValue(waterMarkValue: true);
-        print(profileController.waterMarkModel.watermarkData!.imageUrl ?? "");
+        debugPrint(profileController.waterMarkModel.watermarkData!.imageUrl ?? "");
         await registerController.updateStudentProfileData(
           updateData: {
             "student_banner":
@@ -882,7 +882,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             ),
 
           /// ✏ REMOVE WATERMARK
-          if (bannerUrl.isNotEmpty && !(waterMarkValue ?? false))
+          if (bannerUrl.isNotEmpty && !(waterMarkValue))
             iconWidget(
               icon: CupertinoIcons.pencil_outline,
               onTap: () async {

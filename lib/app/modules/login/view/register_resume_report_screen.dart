@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
@@ -83,8 +82,8 @@ class _RegisterResumeReportScreenState
     //   resumeUrl:
     //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
     // );
-    print(networkResumePath!);
-    print("******************");
+    debugPrint(networkResumePath!);
+    debugPrint("******************");
     await registerController.checkResumeScore(resumeUrl: networkResumePath!);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {

@@ -8,7 +8,6 @@ import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-import '../../../../core/const_file/asset_image.dart';
 import '../../../data/repositories/local_storage_service.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -190,7 +189,7 @@ class _SplashScreenState extends State<SplashScreen>
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(AppAssetImages.backgroundimage),
+            image: AssetImage(AssetImages.appBgImage),
             fit: BoxFit.cover,
           ),
         ),

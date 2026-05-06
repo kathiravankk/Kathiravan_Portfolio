@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
-import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 import 'package:path_provider/path_provider.dart';

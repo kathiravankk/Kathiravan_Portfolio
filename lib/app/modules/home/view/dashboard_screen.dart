@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -7,7 +6,6 @@ import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/internship/view/my_internship_screen.dart';
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
-
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 
 class DashboardScreen extends StatefulWidget {

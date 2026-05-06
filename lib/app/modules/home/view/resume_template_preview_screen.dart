@@ -1,20 +1,12 @@
-import 'dart:io';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:printing/printing.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ResumeTemplatePreviewScreen extends StatefulWidget {
@@ -64,35 +56,35 @@ class _ResumeTemplatePreviewScreenState
   }
 
   // ─── Get fully rendered HTML from WebView ───────────────────────────────────
-  Future<String?> _getRenderedHtml() async {
-    try {
-      final result = await _controller.runJavaScriptReturningResult(
-        "document.documentElement.outerHTML",
-      );
-      String html = result.toString();
-      if (html.startsWith('"') && html.endsWith('"')) {
-        html = json.decode(html);
-      }
-      return html;
-    } catch (e) {
-      debugPrint("Error getting HTML: $e");
-      return null;
-    }
-  }
+  // Future<String?> _getRenderedHtml() async {
+  //   try {
+  //     final result = await _controller.runJavaScriptReturningResult(
+  //       "document.documentElement.outerHTML",
+  //     );
+  //     String html = result.toString();
+  //     if (html.startsWith('"') && html.endsWith('"')) {
+  //       html = json.decode(html);
+  //     }
+  //     return html;
+  //   } catch (e) {
+  //     debugPrint("Error getting HTML: $e");
+  //     return null;
+  //   }
+  // }
 
   // ─── Convert HTML → Uint8List PDF bytes ─────────────────────────────────────
-  Future<Uint8List> _htmlToPdfBytes(String html) async {
-    // Printing.convertHtml returns Uint8List directly
-    final Uint8List bytes = await Printing.convertHtml(
-      format: const PdfPageFormat(
-        210 * PdfPageFormat.mm,
-        297 * PdfPageFormat.mm,
-        marginAll: 0,
-      ),
-      html: html,
-    );
-    return bytes;
-  }
+  // Future<Uint8List> _htmlToPdfBytes(String html) async {
+  //   // Printing.convertHtml returns Uint8List directly
+  //   final Uint8List bytes = await Printing.convertHtml(
+  //     format: const PdfPageFormat(
+  //       210 * PdfPageFormat.mm,
+  //       297 * PdfPageFormat.mm,
+  //       marginAll: 0,
+  //     ),
+  //     html: html,
+  //   );
+  //   return bytes;
+  // }
 
   // ─── Show editable filename dialog ──────────────────────────────────────────
   Future<String?> _askFileName() async {
@@ -179,27 +171,27 @@ class _ResumeTemplatePreviewScreenState
   }
 
   // ─── Request storage permission based on Android version ────────────────────
-  Future<bool> _requestStoragePermission() async {
-    if (!Platform.isAndroid) return true;
-
-    // Get Android SDK version
-    final androidInfo = await _getAndroidSdkVersion();
-
-    if (androidInfo >= 33) {
-      // Android 13+ — no storage permission needed for Downloads via File API
-      // WRITE_EXTERNAL_STORAGE is ignored on 33+, but we can still write to
-      // /storage/emulated/0/Download directly without permission
-      return true;
-    } else if (androidInfo >= 29) {
-      // Android 10–12 — WRITE_EXTERNAL_STORAGE is restricted but
-      // /storage/emulated/0/Download is still accessible without it
-      return true;
-    } else {
-      // Android 9 and below — need WRITE_EXTERNAL_STORAGE
-      final status = await Permission.storage.request();
-      return status.isGranted;
-    }
-  }
+  // Future<bool> _requestStoragePermission() async {
+  //   if (!Platform.isAndroid) return true;
+  //
+  //   // Get Android SDK version
+  //   final androidInfo = await _getAndroidSdkVersion();
+  //
+  //   if (androidInfo >= 33) {
+  //     // Android 13+ — no storage permission needed for Downloads via File API
+  //     // WRITE_EXTERNAL_STORAGE is ignored on 33+, but we can still write to
+  //     // /storage/emulated/0/Download directly without permission
+  //     return true;
+  //   } else if (androidInfo >= 29) {
+  //     // Android 10–12 — WRITE_EXTERNAL_STORAGE is restricted but
+  //     // /storage/emulated/0/Download is still accessible without it
+  //     return true;
+  //   } else {
+  //     // Android 9 and below — need WRITE_EXTERNAL_STORAGE
+  //     final status = await Permission.storage.request();
+  //     return status.isGranted;
+  //   }
+  // }
 
   /// Returns Android SDK int version, defaults to 33 if unavailable
   Future<int> _getAndroidSdkVersion() async {
@@ -212,43 +204,43 @@ class _ResumeTemplatePreviewScreenState
     }
   }
 
-  // ─── Save Uint8List PDF to Downloads folder ──────────────────────────────────
-  Future<File?> _savePdfToDownloads(Uint8List bytes, String fileName) async {
-    try {
-      Directory downloadDir;
-
-      if (Platform.isAndroid) {
-        // Standard public Downloads directory — works on Android 9+
-        // without needing WRITE_EXTERNAL_STORAGE on Android 10+
-        const downloadsPath = '/storage/emulated/0/Download';
-        downloadDir = Directory(downloadsPath);
-
-        if (!await downloadDir.exists()) {
-          // Fallback via getExternalStorageDirectory
-          final extDir = await getExternalStorageDirectory();
-          if (extDir != null) {
-            final parts = extDir.path.split('Android');
-            downloadDir = Directory('${parts.first}Download');
-          }
-        }
-      } else {
-        // iOS: save to app Documents (visible in Files app)
-        downloadDir = await getApplicationDocumentsDirectory();
-      }
-
-      if (!await downloadDir.exists()) {
-        await downloadDir.create(recursive: true);
-      }
-
-      final filePath = '${downloadDir.path}/$fileName.pdf';
-      final file = File(filePath);
-      await file.writeAsBytes(bytes); // writeAsBytes accepts Uint8List ✅
-      return file;
-    } catch (e) {
-      debugPrint("Save error: $e");
-      return null;
-    }
-  }
+  // // ─── Save Uint8List PDF to Downloads folder ──────────────────────────────────
+  // Future<File?> _savePdfToDownloads(Uint8List bytes, String fileName) async {
+  //   try {
+  //     Directory downloadDir;
+  //
+  //     if (Platform.isAndroid) {
+  //       // Standard public Downloads directory — works on Android 9+
+  //       // without needing WRITE_EXTERNAL_STORAGE on Android 10+
+  //       const downloadsPath = '/storage/emulated/0/Download';
+  //       downloadDir = Directory(downloadsPath);
+  //
+  //       if (!await downloadDir.exists()) {
+  //         // Fallback via getExternalStorageDirectory
+  //         final extDir = await getExternalStorageDirectory();
+  //         if (extDir != null) {
+  //           final parts = extDir.path.split('Android');
+  //           downloadDir = Directory('${parts.first}Download');
+  //         }
+  //       }
+  //     } else {
+  //       // iOS: save to app Documents (visible in Files app)
+  //       downloadDir = await getApplicationDocumentsDirectory();
+  //     }
+  //
+  //     if (!await downloadDir.exists()) {
+  //       await downloadDir.create(recursive: true);
+  //     }
+  //
+  //     final filePath = '${downloadDir.path}/$fileName.pdf';
+  //     final file = File(filePath);
+  //     await file.writeAsBytes(bytes); // writeAsBytes accepts Uint8List ✅
+  //     return file;
+  //   } catch (e) {
+  //     debugPrint("Save error: $e");
+  //     return null;
+  //   }
+  // }
 
   // ─── Handle Download ──────────────────────────────────────────────────────────
   Future<void> _handleDownload() async {

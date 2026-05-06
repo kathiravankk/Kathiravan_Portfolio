@@ -169,14 +169,12 @@ class _CategoryWiseInternshipScreenState
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .studentQualification!.join(", ") ??
-                            "All",
+                                .studentQualification!.join(", "),
                         eligibility:
                             dashboardController
                                 .categoryInternshipModel
                                 .jobs![index]
-                                .requiredSkills!.join(",") ??
-                            "All",
+                                .requiredSkills!.join(","),
                         skillList:
                             dashboardController
                                 .categoryInternshipModel
