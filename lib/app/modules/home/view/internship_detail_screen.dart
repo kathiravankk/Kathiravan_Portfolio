@@ -213,35 +213,42 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   }
 
   Future<void> internshipApplyFunc() async {
-    await dashboardController.applyNewInternship(
-      internshipId: internshipId,
-      studentId: studentId!,
-      //studentId: "6983122036ebb4ab9c79c38e",
-    );
-    if (dashboardController.getResponseCode() == 200 ||
-        dashboardController.getResponseCode() == 201) {
-      AppFunctions.showToast(
-        message: dashboardController.internshipApplyModel.message!,
-        isError: false,
+    try {
+      await dashboardController.applyNewInternship(
+        internshipId: internshipId,
+        studentId: studentId!,
+        //studentId: "6983122036ebb4ab9c79c38e",
       );
-      AppFunctions.showAppAlert(
-        context: context,
-        content: "Application Submitted!",
-        title: "Success",
-        confirmText: "Okay",
-        onCancel: () {
-          Get.back();
-        },
-        onConfirm: () {
-          Get.close(1);
-        },
-      );
-    } else {
-      AppFunctions.showToast(
-        message:
-            dashboardController.internshipApplyModel.message ??
+      if (dashboardController.getResponseCode() == 200 ||
+          dashboardController.getResponseCode() == 201) {
+        AppFunctions.showToast(
+          message: dashboardController.internshipApplyModel.message!,
+          isError: false,
+        );
+        AppFunctions.showAppAlert(
+          context: context,
+          content: "Application Submitted!",
+          title: "Success",
+          confirmText: "Okay",
+          onCancel: () {
+            Get.back();
+          },
+          onConfirm: () {
+            Get.close(1);
+          },
+        );
+      } else {
+        AppFunctions.apiErrorHandling(
+          dashboardController.getResponseCode(),
+          dashboardController.internshipApplyModel.message ??
+              "Failed to apply this Internship!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        dashboardController.getResponseCode(),
+        dashboardController.internshipApplyModel.message ??
             "Failed to apply this Internship!",
-        isError: true,
       );
     }
   }
@@ -354,7 +361,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             ),
           ),
           Text(
-            internship!.requiredSkills!.join(",") ?? "All",
+            internship!.requiredSkills!.join(","),
             style: AppStyles.customTextStyle(
               size: 14,
               weight: FontWeight.w400,
@@ -449,7 +456,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                     color: AppColors.greyIcon,
                   ),
                   Text(
-                    studentName ?? "",
+                    studentName,
                     style: AppStyles.customTextStyle(
                       size: 12,
                       color: AppColors.blackLight,
@@ -463,7 +470,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: Text(
-              reviewContent ?? "",
+              reviewContent,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: AppStyles.customTextStyle(

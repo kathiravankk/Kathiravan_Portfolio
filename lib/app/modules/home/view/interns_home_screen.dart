@@ -374,7 +374,14 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 return InternshipCard(
                   width: 360,
                   companyName: recommentedList.companyName ?? "",
-                  duration: recommentedList.internshipDuration ?? "",
+                  //duration: recommentedList.internshipDuration ?? "",
+                  duration:
+                  recommentedList.internshipDuration!.isNotEmpty &&
+                      recommentedList.internshipDuration != null
+                      ? "${recommentedList.internshipDuration!} Months"
+                      : "${recommentedList.days} Days",
+                  internFees: recommentedList.internFees ?? "",
+                  location: recommentedList.companyCity ?? "",
                   isSaved: recommentedList.isSaved ?? false,
                   // saveFunc: () {
                   //   recommentedList.isSaved!
@@ -393,7 +400,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   },
                   eligibility: recommentedList.eligibilityCriteria ?? "",
                   qualification:
-                      recommentedList.studentQualification!.join(", ") ?? "",
+                      recommentedList.studentQualification!.join(", "),
                   stipendRupees: recommentedList.internshipStipend ?? "",
                   description: recommentedList.internshipDescription ?? "",
                   imageUrl: recommentedList.companyLogo ?? "",
@@ -528,12 +535,12 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
     );
   }
 
-  String _formatNumber(int number) {
-    return number.toString().replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'),
-      (match) => ',',
-    );
-  }
+  // String _formatNumber(int number) {
+  //   return number.toString().replaceAllMapped(
+  //     RegExp(r'\B(?=(\d{3})+(?!\d))'),
+  //     (match) => ',',
+  //   );
+  // }
 
   Future<void> addToSaved({required String jobId}) async {
     await profileController.addSavedJobsData(jobId: jobId);

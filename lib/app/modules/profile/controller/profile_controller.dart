@@ -58,10 +58,10 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> _loadHtml(String path) async {
-    final html = await rootBundle.loadString(path);
-    await webViewController!.loadHtmlString(html);
-  }
+  // Future<void> _loadHtml(String path) async {
+  //   final html = await rootBundle.loadString(path);
+  //   await webViewController!.loadHtmlString(html);
+  // }
 
   // GET STUDENT PROFILE DATA
 

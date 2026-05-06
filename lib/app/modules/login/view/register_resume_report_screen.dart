@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
@@ -83,8 +82,8 @@ class _RegisterResumeReportScreenState
     //   resumeUrl:
     //       "https://fulupo.selfietoons.com/uploads/1769402419963-Narmatha M.pdf",
     // );
-    print(networkResumePath!);
-    print("******************");
+    debugPrint(networkResumePath!);
+    debugPrint("******************");
     await registerController.checkResumeScore(resumeUrl: networkResumePath!);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
@@ -718,19 +717,32 @@ class _RegisterResumeReportScreenState
   }
 
   Future<void> updateResumeFunc() async {
-    try {
-      /// ✅ show loader first
-      AiLoadingWidget.show(context, type: LoadingDialogType.enhanceResume);
+    bool alreadyClosed = false;
 
-      /// ✅ allow one frame to render loader
+    try {
+      /// ✅ show loader
+      AiLoadingWidget.show(
+        context,
+        type: LoadingDialogType.enhanceResume,
+      );
+
       await Future.delayed(const Duration(milliseconds: 100));
 
       await registerController.updateResumeData(
         updateData: registerController.resumeAnalyzeModel.extractedData!,
       );
 
-      if (registerController.getResponseCode() == 200 ||
-          registerController.getResponseCode() == 201) {
+      if ((registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201)) {
+
+        /// ✅ close loader BEFORE navigation
+        if (Get.isDialogOpen ?? false) {
+          if (mounted) {
+            AiLoadingWidget.hide(context);
+            alreadyClosed = true;
+          }
+        }
+
         AppFunctions.showToast(
           message: "Resume Updated Successfully!",
           isError: false,
@@ -739,8 +751,12 @@ class _RegisterResumeReportScreenState
         AppFunctions.navigateScreen(
           context,
           AppRoutes.chatResumeTemplateScreen,
-          arguments: {"resumeData": registerController.extractedResumeModel},
+          arguments: {
+            "resumeData": registerController.extractedResumeModel,
+          },
         );
+
+        return;
       } else {
         AppFunctions.apiErrorHandling(
           registerController.getResponseCode(),
@@ -755,8 +771,12 @@ class _RegisterResumeReportScreenState
         isError: true,
       );
     } finally {
-      /// ✅ always hide loader
-      AiLoadingWidget.hide(context);
+      /// ✅ prevent closing next screen
+      if (!alreadyClosed && (Get.isDialogOpen ?? false)) {
+        if (mounted) {
+          AiLoadingWidget.hide(context);
+        }
+      }
     }
   }
 

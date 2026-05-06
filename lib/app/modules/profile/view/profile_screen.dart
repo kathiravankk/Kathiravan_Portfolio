@@ -61,8 +61,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     emailController.text = profileController.profileDataModel.studEmail ?? "";
     mobileController.text =
         profileController.profileDataModel.studMobileNo ?? "";
-    print(profileController.profileDataModel.isVerified);
-    print("+================");
+    debugPrint(profileController.profileDataModel.isVerified.toString());
+    debugPrint("+================");
   }
 
   @override
@@ -269,7 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
     Map<String, dynamic> updateData = {
-      "studprofile": multipartFile ?? null,
+      "studprofile": multipartFile,
       "stuid": studentId,
       "studname": isNameChanged ? nameController.text.trim() : null,
     };

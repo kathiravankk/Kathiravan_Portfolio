@@ -144,7 +144,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           message: "Successfully! removed Watermark  from your AI Banner ",
         );
         LocalStorageService.saveWatermarkValue(waterMarkValue: true);
-        print(profileController.waterMarkModel.watermarkData!.imageUrl ?? "");
+        debugPrint(profileController.waterMarkModel.watermarkData!.imageUrl ?? "");
         await registerController.updateStudentProfileData(
           updateData: {
             "student_banner":
@@ -240,8 +240,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
       await ResumeFileUtils.handleDownload(
         webViewController: webViewController!,
-        context: context,
-        defaultFileName: "${firstName}_resume",
+        fileName: "${firstName}_resume",
       );
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -256,10 +255,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       final firstName = (resumeData?.personalInfo?.name ?? 'resume')
           .split(' ')
           .first;
-
       await ResumeFileUtils.handleShare(
         webViewController: webViewController!,
-        defaultFileName: "${firstName}_resume",
+        fileName: "${firstName}_resume",
       );
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -525,7 +523,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                         "templateId": int.parse(
                                           profileController
                                               .profileDataModel
-                                              .templateNumber!,
+                                              .templateNumber != null && profileController
+                                              .profileDataModel
+                                              .templateNumber!.isNotEmpty ? profileController
+                                              .profileDataModel
+                                              .templateNumber! : "1",
                                         ),
                                         //"templateId": 1,
                                         "resumeData": ExtractedResumeDataModel(
@@ -880,7 +882,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             ),
 
           /// ✏ REMOVE WATERMARK
-          if (bannerUrl.isNotEmpty && !(waterMarkValue ?? false))
+          if (bannerUrl.isNotEmpty && !(waterMarkValue))
             iconWidget(
               icon: CupertinoIcons.pencil_outline,
               onTap: () async {

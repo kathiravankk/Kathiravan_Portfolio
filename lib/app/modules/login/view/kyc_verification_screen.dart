@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
@@ -11,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/kyc_response_dialog.dart';
@@ -18,7 +18,6 @@ import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:internsharks/core/const_file/asset_image.dart';
 
 class KycVerificationScreen extends StatefulWidget {
   const KycVerificationScreen({super.key});
@@ -159,7 +158,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AppAssetImages.backgroundimage),
+          image: AssetImage(AssetImages.appBgImage),
           fit: BoxFit.cover,
         ),
       ),
@@ -282,7 +281,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
 
   Future<void> updateKYC() async {
     final studentName = await LocalStorageService.getStudentName();
-    final studentId = await LocalStorageService.getStudentId();
+    //final studentId = await LocalStorageService.getStudentId();
 
     if (!collegeIdImg!.existsSync()) {
       AppFunctions.showToast(message: "College ID image is required!");
@@ -354,7 +353,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
               );
             }
           } else {
-            Get.close(2);
+            Get.back();
           }
         } else {
           /// ✅ now dialog opens without loader behind it

@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -334,26 +332,31 @@ class ResumeFileUtils {
   // ─────────────────────────────────────────────────────────────────────────────
   static Future<void> handleDownload({
     required WebViewController webViewController,
-    required BuildContext context,
-    String defaultFileName = "my_resume",
+    required String fileName,
   }) async {
-    final fileName = await askFileName(context: context, defaultName: defaultFileName);
-    if (fileName == null) return;
     try {
       if (!await requestStoragePermission()) {
-        AppFunctions.showToast(message: "❌ Storage permission denied.", isError: true);
+        AppFunctions.showToast(
+          message: "❌ Storage permission denied.",
+          isError: true,
+        );
         return;
       }
+
       final html = await getRenderedHtml(webViewController);
       if (html == null) {
-        AppFunctions.showToast(message: "❌ Failed to capture resume content", isError: true);
+        AppFunctions.showToast(
+          message: "❌ Failed to capture resume content",
+          isError: true,
+        );
         return;
       }
-      final file = await savePdfToDownloads(await htmlToPdfBytes(html), fileName);
-      // AppFunctions.showToast(
-      //   message: file != null ? "✅ Saved: $fileName.pdf" : "❌ Download failed.",
-      //   isError: file == null,
-      // );
+
+      final file = await savePdfToDownloads(
+        await htmlToPdfBytes(html),
+        fileName,
+      );
+
       AppFunctions.showToast(
         message: file != null
             ? "✅ Saved: ${file.path.split('/').last}"
@@ -361,7 +364,10 @@ class ResumeFileUtils {
         isError: file == null,
       );
     } catch (e) {
-      AppFunctions.showToast(message: "❌ Download failed: $e", isError: true);
+      AppFunctions.showToast(
+        message: "❌ Download failed: $e",
+        isError: true,
+      );
     }
   }
 
@@ -370,17 +376,28 @@ class ResumeFileUtils {
   // ─────────────────────────────────────────────────────────────────────────────
   static Future<void> handleShare({
     required WebViewController webViewController,
-    String defaultFileName = "my_resume",
+    required String fileName,
   }) async {
     try {
       final html = await getRenderedHtml(webViewController);
+
       if (html == null) {
-        AppFunctions.showToast(message: "❌ Failed to capture resume content", isError: true);
+        AppFunctions.showToast(
+          message: "❌ Failed to capture resume content",
+          isError: true,
+        );
         return;
       }
-      await _sharePdfBytes(await htmlToPdfBytes(html), defaultFileName);
+
+      await _sharePdfBytes(
+        await htmlToPdfBytes(html),
+        fileName,
+      );
     } catch (e) {
-      AppFunctions.showToast(message: "❌ Share failed", isError: true);
+      AppFunctions.showToast(
+        message: "❌ Share failed",
+        isError: true,
+      );
     }
   }
 

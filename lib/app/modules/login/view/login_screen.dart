@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/modules/login/controllers/login_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:internsharks/core/const_file/app_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 import '../../../data/repositories/local_storage_service.dart';
 
@@ -160,29 +159,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
 
                         const SizedBox(height: 30),
-
-                        AppButton.AppContainerButton(
-                          onTap: loginController.loginVerifyLoading
-                              ? null
+                        CustomButtonWidget(
+                          height: 40,
+                          buttonFunction: loginController.loginVerifyLoading
+                              ? () {}
                               : () async {
                                   await verifyOtpFunc();
                                 },
-                          bgColor: loginController.loginVerifyLoading
-                              ? Colors.grey.shade800
-                              : AppColors.appBlue,
-                          borderRadius: 30,
-                          borderColor: Colors.white24,
-                          borderWidth: 1,
-                          text: loginController.loginVerifyLoading
+                          buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
-                          verticalPadding: 12,
-                          textStyle: AppStyles.customTextStyle(
-                            size: 18,
-                            weight: FontWeight.w600,
-                            color: AppColors.whiteColor,
-                          ),
+                          disable: loginController.loginVerifyLoading,
                         ),
+                        const SizedBox(height: 10,)
                       ],
                     );
                   }
@@ -193,21 +182,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       null;
 
                   // 📤 SEND OTP BUTTON (OTP NOT SENT)
-                  return AppButton.AppContainerButton(
-                    onTap: isValid
+                  return CustomButtonWidget(
+                    height: 40,
+                    buttonFunction: isValid
                         ? () => sendOtpFunc(mobileNumber: mobileController.text)
-                        : null,
-                    bgColor: isValid
-                        ? AppColors.primaryColor
-                        : AppColors.disableButtonColor,
-                    borderRadius: 30,
-                    text: "Send OTP",
-                    verticalPadding: 12,
-                    textStyle: AppStyles.customTextStyle(
-                      size: 18,
-                      weight: FontWeight.w600,
-                      color: AppColors.whiteColor,
-                    ),
+                        : () {},
+                    buttonText: "Send OTP",
+                    disable: !isValid,
                   );
                 }),
 
@@ -336,7 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
           isError: false,
         );
         final token = await LocalStorageService.getToken();
-        print(token);
+        debugPrint(token);
         Get.offAllNamed(AppRoutes.dashBoardScreen);
       } else {
         AppFunctions.apiErrorHandling(

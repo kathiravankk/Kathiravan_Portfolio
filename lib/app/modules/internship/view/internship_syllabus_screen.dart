@@ -74,7 +74,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       // Project link
       final links = statusData?.internProjectLink ?? [];
       isProjectSubmitted = links.isNotEmpty;
-      projectController.text = links.isNotEmpty ? (links.first ?? "") : "";
+      projectController.text = links.isNotEmpty ? (links.first) : "";
 
       // Build dayProgressMap from dailyProgress list
       dayProgressMap.clear();

@@ -45,6 +45,7 @@ class RecommentedData {
   String? companyState;
   String? companyCity;
   String? locationLink;
+  String? internFees;
   String? internshipDuration;
   String? internshipStipend;
   String? days;
@@ -61,6 +62,7 @@ class RecommentedData {
     this.syllabusData,
     this.sId,
     this.companyName,
+    this.internFees,
     this.aboutCompany,
     this.companyWebsite,
     this.companyLogo,
@@ -91,6 +93,7 @@ class RecommentedData {
 
   RecommentedData.fromJson(Map<String, dynamic> json) {
     syllabusData = json['syllabusdata'] ?? "";
+    internFees = json['fee'] ?? "";
     sId = json['_id'] ?? "";
     companyName = json['companyname'] ?? "";
     aboutCompany = json['aboutcompany'] ?? "";
@@ -128,6 +131,7 @@ class RecommentedData {
     data['syllabusdata'] = syllabusData;
     data['internshipmode'] = internshipMode;
     data['_id'] = sId;
+    data['fee'] = internFees;
     data['days'] = days;
     data['companyname'] = companyName;
     data['aboutcompany'] = aboutCompany;

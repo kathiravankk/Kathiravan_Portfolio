@@ -268,7 +268,7 @@ class _RegisterResumeUploadScreenState
 
                 //final progress = registerController.uploadProgress.value;
                 final progress = registerController.uploadProgress.value;
-                final isExtracting = registerController.isExtracting.value;
+                //final isExtracting = registerController.isExtracting.value;
 
                 String statusText;
 

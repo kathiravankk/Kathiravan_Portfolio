@@ -49,38 +49,42 @@ class SavedInternshipCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  spacing: 5,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      jobTitle!.capitalize ?? "",
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.disableButtonColor2,
-                        weight: FontWeight.w700,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        jobTitle?.capitalize ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppStyles.customTextStyle(
+                          size: 14,
+                          color: AppColors.disableButtonColor2,
+                          weight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    Text(
-                      companyName ?? "",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.selectedContColor,
-                        weight: FontWeight.w400,
+                      const SizedBox(height: 4),
+                      Text(
+                        companyName ?? "",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          color: AppColors.selectedContColor,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 GestureDetector(
-                  onTap: isSaveFunc!,
+                  onTap: isSaveFunc,
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColors.lightWhiteCont,
                       shape: BoxShape.circle,
                     ),
-                    padding: EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
                     child: Icon(
                       Icons.bookmark,
                       color: AppColors.secondaryColor,
@@ -90,92 +94,55 @@ class SavedInternshipCard extends StatelessWidget {
                 ),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              spacing: 5,
+            Wrap(
+              spacing: 10,
+              runSpacing: 5,
               children: [
-                Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 5,
-                    children: [
-                      Text(
-                        "Education: ",
-                        style: AppStyles.customTextStyle(
-                          size: 10,
-                          weight: FontWeight.w400,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: Text(
-                          qualification!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppStyles.customTextStyle(
-                            size: 10,
-                            weight: FontWeight.w400,
-                            color: AppColors.blackLight,
-                          ),
-                        ),
-                      ),
-                    ],
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  child: Text(
+                    "Education: ${qualification ?? ""}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
-                Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 5,
-                    children: [
-                      Text(
-                        "Available: ",
-                        style: AppStyles.customTextStyle(
-                          size: 10,
-                          weight: FontWeight.w400,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: Text(
-                          skillList!.join(", "),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppStyles.customTextStyle(
-                            size: 10,
-                            weight: FontWeight.w400,
-                            color: AppColors.blackLight,
-                          ),
-                        ),
-                      ),
-                    ],
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 150),
+                  child: Text(
+                    "Available: ${skillList?.join(", ") ?? ""}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                 ),
               ],
             ),
-            Row(
+            Wrap(
               spacing: 10,
+              runSpacing: 5,
               children: [
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.secondaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   child: Row(
-                    spacing: 6,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.access_time,
-                        size: 12,
-                        color: AppColors.greyIcon,
-                      ),
+                      const Icon(Icons.access_time, size: 12, color: AppColors.greyIcon),
+                      const SizedBox(width: 5),
                       Text(
                         "Duration : $duration",
                         style: AppStyles.customTextStyle(
                           size: 10,
-                          weight: FontWeight.w400,
                           color: AppColors.blackLight,
                         ),
                       ),
@@ -187,15 +154,12 @@ class SavedInternshipCard extends StatelessWidget {
                     color: AppColors.lightWhiteCont,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   child: Row(
-                    spacing: 3,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.currency_rupee,
-                        size: 12,
-                        color: AppColors.greyIcon,
-                      ),
+                      const Icon(Icons.currency_rupee, size: 12, color: AppColors.greyIcon),
+                      const SizedBox(width: 5),
                       Text(
                         stipendRupees != "N/A"
                             ? "Stipend : $stipendRupees"
@@ -204,7 +168,6 @@ class SavedInternshipCard extends StatelessWidget {
                             : "Free Internship",
                         style: AppStyles.customTextStyle(
                           size: 10,
-                          weight: FontWeight.w400,
                           color: AppColors.blackLight,
                         ),
                       ),

@@ -41,7 +41,7 @@ class _RegisterProfileUploadScreenState
       await controller!.initialize();
       if (mounted) setState(() {});
     } catch (e) {
-      print('Camera init error: $e');
+      debugPrint('Camera init error: $e');
     }
   }
 
@@ -61,7 +61,7 @@ class _RegisterProfileUploadScreenState
       );
       if (mounted) setState(() {});
     } catch (e) {
-      print('Flash toggle error: $e');
+      debugPrint('Flash toggle error: $e');
     }
   }
 
@@ -397,10 +397,10 @@ class _RegisterProfileUploadScreenState
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 2,
               ),
             ),
@@ -439,7 +439,7 @@ class _RegisterProfileUploadScreenState
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.appBlue.withOpacity(0.5),
+                  color: AppColors.appBlue.withValues(alpha: 0.5),
                   blurRadius: 20,
                   spreadRadius: 2,
                 ),
