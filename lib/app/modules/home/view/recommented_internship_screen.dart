@@ -112,6 +112,10 @@ class _RecommentedInternshipScreenState
                           .recommentedModel
                           .internshipList![index]
                           .createdAt!,
+                      location: dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .companyCity ??"NA",
                       role:
                           dashboardController
                               .recommentedModel
@@ -143,17 +147,28 @@ class _RecommentedInternshipScreenState
                               .internshipDescription ??
                           "",
                       duration:
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index].internshipDuration!.isNotEmpty &&
                           dashboardController
                               .recommentedModel
-                              .internshipList![index]
-                              .internshipDuration ??
-                          "NA",
+                              .internshipList![index].internshipDuration != null
+                          ? "${dashboardController
+                          .recommentedModel
+                          .internshipList![index].internshipDuration!} Months"
+                          : "${dashboardController
+                          .recommentedModel
+                          .internshipList![index].days} Days",
                       stipendRupees:
                           dashboardController
                               .recommentedModel
                               .internshipList![index]
                               .internshipStipend ??
                           "NA",
+                      internFees:  dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .internFees ?? "NA",
                       qualification:
                           dashboardController
                               .recommentedModel

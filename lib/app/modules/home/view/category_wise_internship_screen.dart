@@ -154,11 +154,18 @@ class _CategoryWiseInternshipScreenState
                                 .aboutInternship ??
                             "",
                         duration:
+                        dashboardController
+                            .categoryInternshipModel
+                            .jobs![index].internshipDuration!.isNotEmpty &&
                             dashboardController
                                 .categoryInternshipModel
-                                .jobs![index]
-                                .internshipDuration ??
-                            "NA",
+                                .jobs![index].internshipDuration != null
+                            ? "${dashboardController
+                            .categoryInternshipModel
+                            .jobs![index].internshipDuration!} Months"
+                            : "${dashboardController
+                            .categoryInternshipModel
+                            .jobs![index].days} Days",
                         stipendRupees:
                             dashboardController
                                 .categoryInternshipModel
@@ -184,6 +191,9 @@ class _CategoryWiseInternshipScreenState
                         internFees:  dashboardController
                             .categoryInternshipModel
                             .jobs![index].fee ?? 'NA',
+                        location: dashboardController
+                            .categoryInternshipModel
+                            .jobs![index].companyCity ?? "NA",
                       ),
                     )
                   : CustomEmptyWidget(),
