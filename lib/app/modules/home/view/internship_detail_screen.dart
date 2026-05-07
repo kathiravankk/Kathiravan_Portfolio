@@ -102,7 +102,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             },
             buttonText: internship!.status!.isNotEmpty
                 ? "Applied"
-                : "Apply Now (10 Credits)",
+                : "Apply Now (20 Credits)",
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

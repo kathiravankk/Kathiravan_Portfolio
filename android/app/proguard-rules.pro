@@ -22,7 +22,7 @@
 -keep interface okhttp3.** { *; }
 
 # Keep all model classes
--keep class com.doubletap.internsharks.** { *; }
+-keep class com.doubletap.internsharks.ai.** { *; }
 
 # Multidex
 -keep class androidx.multidex.** { *; }

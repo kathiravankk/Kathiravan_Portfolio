@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _gifAnimation;
 
   final NewVersionPlus _newVersion = NewVersionPlus(
-    androidId: 'com.doubletap.internsharks',
+    androidId: 'com.doubletap.internsharks.ai',
   );
   String localVersion = "";
 

@@ -1,4 +1,4 @@
-package com.doubletap.internsharks
+package com.doubletap.ai.internsharks
 
 import android.os.Bundle
 import android.view.WindowManager
