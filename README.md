@@ -2,6 +2,8 @@
 
 A new Flutter project.
 
+Flutter 3.38.5
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
