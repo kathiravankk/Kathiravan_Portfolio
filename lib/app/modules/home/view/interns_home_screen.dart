@@ -17,7 +17,7 @@ import 'package:internsharks/app/modules/home/controller/dashboard_controller.da
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+//import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../core/widgets/home_drawer.dart';
 
 class InternsHomeScreen extends StatefulWidget {
@@ -288,8 +288,8 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
           options: CarouselOptions(
             height: 150,
             autoPlay: true,
-            autoPlayInterval: Duration(seconds: 3),
-            autoPlayAnimationDuration: Duration(milliseconds: 800),
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
             viewportFraction: 1,
             enlargeCenterPage: false,
             onPageChanged: (index, reason) {
@@ -299,33 +299,91 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             },
           ),
           items: images.map((imageUrl) {
-            return Builder(
-              builder: (BuildContext context) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(25),
-                  child: Image.asset(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
-                );
-              },
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: Image.asset(
+                imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
             );
           }).toList(),
         ),
-        AnimatedSmoothIndicator(
-          activeIndex: activeIndex,
-          count: images.length,
-          effect: ExpandingDotsEffect(
-            activeDotColor: AppColors.primaryColor,
-            dotColor: AppColors.lightWhiteCont,
-            dotHeight: 5,
-            dotWidth: 5,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: images.asMap().entries.map((entry) {
+            bool isActive = activeIndex == entry.key;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              width: isActive ? 20 : 5,
+              height: 5,
+              decoration: BoxDecoration(
+                color: isActive
+                    ? AppColors.primaryColor
+                    : AppColors.lightWhiteCont,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );
   }
+
+
+  // Widget _buildBannerCarousel() {
+  //   List<String> images = [
+  //     AssetImages.homeScreenBannerImg,
+  //     AssetImages.homeScreenBannerImg,
+  //     AssetImages.homeScreenBannerImg,
+  //   ];
+  //
+  //   return Column(
+  //     spacing: 10,
+  //     children: [
+  //       CarouselSlider(
+  //         options: CarouselOptions(
+  //           height: 150,
+  //           autoPlay: true,
+  //           autoPlayInterval: Duration(seconds: 3),
+  //           autoPlayAnimationDuration: Duration(milliseconds: 800),
+  //           viewportFraction: 1,
+  //           enlargeCenterPage: false,
+  //           onPageChanged: (index, reason) {
+  //             setState(() {
+  //               activeIndex = index;
+  //             });
+  //           },
+  //         ),
+  //         items: images.map((imageUrl) {
+  //           return Builder(
+  //             builder: (BuildContext context) {
+  //               return ClipRRect(
+  //                 borderRadius: BorderRadius.circular(25),
+  //                 child: Image.asset(
+  //                   imageUrl,
+  //                   fit: BoxFit.cover,
+  //                   width: double.infinity,
+  //                 ),
+  //               );
+  //             },
+  //           );
+  //         }).toList(),
+  //       ),
+  //       AnimatedSmoothIndicator(
+  //         activeIndex: activeIndex,
+  //         count: images.length,
+  //         effect: ExpandingDotsEffect(
+  //           activeDotColor: AppColors.primaryColor,
+  //           dotColor: AppColors.lightWhiteCont,
+  //           dotHeight: 5,
+  //           dotWidth: 5,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildSectionHeader({
     required String title,
