@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -205,7 +206,7 @@ class _CategoryWiseInternshipScreenState
     await profileController.addSavedJobsData(jobId: jobId);
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.savedJobModel.message ??
             "Internship added to your saved posts!",
@@ -224,7 +225,7 @@ class _CategoryWiseInternshipScreenState
     await profileController.removeSavedJobsData(jobId: jobId);
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.savedJobModel.message ??
             "Internship removed from your saved posts!",

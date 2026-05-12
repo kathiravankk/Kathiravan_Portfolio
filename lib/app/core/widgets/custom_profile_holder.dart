@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -173,7 +174,7 @@ class _CustomProfileHolderState extends State<CustomProfileHolder> {
 
     if (pickedFile != null) {
       if (await pickedFile.length() > 1000000) {
-        AppFunctions.showToast(message: "File size exists..!");
+        AppAlertUtils.showToast(message: "File size exists..!");
       } else {
         selectedFile.value = File(pickedFile.path);
         if (widget.fileCallBack != null) {

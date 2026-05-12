@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
@@ -136,7 +137,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                     icon: CupertinoIcons.delete,
                     title: "Delete Account",
                     onTap: () {
-                      AppFunctions.showAppAlert(
+                      AppAlertUtils.showAppAlert(
                         context: context,
                         title: "Delete Account",
                         confirmText: "OKAY",
@@ -163,7 +164,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                     text: "info@internsharks.ai",
                                   ),
                                 );
-                                AppFunctions.showToast(
+                                AppAlertUtils.showToast(
                                   message: "Email copied!",
                                 );
                               },

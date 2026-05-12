@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
@@ -166,7 +167,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
     await internController.saveTestResult(testData: testData);
     if (internController.getResponseCode() == 200 ||
         internController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             internController.saveTestModel.message ??
             "Test Submitted Successfully!",
@@ -262,7 +263,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
           });
           return false;
         } else {
-          AppFunctions.showAppAlert(
+          AppAlertUtils.showAppAlert(
             context: context,
             title: "Exit Test",
             content:
@@ -296,7 +297,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
                   selectedOption = answers[currentQuestionIndex];
                 });
               } else {
-                AppFunctions.showAppAlert(
+                AppAlertUtils.showAppAlert(
                   context: context,
                   title: "Exit Test",
                   content:
@@ -390,7 +391,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
                   height: 45,
                   buttonFunction: () async {
                     if (currentQuestionIndex == allQuestions.length - 1) {
-                      AppFunctions.showAppAlert(
+                      AppAlertUtils.showAppAlert(
                         context: context,
                         title: "Complete Test",
                         content:

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -208,7 +209,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
     await registerController.registerNewStudent(registerData: registerData);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.studentRegisterModel.message ??
             "Student registered successfully!",

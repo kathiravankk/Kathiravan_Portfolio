@@ -7,6 +7,7 @@ import 'package:http/http.dart' hide MultipartFile;
 import 'package:dio/dio.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -284,7 +285,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     //final studentId = await LocalStorageService.getStudentId();
 
     if (!collegeIdImg!.existsSync()) {
-      AppFunctions.showToast(message: "College ID image is required!");
+      AppAlertUtils.showToast(message: "College ID image is required!");
       return;
     }
 
@@ -339,7 +340,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                 registerController.kycUpdateModel.collegeName == "valid";
 
         if (isValid) {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message: "KYC details verified successfully!",
             isError: false,
           );
@@ -376,7 +377,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         AiLoadingWidget.hide(context);
 
         debugPrint("KYC error: $e");
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Something went wrong. Try again.",
           isError: true,
         );

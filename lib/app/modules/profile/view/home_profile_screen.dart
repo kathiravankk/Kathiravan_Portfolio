@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -83,13 +84,13 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       if (profileController.getResponseCode() == 200 ||
           profileController.getResponseCode() == 201) {
         if (profileController.resDpModel.status!.status == "error") {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message:
                 profileController.resDpModel.error ??
                 "Failed to Generate your AI Banner",
           );
         } else {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message: "Your AI Banner Generated Successfully!",
           );
 
@@ -105,10 +106,10 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           final code = registerController.getResponseCode();
 
           if (code == 200 || code == 201) {
-            AppFunctions.showToast(message: 'Profile updated successfully!');
+            AppAlertUtils.showToast(message: 'Profile updated successfully!');
             await getProfileData();
           } else {
-            AppFunctions.showToast(
+            AppAlertUtils.showToast(
               message: 'Failed to update. Please try again.',
               isError: true,
             );
@@ -138,9 +139,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       if (profileController.waterMarkModel.watermarkData!.status! == "error") {
-        AppFunctions.showToast(message: "Failed to Generate your AI Banner");
+        AppAlertUtils.showToast(message: "Failed to Generate your AI Banner");
       } else {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Successfully! removed Watermark  from your AI Banner ",
         );
         LocalStorageService.saveWatermarkValue(waterMarkValue: true);
@@ -153,10 +154,10 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         );
         final code = registerController.getResponseCode();
         if (code == 200 || code == 201) {
-          AppFunctions.showToast(message: 'Profile updated successfully!');
+          AppAlertUtils.showToast(message: 'Profile updated successfully!');
           await getProfileData();
         } else {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message: 'Failed to update. Please try again.',
             isError: true,
           );
@@ -684,7 +685,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              AppFunctions.showToast(message: "Generate your AI Banner First!");
+              AppAlertUtils.showToast(message: "Generate your AI Banner First!");
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -808,7 +809,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             icon: isLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined,
             onTap: () async {
               if (isBanner) {
-                AppFunctions.showToast(
+                AppAlertUtils.showToast(
                   message: "Generate your AI Banner First!",
                   isError: true,
                 );
@@ -837,7 +838,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             icon: Icons.share_outlined,
             onTap: () async {
               if (bannerUrl.isEmpty) {
-                AppFunctions.showToast(
+                AppAlertUtils.showToast(
                   message: "No banner available!",
                   isError: true,
                 );
@@ -852,7 +853,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             icon: Icons.download,
             onTap: () async {
               if (bannerUrl.isEmpty) {
-                AppFunctions.showToast(
+                AppAlertUtils.showToast(
                   message: "No banner available!",
                   isError: true,
                 );
@@ -867,7 +868,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             iconWidget(
               icon: Icons.refresh,
               onTap: () async {
-                AppFunctions.showAppAlert(
+                AppAlertUtils.showAppAlert(
                   context: context,
                   title: "Regenerate AI Banner",
                   content:
@@ -886,7 +887,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             iconWidget(
               icon: CupertinoIcons.pencil_outline,
               onTap: () async {
-                AppFunctions.showAppAlert(
+                AppAlertUtils.showAppAlert(
                   context: context,
                   title: "Remove Watermark",
                   content:
@@ -913,18 +914,18 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       final code = profileController.getResponseCode();
 
       if (code == 200 || code == 201) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: isLike
               ? "You've liked this AI banner!"
               : "Like removed this AI banner!",
         );
         return true;
       } else {
-        AppFunctions.showToast(message: "Something went wrong!", isError: true);
+        AppAlertUtils.showToast(message: "Something went wrong!", isError: true);
         return false;
       }
     } catch (e) {
-      AppFunctions.showToast(message: "Something went wrong!", isError: true);
+      AppAlertUtils.showToast(message: "Something went wrong!", isError: true);
       return false;
     }
   }
@@ -942,7 +943,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
       await Share.shareXFiles([XFile(file.path)]);
     } catch (e) {
-      AppFunctions.showToast(message: "Share failed", isError: true);
+      AppAlertUtils.showToast(message: "Share failed", isError: true);
     }
   }
 
@@ -982,7 +983,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     try {
       final hasPermission = await _requestStoragePermission();
       if (!hasPermission) {
-        AppFunctions.showToast(message: "Permission denied", isError: true);
+        AppAlertUtils.showToast(message: "Permission denied", isError: true);
         return;
       }
 
@@ -1008,9 +1009,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
       await file.writeAsBytes(bytes);
 
-      AppFunctions.showToast(message: "Saved to Downloads");
+      AppAlertUtils.showToast(message: "Saved to Downloads");
     } catch (e) {
-      AppFunctions.showToast(message: "Download failed", isError: true);
+      AppAlertUtils.showToast(message: "Download failed", isError: true);
     }
   }
 

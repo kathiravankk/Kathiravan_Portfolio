@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -115,7 +116,7 @@ class _RegisterResumeReportScreenState
       canPop: false,
       onPopInvoked: (didPop) async {
         if (didPop) return;
-        AppFunctions.showAppAlert(
+        AppAlertUtils.showAppAlert(
           context: context,
           title: "Are you sure? ⚠️",
           content:
@@ -657,7 +658,7 @@ class _RegisterResumeReportScreenState
                   .updatedProfileSummary
                   .toString(),
             );
-            AppFunctions.showAppAlert(
+            AppAlertUtils.showAppAlert(
               context: context,
               title: "Update Resume",
               content:
@@ -695,7 +696,7 @@ class _RegisterResumeReportScreenState
     );
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Resume updated successfully!",
         isError: false,
       );
@@ -707,7 +708,7 @@ class _RegisterResumeReportScreenState
         );
       }
     } else {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.updateProfileModel.message ??
             "Something went wrong!,Please try again later!",
@@ -743,7 +744,7 @@ class _RegisterResumeReportScreenState
           }
         }
 
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Resume Updated Successfully!",
           isError: false,
         );
@@ -766,7 +767,7 @@ class _RegisterResumeReportScreenState
     } catch (e) {
       debugPrint("Resume update error: $e");
 
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Something went wrong while updating resume",
         isError: true,
       );

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
@@ -390,7 +391,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                             mini: true,
                             backgroundColor: AppColors.primaryColor,
                             onPressed: () {
-                              AppFunctions.showAppAlert(
+                              AppAlertUtils.showAppAlert(
                                 context: context,
                                 title: "Update Resume",
                                 content:
@@ -468,16 +469,16 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
       if (registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: isLike ? "❤️ Template Liked!" : "💔 Template Unliked!",
         );
       } else {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Something went wrong!, Try again later!",
         );
       }
     } catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Something went wrong!, Try again later!",
       );
     }
@@ -493,7 +494,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Resume updated successfully!",
         isError: false,
       );
@@ -519,7 +520,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
         }
       }
     } else {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.updateProfileModel.message ??
             "Something went wrong!",

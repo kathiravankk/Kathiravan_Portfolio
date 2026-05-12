@@ -6,6 +6,7 @@ import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/widgets/education_card.dart';
 import 'package:internsharks/app/core/widgets/item_card_widget.dart';
@@ -240,16 +241,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       await registerController.updateStudentProfileData(updateData: payload);
       final code = registerController.getResponseCode();
       if (code == 200 || code == 201) {
-        AppFunctions.showToast(message: 'Profile updated successfully!');
+        AppAlertUtils.showToast(message: 'Profile updated successfully!');
         await _loadProfile();
       } else {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: 'Failed to update. Please try again.',
           isError: true,
         );
       }
     } catch (e) {
-      AppFunctions.showToast(message: 'Error: $e', isError: true);
+      AppAlertUtils.showToast(message: 'Error: $e', isError: true);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -656,7 +657,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         if (picked == null) return;
         final file = File(picked.path);
         if (await file.length() > 1_000_000) {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message: 'File too large (max 1 MB)',
             isError: true,
           );
@@ -664,7 +665,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           setState(() => _pickedImage = file);
         }
       } catch (e) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: 'Could not open camera/gallery: $e',
           isError: true,
         );
@@ -674,7 +675,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         source == ImageSource.camera ? 'Camera' : 'Photo Library',
       );
     } else {
-      AppFunctions.showToast(message: 'Permission denied', isError: true);
+      AppAlertUtils.showToast(message: 'Permission denied', isError: true);
     }
   }
 
