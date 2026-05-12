@@ -97,10 +97,10 @@ class _RecommentedInternshipScreenState
                         );
                       },
                       isSaved:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .isSaved ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .isSaved ??
                           false,
                       // saveFunc: () {
                       //   internshipList![index].isSaved!
@@ -117,34 +117,34 @@ class _RecommentedInternshipScreenState
                           .internshipList![index]
                           .companyCity ??"NA",
                       role:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .roleType ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .roleType ??
                           "",
                       companyName:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .companyName ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .companyName ??
                           "",
                       internshipMode:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .internshipMode ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .internshipMode ??
                           "NA",
                       imageUrl:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .companyLogo ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .companyLogo ??
                           "",
                       description:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .internshipDescription ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .internshipDescription ??
                           "",
                       duration:
                       dashboardController
@@ -160,31 +160,31 @@ class _RecommentedInternshipScreenState
                           .recommentedModel
                           .internshipList![index].days} Days",
                       stipendRupees:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .internshipStipend ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .internshipStipend ??
                           "NA",
                       internFees:  dashboardController
                           .recommentedModel
                           .internshipList![index]
                           .internFees ?? "NA",
                       qualification:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .studentQualification!.join(", "),
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .studentQualification!.join(", "),
                       eligibility:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .eligibilityCriteria ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .eligibilityCriteria ??
                           "All",
                       skillList:
-                          dashboardController
-                              .recommentedModel
-                              .internshipList![index]
-                              .requiredSkills ??
+                      dashboardController
+                          .recommentedModel
+                          .internshipList![index]
+                          .requiredSkills ??
                           [],
                     ),
                   ),

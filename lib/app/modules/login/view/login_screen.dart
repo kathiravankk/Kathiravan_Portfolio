@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
+          image: AssetImage(AssetImages.appBgImage),
           fit: BoxFit.cover,
         ),
       ),
@@ -41,11 +41,11 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Padding(
             padding: const EdgeInsets.all(15),
             child: Column(
-              spacing: 20,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 50),
-                Image.asset(AssetImages.appLogoImage, height: 40),
+                const SizedBox(height: 150),
+                Image.asset(AssetImages.appIconImage, height: 100, width: 100),
                 Text(
                   "Welcome!",
                   style: AppStyles.customTextStyle(
@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Text(
-                  "Secure access portal. \nPlease enter your credentials.",
+                  "Secure access portal.Please enter your credentials.",
                   style: AppStyles.customTextStyle(
                     lineSpace: 1.4,
                     color: AppColors.whiteColor,
@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 /// ---------------- MOBILE FIELD ----------------
-                SizedBox(height: 10),
+                SizedBox(height: 15),
                 CustomTextField(
                   labelText: "Mobile Number",
 
@@ -91,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   },
                 ),
+                const SizedBox(height: 20),
 
                 /// ---------------- OTP / BUTTON SECTION ----------------
                 Obx(() {
@@ -123,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
 
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 30),
 
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 30),
                         CustomButtonWidget(
-                          height: 40,
+                          height: 45,
                           buttonFunction: loginController.loginVerifyLoading
                               ? () {}
                               : () async {
@@ -171,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               : "Verify & Continue",
                           disable: loginController.loginVerifyLoading,
                         ),
-                        const SizedBox(height: 10,)
+                        const SizedBox(height: 10),
                       ],
                     );
                   }
@@ -183,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // 📤 SEND OTP BUTTON (OTP NOT SENT)
                   return CustomButtonWidget(
-                    height: 40,
+                    height: 45,
                     buttonFunction: isValid
                         ? () => sendOtpFunc(mobileNumber: mobileController.text)
                         : () {},
@@ -195,35 +196,72 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 10),
 
                 /// ---------------- REGISTER LINK ----------------
-                Center(
-                  child: RichText(
-                    text: TextSpan(
-                      text: "If you’re new to Internshark, ",
+                // Center(
+                //   child: RichText(
+                //     text: TextSpan(
+                //       text: "If you’re new to Internshark, ",
+                //       style: AppStyles.customTextStyle(
+                //         size: 15,
+                //         weight: FontWeight.w300,
+                //         color: AppColors.whiteColor,
+                //       ),
+                //       children: [
+                //         TextSpan(
+                //           text: "Register now",
+                //           style: AppStyles.customTextStyle(
+                //             size: 15,
+                //             weight: FontWeight.w300,
+                //             color: AppColors.secondaryColor,
+                //             isUnderlined: true,
+                //           ),
+                //           recognizer: TapGestureRecognizer()
+                //             ..onTap = () {
+                //               AppFunctions.navigateScreen(
+                //                 context,
+                //                 AppRoutes.registerResumeUploadScreen,
+                //               );
+                //             },
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                        "If you’re new to Internshark, ",
+                        style: AppStyles.customTextStyle(
+                          size: 15,
+                          weight: FontWeight.w300,
+                          color: AppColors.whiteColor,
+                        )
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.registerResumeUploadScreen,
+                        );
+                      },
+                      child: Text(
+                      "Register now",
                       style: AppStyles.customTextStyle(
                         size: 15,
                         weight: FontWeight.w300,
-                        color: AppColors.whiteColor,
+                        color: AppColors.secondaryColor,
+                        isUnderlined: true,
+                        underlineColor: AppColors.secondaryColor
                       ),
-                      children: [
-                        TextSpan(
-                          text: "Register now",
-                          style: AppStyles.customTextStyle(
-                            size: 15,
-                            weight: FontWeight.w300,
-                            color: AppColors.secondaryColor,
-                            isUnderlined: true,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              AppFunctions.navigateScreen(
-                                context,
-                                AppRoutes.registerResumeUploadScreen,
-                              );
-                            },
-                        ),
-                      ],
                     ),
-                  ),
+                    )
+                  ],
                 ),
               ],
             ),

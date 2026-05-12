@@ -15,7 +15,7 @@ plugins {
 }
 
 android {
-    namespace = "com.doubletap.internsharks"
+    namespace = "com.doubletap.internsharks.ai"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.doubletap.internsharks"
+        applicationId = "com.doubletap.internsharks.ai"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
