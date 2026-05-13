@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dotted_border/dotted_border.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
 import 'package:dio/dio.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -284,7 +285,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     //final studentId = await LocalStorageService.getStudentId();
 
     if (!collegeIdImg!.existsSync()) {
-      AppFunctions.showToast(message: "College ID image is required!");
+      AppAlertUtils.showToast(message: "College ID image is required!");
       return;
     }
 
@@ -339,7 +340,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                 registerController.kycUpdateModel.collegeName == "valid";
 
         if (isValid) {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message: "KYC details verified successfully!",
             isError: false,
           );
@@ -376,7 +377,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         AiLoadingWidget.hide(context);
 
         debugPrint("KYC error: $e");
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Something went wrong. Try again.",
           isError: true,
         );
@@ -389,66 +390,17 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     required File? file,
     required Function() onSelect,
   }) {
-    if (file == null) {
-      return GestureDetector(
-        onTap: onSelect,
-        child: DottedBorder(
-          color: AppColors.contBorderColor,
-          strokeWidth: 1.4,
-          borderType: BorderType.RRect,
-          radius: const Radius.circular(20),
-          dashPattern: const [8, 5],
-          child: Container(
-            width: double.infinity,
-            height: 180,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: const LinearGradient(
-                colors: [AppColors.contGradient1, AppColors.contGradient2],
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-              ),
-            ),
-            child: Column(
-              spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.cloud_upload_outlined,
-                  color: Colors.white,
-                  size: 50,
-                ),
-                Text(
-                  title,
-                  style: AppStyles.customTextStyle(
-                    size: 16,
-                    color: AppColors.primaryColor,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  "PNG, JPG, JPEG up to 10MB",
-                  style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: AppColors.whiteColor,
-                    weight: FontWeight.w300,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
     return GestureDetector(
-      onTap: () => openFullImage(file),
-      child: DottedBorder(
-        color: AppColors.contBorderColor,
-        strokeWidth: 1.4,
-        borderType: BorderType.RRect,
-        dashPattern: const [8, 5],
-        radius: const Radius.circular(20),
+      onTap: file == null ? onSelect : () => openFullImage(file),
+      child: CustomPaint(
+        painter: DashPainter(
+          color: AppColors.contBorderColor,
+          radius: 20,
+          dash: 8,
+          gap: 5,
+        ),
         child: Container(
+          width: double.infinity,
           height: 180,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -459,76 +411,62 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
             ),
           ),
           padding: const EdgeInsets.all(15),
-          child: Row(
-            spacing: 15,
-            children: [
-              Container(
-                width: 100,
-                height: 130,
-                decoration: BoxDecoration(
-                  color: AppColors.transparentColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.file(file, fit: BoxFit.cover),
-                ),
-              ),
-              // RIGHT SIDE TEXT + BUTTON
-              Expanded(
-                child: Column(
-                  spacing: 5,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.primaryColor,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                    // FILE NAME
-                    Text(
-                      file.path.split("/").last,
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w300,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    // FILE SIZE
-                    Text(
-                      "${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w300,
-                      ),
-                    ),
-
-                    const SizedBox(height: 15),
-
-                    CustomButtonWidget(
-                      width: 150,
-                      height: 40,
-                      buttonFunction: onSelect,
-                      buttonText: "Replace",
-                      bgColor: AppColors.secButtonColor,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          child: file == null
+              ? _buildEmptyState(title)
+              : _buildFileState(title, file, onSelect),
         ),
       ),
     );
   }
+
+// Sub-widgets to keep the code clean
+  Widget _buildEmptyState(String title) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 10,
+      children: [
+        const Icon(Icons.cloud_upload_outlined, color: Colors.white, size: 50),
+        const SizedBox(height: 10),
+        Text(title, style: AppStyles.customTextStyle(size: 16, color: AppColors.primaryColor, weight: FontWeight.w700)),
+        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 14, color: AppColors.whiteColor, weight: FontWeight.w300)),
+      ],
+    );
+  }
+
+  Widget _buildFileState(String title, File file, Function() onSelect) {
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.file(file, width: 100, height: 130, fit: BoxFit.cover),
+        ),
+        const SizedBox(width: 15),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
+            children: [
+              Text(title, style: AppStyles.customTextStyle(size: 14, color: AppColors.primaryColor, weight: FontWeight.w700)),
+              Text(file.path.split("/").last, style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300), maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text("${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
+              const SizedBox(height: 15),
+              CustomButtonWidget(
+                width: 150,
+                height: 40,
+                buttonFunction: onSelect,
+                buttonText: "Replace",
+                bgColor: AppColors.secButtonColor,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+
+
 
   // void showAlertDialog() {
   //   showDialog(
@@ -586,3 +524,48 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
   //   );
   // }
 }
+
+class DashPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double gap;
+  final double dash;
+  final double radius;
+
+  DashPainter({
+    this.color = Colors.grey,
+    this.strokeWidth = 1.4,
+    this.gap = 5.0,
+    this.dash = 8.0,
+    this.radius = 20.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final Path path = Path()
+      ..addRRect(RRect.fromLTRBR(0, 0, size.width, size.height, Radius.circular(radius)));
+
+    final Path dashPath = Path();
+
+    for (final PathMetric measure in path.computeMetrics()) {
+      double distance = 0.0;
+      while (distance < measure.length) {
+        dashPath.addPath(
+          measure.extractPath(distance, distance + dash),
+          Offset.zero,
+        );
+        distance += dash + gap;
+      }
+    }
+    canvas.drawPath(dashPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(DashPainter oldDelegate) => false;
+}
+

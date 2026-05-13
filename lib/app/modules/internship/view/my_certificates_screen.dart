@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -34,13 +35,13 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
       await internController.getAllCertificates();
       if (internController.getResponseCode() != 200 &&
           internController.getResponseCode() != 201) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Failed to fetch your certificates!",
           isError: true,
         );
       }
     } catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Failed to fetch your certificates!",
         isError: true,
       );
@@ -52,7 +53,7 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
       final hasPermission = await _requestStoragePermission();
 
       if (!hasPermission) {
-        AppFunctions.showToast(message: "Permission denied", isError: true);
+        AppAlertUtils.showToast(message: "Permission denied", isError: true);
         return;
       }
 
@@ -78,9 +79,9 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
 
       await file.writeAsBytes(bytes);
 
-      AppFunctions.showToast(message: "Saved to Downloads");
+      AppAlertUtils.showToast(message: "Saved to Downloads");
     } catch (e) {
-      AppFunctions.showToast(message: "Download failed", isError: true);
+      AppAlertUtils.showToast(message: "Download failed", isError: true);
     }
   }
 
@@ -99,7 +100,7 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
 
       await Share.shareXFiles([XFile(file.path, mimeType: 'image/jpeg')]);
     } catch (e) {
-      AppFunctions.showToast(message: "Share failed", isError: true);
+      AppAlertUtils.showToast(message: "Share failed", isError: true);
     }
   }
 

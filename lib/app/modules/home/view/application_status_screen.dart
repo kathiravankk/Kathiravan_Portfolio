@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
@@ -64,7 +65,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
         await verifyPaymentOrder(orderId);
       },
       (orderId, error) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Payment failed: $error",
           isError: true,
         );
@@ -483,7 +484,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
 
       cfPaymentGatewayService.doPayment(payment);
     } on CFException catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Payment error: ${e.message}",
         isError: true,
       );
@@ -497,7 +498,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
 
     if (internController.getResponseCode() == 200 ||
         internController.getResponseCode() == 201) {
-      AppFunctions.showToast(message: "Payment successful 🎉", isError: false);
+      AppAlertUtils.showToast(message: "Payment successful 🎉", isError: false);
       if (mounted) {
         AppFunctions.navigateScreen(
           context,
@@ -509,7 +510,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
         );
       }
     } else {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Payment verification pending",
         isError: true,
       );
@@ -520,7 +521,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
     await profileController.addSavedJobsData(jobId: jobId);
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.savedJobModel.message ??
             "Internship added to your saved posts!",
@@ -539,7 +540,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
     await profileController.removeSavedJobsData(jobId: jobId);
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.savedJobModel.message ??
             "Internship removed from your saved posts!",
@@ -610,7 +611,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
               height: 35,
               buttonFunction: isPending
                   ? () async {
-                      AppFunctions.showPaymentRequiredDialog(
+                AppAlertUtils.showPaymentRequiredDialog(
                         context: context,
                         courseName: appliedData!.jobData!.roleType!,
                         amount: internController.paymentStatusModel.feeAmount

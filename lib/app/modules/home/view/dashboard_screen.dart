@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
@@ -23,7 +24,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onPopInvoked: (didPop) async {
         if (didPop) return;
 
-        final shouldExit = await AppFunctions.showAppExitAlert(
+        final shouldExit = await AppAlertUtils.showAppExitAlert(
           context: context,
           title: "Exit ?",
           content: "Are you sure you want to Exit the app?",

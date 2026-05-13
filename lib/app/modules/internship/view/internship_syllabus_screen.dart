@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -754,7 +755,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
           CustomButtonWidget(
             isLoading: internController.getMcqQuestionLoading,
             buttonFunction: () async {
-              AppFunctions.showAppAlert(
+              AppAlertUtils.showAppAlert(
                 context: context,
                 title: "Mock Test Instructions",
                 content:
@@ -877,7 +878,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
           );
         }
 
-        AppFunctions.showToast(message: "Successfully generated MCQ test!");
+        AppAlertUtils.showToast(message: "Successfully generated MCQ test!");
       } else {
         if (mounted) {
           AiLoadingWidget.hide(context);
@@ -911,7 +912,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
         internController.getResponseCode() == 201) {
       await getInitialData();
       await getStatusData();
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             internController.weeklyUpdateModel.message ??
             "Your Project Submitted Successfully!",

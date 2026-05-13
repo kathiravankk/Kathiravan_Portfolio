@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
@@ -244,7 +245,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 title: "Logout",
                 onTap: () {
                   //showLogoutPopup(context);
-                  AppFunctions.showAppAlert(
+                  AppAlertUtils.showAppAlert(
                     context: context,
                     content: "Are you sure you want to logout?",
                     confirmText: "Confirm",

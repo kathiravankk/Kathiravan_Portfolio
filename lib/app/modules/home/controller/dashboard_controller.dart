@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
@@ -412,7 +413,7 @@ class DashboardController extends GetxController {
 
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.newSavedJobModel.message ??
             "Internship added to saved!",
@@ -434,7 +435,7 @@ class DashboardController extends GetxController {
 
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.newSavedJobModel.message ??
             "Internship removed from saved!",

@@ -6,6 +6,7 @@ import 'package:flutter_cashfree_pg_sdk/api/cfpaymentgateway/cfpaymentgatewayser
 import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -129,7 +130,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
           orderData.orderId!.isEmpty ||
           orderData.paymentSessionId == null ||
           orderData.paymentSessionId!.isEmpty) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Invalid order details received. Please try again.",
           isError: true,
         );
@@ -139,7 +140,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
       // Step 2 – Open Cashfree checkout
       openCashFreeCheckout(orderData);
     } catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Something went wrong: $e",
         isError: true,
       );
@@ -169,12 +170,12 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
 
       cfPaymentGatewayService.doPayment(dropPayment);
     } on CFException catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Payment error: ${e.message}",
         isError: true,
       );
     } catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Error opening payment: $e",
         isError: true,
       );
@@ -195,11 +196,11 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
       if (verifyData.orderStatus?.toUpperCase() == "PAID") {
         // Refresh credit balance
         await getCreditData();
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: verifyData.message ?? "Credits added successfully! 🎉",
         );
       } else {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message:
               verifyData.message ??
               "Payment verification pending. Credits will be added shortly.",
@@ -207,7 +208,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
         );
       }
     } else {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             "Verification failed. Please contact support with order ID: $orderId",
         isError: true,
@@ -217,7 +218,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
 
   /// Step 3b – Handle failure reported by Cashfree SDK.
   void handlePaymentFailure(String orderId, String error) {
-    AppFunctions.showToast(message: "Payment failed: $error", isError: true);
+    AppAlertUtils.showToast(message: "Payment failed: $error", isError: true);
   }
 
   void _showInfo(String message) {

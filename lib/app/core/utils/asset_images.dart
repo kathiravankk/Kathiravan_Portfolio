@@ -5,7 +5,8 @@ class AssetImages {
   static const String splashGif = "assets/images/splash_gif.gif";
   static const String appIconImage = "assets/images/app_icon.png";
   static const String appBgImage = "assets/images/app_bg_image.png";
-  static const String newAppBg = "assets/images/new_splash_bg.jpg";
+  //static const String newAppBg = "assets/images/new_splash_bg.jpg";
+  static const String newAppBg = "assets/images/new_app_bg.jpg";
   static const String verifiedIcon = "assets/images/verified_icon.png";
   static const String verificationIcon = "assets/images/verification_icon.png";
   static const String alertImage = "assets/images/alert_img.png";

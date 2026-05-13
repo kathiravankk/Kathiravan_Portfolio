@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -48,7 +49,7 @@ class _RegisterResumeUploadScreenState
       allowedExtensions: ['pdf', 'doc', 'docx'],
     );
     if (result == null) {
-      AppFunctions.showToast(message: "No file selected", isError: true);
+      AppAlertUtils.showToast(message: "No file selected", isError: true);
       return;
     }
     final filePath = result.files.single.path!;
@@ -85,7 +86,7 @@ class _RegisterResumeUploadScreenState
           alreadyClosed = true;
         }
 
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Resume uploaded & extracted successfully!",
           isError: false,
         );
@@ -93,7 +94,7 @@ class _RegisterResumeUploadScreenState
         Get.offNamed(AppRoutes.studentRegisterScreen);
         return;
       } else {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Failed to upload your resume",
           isError: true,
         );

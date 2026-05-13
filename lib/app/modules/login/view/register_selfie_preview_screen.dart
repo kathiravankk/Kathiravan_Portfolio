@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
 import 'package:image_cropper/image_cropper.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -147,7 +148,7 @@ class _RegisterSelfiePreviewScreenState
     final file = File(imagePath);
 
     if (!file.existsSync()) {
-      AppFunctions.showToast(message: "Image file not found");
+      AppAlertUtils.showToast(message: "Image file not found");
       return;
     }
 
@@ -167,7 +168,7 @@ class _RegisterSelfiePreviewScreenState
 
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.updateProfileModel.message ??
             "Your profile updated successfully!",

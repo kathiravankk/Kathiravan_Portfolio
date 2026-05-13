@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -336,7 +336,7 @@ class ResumeFileUtils {
   }) async {
     try {
       if (!await requestStoragePermission()) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "❌ Storage permission denied.",
           isError: true,
         );
@@ -345,7 +345,7 @@ class ResumeFileUtils {
 
       final html = await getRenderedHtml(webViewController);
       if (html == null) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "❌ Failed to capture resume content",
           isError: true,
         );
@@ -357,14 +357,14 @@ class ResumeFileUtils {
         fileName,
       );
 
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: file != null
             ? "✅ Saved: ${file.path.split('/').last}"
             : "❌ Download failed.",
         isError: file == null,
       );
     } catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "❌ Download failed: $e",
         isError: true,
       );
@@ -382,7 +382,7 @@ class ResumeFileUtils {
       final html = await getRenderedHtml(webViewController);
 
       if (html == null) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "❌ Failed to capture resume content",
           isError: true,
         );
@@ -394,7 +394,7 @@ class ResumeFileUtils {
         fileName,
       );
     } catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "❌ Share failed",
         isError: true,
       );
@@ -415,16 +415,16 @@ class ResumeFileUtils {
     if (fileName == null) return;
     try {
       if (!await requestStoragePermission()) {
-        AppFunctions.showToast(message: "❌ Storage permission denied.", isError: true);
+        AppAlertUtils.showToast(message: "❌ Storage permission denied.", isError: true);
         return;
       }
       final file = await savePdfToDownloads(await htmlToPdfBytes(html), fileName);
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: file != null ? "✅ Saved: $fileName.pdf" : "❌ Download failed.",
         isError: file == null,
       );
     } catch (e) {
-      AppFunctions.showToast(message: "❌ Download failed: $e", isError: true);
+      AppAlertUtils.showToast(message: "❌ Download failed: $e", isError: true);
     }
   }
 
@@ -438,7 +438,7 @@ class ResumeFileUtils {
     try {
       await _sharePdfBytes(await htmlToPdfBytes(html), defaultFileName);
     } catch (e) {
-      AppFunctions.showToast(message: "❌ Share failed", isError: true);
+      AppAlertUtils.showToast(message: "❌ Share failed", isError: true);
     }
   }
 

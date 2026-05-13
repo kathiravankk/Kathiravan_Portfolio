@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final error = AppFunctions.validateIndianMobile(val);
 
                     if (error != null && val.length == 10) {
-                      AppFunctions.showToast(message: error, isError: true);
+                      AppAlertUtils.showToast(message: error, isError: true);
                     }
                   },
                 ),
@@ -275,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final error = AppFunctions.validateIndianMobile(mobileNumber);
 
     if (error != null) {
-      AppFunctions.showToast(message: error, isError: true);
+      AppAlertUtils.showToast(message: error, isError: true);
       return;
     }
 
@@ -285,14 +286,14 @@ class _LoginScreenState extends State<LoginScreen> {
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
         if (loginController.commonPostModel.userType == "student") {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message:
                 loginController.commonPostModel.message ??
                 "OTP successfully sent to your Mobile Number!",
             isError: false,
           );
         } else {
-          AppFunctions.showAppAlert(
+          AppAlertUtils.showAppAlert(
             context: context,
             content:
                 "Mobile Number already registered as Recruiter. Please use another Number.",
@@ -348,7 +349,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   .studentCreditId ??
               "",
         );
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message:
               loginController.studentRegisterModel.message ??
               "OTP verified successfully!",
