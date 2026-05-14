@@ -30,7 +30,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines= 1,
     this.width,
     this.prefixText,
-    this.maxLength = 1000,
+    this.maxLength = 3000,
     this.labelText = "",
     this.suffixWidget,
     this.prefixWidget,
@@ -52,7 +52,7 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: BoxConstraints(minHeight: 40),
+          constraints: BoxConstraints(minHeight: 55),
           width: width != null ? width! : double.maxFinite,
           child: TextField(
             maxLines: maxLines,
@@ -126,7 +126,7 @@ class CustomTextField extends StatelessWidget {
               //   maxHeight: 50
               // ),
               contentPadding: EdgeInsetsGeometry.symmetric(
-                vertical: 18,
+                vertical: 22,
                 horizontal: 30,
               ),
               enabledBorder: OutlineInputBorder(

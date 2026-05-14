@@ -139,220 +139,318 @@ class _RegisterResumeUploadScreenState
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(15),
-            child: Column(
-              spacing: 15,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.gradientColor1,
-                        AppColors.gradientColor2,
-                        AppColors.gradientColor1,
-                      ],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      stops: [0.09, 0.9, 0.0],
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 15,
-                    children: [
-                      Container(
-                        width: 160,
-                        height: 160,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(AssetImages.resumeUploadImage),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Upload Your Resume",
-                        style: AppStyles.customTextStyle(
-                          size: 16,
-                          weight: FontWeight.w600,
-                          color: AppColors.whiteColor,
-                        ),
-                      ),
-                      Text(
-                        "Ready to land your dream Internship? Start \n\n by uploading your resume.",
-                        textAlign: TextAlign.center,
-                        style: AppStyles.customTextStyle(
-                          size: 14,
-                          weight: FontWeight.w400,
-                          color: AppColors.whiteColor,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
+            child: Center(
+              child: Column(
+                spacing: 15,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                 resumeUploadContainer(),
+                  //const SizedBox(height: 20),
 
-                      //Obx(() =>
-                      InkWell(
-                        onTap: () async {
-                          await pickFile();
-                          //AppFunctions.navigateScreen(context, AppRoutes.stepUpdateScreen, arguments: {"activeStep": 3});
-                        },
-                        child: Container(
-                          width: 322,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            border: Border.all(
-                              color: AppColors.primaryColor,
-                              width: 1.5,
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            // resumeController.resumeUploadLoading
-                            //     ? "Resume Uploading...."
-                            //     :
-                            "Select File to Upload",
-                            textAlign: TextAlign.center,
-                            style: AppStyles.customTextStyle(
-                              size: 16,
-                              weight: FontWeight.w600,
-                              color: AppColors.whiteColor,
-                            ),
-                          ),
-                        ),
-                      ),
+                  /// ---------------- UPLOAD PROGRESS ----------------
+                  Obx(() {
+                    if (!registerController.resumeExtractLoading) {
+                      return
+                      //   Column(
+                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                      //   spacing: 10,
+                      //   children: [
+                      //     Text(
+                      //       "Or",
+                      //       textAlign: TextAlign.center,
+                      //       style: AppStyles.customTextStyle(
+                      //         size: 16,
+                      //         weight: FontWeight.w600,
+                      //         color: AppColors.whiteColor,
+                      //       ),
+                      //     ),
+                      //     Center(
+                      //       child: InkWell(
+                      //         onTap: () {
+                      //           AppFunctions.navigateScreen(
+                      //             context,
+                      //             AppRoutes.chatResumeCreation,
+                      //           );
+                      //         },
+                      //         child: Text(
+                      //           "Create Your Resume",
+                      //           textAlign: TextAlign.center,
+                      //           style: AppStyles.customTextStyle(
+                      //             size: 16,
+                      //             weight: FontWeight.w600,
+                      //             color: AppColors.whiteColor,
+                      //             isUnderlined: true,
+                      //             underlineColor: AppColors.whiteColor,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // );
 
-                      //),
-                      const SizedBox(height: 10),
-                    ],
-                  ),
-                ),
+                        resumeCreateContainer();
+                    }
 
-                const SizedBox(height: 20),
+                    //final progress = registerController.uploadProgress.value;
+                    final progress = registerController.uploadProgress.value;
+                    //final isExtracting = registerController.isExtracting.value;
 
-                /// ---------------- UPLOAD PROGRESS ----------------
-                Obx(() {
-                  if (!registerController.resumeExtractLoading) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 10,
-                      children: [
-                        Text(
-                          "Or",
-                          textAlign: TextAlign.center,
-                          style: AppStyles.customTextStyle(
-                            size: 16,
-                            weight: FontWeight.w600,
-                            color: AppColors.whiteColor,
-                          ),
-                        ),
-                        Center(
-                          child: InkWell(
-                            onTap: () {
-                              AppFunctions.navigateScreen(
-                                context,
-                                AppRoutes.chatResumeCreation,
-                              );
-                            },
-                            child: Text(
-                              "Create Your Resume",
-                              textAlign: TextAlign.center,
-                              style: AppStyles.customTextStyle(
-                                size: 16,
-                                weight: FontWeight.w600,
-                                color: AppColors.whiteColor,
-                                isUnderlined: true,
-                                underlineColor: AppColors.whiteColor,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }
+                    String statusText;
 
-                  //final progress = registerController.uploadProgress.value;
-                  final progress = registerController.uploadProgress.value;
-                  //final isExtracting = registerController.isExtracting.value;
+                    if (progress < 0.7) {
+                      statusText = "Uploading resume...";
+                    } else if (progress < 1.0) {
+                      statusText = "Extracting data from resume...";
+                    } else {
+                      statusText = "Extraction complete!";
+                    }
 
-                  String statusText;
-
-                  if (progress < 0.7) {
-                    statusText = "Uploading resume...";
-                  } else if (progress < 1.0) {
-                    statusText = "Extracting data from resume...";
-                  } else {
-                    statusText = "Extraction complete!";
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Container(
+                    return Padding(
                       padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: AppColors.iconContColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 20,
-                                backgroundColor: AppColors.iconBgColor,
-                                child: Icon(
-                                  Icons.picture_as_pdf,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  fileName ?? "Uploading file",
-                                  style: AppStyles.customTextStyle(
-                                    size: 14,
-                                    weight: FontWeight.w500,
-                                    color: AppColors.whiteColor,
+                      child: Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: AppColors.iconContColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                const CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: AppColors.iconBgColor,
+                                  child: Icon(
+                                    Icons.picture_as_pdf,
+                                    color: AppColors.primaryColor,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          LinearProgressIndicator(
-                            value: progress,
-                            minHeight: 6,
-                            backgroundColor: AppColors.lightTextColor,
-                            valueColor: const AlwaysStoppedAnimation(
-                              AppColors.secondaryColor,
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    fileName ?? "Uploading file",
+                                    style: AppStyles.customTextStyle(
+                                      size: 14,
+                                      weight: FontWeight.w500,
+                                      color: AppColors.whiteColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              progress == 1.0
-                                  ? "Completed"
-                                  : "${(progress * 100).toInt()}% • $statusText",
-                              style: AppStyles.customTextStyle(
-                                size: 10,
-                                weight: FontWeight.w600,
-                                color: AppColors.lightTextColor,
+                            const SizedBox(height: 10),
+                            LinearProgressIndicator(
+                              value: progress,
+                              minHeight: 6,
+                              backgroundColor: AppColors.lightTextColor,
+                              valueColor: const AlwaysStoppedAnimation(
+                                AppColors.secondaryColor,
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 6),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                progress == 1.0
+                                    ? "Completed"
+                                    : "${(progress * 100).toInt()}% • $statusText",
+                                style: AppStyles.customTextStyle(
+                                  size: 10,
+                                  weight: FontWeight.w600,
+                                  color: AppColors.lightTextColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
-              ],
+                    );
+                  }),
+                ],
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget resumeUploadContainer(){
+    return   Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.gradientColor1,
+            AppColors.gradientColor2,
+            AppColors.gradientColor1,
+          ],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          stops: [0.09, 0.9, 0.0],
+        ),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      padding: EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 15,
+        children: [
+          Container(
+            width: 120,
+            height: 120,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(AssetImages.resumeUploadImage),
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+          //const SizedBox(height: 10),
+          Text(
+            "Upload Your Resume",
+            style: AppStyles.customTextStyle(
+              size: 16,
+              weight: FontWeight.w600,
+              color: AppColors.whiteColor,
+            ),
+          ),
+          Text(
+            "Ready to land your dream Internship? \n\n Start by uploading your resume.",
+            textAlign: TextAlign.center,
+            style: AppStyles.customTextStyle(
+              size: 14,
+              weight: FontWeight.w400,
+              color: AppColors.whiteColor,
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          //Obx(() =>
+          InkWell(
+            onTap: () async {
+              await pickFile();
+              //AppFunctions.navigateScreen(context, AppRoutes.stepUpdateScreen, arguments: {"activeStep": 3});
+            },
+            child: Container(
+              width: 322,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: AppColors.primaryColor,
+                  width: 1.5,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                // resumeController.resumeUploadLoading
+                //     ? "Resume Uploading...."
+                //     :
+                "Select File to Upload",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  weight: FontWeight.w600,
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ),
+          ),
+
+          //),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+  Widget resumeCreateContainer(){
+    return   Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.gradientColor4,
+            AppColors.gradientColor5,
+            AppColors.gradientColor4,
+          ],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          stops: [0.09, 0.9, 0.0],
+        ),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      padding: EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 15,
+        children: [
+          Container(
+            width: 120,
+            height: 120,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(AssetImages.resumeCreateImage),
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+          //const SizedBox(height: 10),
+          Text(
+            "Create Your Resume",
+            style: AppStyles.customTextStyle(
+              size: 16,
+              weight: FontWeight.w600,
+              color: AppColors.whiteColor,
+            ),
+          ),
+          Text(
+            "No resume? No problem. Use our \n\n high-fidelity AI Builder to build a profile \n\n that guarantees internships.",
+            textAlign: TextAlign.center,
+            style: AppStyles.customTextStyle(
+              size: 14,
+              weight: FontWeight.w400,
+              color: AppColors.whiteColor,
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          //Obx(() =>
+          InkWell(
+            onTap: ()  {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.chatResumeCreation,
+              );
+            },
+            child: Container(
+              width: 322,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: AppColors.secondaryColor,
+                  width: 1.5,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                // resumeController.resumeUploadLoading
+                //     ? "Resume Uploading...."
+                //     :
+                "Start Building",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  weight: FontWeight.w600,
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ),
+          ),
+
+          //),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }

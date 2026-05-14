@@ -852,7 +852,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.fieldBgColor,
-        title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+        title: Image.asset(AssetImages.appAlertImage, height: 30, width: 30),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 15,

@@ -671,9 +671,10 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               ),
             ),
             Text(
-              registerController.kycUpdateModel.reasoning != null
-                  ? registerController.kycUpdateModel.reasoning!
-                  : "Your identity verification is pending. This step is mandatory before you can apply for any internships!",
+              // registerController.kycUpdateModel.reasoning != null
+              //     ? registerController.kycUpdateModel.reasoning!
+              //     :
+              "Your identity verification is pending. This step is mandatory before you can apply for any internships!",
               textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
                 size: 14,

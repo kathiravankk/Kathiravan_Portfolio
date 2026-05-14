@@ -624,7 +624,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             : CrossAxisAlignment.end,
         children: [
           Text(
-            isBot ? "Shark Bot" : "You",
+            isBot ? "Sharks Bot" : "You",
             style: AppStyles.customTextStyle(
               color: AppColors.chatTextColor,
               size: 12,

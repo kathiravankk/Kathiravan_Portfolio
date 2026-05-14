@@ -302,7 +302,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
             : CrossAxisAlignment.end,
         children: [
           Text(
-            isBot ? "Shark Bot" : "You",
+            isBot ? "Sharks Bot" : "You",
             style: AppStyles.customTextStyle(
               color: AppColors.chatTextColor,
               size: 12,
@@ -424,6 +424,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
                   "message": chatTextController.text,
                 },
               );
+              //showAlertDialog();
               //registerNewStudent();
             },
           ),
@@ -438,14 +439,14 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.fieldBgColor,
-        title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+        title: Image.asset(AssetImages.appAlertImage, height: 30, width: 30),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 15,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "Welcome to InternShark!",
+              "Step 1 Registration Successful! 🎉",
               textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
                 size: 18,
@@ -454,7 +455,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
               ),
             ),
             Text(
-              "Registration successful! You can access your dashboard now or complete the remaining steps here.!",
+              "Welcome to Internsharks.ai Please complete the remaining steps to continue",
               textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
                 size: 14,
@@ -472,7 +473,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
               Get.back();
               await getStudentProfileData();
             },
-            buttonText: "OKAY",
+            buttonText: "NEXT",
             width: 150,
             height: 40,
           ),

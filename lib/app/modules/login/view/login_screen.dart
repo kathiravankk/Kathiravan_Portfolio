@@ -40,13 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(20),
             child: Column(
               spacing: 10,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 150),
-                Image.asset(AssetImages.appIconImage, height: 100, width: 100),
+                const SizedBox(height: 100),
+                Image.asset(AssetImages.appLogoImage, height: 100, width: 250),
                 Text(
                   "Welcome!",
                   style: AppStyles.customTextStyle(
@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
-                          disable: loginController.loginVerifyLoading,
+                          disable: loginController.loginVerifyLoading || otpController.text.length != 4,
                         ),
                         const SizedBox(height: 10),
                       ],
@@ -232,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                        "If you’re new to Internshark, ",
+                        "If you’re new to Internsharks, ",
                         style: AppStyles.customTextStyle(
                           size: 15,
                           weight: FontWeight.w300,

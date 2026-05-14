@@ -112,6 +112,11 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     );
 
     if (pickedFile == null) return null;
+
+    /// ✅ Store original filename
+    final originalFile = File(pickedFile.path);
+    final originalFileName = originalFile.path.split('/').last;
+
     final cropped = await ImageCropper().cropImage(
       sourcePath: pickedFile.path,
       aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
@@ -129,7 +134,16 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
 
     if (cropped == null) return null;
 
-    return File(cropped.path);
+    /// ✅ Create new file path with ORIGINAL filename
+    final croppedFile = File(cropped.path);
+
+    final newPath =
+        '${croppedFile.parent.path}/$originalFileName';
+
+    /// ✅ Copy cropped image using original filename
+    final renamedFile = await croppedFile.copy(newPath);
+
+    return renamedFile;
   }
 
   // FULL IMAGE VIEW
@@ -189,10 +203,10 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           ),
           body: Obx(
             () => Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 spacing: 15,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Secure Your Account",
@@ -203,16 +217,15 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                     ),
                   ),
                   Text(
-                    "Please upload the required document \n to complete your KYC Verification!",
-                    textAlign: TextAlign.center,
+                    "Please upload the your required documents to complete your KYC Verification",
                     style: AppStyles.customTextStyle(
                       size: 14,
-                      color: AppColors.whiteColor,
+                      color: AppColors.lightColorText,
                       weight: FontWeight.w300,
-                      lineSpace: 1.3,
+                      lineSpace: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -220,7 +233,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                         //"Upload Your\nCollege ID Card & Aadhaar Card",
                         "Upload Your College ID Card",
                         style: AppStyles.customTextStyle(
-                          size: 18,
+                          size: 16,
                           color: AppColors.whiteColor,
                           weight: FontWeight.w700,
                           lineSpace: 1.5,
@@ -229,19 +242,18 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                     ],
                   ),
 
-                  Text(
-                    //"Kindly upload clear images of the front side of your College ID & Aadhaar card.",
-                    "Kindly upload clear image of the front side of your College ID.",
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w300,
-                      lineSpace: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
+                  // Text(
+                  //   //"Kindly upload clear images of the front side of your College ID & Aadhaar card.",
+                  //   "Kindly upload clear image of the front side of your College ID.",
+                  //   style: AppStyles.customTextStyle(
+                  //     size: 14,
+                  //     color: AppColors.whiteColor,
+                  //     weight: FontWeight.w300,
+                  //     lineSpace: 1.3,
+                  //   ),
+                  // ),
                   uploadBox(
-                    title: "Front side of College ID",
+                    title: "College ID",
                     file: collegeIdImg,
                     onSelect: () async {
                       File? f = await pickFromCameraGallery();
@@ -259,16 +271,18 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                   // ),
                   //const SizedBox(height: 40),
                   const Spacer(),
-                  CustomButtonWidget(
-                    width: 270,
-                    height: 45,
-                    isLoading: registerController.kycVerificationLoading,
-                    buttonFunction: () async {
-                      await updateKYC();
-                    },
-                    buttonText: "Submit",
-                    //disable: !(collegeIdImg != null && aadhaarImg != null),
-                    disable: !(collegeIdImg != null),
+                  Center(
+                    child: CustomButtonWidget(
+                      width: 300,
+                      height: 45,
+                      isLoading: registerController.kycVerificationLoading,
+                      buttonFunction: () async {
+                        await updateKYC();
+                      },
+                      buttonText: "Submit",
+                      //disable: !(collegeIdImg != null && aadhaarImg != null),
+                      disable: !(collegeIdImg != null),
+                    ),
                   ),
                   const SizedBox(height: 25),
                 ],
@@ -401,7 +415,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         ),
         child: Container(
           width: double.infinity,
-          height: 180,
+          //height: 180,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: const LinearGradient(
@@ -410,10 +424,10 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
               end: Alignment.topRight,
             ),
           ),
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
           child: file == null
               ? _buildEmptyState(title)
-              : _buildFileState(title, file, onSelect),
+              : _buildFileState( file, onSelect),
         ),
       ),
     );
@@ -426,40 +440,43 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
       spacing: 10,
       children: [
         const Icon(Icons.cloud_upload_outlined, color: Colors.white, size: 50),
-        const SizedBox(height: 10),
         Text(title, style: AppStyles.customTextStyle(size: 16, color: AppColors.primaryColor, weight: FontWeight.w700)),
-        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 14, color: AppColors.whiteColor, weight: FontWeight.w300)),
+        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
+        Text("* Please upload your clear image of your id card", style: AppStyles.customTextStyle(size: 10, color: AppColors.lightColorText, weight: FontWeight.w300)),
       ],
     );
   }
 
-  Widget _buildFileState(String title, File file, Function() onSelect) {
-    return Row(
+  Widget _buildFileState(
+      //String title,
+      File file, Function() onSelect) {
+    return Column(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.file(file, width: 100, height: 130, fit: BoxFit.cover),
-        ),
-        const SizedBox(width: 15),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: [
-              Text(title, style: AppStyles.customTextStyle(size: 14, color: AppColors.primaryColor, weight: FontWeight.w700)),
-              Text(file.path.split("/").last, style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300), maxLines: 1, overflow: TextOverflow.ellipsis),
-              Text("${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
-              const SizedBox(height: 15),
-              CustomButtonWidget(
-                width: 150,
-                height: 40,
-                buttonFunction: onSelect,
-                buttonText: "Replace",
-                bgColor: AppColors.secButtonColor,
-              ),
-            ],
+        Container(
+          height: 130,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: AppColors.lightWhiteCont
           ),
+          child: Image.file(file,  fit: BoxFit.contain),
+        ),
+        const SizedBox(height: 15),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 10,
+          children: [
+            //Text(title, style: AppStyles.customTextStyle(size: 14, color: AppColors.primaryColor, weight: FontWeight.w700)),
+            Text(file.path.split("/").last, style: AppStyles.customTextStyle(size: 12, color: AppColors.primaryColor, weight: FontWeight.w300), maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text("${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
+            const SizedBox(height: 15),
+            CustomButtonWidget(
+              height: 40,
+              buttonFunction: onSelect,
+              buttonText: "Replace",
+              bgColor: AppColors.secButtonColor,
+            ),
+          ],
         ),
       ],
     );
