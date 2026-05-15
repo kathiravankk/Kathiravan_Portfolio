@@ -226,7 +226,7 @@ class AppPages {
       page: () => TermsAndConditionsScreen(),
     ),
     appPage(name: AppRoutes.profileEditScreen, page: () => ProfileEditScreen()),
-    appPage(name: AppRoutes.buyCreditsScreen, page: () => BuyCreditScreen()),
+    appPage(name: AppRoutes.buyCreditsScreen, page: () => BuyCreditScreen(), bindings: [DashboardBindings()]),
     appPage(name: AppRoutes.homeProfileScreen, page: () => HomeProfileScreen()),
     appPage(name: AppRoutes.myAppliesScreen, page: () => MyAppliesScreen()),
   ];
