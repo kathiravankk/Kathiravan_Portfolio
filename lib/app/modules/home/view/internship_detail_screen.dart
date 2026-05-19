@@ -76,34 +76,61 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
       }
 
       return Scaffold(
-        backgroundColor: AppColors.blackColor,
+        backgroundColor: AppColors.appBgColor_2,
         floatingActionButton: Visibility(
           visible: !isStatusFlow,
-          child: CustomButtonWidget(
-            disable: internship!.status!.isNotEmpty,
-            width: isTablet ? 400 : double.infinity,
-            height: 45,
-            isLoading: dashboardController.internshipApplyLoading,
-            buttonFunction: () async {
-              bool isVerified =
-                  await LocalStorageService.getVerifiedValue() ?? false;
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: CustomButtonWidget(
+              disable: internship!.status!.isNotEmpty,
+              width: isTablet ? 400 : double.infinity,
+              height: 45,
+              isLoading: dashboardController.internshipApplyLoading,
+              buttonFunction: () async {
+                bool isVerified =
+                    await LocalStorageService.getVerifiedValue() ?? false;
 
-              if (!isVerified) {
-                showKycVerifyAlertDialog();
-              } else {
-                var banner = profileController.profileDataModel.studentBanner;
-                bool hasBanner = banner != null && banner.isNotEmpty;
-
-                if (!hasBanner) {
-                  showAiBannerRequirementDialog();
+                if (!isVerified) {
+                  showKycVerifyAlertDialog();
                 } else {
-                  await internshipApplyFunc();
+                  var banner = profileController.profileDataModel.studentBanner;
+                  bool hasBanner = banner != null && banner.isNotEmpty;
+
+                  if (!hasBanner) {
+                    showAiBannerRequirementDialog();
+                  } else {
+                    await internshipApplyFunc();
+                  }
                 }
-              }
-            },
-            buttonText: internship!.status!.isNotEmpty
-                ? "Applied"
-                : "Apply Now (20 Credits)",
+              },
+              buttonText: internship!.status!.isNotEmpty
+                  ? "Applied"
+                  : "Apply Now (20 Credits)",
+              buttonWidget: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Apply Now - ",
+                    style: AppStyles.customTextStyle(
+                      size: 16,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w500,
+                      fontFamily: "Roboto",
+                    ),
+                  ),
+                  Text(
+                    "20",
+                    style: AppStyles.customTextStyle(
+                      size: 16,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w500,
+                      fontFamily: "Roboto",
+                    ),
+                  ),
+                  Image.asset(AssetImages.creditsIconNew, height: 22, width: 22),
+                ],
+              ),
+            ),
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -118,7 +145,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 24 : 12,
+              horizontal: isTablet ? 24 : 16,
               vertical: 10,
             ),
             child: Column(
@@ -155,7 +182,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        "( ⭐ ${internship!.averageRating ?? 0} )",
+                        "( ⭐ ${internship!.averageRating ?? 0} Reviews)",
                         overflow: TextOverflow.ellipsis,
                         style: AppStyles.customTextStyle(
                           size: 11,
@@ -182,10 +209,10 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
 
                 /// DURATION + STIPEND (FIXED OVERFLOW)
                 Row(
+                  spacing: 10,
                   children: [
-                    Expanded(child: durationWidget()),
-                    const SizedBox(width: 8),
-                    Expanded(child: stipendWidget()),
+                    durationWidget(),
+                    stipendWidget(),
                   ],
                 ),
 
@@ -314,7 +341,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                           internship!.requiredSkills != [])
                       ? internship!.requiredSkills!.join(',')
                       : "NA",
-                  maxLines: 3,
+                  maxLines: 10,
                   style: AppStyles.customTextStyle(
                     size: 14,
                     lineSpace: 1.3,
@@ -337,6 +364,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             internship!.aboutInternship ?? "NA",
             style: AppStyles.customTextStyle(
               size: 14,
+              lineSpace: 1.4,
               weight: FontWeight.w400,
               color: AppColors.whiteColor,
             ),
@@ -598,20 +626,19 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
+        spacing: 5,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.access_time, size: 14),
-          const SizedBox(width: 5),
-          Expanded(
-            child: Text(
-              internship!.internshipDuration != null &&
-                      internship!.internshipDuration!.isNotEmpty
-                  ? "${internship!.internshipDuration} Months"
-                  : "${internship!.days} Days",
-              overflow: TextOverflow.ellipsis,
-              style: AppStyles.customTextStyle(
-                size: 10,
-                color: AppColors.blackLight,
-              ),
+          Text(
+            internship!.internshipDuration != null &&
+                    internship!.internshipDuration!.isNotEmpty
+                ? "Duration: ${internship!.internshipDuration} Months"
+                : "Duration: ${internship!.days} Days",
+            overflow: TextOverflow.ellipsis,
+            style: AppStyles.customTextStyle(
+              size: 10,
+              color: AppColors.blackLight,
             ),
           ),
         ],
@@ -630,19 +657,17 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
         children: [
           const Icon(Icons.currency_rupee, size: 14),
           const SizedBox(width: 5),
-          Expanded(
-            child: Text(
-              internship!.internshipStipend != "N/A"
-                  ? "Stipend : ${internship!.internshipStipend}"
-                  : internship!.fee != "0"
-                  ? "Fees : ${internship!.fee}"
-                  : "Free Internship",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppStyles.customTextStyle(
-                size: 10,
-                color: AppColors.blackLight,
-              ),
+          Text(
+            internship!.internshipStipend != "N/A"
+                ? "Stipend : ${internship!.internshipStipend}"
+                : internship!.fee != "0"
+                ? "Fees : ${internship!.fee}"
+                : "Free Internship",
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppStyles.customTextStyle(
+              size: 10,
+              color: AppColors.blackLight,
             ),
           ),
         ],

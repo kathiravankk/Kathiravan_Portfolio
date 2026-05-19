@@ -59,7 +59,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
           automaticallyImplyActions: false,
           centerTitle: true,
           title: Text(
-            "My Applies",
+            "My Application",
             style: AppStyles.customTextStyle(
               size: 18,
               color: AppColors.whiteColor,
@@ -79,7 +79,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                   separatorBuilder: (context, index) => SizedBox(height: 10),
                   itemCount: appliedList!.length,
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(16),
                   itemBuilder: (context, index) {
                     final item = appliedList![index];
                     return AppliesInternshipCard(

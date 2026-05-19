@@ -87,11 +87,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           AppAlertUtils.showToast(
             message:
                 profileController.resDpModel.error ??
-                "Failed to Generate your AI Banner",
+                "Failed to Generate your ResDp",
           );
         } else {
           AppAlertUtils.showToast(
-            message: "Your AI Banner Generated Successfully!",
+            message: "Your ResDp Generated Successfully!",
           );
 
           LocalStorageService.saveWatermarkValue(waterMarkValue: false);
@@ -124,7 +124,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         );
       }
     } finally {
-      if(mounted) {
+      if (mounted) {
         AiLoadingWidget.hide(context);
       }
     }
@@ -139,13 +139,15 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       if (profileController.waterMarkModel.watermarkData!.status! == "error") {
-        AppAlertUtils.showToast(message: "Failed to Generate your AI Banner");
+        AppAlertUtils.showToast(message: "Failed to Generate your ResDp");
       } else {
         AppAlertUtils.showToast(
-          message: "Successfully! removed Watermark  from your AI Banner ",
+          message: "Successfully! removed Watermark  from your ResDp ",
         );
         LocalStorageService.saveWatermarkValue(waterMarkValue: true);
-        debugPrint(profileController.waterMarkModel.watermarkData!.imageUrl ?? "");
+        debugPrint(
+          profileController.waterMarkModel.watermarkData!.imageUrl ?? "",
+        );
         await registerController.updateStudentProfileData(
           updateData: {
             "student_banner":
@@ -364,7 +366,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           children: [
                             profileController.profileDataModel.studentBanner !=
@@ -523,12 +525,17 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                       arguments: {
                                         "templateId": int.parse(
                                           profileController
-                                              .profileDataModel
-                                              .templateNumber != null && profileController
-                                              .profileDataModel
-                                              .templateNumber!.isNotEmpty ? profileController
-                                              .profileDataModel
-                                              .templateNumber! : "1",
+                                                          .profileDataModel
+                                                          .templateNumber !=
+                                                      null &&
+                                                  profileController
+                                                      .profileDataModel
+                                                      .templateNumber!
+                                                      .isNotEmpty
+                                              ? profileController
+                                                    .profileDataModel
+                                                    .templateNumber!
+                                              : "1",
                                         ),
                                         //"templateId": 1,
                                         "resumeData": ExtractedResumeDataModel(
@@ -685,7 +692,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              AppAlertUtils.showToast(message: "Generate your AI Banner First!");
+              AppAlertUtils.showToast(
+                message: "Generate your ResDp First!",
+              );
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -697,7 +706,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            "Your Custom AI Banner",
+            "Your Custom ResDp",
             style: AppStyles.customTextStyle(
               size: 16,
               color: AppColors.whiteColor,
@@ -722,7 +731,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             buttonFunction: () async {
               await generateAiBanner();
             },
-            buttonText: "Generate AI Banner",
+            buttonText: "✧˖° Generate ResDp",
             buttonTextStyle: AppStyles.customTextStyle(
               size: 12,
               weight: FontWeight.w600,
@@ -772,23 +781,25 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   Widget aiPoweredContainer() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.creditContColor.withValues(alpha: 0.5),
+        color: AppColors.whiteColor,
+        //color: AppColors.creditContColor.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: AppColors.creditBorderColor),
+        //border: Border.all(color: AppColors.creditBorderColor),
       ),
       padding: EdgeInsets.all(5),
-      child: Row(
-        children: [
-          Text(
-            "✨ AI POWERED",
-            style: AppStyles.customTextStyle(
-              size: 8,
-              weight: FontWeight.w500,
-              color: AppColors.whiteColor,
-            ),
-          ),
-        ],
-      ),
+      child: Image.asset(AssetImages.resDpIcon, height: 15, width: 70),
+      // Row(
+      //   children: [
+      //     Text(
+      //       "✨ AI POWERED",
+      //       style: AppStyles.customTextStyle(
+      //         size: 8,
+      //         weight: FontWeight.w500,
+      //         color: AppColors.whiteColor,
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 
@@ -803,6 +814,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       ),
       padding: const EdgeInsets.all(5),
       child: Row(
+        spacing: 5,
         children: [
           /// 👍 LIKE BUTTON
           iconWidget(
@@ -810,7 +822,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             onTap: () async {
               if (isBanner) {
                 AppAlertUtils.showToast(
-                  message: "Generate your AI Banner First!",
+                  message: "Generate your ResDp First!",
                   isError: true,
                 );
                 return;
@@ -839,7 +851,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             onTap: () async {
               if (bannerUrl.isEmpty) {
                 AppAlertUtils.showToast(
-                  message: "No banner available!",
+                  message: "No ResDp available!",
                   isError: true,
                 );
                 return;
@@ -854,7 +866,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             onTap: () async {
               if (bannerUrl.isEmpty) {
                 AppAlertUtils.showToast(
-                  message: "No banner available!",
+                  message: "No ResDp available!",
                   isError: true,
                 );
                 return;
@@ -870,9 +882,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
               onTap: () async {
                 AppAlertUtils.showAppAlert(
                   context: context,
-                  title: "Regenerate AI Banner",
+                  title: "Regenerate ResDp",
                   content:
-                      "✨ You've already used your free AI banner.\n\n🔁 Regenerating will cost 25 credits.\n\nProceed?",
+                      "✨ You've already used your free ResDp.\n\n🔁 Regenerating will cost 25 credits.\n\nProceed?",
                   onConfirm: () async {
                     await generateAiBanner();
                   },
@@ -916,12 +928,15 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       if (code == 200 || code == 201) {
         AppAlertUtils.showToast(
           message: isLike
-              ? "You've liked this AI banner!"
-              : "Like removed this AI banner!",
+              ? "You've liked this ResDp!"
+              : "Like removed this ResDp!",
         );
         return true;
       } else {
-        AppAlertUtils.showToast(message: "Something went wrong!", isError: true);
+        AppAlertUtils.showToast(
+          message: "Something went wrong!",
+          isError: true,
+        );
         return false;
       }
     } catch (e) {

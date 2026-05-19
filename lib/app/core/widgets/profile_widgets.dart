@@ -229,16 +229,15 @@ class ProfileWidgets {
           spacing: 10,
           children: [
             Image.asset(
-              AssetImages.creditIcon,
-              height: 20,
-              width: 20,
-              color: AppColors.secondaryColor,
+              AssetImages.creditsIconNew,
+              height: 22,
+              width: 22,
             ),
             Text(
               (creditCount ?? 0)
                   .toString(),
               style: AppStyles.customTextStyle(
-                size: 12,
+                size: 14,
                 color: AppColors.whiteColor,
                 weight: FontWeight.w700,
               ),

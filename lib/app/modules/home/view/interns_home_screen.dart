@@ -18,7 +18,6 @@ import 'package:internsharks/app/modules/home/controller/dashboard_controller.da
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-//import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../core/widgets/home_drawer.dart';
 
 class InternsHomeScreen extends StatefulWidget {
@@ -180,7 +179,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 ),
                 body: SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 10,
