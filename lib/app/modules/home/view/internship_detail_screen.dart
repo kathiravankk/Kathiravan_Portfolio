@@ -14,6 +14,7 @@ import 'package:internsharks/app/modules/home/controller/dashboard_controller.da
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:intl/intl.dart';
 import '../../../core/utils/asset_images.dart' show AssetImages;
 import '../../../data/models/home/category_wise_internship_model.dart';
 
@@ -127,7 +128,11 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                       fontFamily: "Roboto",
                     ),
                   ),
-                  Image.asset(AssetImages.creditsIconNew, height: 22, width: 22),
+                  Image.asset(
+                    AssetImages.creditsIconNew,
+                    height: 22,
+                    width: 22,
+                  ),
                 ],
               ),
             ),
@@ -208,13 +213,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                 const SizedBox(height: 10),
 
                 /// DURATION + STIPEND (FIXED OVERFLOW)
-                Row(
-                  spacing: 10,
-                  children: [
-                    durationWidget(),
-                    stipendWidget(),
-                  ],
-                ),
+                Row(spacing: 10, children: [durationWidget(), stipendWidget()]),
 
                 const SizedBox(height: 10),
 
@@ -429,7 +428,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           ),
         ),
         SizedBox(
-          height: 100,
+          height: 150,
           child: reviewList!.isNotEmpty
               ? ListView.separated(
                   separatorBuilder: (context, index) => SizedBox(width: 10),
@@ -442,6 +441,8 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                           ? reviewList![index].studentData!.studentName ?? ""
                           : "NA",
                       reviewContent: reviewList![index].review ?? "",
+                      createdAt: reviewList![index].createdAt ?? "",
+                      rating: int.parse(reviewList![index].rating.toString()),
                     );
                   },
                 )
@@ -454,59 +455,103 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   Widget reviewCard({
     required String studentName,
     required String reviewContent,
+    required int rating,
+    required String createdAt,
   }) {
+    final formattedDate = DateFormat(
+      "MMMM yyyy",
+    ).format(DateTime.parse(createdAt));
+
     return Container(
+      width: 320,
       decoration: BoxDecoration(
-        color: AppColors.whiteColor,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(20),
+        color: AppColors.contColor2,
+        border: Border.all(color: AppColors.contBorderColor2),
       ),
+      padding: const EdgeInsets.all(15),
       child: Column(
-        spacing: 15,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 5, top: 5),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.secondaryColor,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(8),
-                  bottomLeft: Radius.circular(8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.contBorderColor2),
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Icon(
+                        Icons.person,
+                        size: 22,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        spacing: 10,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            studentName.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppStyles.customTextStyle(
+                              size: 14,
+                              color: AppColors.whiteColor,
+                              weight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: AppStyles.customTextStyle(
+                              size: 12,
+                              color: AppColors.lightColorText,
+                              weight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8),
 
-              child: Row(
-                spacing: 10,
-                children: [
-                  Icon(
-                    Icons.person_4_outlined,
-                    size: 15,
-                    color: AppColors.greyIcon,
-                  ),
-                  Text(
-                    studentName,
-                    style: AppStyles.customTextStyle(
-                      size: 12,
-                      color: AppColors.blackLight,
-                      weight: FontWeight.w500,
+              const SizedBox(width: 10),
+              Row(
+                children: List.generate(5, (index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Icon(
+                      Icons.star,
+                      size: 20,
+                      color: index < rating
+                          ? AppColors.secondaryColor
+                          : AppColors.whiteColor,
                     ),
-                  ),
-                ],
+                  );
+                }),
               ),
-            ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Text(
-              reviewContent,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: AppStyles.customTextStyle(
-                size: 10,
-                color: AppColors.blackColor,
-                weight: FontWeight.w400,
-              ),
+          const SizedBox(height: 18),
+          Text(
+            reviewContent,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: AppStyles.customTextStyle(
+              size: 14,
+              lineSpace: 1.4,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w400,
             ),
           ),
         ],
@@ -574,27 +619,31 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
 
         /// 🔥 FIX WIDTH REMOVED
         Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
-            color: AppColors.secondaryColor,
-            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.contBorderColor2),
+            borderRadius: BorderRadius.circular(15),
+            color: AppColors.contColor2,
           ),
           child: Row(
+            spacing: 10,
             children: [
-              const Icon(Icons.map_outlined, size: 40),
-              const SizedBox(width: 10),
-
-              /// 🔥 FIXED OVERFLOW HERE
+              Image.asset(AssetImages.mapViewImg, height: 50, width: 50),
+              //const Icon(Icons.map_outlined, size: 40),
               Expanded(
                 child: Column(
+                  spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "${internship!.companyCity}, ${internship!.companyState}",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: AppStyles.customTextStyle(size: 12),
+                      style: AppStyles.customTextStyle(
+                        size: 14,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w500,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -603,8 +652,11 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                       child: Text(
                         "View on Map",
                         style: AppStyles.customTextStyle(
-                          size: 10,
+                          size: 12,
                           isUnderlined: true,
+                          underlineColor: AppColors.whiteColor,
+                          weight: FontWeight.w400,
+                          color: AppColors.whiteColor,
                         ),
                       ),
                     ),
@@ -742,7 +794,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "AI Banner Required!",
+              "ResDp Required!",
               textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
                 size: 18,
@@ -751,7 +803,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               ),
             ),
             Text(
-              "To complete your application, you must first generate an AI Banner. This personalized visual is a required part of your profile submission!",
+              "To complete your application, you must first generate an ResDp. This personalized visual is a required part of your profile submission!",
               textAlign: TextAlign.center,
               style: AppStyles.customTextStyle(
                 size: 14,

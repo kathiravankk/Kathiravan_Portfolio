@@ -123,14 +123,19 @@ class ProfileWidgets {
     final validValue = items.contains(value) ? value : null;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      //padding: const EdgeInsets.symmetric(horizontal: 14),
       decoration: BoxDecoration(
         color: AppColors.fieldBgColor,
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: AppColors.fieldBorderColor),
       ),
       child: DropdownButtonHideUnderline(
+
         child: DropdownButton<String>(
+          padding: EdgeInsetsGeometry.symmetric(
+            vertical: 5,
+            horizontal: 10,
+          ),
           value: validValue, // ✅ FIX HERE
           hint: Text(
             hint ?? 'Select',

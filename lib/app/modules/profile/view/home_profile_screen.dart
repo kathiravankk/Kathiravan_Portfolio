@@ -12,6 +12,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -321,6 +322,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     return Scaffold(
       backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: AppColors.whiteColor),
         backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         // leading: IconButton(
@@ -375,75 +377,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                         .profileDataModel
                                         .studentBanner!
                                         .isNotEmpty
-                                ? Stack(
-                                    children: [
-                                      profileController.waterMarkLoading ||
-                                              profileController
-                                                  .aiBannerLikeLoading
-                                          ? Center(
-                                              child: CupertinoActivityIndicator(
-                                                color: AppColors.secondaryColor,
-                                              ),
-                                            )
-                                          : ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              child: Image.network(
-                                                profileController
-                                                        .profileDataModel
-                                                        .studentBanner ??
-                                                    "",
-                                                height: 180,
-                                                fit: BoxFit.fill,
-                                                loadingBuilder: (context, child, loadingProgress) {
-                                                  if (loadingProgress == null) {
-                                                    return child;
-                                                  }
-                                                  return Container(
-                                                    height: 180,
-                                                    color: AppColors.thirdColor,
-                                                    child: Center(
-                                                      child: CircularProgressIndicator(
-                                                        color: AppColors
-                                                            .primaryColor,
-                                                        value:
-                                                            loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                      .cumulativeBytesLoaded /
-                                                                  loadingProgress
-                                                                      .expectedTotalBytes!
-                                                            : null,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                errorBuilder:
-                                                    (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) =>
-                                                        const Icon(Icons.photo),
-                                              ),
-                                            ),
-
-                                      Positioned(
-                                        top: 10,
-                                        right: 10,
-                                        left: 10,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            aiPoweredContainer(),
-                                            likeShareContainer(),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  )
+                                ? resDpContainer()
                                 : aiBannerContainer(),
                             SizedBox(height: 15),
                             SizedBox(
@@ -672,6 +606,93 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                 );
         }),
       ),
+    );
+  }
+
+  Widget resDpContainer(){
+    return Stack(
+      children: [
+        profileController.waterMarkLoading ||
+            profileController.aiBannerLikeLoading
+            ? Center(
+          child: CupertinoActivityIndicator(
+            color: AppColors.secondaryColor,
+          ),
+        )
+            : GestureDetector(
+          onTap: () {
+            final imageUrl =
+                profileController.profileDataModel.studentBanner ?? "";
+
+            if (imageUrl.isNotEmpty) {
+              Get.to(
+                    () => FullScreenImagePreview(
+                  imageUrl: imageUrl,
+                ),
+              );
+            }
+          },
+          child: Hero(
+            tag:
+            profileController.profileDataModel.studentBanner ?? "",
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Image.network(
+                profileController.profileDataModel.studentBanner ?? "",
+                height: 180,
+                width: double.infinity,
+                fit: BoxFit.fill,
+
+                loadingBuilder:
+                    (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+
+                  return Container(
+                    height: 180,
+                    color: AppColors.thirdColor,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryColor,
+                        value:
+                        loadingProgress.expectedTotalBytes !=
+                            null
+                            ? loadingProgress
+                            .cumulativeBytesLoaded /
+                            loadingProgress
+                                .expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+
+                errorBuilder:
+                    (
+                    context,
+                    error,
+                    stackTrace,
+                    ) => const Icon(Icons.photo),
+              ),
+            ),
+          ),
+        ),
+
+        Positioned(
+          top: 10,
+          right: 10,
+          left: 10,
+          child: Row(
+            mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
+            children: [
+              aiPoweredContainer(),
+              likeShareContainer(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

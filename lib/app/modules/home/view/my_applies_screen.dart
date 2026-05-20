@@ -54,6 +54,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
       child: Scaffold(
         backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.whiteColor),
           backgroundColor: AppColors.appBgColor_2,
           elevation: 0,
           automaticallyImplyActions: false,
