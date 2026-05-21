@@ -59,8 +59,8 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   bool isWebLoaded = false;
 
   List<int> templateHistory = [];
-  int latestGeneratedTemplateIndex = 0;
 
+  int latestGeneratedTemplateIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -74,9 +74,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
     /// THEN initialize webview
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initWebView(
-        templates[currentTemplateIndex],
-      );
+      _initWebView(templates[currentTemplateIndex]);
     });
 
     getProfileData();
@@ -113,27 +111,38 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   }
 
   void setInitialTemplate() {
+
     if (isRegisterFlow == true) {
+
       currentTemplateIndex = 0;
       latestGeneratedTemplateIndex = 0;
 
-      templateHistory.add(currentTemplateIndex);
-
+      templateHistory = [0];
       return;
     }
 
     if (templateId != null &&
         templateId! > 0 &&
         templateId! <= templates.length) {
+
       currentTemplateIndex = templateId! - 1;
 
+      /// latest generated template
       latestGeneratedTemplateIndex = currentTemplateIndex;
+
+      /// store all previous templates
+      templateHistory = List.generate(
+        currentTemplateIndex + 1,
+            (index) => index,
+      );
+
     } else {
+
       currentTemplateIndex = 0;
       latestGeneratedTemplateIndex = 0;
-    }
 
-    templateHistory.add(currentTemplateIndex);
+      templateHistory = [0];
+    }
   }
 
   Future<void> getProfileData() async {
@@ -168,26 +177,35 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   }
 
   Future<void> nextTemplate() async {
+
+    /// stop refresh after template 10
+    if (latestGeneratedTemplateIndex >= templates.length - 1) {
+      return;
+    }
+
     await registerController.templateRefreshCredit();
 
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
+
       await getCreditData(creditId: creditIdString);
 
       setState(() {
-        /// move to next generated template
-        latestGeneratedTemplateIndex =
-            (latestGeneratedTemplateIndex + 1) % templates.length;
 
-        /// preview newly generated template
+        /// move only from latest generated template
+        latestGeneratedTemplateIndex++;
+
+        /// show latest generated template
         currentTemplateIndex = latestGeneratedTemplateIndex;
 
-        /// store ALL generated templates including current
+        /// store into history
         if (!templateHistory.contains(currentTemplateIndex)) {
           templateHistory.add(currentTemplateIndex);
         }
       });
+
     } else {
+
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
         "Something went wrong!, Try again later!",
@@ -244,7 +262,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     return Scaffold(
       backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
-        backgroundColor: AppColors.transparentColor,
+        backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
@@ -287,7 +305,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   spacing: 15,
                   children: [
@@ -330,9 +348,8 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
                     Expanded(
-                      flex: 3,
+                      flex: 2,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -556,37 +573,78 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
               const SizedBox(width: 10),
 
               /// Refresh
-              SizedBox(
-                height: 35,
-                width: 50,
-                child: FloatingActionButton(
-                  shape: const CircleBorder(),
-                  elevation: 0,
-                  mini: true,
-                  backgroundColor: AppColors.primaryColor,
-                  onPressed: () async {
-                    await nextTemplate();
+              if (latestGeneratedTemplateIndex < templates.length - 1) ...[
 
-                    _initWebView(templates[currentTemplateIndex]);
-                  },
-                  child: const Icon(
-                    Icons.refresh,
-                    color: AppColors.whiteColor,
-                    size: 30,
+                SizedBox(
+                  height: 35,
+                  width: 50,
+                  child: FloatingActionButton(
+                    shape: const CircleBorder(),
+                    elevation: 0,
+                    mini: true,
+                    backgroundColor: AppColors.primaryColor,
+                    onPressed: () async {
+
+                      await nextTemplate();
+
+                       _initWebView(
+                        templates[currentTemplateIndex],
+                      );
+                    },
+                    child: const Icon(
+                      Icons.refresh,
+                      color: AppColors.whiteColor,
+                      size: 30,
+                    ),
                   ),
                 ),
-              ),
 
-              Image.asset(AssetImages.creditsIconNew, height: 28, width: 28),
-
-              Text(
-                "25",
-                style: AppStyles.customTextStyle(
-                  size: 16,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w700,
+                Image.asset(
+                  AssetImages.creditsIconNew,
+                  height: 28,
+                  width: 28,
                 ),
-              ),
+
+                Text(
+                  "25",
+                  style: AppStyles.customTextStyle(
+                    size: 16,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w700,
+                  ),
+                ),
+              ],
+              // SizedBox(
+              //   height: 35,
+              //   width: 50,
+              //   child: FloatingActionButton(
+              //     shape: const CircleBorder(),
+              //     elevation: 0,
+              //     mini: true,
+              //     backgroundColor: AppColors.primaryColor,
+              //     onPressed: () async {
+              //       await nextTemplate();
+              //
+              //       _initWebView(templates[currentTemplateIndex]);
+              //     },
+              //     child: const Icon(
+              //       Icons.refresh,
+              //       color: AppColors.whiteColor,
+              //       size: 30,
+              //     ),
+              //   ),
+              // ),
+              //
+              // Image.asset(AssetImages.creditsIconNew, height: 28, width: 28),
+              //
+              // Text(
+              //   "25",
+              //   style: AppStyles.customTextStyle(
+              //     size: 16,
+              //     color: AppColors.whiteColor,
+              //     weight: FontWeight.w700,
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -624,40 +682,36 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   }
 
   Future<void> updateResumeFunc() async {
-
-    debugPrint(
-      "PREVIEW TEMPLATE INDEX => $currentTemplateIndex",
-    );
+    debugPrint("PREVIEW TEMPLATE INDEX => $currentTemplateIndex");
 
     debugPrint(
       "LATEST GENERATED TEMPLATE INDEX => "
-          "$latestGeneratedTemplateIndex",
+      "$latestGeneratedTemplateIndex",
     );
 
-    final studentId =
-    await LocalStorageService.getStudentId();
+    final studentId = await LocalStorageService.getStudentId();
 
     /// ALWAYS SAVE LATEST GENERATED TEMPLATE
-    final selectedTemplate =
-    templates[latestGeneratedTemplateIndex];
+    final selectedTemplate = templates[latestGeneratedTemplateIndex];
 
     resumeData!.templateNumber =
-        selectedTemplate.id.toString();
-
+        templates[currentTemplateIndex].id.toString();
     debugPrint(
       "FINAL templateNumber => "
-          "${resumeData!.templateNumber}",
+      "${resumeData!.templateNumber}",
+    );
+
+
+    debugPrint(
+      "UPDATED TEMPLATE => ${templates[currentTemplateIndex].id}",
     );
 
     resumeData!.studentId = studentId;
 
-    await registerController.updateResumeProfileData(
-      updateData: resumeData,
-    );
+    await registerController.updateResumeProfileData(updateData: resumeData);
 
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-
       AppAlertUtils.showToast(
         message: "Resume updated successfully!",
         isError: false,
@@ -668,19 +722,14 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
       );
 
       if (isRegisterFlow!) {
-
         if (mounted) {
           AppFunctions.navigateScreen(
             context,
             AppRoutes.stepUpdateScreen,
-            arguments: {
-              "activeStep": 2,
-            },
+            arguments: {"activeStep": 2},
           );
         }
-
       } else {
-
         if (mounted) {
           AppFunctions.navigateInitialScreen(
             context,
@@ -688,12 +737,10 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
           );
         }
       }
-
     } else {
-
       AppAlertUtils.showToast(
         message:
-        registerController.updateProfileModel.message ??
+            registerController.updateProfileModel.message ??
             "Something went wrong!",
         isError: true,
       );

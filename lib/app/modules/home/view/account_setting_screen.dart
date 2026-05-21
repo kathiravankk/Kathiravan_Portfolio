@@ -8,6 +8,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class AccountSettingScreen extends StatefulWidget {
@@ -161,6 +162,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                                 message: "Email copied!",
                               );
                             },
+                            //onTap: _launchEmail,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 12,
@@ -208,6 +210,32 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _launchEmail() async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: 'info@internsharks.ai',
+      queryParameters: {
+        'subject': 'Account Deletion Request',
+      },
+    );
+
+    try {
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(emailUri);
+      } else {
+        AppAlertUtils.showToast(
+          message: "No email app found!",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      AppAlertUtils.showToast(
+        message: "Unable to open email app",
+        isError: true,
+      );
+    }
   }
 
   Widget _settingsCard({required List<Widget> children}) {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "444233131798",
+    "project_id": "internsharks-3033f",
+    "storage_bucket": "internsharks-3033f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:444233131798:android:d0e04de6db2aaea5355237",
+        "android_client_info": {
+          "package_name": "com.doubletap.internsharks.ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-diwq31Bv7p88GLoWiSK79jNBUbhDddw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -5,6 +5,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/full_pdf_viewer_screen.dart';
@@ -149,8 +150,7 @@ class _RegisterResumeReportScreenState
             ),
           ),
           body: Obx(
-                () =>
-            registerController.resumeScoreLoading ||
+                () => registerController.resumeScoreLoading ||
                 registerController.studentDetailsLoading
                 ? Center(
               child: CupertinoActivityIndicator(
@@ -158,55 +158,73 @@ class _RegisterResumeReportScreenState
               ),
             )
                 : Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  resumePreview(),
-                  const SizedBox(height: 15),
-                  buildScoreCard(),
-
-                  const SizedBox(height: 15),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                            children: [
+                            /// 🔹 TOP STATIC
+                            Expanded(
+                            flex: 4,
+                              child: Column(
+                                children: [
                   Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () async {
-                        await getResumeScore();
-                      },
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Column(
-                          spacing: 15,
-                          children: [
-                            buildAllSections(),
-
-                            buildStrengthCard(
-                              isStrength: true,
-                              list: registerController
-                                  .resumeAnalyzeModel
-                                  .analysis!
-                                  .strengths,
-                              title: "Strengths",
-                            ),
-
-
-                            buildStrengthCard(
-                              isStrength: false,
-                              list: registerController
-                                  .resumeAnalyzeModel
-                                  .analysis!
-                                  .improvements,
-                              title: "Improvements",
-                            ),
-                            const SizedBox(height: 10,),
-                            buildBottomButtons(),
-                            const SizedBox(height: 20,)
-                          ],
-                        ),
-                      ),
-                    ),
+                    child: resumePreview(),
                   ),
-                ],
-              ),
-            ),
+
+                  const SizedBox(height: 12),
+
+                  buildScoreCard(),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            /// 🔹 BOTTOM SCROLLABLE
+                            Expanded(
+                              flex: 6,
+                              child: RefreshIndicator(
+                                onRefresh: () async {
+                  await getResumeScore();
+                                },
+                                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      buildAllSections(),
+
+                      buildStrengthCard(
+                        isStrength: true,
+                        list: registerController
+                            .resumeAnalyzeModel
+                            .analysis!
+                            .strengths,
+                        title: "Strengths",
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      buildStrengthCard(
+                        isStrength: false,
+                        list: registerController
+                            .resumeAnalyzeModel
+                            .analysis!
+                            .improvements,
+                        title: "Improvements",
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      buildBottomButtons(),
+
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                                ),
+                              ),
+                            ),
+                            ],
+                          ),
+                ),
           ),
         ),
       ),
@@ -466,6 +484,7 @@ class _RegisterResumeReportScreenState
           data.profileSummary!,
           style: AppStyles.customTextStyle(
             size: 12,
+            lineSpace: 1.4,
             color: Colors.white,
             weight: FontWeight.w600,
           ),
@@ -527,6 +546,7 @@ class _RegisterResumeReportScreenState
               subtitle,
               style: AppStyles.customTextStyle(
                 size: 12,
+                lineSpace: 1.4,
                 color: AppColors.whiteColor,
                 weight: FontWeight.w700,
               ),
@@ -733,6 +753,34 @@ class _RegisterResumeReportScreenState
           },
           isLoading: registerController.updateResumeLoading,
           buttonText: "Update (🪙50)",
+          buttonWidget: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Apply Now - ",
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w500,
+                  fontFamily: "Roboto",
+                ),
+              ),
+              Text(
+                "20",
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w500,
+                  fontFamily: "Roboto",
+                ),
+              ),
+              Image.asset(
+                AssetImages.creditsIconNew,
+                height: 22,
+                width: 22,
+              ),
+            ],
+          ),
         ),
         CustomButtonWidget(
           bgColor: AppColors.transparentColor,
@@ -851,7 +899,7 @@ class _RegisterResumeReportScreenState
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Total ATS Score : ",
+            "ATS Score : ",
             style: AppStyles.customTextStyle(
               size: 20,
               color: AppColors.secondaryColor,

@@ -104,7 +104,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                       duration: item.jobData != null
                           ? item.jobData!.internshipDuration!.isNotEmpty &&
                                     item.jobData!.internshipDuration != null
-                                ? item.jobData!.internshipDuration
+                                ? "${item.jobData!.internshipDuration} Months"
                                 : "${item.jobData!.days} Days"
                           : "N/A",
                       // companyDescription: item.jobData != null
