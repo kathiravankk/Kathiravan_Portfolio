@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -757,7 +759,7 @@ class _RegisterResumeReportScreenState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Apply Now - ",
+                "Update - ",
                 style: AppStyles.customTextStyle(
                   size: 16,
                   color: AppColors.whiteColor,
@@ -766,7 +768,7 @@ class _RegisterResumeReportScreenState
                 ),
               ),
               Text(
-                "20",
+                "50",
                 style: AppStyles.customTextStyle(
                   size: 16,
                   color: AppColors.whiteColor,
@@ -798,9 +800,9 @@ class _RegisterResumeReportScreenState
 
   Future<void> updateSkipProfileFunc() async {
     final studentId = await LocalStorageService.getStudentId();
-    registerController.extractedResumeModel.templateNumber != 1.toString();
-    registerController.extractedResumeModel.studentId != studentId!;
-    await registerController.updateResumeProfileData(
+    registerController.extractedResumeModel.templateNumber  = "1";
+    registerController.extractedResumeModel.studentId = studentId!;
+    await registerController.updateResumeData(
       updateData: registerController.extractedResumeModel,
     );
     if (registerController.getResponseCode() == 200 ||

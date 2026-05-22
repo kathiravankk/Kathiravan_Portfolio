@@ -443,6 +443,9 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                       reviewContent: reviewList![index].review ?? "",
                       createdAt: reviewList![index].createdAt ?? "",
                       rating: int.parse(reviewList![index].rating.toString()),
+                      profileImage: reviewList![index].studentData != null
+                          ? reviewList![index].studentData!.studentProfile ?? ""
+                          : "",
                     );
                   },
                 )
@@ -457,6 +460,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     required String reviewContent,
     required int rating,
     required String createdAt,
+    required String profileImage,
   }) {
     final formattedDate = DateFormat(
       "MMMM yyyy",
@@ -481,16 +485,41 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.contBorderColor2),
-                      ),
-                      padding: const EdgeInsets.all(8),
-                      child: Icon(
-                        Icons.person,
-                        size: 22,
-                        color: AppColors.whiteColor,
+                    ClipOval(
+                      child: Image.network(
+                        profileImage,
+                        height: 35,
+                        width: 35,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.contBorderColor2),
+                              shape: BoxShape.circle
+                            ),
+                            padding: EdgeInsets.all(5),
+                            child: Icon(
+                              Icons.person_2_outlined,
+                              size: 25,
+                              color: AppColors.whiteColor,
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                      
+                          return SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: Center(
+                              child: CupertinoActivityIndicator(
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
 

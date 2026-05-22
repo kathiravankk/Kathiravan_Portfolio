@@ -58,7 +58,10 @@ class _KycResultDialog extends StatelessWidget {
         arguments: {'activeStep': 4},
       );
     } else {
-      Get.close(1);
+      AppFunctions.navigateInitialScreen(
+        ctx,
+        AppRoutes.dashBoardScreen,
+      );
     }
   }
 
@@ -110,7 +113,7 @@ class _KycResultDialog extends StatelessWidget {
 
             const SizedBox(height: 10),
             Text(
-              'Verification Pending! ⚠️',
+              'KYC Verification',
               style: AppStyles.customTextStyle(
                 size: 18,
                 color: AppColors.whiteColor,

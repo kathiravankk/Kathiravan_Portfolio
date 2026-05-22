@@ -296,23 +296,32 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
 
   Future<void> updateKYC() async {
     final studentName = await LocalStorageService.getStudentName();
-    //final studentId = await LocalStorageService.getStudentId();
 
-    if (!collegeIdImg!.existsSync()) {
-      AppAlertUtils.showToast(message: "College ID image is required!");
+    if (collegeIdImg == null || !collegeIdImg!.existsSync()) {
+      AppAlertUtils.showToast(
+        message: "College ID image is required!",
+      );
       return;
     }
 
+    bool loaderVisible = false;
+
     try {
-      if(mounted) {
-        AiLoadingWidget.show(context, type: LoadingDialogType.kyc);
+      /// ✅ SHOW LOADER
+      if (mounted) {
+        AiLoadingWidget.show(
+          context,
+          type: LoadingDialogType.kyc,
+        );
+        loaderVisible = true;
       }
 
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 150));
 
       final collegeIdFile = await MultipartFile.fromFile(
         collegeIdImg!.path,
-        filename: "college_id_${DateTime.now().millisecondsSinceEpoch}.jpg",
+        filename:
+        "college_id_${DateTime.now().millisecondsSinceEpoch}.jpg",
         contentType: MediaType("image", "jpeg"),
       );
 
@@ -326,75 +335,77 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         ),
       };
 
-      await registerController.verifyKycData(kycData: kycData);
+      /// ✅ API CALL
+      await registerController.verifyKycData(
+        kycData: kycData,
+      );
 
-      /// ✅ hide loader immediately after API
-      if(mounted) {
+      /// ✅ HIDE LOADER BEFORE DIALOG / TOAST
+      if (loaderVisible && mounted) {
         AiLoadingWidget.hide(context);
+        loaderVisible = false;
       }
 
-      if (registerController.getResponseCode() == 200 ||
-          registerController.getResponseCode() == 201) {
-        Map<String, dynamic> updateProfileData = {
-          "isVerified":
-          (registerController.kycUpdateModel.name == "valid" &&
-              registerController.kycUpdateModel.collegeId == "valid" &&
-              registerController.kycUpdateModel.collegeName == "valid")
-              ? true
-              : false,
-        };
+      final responseCode = registerController.getResponseCode();
 
-        await registerController.updateStudentProfileData(
-          updateData: updateProfileData,
-        );
-
+      if (responseCode == 200 || responseCode == 201) {
         final isValid =
             registerController.kycUpdateModel.name == "valid" &&
                 registerController.kycUpdateModel.collegeId == "valid" &&
                 registerController.kycUpdateModel.collegeName == "valid";
 
-        if (isValid) {
-          AppAlertUtils.showToast(
-            message: "KYC details verified successfully!",
-            isError: false,
-          );
-
-          if (isRegisterFlow == true) {
-            if(mounted) {
-              AppFunctions.navigateScreen(
-                context,
-                AppRoutes.stepUpdateScreen,
-                arguments: {"activeStep": 4},
-              );
-            }
-          } else {
-            Get.back();
-          }
-        } else {
-          /// ✅ now dialog opens without loader behind it
-          if(mounted) {
-            showKycResultDialog(
-              context: context,
-              model: registerController.kycUpdateModel,
-              isRegisterFlow: isRegisterFlow,
-            );
-          }
-        }
-      } else {
-        AppFunctions.apiErrorHandling(
-          registerController.getResponseCode(),
-          "Failed to verify your KYC details!",
+        /// ✅ UPDATE PROFILE VERIFIED STATUS
+        await registerController.updateStudentProfileData(
+          updateData: {
+            "isVerified": isValid,
+          },
         );
-      }
-    } catch (e) {
-      if(mounted) {
-        AiLoadingWidget.hide(context);
 
-        debugPrint("KYC error: $e");
+        /// ✅ SUCCESS TOAST
         AppAlertUtils.showToast(
-          message: "Something went wrong. Try again.",
-          isError: true,
+          message: isValid
+              ? "KYC details verified successfully!"
+              : "KYC verification completed",
+          isError: false,
         );
+
+        /// ✅ SMALL DELAY FOR SMOOTH UI
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        /// ✅ ALWAYS SHOW RESULT DIALOG
+        if (mounted) {
+          showKycResultDialog(
+            context: context,
+            model: registerController.kycUpdateModel,
+            isRegisterFlow: isRegisterFlow,
+          );
+        }
+
+        return;
+      }
+
+      /// ❌ API FAILED
+      AppFunctions.apiErrorHandling(
+        responseCode,
+        "Failed to verify your KYC details!",
+      );
+    } catch (e) {
+      debugPrint("KYC error: $e");
+
+      /// ✅ HIDE LOADER SAFELY
+      if (loaderVisible && mounted) {
+        AiLoadingWidget.hide(context);
+        loaderVisible = false;
+      }
+
+      AppAlertUtils.showToast(
+        message: "Something went wrong. Try again.",
+        isError: true,
+      );
+    } finally {
+      /// ✅ EXTRA SAFETY
+      if (loaderVisible && mounted) {
+        AiLoadingWidget.hide(context);
       }
     }
   }

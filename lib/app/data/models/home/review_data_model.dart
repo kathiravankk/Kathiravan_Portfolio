@@ -56,12 +56,14 @@ class StudentData {
   String? studentId;
   String? studentName;
   String? studentMobNum;
+  String? studentProfile;
 
   StudentData.fromJson(Map<String, dynamic> json) {
     studentId = json["_id"] ?? "";
     studentName = json["studname"] ?? "";
     studentMobNum = json["studmobileno"] ?? "";
+    studentProfile = json["studprofile"] ?? "";
   }
 
-  StudentData({this.studentMobNum, this.studentName, this.studentId});
+  StudentData({this.studentMobNum, this.studentName, this.studentId, this.studentProfile});
 }
