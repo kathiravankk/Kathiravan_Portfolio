@@ -85,6 +85,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
         icon: Icon(Icons.home_outlined, color: AppColors.whiteColor),
         label: "Home",
         activeIcon: Icon(Icons.home, color: AppColors.secondaryColor),
+        tooltip: "Home"
       ),
       const BottomNavigationBarItem(
         icon: Icon(CupertinoIcons.location, color: AppColors.whiteColor),
@@ -92,7 +93,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
           CupertinoIcons.location_fill,
           color: AppColors.secondaryColor,
         ),
-        label: ("Applies"),
+        label: ("Applied"),
+        tooltip: "Applied"
       ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.file_copy_outlined, color: AppColors.whiteColor),
@@ -101,11 +103,13 @@ class _CustomNavBarState extends State<CustomNavBar> {
           color: AppColors.secondaryColor,
         ),
         label: ("Internships"),
+        tooltip: "Internships"
       ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.person_outline_sharp, color: AppColors.whiteColor),
         activeIcon: Icon(Icons.person, color: AppColors.secondaryColor),
         label: ("Profile"),
+        tooltip: "Profile"
       ),
     ];
   }

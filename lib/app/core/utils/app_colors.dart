@@ -63,6 +63,8 @@ class AppColors {
   static const Color sucBgColor = Color.fromRGBO(220, 252, 231,1);
   static const Color gradientColor1 = Color.fromRGBO(24, 20, 16, 1);
   static const Color gradientColor2 = Color.fromRGBO(1, 205, 205, 0);
+  static const Color gradientColor4 = Color.fromRGBO(24, 20, 16, 1);
+  static const Color gradientColor5 = Color.fromRGBO(205, 188, 1, 0);
   static const Color lightTextColor = Color.fromRGBO(255, 255, 255, 0.23);
   static const Color contLightText = Color.fromRGBO(107, 114, 128, 1);
   static const Color paymentContColor = Color.fromRGBO(71, 233, 233, 0.1);

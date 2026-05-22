@@ -6,6 +6,7 @@ import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/widgets/education_card.dart';
 import 'package:internsharks/app/core/widgets/item_card_widget.dart';
@@ -67,6 +68,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   List<Map<String, dynamic>> _industrialVisits = [];
   List<Map<String, dynamic>> _paperPresentations = [];
   List<Map<String, dynamic>> _internships = [];
+
+  String _initialProfileSnapshot = '';
 
   @override
   void initState() {
@@ -240,16 +243,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       await registerController.updateStudentProfileData(updateData: payload);
       final code = registerController.getResponseCode();
       if (code == 200 || code == 201) {
-        AppFunctions.showToast(message: 'Profile updated successfully!');
+        AppAlertUtils.showToast(message: 'Profile updated successfully!');
         await _loadProfile();
       } else {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: 'Failed to update. Please try again.',
           isError: true,
         );
       }
     } catch (e) {
-      AppFunctions.showToast(message: 'Error: $e', isError: true);
+      AppAlertUtils.showToast(message: 'Error: $e', isError: true);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -257,17 +260,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
-          fit: BoxFit.cover,
-        ),
-      ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        await _handleBackPress();
+      },
       child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
+        backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
+          backgroundColor: AppColors.appBgColor_2,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(
@@ -275,10 +277,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               size: 25,
               color: AppColors.whiteColor,
             ),
-            onPressed: () {
-              Get.back();
-              _loadProfile();
-            },
+            onPressed: _handleBackPress,
           ),
           title: Text(
             'Edit Profile',
@@ -292,9 +291,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         body: Obx(() {
           if (profileController.profileDataLoading) {
             return const Center(
-              child: CupertinoActivityIndicator(
-                color: AppColors.secondaryColor,
-              ),
+              child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
             );
           }
           return SingleChildScrollView(
@@ -312,7 +309,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   onTap: _showImageSourceSheet,
                 ),
                 const SizedBox(height: 20),
-
+      
                 // ── Personal Info ─────────────────────────────────────────
                 ProfileWidgets.sectionHeader('📋', 'Personal Information'),
                 _pfield(Icons.person_outline_sharp, _nameCtrl, 'Full Name'),
@@ -346,7 +343,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   'Portfolio/Personal Website',
                 ),
                 const SizedBox(height: 20),
-
+      
                 // ── Bio ───────────────────────────────────────────────────
                 ProfileWidgets.sectionHeader('📝', 'Professional Summary'),
                 CustomTextField(
@@ -364,7 +361,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   onChanged: (_) {},
                 ),
                 const SizedBox(height: 20),
-
+      
                 // ── Certifications ────────────────────────────────────────
                 ProfileWidgets.sectionHeader(
                   '🏅',
@@ -411,7 +408,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 //     ),
                 //   ),
                 const SizedBox(height: 20),
-
+      
                 // ── Education ─────────────────────────────────────────────
                 ProfileWidgets.sectionHeader(
                   '🏫',
@@ -431,7 +428,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           meta:
                               '${_collegeData!['start_year']} - ${_collegeData!['end_year']}',
                           extra: 'Full Time',
-                          onEdit: () => _eduSheet(type: 'College'),
+                          onEdit: () => _eduSheet(),
                         ),
                         const Divider(color: Colors.white12),
                       ],
@@ -442,7 +439,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           subtitle: _higherSecData!['board'] ?? '',
                           meta: _higherSecData!['year'] ?? '',
                           extra: '${_higherSecData!['percentage']}%',
-                          onEdit: () => _eduSheet(type: 'Class XII'),
+                          onEdit: () => _eduSheet(),
                         ),
                         const Divider(color: Colors.white12),
                       ],
@@ -453,7 +450,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           subtitle: _secondaryData!['board'] ?? '',
                           meta: _secondaryData!['year'] ?? '',
                           extra: '${_secondaryData!['percentage']}%',
-                          onEdit: () => _eduSheet(type: 'Class X'),
+                          onEdit: () => _eduSheet(),
                         ),
                       if (_collegeData == null &&
                           _higherSecData == null &&
@@ -475,7 +472,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
+      
                 // ── Skills ────────────────────────────────────────────────
                 ProfileWidgets.sectionHeader(
                   '💡',
@@ -533,7 +530,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   ),
                 ],
                 const SizedBox(height: 20),
-
+      
                 // ── Projects ──────────────────────────────────────────────
                 ProfileWidgets.sectionHeader(
                   '🚀',
@@ -554,7 +551,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   'Internships',
                   onAdd: () => _internshipSheet(),
                 ),
-
+      
                 ..._internships.asMap().entries.map(
                   (e) => ItemCard(
                     title: e.value['company'] ?? '',
@@ -562,14 +559,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     onEdit: () => _internshipSheet(editIndex: e.key),
                   ),
                 ),
-
+      
                 const SizedBox(height: 20),
                 ProfileWidgets.sectionHeader(
                   '🏭',
                   'Industrial Visits',
                   onAdd: () => _industrialVisitSheet(),
                 ),
-
+      
                 ..._industrialVisits.asMap().entries.map(
                   (e) => ItemCard(
                     title: e.value['company'] ?? '',
@@ -577,14 +574,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     onEdit: () => _industrialVisitSheet(editIndex: e.key),
                   ),
                 ),
-
+      
                 const SizedBox(height: 20),
                 ProfileWidgets.sectionHeader(
                   '📄',
                   'Paper Presentations',
                   onAdd: () => _paperPresentationSheet(),
                 ),
-
+      
                 ..._paperPresentations.asMap().entries.map(
                   (e) => ItemCard(
                     title: e.value['title'] ?? '',
@@ -592,15 +589,15 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     onEdit: () => _paperPresentationSheet(editIndex: e.key),
                   ),
                 ),
-
+      
                 const SizedBox(height: 20),
-
+      
                 ProfileWidgets.sectionHeader(
                   '📘',
                   'Additional Information',
                   onAdd: () => _additionalInfoSheet(),
                 ),
-
+      
                 ProfileWidgets.infoCard(
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -620,7 +617,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
+      
                 // ── Save ──────────────────────────────────────────────────
                 CustomButtonWidget(
                   isLoading: registerController.updateProfileLoading,
@@ -638,97 +635,153 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
+  String _generateProfileSnapshot() {
+    return jsonEncode({
+      'name': _nameCtrl.text.trim(),
+      'mobile': _mobileCtrl.text.trim(),
+      'email': _emailCtrl.text.trim(),
+      'linkedin': _linkedinCtrl.text.trim(),
+      'website': _websiteCtrl.text.trim(),
+      'bio': _bioCtrl.text.trim(),
+      'pickedImage': _pickedImage?.path ?? '',
+      'certifications': _certifications,
+      'experiences': _experiences,
+      'projects': _projects,
+      'programmingSkills': _programmingSkills,
+      'toolsSkills': _toolsSkills,
+      'collegeData': _collegeData,
+      'higherSecData': _higherSecData,
+      'secondaryData': _secondaryData,
+      'languagesKnown': _languagesKnown,
+      'hobbies': _hobbies,
+      'areasOfInterest': _areasOfInterest,
+      'achievements': _achievements,
+      'volunteerExperience': _volunteerExperience,
+      'leadership': _leadership,
+      'publications': _publications,
+      'workshops': _workshops,
+      'industrialVisits': _industrialVisits,
+      'paperPresentations': _paperPresentations,
+      'internships': _internships,
+    });
+  }
+
+  bool _hasUnsavedChanges() {
+    return _initialProfileSnapshot != _generateProfileSnapshot();
+  }
+
+  Future<void> _handleBackPress() async {
+    if (!_hasUnsavedChanges()) {
+      Get.back();
+      return;
+    }
+
+    await AppAlertUtils.showAppAlert(
+      context: context,
+      title: 'Discard Changes?',
+      content:
+      'You have unsaved changes in your profile. If you go back now, all modified data will be lost.',
+      confirmText: 'Discard',
+      cancelText: 'Stay',
+      isDestructive: true,
+      onConfirm: () {
+        Get.back();
+      },
+    );
+  }
+
   // Profile Image Widgets
 
   Future<void> _pickImage(ImageSource source) async {
-    final permission = source == ImageSource.camera
-        ? Permission.camera
-        : Permission.photos;
-    final status = await permission.request();
+    // final permission = source == ImageSource.camera
+    //     ? Permission.camera
+    //     : Permission.photos;
+    // final status = await permission.request();
 
-    if (status.isGranted) {
-      try {
-        final picked = await ImagePicker().pickImage(
-          source: source,
-          imageQuality: 80,
-          maxWidth: 800,
-        );
-        if (picked == null) return;
-        final file = File(picked.path);
-        if (await file.length() > 1_000_000) {
-          AppFunctions.showToast(
-            message: 'File too large (max 1 MB)',
-            isError: true,
-          );
-        } else {
-          setState(() => _pickedImage = file);
-        }
-      } catch (e) {
-        AppFunctions.showToast(
-          message: 'Could not open camera/gallery: $e',
+    //if (status.isGranted) {
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: source,
+        imageQuality: 80,
+        maxWidth: 800,
+      );
+      if (picked == null) return;
+      final file = File(picked.path);
+      if (await file.length() > 1_000_000) {
+        AppAlertUtils.showToast(
+          message: 'File too large (max 1 MB)',
           isError: true,
         );
+      } else {
+        setState(() => _pickedImage = file);
       }
-    } else if (status.isPermanentlyDenied) {
-      _showPermissionDialog(
-        source == ImageSource.camera ? 'Camera' : 'Photo Library',
+    } catch (e) {
+      AppAlertUtils.showToast(
+        message: 'Could not open camera/gallery: $e',
+        isError: true,
       );
-    } else {
-      AppFunctions.showToast(message: 'Permission denied', isError: true);
     }
+    // } else if (status.isPermanentlyDenied) {
+    //   _showPermissionDialog(
+    //     source == ImageSource.camera ? 'Camera' : 'Photo Library',
+    //   );
+    //}
+    // else {
+    //   AppAlertUtils.showToast(message: 'Permission denied', isError: true);
+    // }
   }
 
-  void _showPermissionDialog(String resource) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: AppColors.fieldBgColor,
-        title: Text(
-          '$resource Permission Required',
-          style: AppStyles.customTextStyle(
-            color: AppColors.whiteColor,
-            size: 16,
-            weight: FontWeight.w600,
-          ),
-        ),
-        content: Text(
-          '$resource access is needed. Please enable it in your device Settings.',
-          style: AppStyles.customTextStyle(
-            color: AppColors.lightText,
-            size: 13,
-            weight: FontWeight.w400,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: AppStyles.customTextStyle(
-                color: AppColors.lightText,
-                size: 13,
-                weight: FontWeight.w500,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              openAppSettings();
-            },
-            child: Text(
-              'Open Settings',
-              style: AppStyles.customTextStyle(
-                color: AppColors.primaryColor,
-                size: 13,
-                weight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // void _showPermissionDialog(String resource) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (_) => AlertDialog(
+  //       backgroundColor: AppColors.fieldBgColor,
+  //       title: Text(
+  //         '$resource Permission Required',
+  //         style: AppStyles.customTextStyle(
+  //           color: AppColors.whiteColor,
+  //           size: 16,
+  //           weight: FontWeight.w600,
+  //         ),
+  //       ),
+  //       content: Text(
+  //         '$resource access is needed. Please enable it in your device Settings.',
+  //         style: AppStyles.customTextStyle(
+  //           color: AppColors.lightText,
+  //           size: 13,
+  //           weight: FontWeight.w400,
+  //         ),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Get.back(),
+  //           child: Text(
+  //             'Cancel',
+  //             style: AppStyles.customTextStyle(
+  //               color: AppColors.lightText,
+  //               size: 13,
+  //               weight: FontWeight.w500,
+  //             ),
+  //           ),
+  //         ),
+  //         TextButton(
+  //           onPressed: () {
+  //             Get.back();
+  //             openAppSettings();
+  //           },
+  //           child: Text(
+  //             'Open Settings',
+  //             style: AppStyles.customTextStyle(
+  //               color: AppColors.primaryColor,
+  //               size: 13,
+  //               weight: FontWeight.w600,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   void _showImageSourceSheet() {
     showModalBottomSheet(
@@ -858,7 +911,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'studmobileno': _mobileCtrl.text.trim(),
       'linkedIn': _linkedinCtrl.text.trim(),
       'github': _websiteCtrl.text.trim(),
-      //'isVerified': true,
+      //'isVerified': false,
       //"role": "Software Developer",
       //"templateNumber": "1",
       'portfolio_website': _websiteCtrl.text.trim(),
@@ -1112,171 +1165,263 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   //   );
   // }
 
-  void _eduSheet({String type = 'College'}) {
-    Map<String, dynamic>? existing;
-    if (type == 'College') existing = _collegeData;
-    if (type == 'Class XII') existing = _higherSecData;
-    if (type == 'Class X') existing = _secondaryData;
-
-    String selectedType = type;
-    String courseType = 'Full time';
-    // String? startYear = existing?['start_year'];
-    // String? endYear = existing?['end_year'];
-
-    final uniCtrl = TextEditingController(text: existing?['institution'] ?? '');
-    final courseCtrl = TextEditingController(text: existing?['degree'] ?? '');
-    final specCtrl = TextEditingController(text: existing?['department'] ?? '');
-    final gradeCtrl = TextEditingController(
-      text: existing?['percentage'] ?? '',
+  void _eduSheet() {
+    final collegeInstitutionCtrl = TextEditingController(
+      text: _collegeData?['institution'] ?? '',
     );
-    final years = List.generate(30, (i) => (2000 + i).toString());
-    String? startYear = existing?['start_year']?.toString();
-    String? endYear = existing?['end_year']?.toString();
+    final degreeCtrl = TextEditingController(
+      text: _collegeData?['degree'] ?? '',
+    );
+    final departmentCtrl = TextEditingController(
+      text: _collegeData?['department'] ?? '',
+    );
 
-    if (!years.contains(startYear)) startYear = null;
-    if (!years.contains(endYear)) endYear = null;
+    final higherInstitutionCtrl = TextEditingController(
+      text: _higherSecData?['institution'] ?? '',
+    );
+    final higherBoardCtrl = TextEditingController(
+      text: _higherSecData?['board'] ?? '',
+    );
+    final higherPercentageCtrl = TextEditingController(
+      text: _higherSecData?['percentage'] ?? '',
+    );
+
+    final secondaryInstitutionCtrl = TextEditingController(
+      text: _secondaryData?['institution'] ?? '',
+    );
+    final secondaryBoardCtrl = TextEditingController(
+      text: _secondaryData?['board'] ?? '',
+    );
+    final secondaryPercentageCtrl = TextEditingController(
+      text: _secondaryData?['percentage'] ?? '',
+    );
+
+    final years = List.generate(40, (index) => (2000 + index).toString());
+
+    String? collegeStartYear = _collegeData?['start_year']?.toString();
+
+    String? collegeEndYear = _collegeData?['end_year']?.toString();
+
+    String? higherYear = _higherSecData?['year']?.toString();
+
+    String? secondaryYear = _secondaryData?['year']?.toString();
 
     ProfileWidgets.showBottomSheet(
       context: context,
-      title: existing != null ? 'Edit Education' : 'Add Education',
+      title: 'Edit Education',
       content: StatefulBuilder(
-        builder: (ctx, setS) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 12,
-          children: [
-            Text(
-              'Education *',
-              style: AppStyles.customTextStyle(
-                color: AppColors.whiteColor,
-                size: 14,
-                weight: FontWeight.w500,
+        builder: (context, setS) {
+          return Column(
+            spacing: 10,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// COLLEGE
+              _sectionTitle(icon: "🎓", title: "College Education"),
+              const SizedBox(height: 5),
+              CustomTextField(
+                isProfileFlow: true,
+                controller: collegeInstitutionCtrl,
+                labelText: 'Institution',
+                onChanged: (_) {},
               ),
-            ),
-            ProfileWidgets.bsDropdown(
-              value: selectedType,
-              items: ['College', 'Class XII', 'Class X'],
-              onChanged: (v) => setS(() => selectedType = v!),
-            ),
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: uniCtrl,
-              labelText: 'University / School *',
-              onChanged: (_) {},
-            ),
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: courseCtrl,
-              labelText: 'Course *',
-              onChanged: (_) {},
-            ),
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: specCtrl,
-              labelText: 'Specialization',
-              onChanged: (_) {},
-            ),
-            Text(
-              'Course type',
-              style: AppStyles.customTextStyle(
-                color: AppColors.whiteColor,
-                size: 14,
-                weight: FontWeight.w500,
+              CustomTextField(
+                isProfileFlow: true,
+                controller: degreeCtrl,
+                isNumberKeyboard: false,
+                labelText: 'Degree',
+                onChanged: (_) {},
               ),
-            ),
-            Row(
-              children: ['Full time', 'Part time']
-                  .map(
-                    (t) => Row(
-                      children: [
-                        Radio<String>(
-                          value: t,
-                          groupValue: courseType,
-                          activeColor: AppColors.primaryColor,
-                          onChanged: (v) => setS(() => courseType = v!),
-                        ),
-                        Text(
-                          t,
-                          style: AppStyles.customTextStyle(
-                            fontFamily: 'Roboto',
-                            color: AppColors.whiteColor,
-                            size: 14,
-                            weight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                      ],
+              Row(
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: ProfileWidgets.bsDropdown(
+                      value: collegeStartYear,
+                      hint: 'Start Year',
+                      items: years,
+                      onChanged: (v) {
+                        setS(() {
+                          collegeStartYear = v;
+                        });
+                      },
                     ),
-                  )
-                  .toList(),
-            ),
-            Text(
-              'Course duration *',
-              style: AppStyles.customTextStyle(
-                color: AppColors.whiteColor,
-                size: 14,
-                weight: FontWeight.w500,
+                  ),
+                  Expanded(
+                    child: ProfileWidgets.bsDropdown(
+                      value: collegeEndYear,
+                      hint: 'End Year',
+                      items: years,
+                      onChanged: (v) {
+                        setS(() {
+                          collegeEndYear = v;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Row(
-              spacing: 10,
-              children: [
-                Expanded(
-                  child: ProfileWidgets.bsDropdown(
-                    value: startYear,
-                    hint: 'Starting year',
-                    items: years,
-                    onChanged: (v) => setS(() => startYear = v),
+              CustomTextField(
+                isProfileFlow: true,
+                isNumberKeyboard: false,
+                controller: departmentCtrl,
+                labelText: 'Department',
+                onChanged: (_) {},
+              ),
+
+              const SizedBox(height: 10),
+
+              /// HSC
+              _sectionTitle(icon: "📚", title: "Higher Secondary (12th)"),
+
+              const SizedBox(height: 5),
+
+              CustomTextField(
+                isProfileFlow: true,
+                controller: higherInstitutionCtrl,
+                labelText: 'Institution',
+                onChanged: (_) {},
+                isNumberKeyboard: false,
+              ),
+              CustomTextField(
+                isProfileFlow: true,
+                controller: higherBoardCtrl,
+                labelText: 'Board',
+                isNumberKeyboard: false,
+
+                onChanged: (_) {},
+              ),
+              Row(
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      isProfileFlow: true,
+                      controller: higherPercentageCtrl,
+                      labelText: 'Percentage / CGPA',
+                      onChanged: (_) {},
+                      isNumberKeyboard: false,
+                    ),
                   ),
-                ),
-                Text(
-                  'To',
-                  style: AppStyles.customTextStyle(
-                    color: AppColors.whiteColor,
-                    size: 14,
-                    weight: FontWeight.w500,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: ProfileWidgets.bsDropdown(
+                        value: higherYear,
+                        hint: 'Year of Passing',
+                        items: years,
+                        onChanged: (v) {
+                          setS(() {
+                            higherYear = v;
+                          });
+                        },
+                      ),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: ProfileWidgets.bsDropdown(
-                    value: endYear,
-                    hint: 'Ending year',
-                    items: years,
-                    onChanged: (v) => setS(() => endYear = v),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              /// SSLC
+              _sectionTitle(icon: "📗", title: "Secondary School (10th)"),
+
+              const SizedBox(height: 5),
+
+                  CustomTextField(
+                    isProfileFlow: true,
+                    controller: secondaryInstitutionCtrl,
+                    labelText: 'Institution',
+                    onChanged: (_) {},
+                    isNumberKeyboard: false,
+
                   ),
-                ),
-              ],
-            ),
-            CustomTextField(
-              isNumberKeyboard: false,
-              isProfileFlow: true,
-              controller: gradeCtrl,
-              labelText: 'Grade / Percentage',
-              onChanged: (_) {},
-            ),
-          ],
-        ),
+              CustomTextField(
+                isProfileFlow: true,
+                controller: secondaryBoardCtrl,
+                labelText: 'Board',
+                isNumberKeyboard: false,
+
+                onChanged: (_) {},
+              ),
+
+              Row(
+                spacing: 10,
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      isProfileFlow: true,
+                      controller: secondaryPercentageCtrl,
+                      labelText: 'Percentage / CGPA',
+                      onChanged: (_) {},
+                      isNumberKeyboard: false,
+
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: ProfileWidgets.bsDropdown(
+                        value: secondaryYear,
+                        hint: 'Year of Passing',
+                        items: years,
+                        onChanged: (v) {
+                          setS(() {
+                            secondaryYear = v;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       ),
+
       onSave: () {
-        final data = {
-          'institution': uniCtrl.text.trim(),
-          'degree': courseCtrl.text.trim(),
-          'department': specCtrl.text.trim(),
-          'percentage': gradeCtrl.text.trim(),
-          'start_year': startYear ?? '',
-          'end_year': endYear ?? '',
-          'year': endYear ?? '',
-          'board': specCtrl.text.trim(),
-        };
         setState(() {
-          if (selectedType == 'College') _collegeData = data;
-          if (selectedType == 'Class XII') _higherSecData = data;
-          if (selectedType == 'Class X') _secondaryData = data;
+          _collegeData = {
+            'institution': collegeInstitutionCtrl.text.trim(),
+            'degree': degreeCtrl.text.trim(),
+            'department': departmentCtrl.text.trim(),
+            'start_year': collegeStartYear ?? '',
+            'end_year': collegeEndYear ?? '',
+          };
+
+          _higherSecData = {
+            'institution': higherInstitutionCtrl.text.trim(),
+            'board': higherBoardCtrl.text.trim(),
+            'percentage': higherPercentageCtrl.text.trim(),
+            'year': higherYear ?? '',
+          };
+
+          _secondaryData = {
+            'institution': secondaryInstitutionCtrl.text.trim(),
+            'board': secondaryBoardCtrl.text.trim(),
+            'percentage': secondaryPercentageCtrl.text.trim(),
+            'year': secondaryYear ?? '',
+          };
         });
+
         Get.back();
       },
+    );
+  }
+
+  Widget _sectionTitle({required String icon, required String title}) {
+    return Row(
+      children: [
+        Text(icon, style: const TextStyle(fontSize: 18)),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: AppStyles.customTextStyle(
+            size: 15,
+            color: AppColors.primaryColor,
+            weight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 

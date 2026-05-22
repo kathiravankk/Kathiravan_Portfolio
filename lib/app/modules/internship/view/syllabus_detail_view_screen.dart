@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -62,7 +63,7 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
 
     if (internController.getResponseCode() == 200 ||
         internController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             internController.weeklyUpdateModel.message ??
             "Day $dayNumber Completed Successfully!",

@@ -624,7 +624,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             : CrossAxisAlignment.end,
         children: [
           Text(
-            isBot ? "Shark Bot" : "You",
+            isBot ? "Sharks Bot" : "You",
             style: AppStyles.customTextStyle(
               color: AppColors.chatTextColor,
               size: 12,
@@ -644,7 +644,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                     color: AppColors.primaryColor,
                     shape: BoxShape.circle,
                     image: DecorationImage(
-                      image: AssetImage(AssetImages.appIconImage),
+                      image: AssetImage(AssetImages.aiBotImage),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -697,7 +697,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
         children: [
           Text(
-            "Shark Bot",
+            "Sharks Bot",
             style: AppStyles.customTextStyle(
               color: AppColors.chatTextColor,
               size: 12,
@@ -737,7 +737,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                     ),
                   ),
                   child: Text(
-                    "Shark AI typing...",
+                    "Shark Bot typing...",
                     style: AppStyles.customTextStyle(
                       size: 14,
                       weight: FontWeight.w500,

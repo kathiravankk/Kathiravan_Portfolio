@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dotted_border/dotted_border.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
 import 'package:dio/dio.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -111,6 +112,11 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     );
 
     if (pickedFile == null) return null;
+
+    /// ✅ Store original filename
+    final originalFile = File(pickedFile.path);
+    final originalFileName = originalFile.path.split('/').last;
+
     final cropped = await ImageCropper().cropImage(
       sourcePath: pickedFile.path,
       aspectRatio: const CropAspectRatio(ratioX: 4, ratioY: 3),
@@ -128,7 +134,16 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
 
     if (cropped == null) return null;
 
-    return File(cropped.path);
+    /// ✅ Create new file path with ORIGINAL filename
+    final croppedFile = File(cropped.path);
+
+    final newPath =
+        '${croppedFile.parent.path}/$originalFileName';
+
+    /// ✅ Copy cropped image using original filename
+    final renamedFile = await croppedFile.copy(newPath);
+
+    return renamedFile;
   }
 
   // FULL IMAGE VIEW
@@ -188,10 +203,10 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           ),
           body: Obx(
             () => Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 spacing: 15,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Secure Your Account",
@@ -202,16 +217,15 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                     ),
                   ),
                   Text(
-                    "Please upload the required document \n to complete your KYC Verification!",
-                    textAlign: TextAlign.center,
+                    "Please upload the your required documents to complete your KYC Verification",
                     style: AppStyles.customTextStyle(
                       size: 14,
-                      color: AppColors.whiteColor,
+                      color: AppColors.lightColorText,
                       weight: FontWeight.w300,
-                      lineSpace: 1.3,
+                      lineSpace: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -219,7 +233,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                         //"Upload Your\nCollege ID Card & Aadhaar Card",
                         "Upload Your College ID Card",
                         style: AppStyles.customTextStyle(
-                          size: 18,
+                          size: 16,
                           color: AppColors.whiteColor,
                           weight: FontWeight.w700,
                           lineSpace: 1.5,
@@ -228,19 +242,18 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                     ],
                   ),
 
-                  Text(
-                    //"Kindly upload clear images of the front side of your College ID & Aadhaar card.",
-                    "Kindly upload clear image of the front side of your College ID.",
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w300,
-                      lineSpace: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
+                  // Text(
+                  //   //"Kindly upload clear images of the front side of your College ID & Aadhaar card.",
+                  //   "Kindly upload clear image of the front side of your College ID.",
+                  //   style: AppStyles.customTextStyle(
+                  //     size: 14,
+                  //     color: AppColors.whiteColor,
+                  //     weight: FontWeight.w300,
+                  //     lineSpace: 1.3,
+                  //   ),
+                  // ),
                   uploadBox(
-                    title: "Front side of College ID",
+                    title: "College ID",
                     file: collegeIdImg,
                     onSelect: () async {
                       File? f = await pickFromCameraGallery();
@@ -258,16 +271,18 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                   // ),
                   //const SizedBox(height: 40),
                   const Spacer(),
-                  CustomButtonWidget(
-                    width: 270,
-                    height: 45,
-                    isLoading: registerController.kycVerificationLoading,
-                    buttonFunction: () async {
-                      await updateKYC();
-                    },
-                    buttonText: "Submit",
-                    //disable: !(collegeIdImg != null && aadhaarImg != null),
-                    disable: !(collegeIdImg != null),
+                  Center(
+                    child: CustomButtonWidget(
+                      width: 300,
+                      height: 45,
+                      isLoading: registerController.kycVerificationLoading,
+                      buttonFunction: () async {
+                        await updateKYC();
+                      },
+                      buttonText: "Submit",
+                      //disable: !(collegeIdImg != null && aadhaarImg != null),
+                      disable: !(collegeIdImg != null),
+                    ),
                   ),
                   const SizedBox(height: 25),
                 ],
@@ -284,7 +299,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     //final studentId = await LocalStorageService.getStudentId();
 
     if (!collegeIdImg!.existsSync()) {
-      AppFunctions.showToast(message: "College ID image is required!");
+      AppAlertUtils.showToast(message: "College ID image is required!");
       return;
     }
 
@@ -339,7 +354,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                 registerController.kycUpdateModel.collegeName == "valid";
 
         if (isValid) {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message: "KYC details verified successfully!",
             isError: false,
           );
@@ -376,7 +391,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         AiLoadingWidget.hide(context);
 
         debugPrint("KYC error: $e");
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Something went wrong. Try again.",
           isError: true,
         );
@@ -389,67 +404,18 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     required File? file,
     required Function() onSelect,
   }) {
-    if (file == null) {
-      return GestureDetector(
-        onTap: onSelect,
-        child: DottedBorder(
-          color: AppColors.contBorderColor,
-          strokeWidth: 1.4,
-          borderType: BorderType.RRect,
-          radius: const Radius.circular(20),
-          dashPattern: const [8, 5],
-          child: Container(
-            width: double.infinity,
-            height: 180,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: const LinearGradient(
-                colors: [AppColors.contGradient1, AppColors.contGradient2],
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-              ),
-            ),
-            child: Column(
-              spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.cloud_upload_outlined,
-                  color: Colors.white,
-                  size: 50,
-                ),
-                Text(
-                  title,
-                  style: AppStyles.customTextStyle(
-                    size: 16,
-                    color: AppColors.primaryColor,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  "PNG, JPG, JPEG up to 10MB",
-                  style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: AppColors.whiteColor,
-                    weight: FontWeight.w300,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
     return GestureDetector(
-      onTap: () => openFullImage(file),
-      child: DottedBorder(
-        color: AppColors.contBorderColor,
-        strokeWidth: 1.4,
-        borderType: BorderType.RRect,
-        dashPattern: const [8, 5],
-        radius: const Radius.circular(20),
+      onTap: file == null ? onSelect : () => openFullImage(file),
+      child: CustomPaint(
+        painter: DashPainter(
+          color: AppColors.contBorderColor,
+          radius: 20,
+          dash: 8,
+          gap: 5,
+        ),
         child: Container(
-          height: 180,
+          width: double.infinity,
+          //height: 180,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: const LinearGradient(
@@ -458,77 +424,66 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
               end: Alignment.topRight,
             ),
           ),
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            spacing: 15,
-            children: [
-              Container(
-                width: 100,
-                height: 130,
-                decoration: BoxDecoration(
-                  color: AppColors.transparentColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.file(file, fit: BoxFit.cover),
-                ),
-              ),
-              // RIGHT SIDE TEXT + BUTTON
-              Expanded(
-                child: Column(
-                  spacing: 5,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.primaryColor,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                    // FILE NAME
-                    Text(
-                      file.path.split("/").last,
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w300,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    // FILE SIZE
-                    Text(
-                      "${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w300,
-                      ),
-                    ),
-
-                    const SizedBox(height: 15),
-
-                    CustomButtonWidget(
-                      width: 150,
-                      height: 40,
-                      buttonFunction: onSelect,
-                      buttonText: "Replace",
-                      bgColor: AppColors.secButtonColor,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+          child: file == null
+              ? _buildEmptyState(title)
+              : _buildFileState( file, onSelect),
         ),
       ),
     );
   }
+
+// Sub-widgets to keep the code clean
+  Widget _buildEmptyState(String title) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 10,
+      children: [
+        const Icon(Icons.cloud_upload_outlined, color: Colors.white, size: 50),
+        Text(title, style: AppStyles.customTextStyle(size: 16, color: AppColors.primaryColor, weight: FontWeight.w700)),
+        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
+        Text("* Please upload your clear image of your id card", style: AppStyles.customTextStyle(size: 10, color: AppColors.lightColorText, weight: FontWeight.w300)),
+      ],
+    );
+  }
+
+  Widget _buildFileState(
+      //String title,
+      File file, Function() onSelect) {
+    return Column(
+      children: [
+        Container(
+          height: 130,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: AppColors.lightWhiteCont
+          ),
+          child: Image.file(file,  fit: BoxFit.contain),
+        ),
+        const SizedBox(height: 15),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 10,
+          children: [
+            //Text(title, style: AppStyles.customTextStyle(size: 14, color: AppColors.primaryColor, weight: FontWeight.w700)),
+            Text(file.path.split("/").last, style: AppStyles.customTextStyle(size: 12, color: AppColors.primaryColor, weight: FontWeight.w300), maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text("${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
+            const SizedBox(height: 15),
+            CustomButtonWidget(
+              height: 40,
+              buttonFunction: onSelect,
+              buttonText: "Replace",
+              bgColor: AppColors.secButtonColor,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+
+
 
   // void showAlertDialog() {
   //   showDialog(
@@ -586,3 +541,48 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
   //   );
   // }
 }
+
+class DashPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double gap;
+  final double dash;
+  final double radius;
+
+  DashPainter({
+    this.color = Colors.grey,
+    this.strokeWidth = 1.4,
+    this.gap = 5.0,
+    this.dash = 8.0,
+    this.radius = 20.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final Path path = Path()
+      ..addRRect(RRect.fromLTRBR(0, 0, size.width, size.height, Radius.circular(radius)));
+
+    final Path dashPath = Path();
+
+    for (final PathMetric measure in path.computeMetrics()) {
+      double distance = 0.0;
+      while (distance < measure.length) {
+        dashPath.addPath(
+          measure.extractPath(distance, distance + dash),
+          Offset.zero,
+        );
+        distance += dash + gap;
+      }
+    }
+    canvas.drawPath(dashPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(DashPainter oldDelegate) => false;
+}
+

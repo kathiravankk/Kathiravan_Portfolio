@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
@@ -57,26 +58,30 @@ class _HomeDrawerState extends State<HomeDrawer> {
               Row(
                 spacing: 15,
                 children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundColor: AppColors.whiteColor,
-                    backgroundImage: NetworkImage(
-                      profileController.profileDataModel.studProfile ?? "",
-                      // fit: BoxFit.fill,
-                      // errorBuilder: (context, error, stackTrace) => Column(
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     Icon(Icons.photo_outlined),
-                      //     Text(
-                      //       "Error!",
-                      //       style: AppStyles.customTextStyle(
-                      //         size: 8,
-                      //         color: AppColors.failTextColor,
-                      //         weight: FontWeight.w300,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: isVerified!
+                        ? BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xFF00D9F5),
+                                Color(0xFF00F5A0),
+                                Color(0xFF0093B4),
+                                Color(0xFF00F5A0),
+                                Color(0xFF00D9F5),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          )
+                        : BoxDecoration(color: AppColors.transparentColor),
+                    child: CircleAvatar(
+                      radius: 25,
+                      backgroundColor: AppColors.whiteColor,
+                      backgroundImage: NetworkImage(
+                        profileController.profileDataModel.studProfile ?? "",
+                      ),
                     ),
                   ),
                   Column(
@@ -84,13 +89,27 @@ class _HomeDrawerState extends State<HomeDrawer> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 10,
                     children: [
-                      Text(
-                        profileController.profileDataModel.studentName ?? "",
-                        style: AppStyles.customTextStyle(
-                          size: 14,
-                          color: AppColors.secondaryColor,
-                          weight: FontWeight.w700,
-                        ),
+                      Row(
+                        spacing: 5,
+                        children: [
+                          Text(
+                            profileController.profileDataModel.studentName ??
+                                "",
+                            style: AppStyles.customTextStyle(
+                              size: 14,
+                              color: AppColors.secondaryColor,
+                              weight: FontWeight.w700,
+                            ),
+                          ),
+                          Visibility(
+                            visible: isVerified!,
+                            child: Icon(
+                              Icons.verified_sharp,
+                              color: AppColors.primaryColor,
+                              size: 20,
+                            ),
+                          ),
+                        ],
                       ),
                       Text(
                         profileController.profileDataModel.studEmail ?? "",
@@ -244,7 +263,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 title: "Logout",
                 onTap: () {
                   //showLogoutPopup(context);
-                  AppFunctions.showAppAlert(
+                  AppAlertUtils.showAppAlert(
                     context: context,
                     content: "Are you sure you want to logout?",
                     confirmText: "Confirm",

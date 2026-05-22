@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -186,7 +187,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                           // },
                           onChanged: (value) {
                             if (value.isNotEmpty && RegExp(r'^[0-5]').hasMatch(value)) {
-                              AppFunctions.showToast(
+                              AppAlertUtils.showToast(
                                 message: "Number must start from 6-9",
                                 isError: true,
                               );
@@ -699,7 +700,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     await registerController.registerNewStudent(registerData: registerData);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.studentRegisterModel.message ??
             "Student registered successfully!",
@@ -736,7 +737,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     final error = AppFunctions.validateIndianMobile(mobileController.text);
 
     if (error != null) {
-      AppFunctions.showToast(message: error, isError: true);
+      AppAlertUtils.showToast(message: error, isError: true);
       return;
     }
 
@@ -745,7 +746,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     );
 
     if (registerController.getResponseCode() == 200) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: registerController.sendMobileOtpModel.message ??
             "OTP sent to your mobile!",
         isError: false,
@@ -765,7 +766,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       otpNumber: mobileOtpController.text,
     );
     if (registerController.getResponseCode() == 200) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.verifyMobileOtpModel.message ??
             "OTP verified successfully!",
@@ -783,7 +784,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   Future<void> sendEmailOtp() async {
     await registerController.sendEmailOtp(emailAddress: emailController.text);
     if (registerController.getResponseCode() == 200) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.sendEmailOtpModel.message ??
             "OTP sent to your Email!",
@@ -804,7 +805,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       otpNumber: emailOtpController.text,
     );
     if (registerController.getResponseCode() == 200) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.verifyEmailOtpModel.message ??
             "OTP verified successfully!",
@@ -851,7 +852,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.fieldBgColor,
-        title: Image.asset(AssetImages.appLogoImage, height: 30, width: 30),
+        title: Image.asset(AssetImages.appAlertImage, height: 30, width: 30),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 15,

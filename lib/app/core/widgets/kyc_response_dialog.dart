@@ -106,7 +106,7 @@ class _KycResultDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(AssetImages.appIconImage, height: 30, width: 30),
+            Image.asset(AssetImages.appAlertImage, height: 30, width: 30),
 
             const SizedBox(height: 10),
             Text(

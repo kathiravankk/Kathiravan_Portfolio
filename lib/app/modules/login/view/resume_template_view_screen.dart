@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -38,7 +39,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        backgroundColor: AppColors.appBgColor,
+        backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
           backgroundColor: AppColors.transparentColor,
           elevation: 0,
@@ -91,7 +92,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
     await registerController.updateResumeProfileData(updateData: resumeData);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Resume updated successfully!",
         isError: false,
       );
@@ -101,7 +102,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
         arguments: {"activeStep": 2},
       );
     } else {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.updateProfileModel.message ??
             "Something went wrong!,Please try again later!",

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
@@ -39,13 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(20),
             child: Column(
               spacing: 10,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 150),
-                Image.asset(AssetImages.appIconImage, height: 100, width: 100),
+                const SizedBox(height: 100),
+                Image.asset(AssetImages.appLogoImage, height: 100, width: 250),
                 Text(
                   "Welcome!",
                   style: AppStyles.customTextStyle(
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final error = AppFunctions.validateIndianMobile(val);
 
                     if (error != null && val.length == 10) {
-                      AppFunctions.showToast(message: error, isError: true);
+                      AppAlertUtils.showToast(message: error, isError: true);
                     }
                   },
                 ),
@@ -170,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
-                          disable: loginController.loginVerifyLoading,
+                          disable: loginController.loginVerifyLoading || otpController.text.length != 4,
                         ),
                         const SizedBox(height: 10),
                       ],
@@ -231,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                        "If you’re new to Internshark, ",
+                        "If you’re new to Internsharks, ",
                         style: AppStyles.customTextStyle(
                           size: 15,
                           weight: FontWeight.w300,
@@ -275,24 +276,25 @@ class _LoginScreenState extends State<LoginScreen> {
     final error = AppFunctions.validateIndianMobile(mobileNumber);
 
     if (error != null) {
-      AppFunctions.showToast(message: error, isError: true);
+      AppAlertUtils.showToast(message: error, isError: true);
       return;
     }
 
     try {
+      otpController.text ="";
       await loginController.sendLoginOtp(mobileNumber: mobileNumber);
 
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
         if (loginController.commonPostModel.userType == "student") {
-          AppFunctions.showToast(
+          AppAlertUtils.showToast(
             message:
                 loginController.commonPostModel.message ??
                 "OTP successfully sent to your Mobile Number!",
             isError: false,
           );
         } else {
-          AppFunctions.showAppAlert(
+          AppAlertUtils.showAppAlert(
             context: context,
             content:
                 "Mobile Number already registered as Recruiter. Please use another Number.",
@@ -348,7 +350,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   .studentCreditId ??
               "",
         );
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message:
               loginController.studentRegisterModel.message ??
               "OTP verified successfully!",

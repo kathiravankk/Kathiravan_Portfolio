@@ -54,12 +54,13 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
       child: Scaffold(
         backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.whiteColor),
           backgroundColor: AppColors.appBgColor_2,
           elevation: 0,
           automaticallyImplyActions: false,
           centerTitle: true,
           title: Text(
-            "My Applies",
+            "My Application",
             style: AppStyles.customTextStyle(
               size: 18,
               color: AppColors.whiteColor,
@@ -79,7 +80,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                   separatorBuilder: (context, index) => SizedBox(height: 10),
                   itemCount: appliedList!.length,
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(16),
                   itemBuilder: (context, index) {
                     final item = appliedList![index];
                     return AppliesInternshipCard(
@@ -103,7 +104,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                       duration: item.jobData != null
                           ? item.jobData!.internshipDuration!.isNotEmpty &&
                                     item.jobData!.internshipDuration != null
-                                ? item.jobData!.internshipDuration
+                                ? "${item.jobData!.internshipDuration} Months"
                                 : "${item.jobData!.days} Days"
                           : "N/A",
                       // companyDescription: item.jobData != null

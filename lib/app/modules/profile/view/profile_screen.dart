@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -288,7 +289,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 .studentName ??
             "",
       );
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.updateProfileModel.message ??
             "Your profile updated successfully!",

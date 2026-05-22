@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -49,7 +50,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
         await verifyPaymentOrder(orderId);
       },
       (orderId, error) {
-        AppFunctions.showToast(
+        AppAlertUtils.showToast(
           message: "Payment failed: $error",
           isError: true,
         );
@@ -105,7 +106,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
                   separatorBuilder: (context, index) => SizedBox(height: 10),
                   itemCount: syllabusList!.length,
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(16),
                   itemBuilder: (context, index) {
                     final item = syllabusList![index];
                     return InternSyllabusCard(
@@ -139,7 +140,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
         internController.getResponseCode() == 201) {
       if (internController.paymentStatusModel.status == "pending") {
         if (mounted) {
-          AppFunctions.showPaymentRequiredDialog(
+          AppAlertUtils.showPaymentRequiredDialog(
             context: context,
             courseName: course!,
             amount: internController.paymentStatusModel.feeAmount.toString(),
@@ -201,7 +202,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
 
       cfPaymentGatewayService.doPayment(payment);
     } on CFException catch (e) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Payment error: ${e.message}",
         isError: true,
       );
@@ -215,7 +216,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
 
     if (internController.getResponseCode() == 200 ||
         internController.getResponseCode() == 201) {
-      AppFunctions.showToast(message: "Payment successful 🎉", isError: false);
+      AppAlertUtils.showToast(message: "Payment successful 🎉", isError: false);
       if (mounted) {
         AppFunctions.navigateScreen(
           context,
@@ -224,7 +225,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
         );
       }
     } else {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message: "Payment verification pending",
         isError: true,
       );

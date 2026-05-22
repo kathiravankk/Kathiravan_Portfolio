@@ -30,7 +30,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines= 1,
     this.width,
     this.prefixText,
-    this.maxLength = 1000,
+    this.maxLength = 3000,
     this.labelText = "",
     this.suffixWidget,
     this.prefixWidget,
@@ -52,7 +52,7 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: BoxConstraints(minHeight: 40),
+          constraints: BoxConstraints(minHeight: 55),
           width: width != null ? width! : double.maxFinite,
           child: TextField(
             maxLines: maxLines,
@@ -81,58 +81,83 @@ class CustomTextField extends StatelessWidget {
             autofocus: false,
             decoration: InputDecoration(
               focusColor: AppColors.primaryColor,
-              //suffix: suffixWidget ?? Text(""),
-              //prefix: prefixWidget ?? Text(""),
-              suffixIcon: suffixWidget ?? Text(""),
+
+              suffixIcon: suffixWidget,
+
               enabled: isEnabled,
               counterText: "",
               hintText: hintText,
+
               hintStyle: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
                 color: AppColors.greyColor,
                 size: 12,
                 weight: FontWeight.w200,
               ),
+
               filled: true,
               isDense: true,
+
               fillColor: isEnabled
                   ? AppColors.fieldBgColor
                   : isProfileFlow
                   ? AppColors.fieldBgColor
                   : AppColors.disableFieldColor,
-              //prefixText: "$prefixText  ",
-              prefixIcon:
-                  prefixWidget ??
-                  Padding(
-                    padding: EdgeInsetsGeometry.only(top: 15),
-                    child: Text(
-                      prefixText ?? "",
-                      textAlign: TextAlign.center,
-                      style: AppStyles.customTextStyle(
-                        fontFamily: "Roboto",
-                        color: AppColors.whiteColor,
-                        size: 14,
-                        weight: FontWeight.w500,
-                      ),
-                    ),
+
+              /// FIXED PREFIX
+              prefixIcon: prefixWidget ?? ((prefixText != null && prefixText!.isNotEmpty)
+                  ? Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: Text(
+                  prefixText!,
+                  textAlign: TextAlign.center,
+                  style: AppStyles.customTextStyle(
+                    fontFamily: "Roboto",
+                    color: AppColors.whiteColor,
+                    size: 14,
+                    weight: FontWeight.w500,
                   ),
+                ),
+              )
+                  : null),
+
+              /// IMPORTANT
+              prefixIconConstraints:
+              prefixWidget != null ||
+                  (prefixText != null && prefixText!.isNotEmpty)
+                  ? const BoxConstraints(
+                minWidth: 45,
+                minHeight: 45,
+              )
+                  : const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
+
               prefixStyle: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
                 color: AppColors.whiteColor,
                 size: 14,
                 weight: FontWeight.w500,
               ),
-              // constraints: BoxConstraints(
-              //   maxHeight: 50
-              // ),
-              contentPadding: EdgeInsetsGeometry.symmetric(
-                vertical: 18,
-                horizontal: 30,
+
+              /// DYNAMIC PADDING
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 22,
+                horizontal:
+                prefixWidget != null ||
+                    (prefixText != null && prefixText!.isNotEmpty)
+                    ? 10
+                    : 18,
               ),
+
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(color: AppColors.fieldBorderColor),
+                borderSide: const BorderSide(
+                  color: AppColors.fieldBorderColor,
+                ),
               ),
+
               disabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide(
@@ -141,13 +166,19 @@ class CustomTextField extends StatelessWidget {
                       : AppColors.disableBorderColor,
                 ),
               ),
+
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(color: AppColors.fieldBorderColor),
+                borderSide: const BorderSide(
+                  color: AppColors.fieldBorderColor,
+                ),
               ),
+
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: const BorderSide(color: AppColors.primaryColor),
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                ),
               ),
             ),
           ),

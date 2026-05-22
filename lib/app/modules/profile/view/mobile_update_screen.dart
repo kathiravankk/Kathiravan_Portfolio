@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -149,13 +150,13 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
                                 width: 300,
                                 buttonFunction: () {
                                   if (newMobileController.text.isEmpty) {
-                                    AppFunctions.showToast(
+                                    AppAlertUtils.showToast(
                                       message: 'Please enter a mobile number!',
                                       isError: true,
                                     );
                                   } else if (newMobileController.text ==
                                       currentMobileController.text) {
-                                    AppFunctions.showToast(
+                                    AppAlertUtils.showToast(
                                       message:
                                           'New number must be different from current!',
                                       isError: true,
@@ -174,7 +175,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
                                 buttonFunction: () {
                                   if (otpController.text.isEmpty ||
                                       otpController.text.length != 4) {
-                                    AppFunctions.showToast(
+                                    AppAlertUtils.showToast(
                                       message: "Please enter valid OTP!",
                                       isError: true,
                                     );
@@ -201,7 +202,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       isisOtpSent = true;
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.commonPostModel.message ??
             "OTP sent to your mobile number!",
@@ -221,7 +222,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
     );
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             profileController.commonPostModel.message ??
             "OTP Verified & Mobile updated successfully",
@@ -249,7 +250,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
       await LocalStorageService.saveUpdateStudent(
         student: registerController.updateProfileModel.profileUpdateData!,
       );
-      AppFunctions.showToast(
+      AppAlertUtils.showToast(
         message:
             registerController.updateProfileModel.message ??
             "Your Mobile updated successfully!",
