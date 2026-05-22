@@ -5,8 +5,10 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/full_pdf_viewer_screen.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
@@ -120,7 +122,7 @@ class _RegisterResumeReportScreenState
           context: context,
           title: "Are you sure? ⚠️",
           content:
-              "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
+          "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
 
           confirmText: "OK, Go Back",
           onConfirm: () {
@@ -148,40 +150,81 @@ class _RegisterResumeReportScreenState
             ),
           ),
           body: Obx(
-            () => registerController.resumeScoreLoading || registerController.studentDetailsLoading
+                () => registerController.resumeScoreLoading ||
+                registerController.studentDetailsLoading
                 ? Center(
-                    child: CupertinoActivityIndicator(
-                      color: AppColors.secondaryColor,
-                    ),
-                  )
-                : SingleChildScrollView(
-                    padding: EdgeInsets.all(15),
-                    child: Column(
-                      spacing: 15,
-                      children: [
-                        resumePreview(),
-                        buildScoreCard(),
-                        buildAllSections(),
-                        buildStrengthCard(
-                          isStrength: true,
-                          list: registerController
-                              .resumeAnalyzeModel
-                              .analysis!
-                              .strengths,
-                          title: "Strengths",
-                        ),
-                        buildStrengthCard(
-                          isStrength: false,
-                          list: registerController
-                              .resumeAnalyzeModel
-                              .analysis!
-                              .improvements,
-                          title: "Improvements",
-                        ),
-                        buildBottomButtons(),
-                      ],
-                    ),
+              child: CupertinoActivityIndicator(
+                color: AppColors.secondaryColor,
+              ),
+            )
+                : Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                            children: [
+                            /// 🔹 TOP STATIC
+                            Expanded(
+                            flex: 4,
+                              child: Column(
+                                children: [
+                  Expanded(
+                    child: resumePreview(),
                   ),
+
+                  const SizedBox(height: 12),
+
+                  buildScoreCard(),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 12),
+
+                            /// 🔹 BOTTOM SCROLLABLE
+                            Expanded(
+                              flex: 6,
+                              child: RefreshIndicator(
+                                onRefresh: () async {
+                  await getResumeScore();
+                                },
+                                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      buildAllSections(),
+
+                      buildStrengthCard(
+                        isStrength: true,
+                        list: registerController
+                            .resumeAnalyzeModel
+                            .analysis!
+                            .strengths,
+                        title: "Strengths",
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      buildStrengthCard(
+                        isStrength: false,
+                        list: registerController
+                            .resumeAnalyzeModel
+                            .analysis!
+                            .improvements,
+                        title: "Improvements",
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      buildBottomButtons(),
+
+                      const SizedBox(height: 30),
+                    ],
+                  ),
+                                ),
+                              ),
+                            ),
+                            ],
+                          ),
+                ),
           ),
         ),
       ),
@@ -189,26 +232,61 @@ class _RegisterResumeReportScreenState
   }
 
   Widget resumePreview() {
-    return Container(
-      height: 300,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(35),
-        color: Colors.white,
-      ),
-      clipBehavior: Clip.hardEdge,
-      child: networkResumePath == null || networkResumePath!.isEmpty
-          ? Center(
-              child: CupertinoActivityIndicator(
-                color: AppColors.secondaryColor,
-              ),
-            )
-          : SfPdfViewer.network(
+    return InkWell(
+      borderRadius: BorderRadius.circular(35),
+      onTap: () {
+        if (networkResumePath != null && networkResumePath!.isNotEmpty) {
+          Get.to(
+                () => FullPdfViewerScreen(
+              pdfUrl: networkResumePath!,
+              title: "Resume Preview",
+            ),
+          );
+        }
+      },
+      child: Container(
+        height: 250,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(35),
+          color: Colors.white,
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: networkResumePath == null || networkResumePath!.isEmpty
+            ? Center(
+          child: CupertinoActivityIndicator(
+            color: AppColors.secondaryColor,
+          ),
+        )
+            : Stack(
+          children: [
+            SfPdfViewer.network(
               networkResumePath ?? "",
               canShowScrollHead: false,
               canShowScrollStatus: false,
               enableDoubleTapZooming: false,
               pageLayoutMode: PdfPageLayoutMode.single,
             ),
+
+            /// Optional Preview Overlay
+            Positioned(
+              right: 15,
+              top: 15,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.fullscreen,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -329,28 +407,28 @@ class _RegisterResumeReportScreenState
             children: list
                 .map(
                   (e) => Row(
-                    spacing: 5,
-                    children: [
-                      Icon(
-                        Icons.star_outline,
-                        color: isStrength
-                            ? AppColors.correctText
-                            : AppColors.inCorrectText,
-                        size: 15,
-                      ),
-                      Expanded(
-                        child: Text(
-                          e,
-                          style: AppStyles.customTextStyle(
-                            size: 12,
-                            color: AppColors.whiteColor,
-                            weight: FontWeight.w300,
-                          ),
-                        ),
-                      ),
-                    ],
+                spacing: 5,
+                children: [
+                  Icon(
+                    Icons.star_outline,
+                    color: isStrength
+                        ? AppColors.correctText
+                        : AppColors.inCorrectText,
+                    size: 15,
                   ),
-                )
+                  Expanded(
+                    child: Text(
+                      e,
+                      style: AppStyles.customTextStyle(
+                        size: 12,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
                 .toList(),
           ),
         ],
@@ -406,6 +484,7 @@ class _RegisterResumeReportScreenState
           data.profileSummary!,
           style: AppStyles.customTextStyle(
             size: 12,
+            lineSpace: 1.4,
             color: Colors.white,
             weight: FontWeight.w600,
           ),
@@ -467,6 +546,7 @@ class _RegisterResumeReportScreenState
               subtitle,
               style: AppStyles.customTextStyle(
                 size: 12,
+                lineSpace: 1.4,
                 color: AppColors.whiteColor,
                 weight: FontWeight.w700,
               ),
@@ -542,7 +622,7 @@ class _RegisterResumeReportScreenState
           ],
         ),
         ...suggestions.map(
-          (s) => Row(
+              (s) => Row(
             children: [
               Checkbox(
                 activeColor: AppColors.primaryColor,
@@ -658,20 +738,49 @@ class _RegisterResumeReportScreenState
                   .updatedProfileSummary
                   .toString(),
             );
-            AppAlertUtils.showAppAlert(
-              context: context,
-              title: "Update Resume",
-              content:
-                  "Updating your resume will consume 50 credits. Are you sure you want to continue?",
-              onConfirm: () async {
-                await updateResumeFunc();
-              },
-              confirmText: "Confirm",
-              cancelText: "Cancel",
-            );
+            // AppAlertUtils.showAppAlert(
+            //   context: context,
+            //   title: "Update Resume",
+            //   content:
+            //       "Updating your resume will consume 50 credits. Are you sure you want to continue?",
+            //   onConfirm: () async {
+            //     await updateResumeFunc();
+            //   },
+            //   confirmText: "Confirm",
+            //   cancelText: "Cancel",
+            // );
+            await updateResumeFunc();
           },
           isLoading: registerController.updateResumeLoading,
-          buttonText: "Update",
+          buttonText: "Update (🪙50)",
+          buttonWidget: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Apply Now - ",
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w500,
+                  fontFamily: "Roboto",
+                ),
+              ),
+              Text(
+                "20",
+                style: AppStyles.customTextStyle(
+                  size: 16,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w500,
+                  fontFamily: "Roboto",
+                ),
+              ),
+              Image.asset(
+                AssetImages.creditsIconNew,
+                height: 22,
+                width: 22,
+              ),
+            ],
+          ),
         ),
         CustomButtonWidget(
           bgColor: AppColors.transparentColor,
@@ -700,7 +809,7 @@ class _RegisterResumeReportScreenState
         message: "Resume updated successfully!",
         isError: false,
       );
-      if(mounted) {
+      if (mounted) {
         AppFunctions.navigateScreen(
           context,
           AppRoutes.stepUpdateScreen,
@@ -710,7 +819,7 @@ class _RegisterResumeReportScreenState
     } else {
       AppAlertUtils.showToast(
         message:
-            registerController.updateProfileModel.message ??
+        registerController.updateProfileModel.message ??
             "Something went wrong!,Please try again later!",
         isError: true,
       );
@@ -722,10 +831,7 @@ class _RegisterResumeReportScreenState
 
     try {
       /// ✅ show loader
-      AiLoadingWidget.show(
-        context,
-        type: LoadingDialogType.enhanceResume,
-      );
+      AiLoadingWidget.show(context, type: LoadingDialogType.enhanceResume);
 
       await Future.delayed(const Duration(milliseconds: 100));
 
@@ -735,7 +841,6 @@ class _RegisterResumeReportScreenState
 
       if ((registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201)) {
-
         /// ✅ close loader BEFORE navigation
         if (Get.isDialogOpen ?? false) {
           if (mounted) {
@@ -752,9 +857,7 @@ class _RegisterResumeReportScreenState
         AppFunctions.navigateScreen(
           context,
           AppRoutes.chatResumeTemplateScreen,
-          arguments: {
-            "resumeData": registerController.extractedResumeModel,
-          },
+          arguments: {"resumeData": registerController.extractedResumeModel},
         );
 
         return;
@@ -796,7 +899,7 @@ class _RegisterResumeReportScreenState
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Total Score",
+            "ATS Score : ",
             style: AppStyles.customTextStyle(
               size: 20,
               color: AppColors.secondaryColor,
@@ -808,7 +911,7 @@ class _RegisterResumeReportScreenState
                 ? "${registerController.resumeAnalyzeModel.analysis!.overallScore ?? "0.0"} / 10"
                 : "0.0 / 10",
             style: AppStyles.customTextStyle(
-              size: 30,
+              size: 25,
               color: AppColors.whiteColor,
               weight: FontWeight.w700,
             ),

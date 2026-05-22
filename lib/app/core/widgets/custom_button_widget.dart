@@ -13,6 +13,7 @@ class CustomButtonWidget extends StatelessWidget {
   final bool isLoading;
   final Color bgColor;
   final TextStyle? buttonTextStyle;
+  final Widget? buttonWidget;
 
   const CustomButtonWidget({
     super.key,
@@ -25,6 +26,7 @@ class CustomButtonWidget extends StatelessWidget {
     this.isLoading = false,
     this.bgColor = AppColors.primaryColor,
     this.buttonTextStyle,
+    this.buttonWidget,
   });
 
   @override
@@ -43,7 +45,11 @@ class CustomButtonWidget extends StatelessWidget {
           maximumSize: WidgetStatePropertyAll(Size(double.infinity, 40)),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: disable ? AppColors.transparentColor :AppColors.primaryColor
+              side: BorderSide(
+                width: 1,
+                color: disable
+                    ? AppColors.transparentColor
+                    : AppColors.primaryColor,
               ),
               borderRadius: BorderRadius.all(Radius.circular(25)),
             ),
@@ -55,24 +61,25 @@ class CustomButtonWidget extends StatelessWidget {
                 width: 20,
                 child: CupertinoActivityIndicator(color: AppColors.whiteColor),
               )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buttonIcon ?? Container(),
-                  SizedBox(width: buttonIcon != null ? 5 : 0),
-                  Text(
-                    buttonText,
-                    style:
-                        buttonTextStyle ??
-                        AppStyles.customTextStyle(
-                          size: 16,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w500,
-                          fontFamily: "Roboto",
-                        ),
+            : buttonWidget ??
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      buttonIcon ?? Container(),
+                      SizedBox(width: buttonIcon != null ? 5 : 0),
+                      Text(
+                        buttonText,
+                        style:
+                            buttonTextStyle ??
+                            AppStyles.customTextStyle(
+                              size: 16,
+                              color: AppColors.whiteColor,
+                              weight: FontWeight.w500,
+                              fontFamily: "Roboto",
+                            ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
       ),
     );
   }

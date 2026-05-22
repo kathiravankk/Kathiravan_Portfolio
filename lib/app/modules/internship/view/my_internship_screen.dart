@@ -106,7 +106,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
                   separatorBuilder: (context, index) => SizedBox(height: 10),
                   itemCount: syllabusList!.length,
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(16),
                   itemBuilder: (context, index) {
                     final item = syllabusList![index];
                     return InternSyllabusCard(

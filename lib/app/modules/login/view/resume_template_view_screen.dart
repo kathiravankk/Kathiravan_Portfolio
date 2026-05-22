@@ -39,7 +39,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        backgroundColor: AppColors.appBgColor,
+        backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
           backgroundColor: AppColors.transparentColor,
           elevation: 0,

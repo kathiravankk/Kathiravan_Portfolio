@@ -281,6 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     try {
+      otpController.text ="";
       await loginController.sendLoginOtp(mobileNumber: mobileNumber);
 
       if (loginController.getResponseCode() == 200 ||
