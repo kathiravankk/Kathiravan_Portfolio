@@ -370,12 +370,12 @@ class _RegisterResumeReportScreenState
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: isStrength! ? AppColors.correctBg : AppColors.inCorrectBg,
+        color: isStrength! ? AppColors.correctBg : AppColors.contLightColor,
         borderRadius: BorderRadius.circular(25),
         border: Border.all(
           color: isStrength
               ? AppColors.correctBorder
-              : AppColors.inCorrectBorder,
+              : AppColors.secondaryColor,
         ),
       ),
       padding: EdgeInsets.all(15),
@@ -399,7 +399,7 @@ class _RegisterResumeReportScreenState
                     : CupertinoIcons.arrow_down_left_square,
                 color: isStrength
                     ? AppColors.correctText
-                    : AppColors.inCorrectText,
+                    : AppColors.secondaryColor,
                 size: 20,
               ),
             ],
@@ -415,7 +415,7 @@ class _RegisterResumeReportScreenState
                     Icons.star_outline,
                     color: isStrength
                         ? AppColors.correctText
-                        : AppColors.inCorrectText,
+                        : AppColors.secondaryColor,
                     size: 15,
                   ),
                   Expanded(

@@ -91,7 +91,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
 
               // ── Privacy Policy & Terms ────────────────────────────────────
               Text(
-                "Privacy Policy and Terms & Conditions",
+                "Support & Legal",
                 style: AppStyles.customTextStyle(
                   color: AppColors.whiteColor,
                   size: 16,

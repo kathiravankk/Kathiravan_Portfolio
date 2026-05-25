@@ -116,15 +116,15 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   backgroundColor: AppColors.transparentColor,
                   elevation: 0,
                   leading: IconButton(
-                    icon: const Icon(
-                      Icons.menu_sharp,
+                    icon:  Icon(
+                      CupertinoIcons.list_bullet,
                       size: 30,
                       color: Colors.white,
                     ),
                     onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                   ),
                   title: Text(
-                    "Welcome ${profileController.profileDataModel.studentName ?? "User"}!",
+                    "Hi ${profileController.profileDataModel.studentName ?? "User"}!",
                     style: AppStyles.customTextStyle(
                       size: 17,
                       color: AppColors.secondaryColor,
@@ -179,7 +179,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 ),
                 body: SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 10,
@@ -555,8 +555,10 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                           .categoryList![index]
                           .categoryName ??
                       "",
+                  textAlign: TextAlign.center,
                   style: AppStyles.customTextStyle(
                     size: 10,
+                    lineSpace: 1.3,
                     color: AppColors.primaryColor,
                     weight: FontWeight.w700,
                   ),
