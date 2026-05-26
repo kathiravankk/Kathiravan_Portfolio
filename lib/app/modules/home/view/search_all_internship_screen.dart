@@ -222,7 +222,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           spacing: 10,
           children: [

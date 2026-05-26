@@ -80,7 +80,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                   separatorBuilder: (context, index) => SizedBox(height: 10),
                   itemCount: appliedList!.length,
                   shrinkWrap: true,
-                  padding: EdgeInsets.all(16),
+                  padding: EdgeInsets.all(20),
                   itemBuilder: (context, index) {
                     final item = appliedList![index];
                     return AppliesInternshipCard(

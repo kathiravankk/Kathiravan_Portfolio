@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -210,10 +211,11 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
               ),
             )
           : Scaffold(
-              backgroundColor: AppColors.appBgColor_2,
+            resizeToAvoidBottomInset: true,
+            backgroundColor: AppColors.appBgColor_2,
               appBar: _buildAppBar(),
               body: ListView(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(20),
                 children: syllabus?.isMonthBased == true
                     ? _buildMonthSections()
                     : _buildDaySections(),
@@ -780,69 +782,242 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
     );
   }
 
+  bool isEditingProject = false;
+
   Widget _projectSubmissionCard() {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: AppColors.contColor2,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.contBorderColor2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final bool hasUrl = projectController.text.trim().isNotEmpty;
+
+    return StatefulBuilder(
+      builder: (context, setLocalState) {
+        return Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            color: AppColors.contColor2,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.contBorderColor2),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Project Submission",
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w300,
-                ),
+              /// HEADER
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Project Submission",
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w300,
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      /// COPY ICON
+                      if (hasUrl)
+                        GestureDetector(
+                          onTap: () async {
+                            await Clipboard.setData(
+                              ClipboardData(
+                                text: projectController.text.trim(),
+                              ),
+                            );
+
+                            AppAlertUtils.showToast(
+                              message: "Project URL copied!",
+                              isError: false,
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.disableContColor,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: AppColors.disableContBorder,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.copy_rounded,
+                              size: 16,
+                              color: AppColors.whiteColor,
+                            ),
+                          ),
+                        ),
+
+                      /// EDIT ICON
+                      if (isProjectSubmitted)
+                        GestureDetector(
+                          onTap: () {
+                            setLocalState(() {
+                              isEditingProject = true;
+                              isProjectSubmitted = false;
+                            });
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.disableContColor,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: AppColors.disableContBorder,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.edit_outlined,
+                              size: 16,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ),
+
+                      /// STATUS
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: AppColors.disableContBorder,
+                          ),
+                          color: AppColors.disableContColor,
+                        ),
+                        padding: const EdgeInsets.all(5),
+                        child: Text(
+                          isProjectSubmitted ? "Submitted!" : "Not Submitted!",
+                          style: AppStyles.customTextStyle(
+                            size: 10,
+                            color: isProjectSubmitted
+                                ? AppColors.primaryColor
+                                : AppColors.lightTextColor,
+                            weight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: AppColors.disableContBorder),
-                  color: AppColors.disableContColor,
+
+              const SizedBox(height: 15),
+
+              /// URL FIELD
+              CustomTextField(
+                maxLines: 2,
+                isNumberKeyboard: false,
+                prefixWidget: const Icon(
+                  Icons.assignment_outlined,
+                  color: AppColors.primaryColor,
                 ),
-                padding: const EdgeInsets.all(5),
-                child: Text(
-                  isProjectSubmitted ? "Submitted!" : "Not Submitted!",
-                  style: AppStyles.customTextStyle(
-                    size: 10,
-                    color: isProjectSubmitted
-                        ? AppColors.primaryColor
-                        : AppColors.lightTextColor,
-                    weight: FontWeight.w300,
+                controller: projectController,
+
+                /// DISABLE AFTER SUBMIT
+                isEnabled:
+                    canSubmitProject &&
+                    (!isProjectSubmitted || isEditingProject),
+
+                hintText: "Paste your GitHub / Drive / Live URL here..",
+
+                onChanged: (value) {
+                  setLocalState(() {});
+                },
+
+                suffixWidget: hasUrl
+                    ? GestureDetector(
+                        onTap: () async {
+                          await Clipboard.setData(
+                            ClipboardData(text: projectController.text.trim()),
+                          );
+
+                          AppAlertUtils.showToast(
+                            message: "Copied successfully!",
+                            isError: false,
+                          );
+                        },
+                        child: const Icon(
+                          Icons.copy,
+                          size: 20,
+                          color: AppColors.primaryColor,
+                        ),
+                      )
+                    : null,
+              ),
+
+              const SizedBox(height: 8),
+
+              /// URL VALIDATION MESSAGE
+              if (projectController.text.trim().isNotEmpty &&
+                  !Uri.tryParse(projectController.text.trim())!.hasAbsolutePath)
+                Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: Text(
+                    "Please enter a valid project URL",
+                    style: AppStyles.customTextStyle(
+                      size: 11,
+                      color: AppColors.failTextColor,
+                      weight: FontWeight.w400,
+                    ),
                   ),
                 ),
+
+              const SizedBox(height: 15),
+
+              /// SUBMIT BUTTON
+              CustomButtonWidget(
+                height: 35,
+                isLoading: internController.weeklyUpdateLoading,
+
+                buttonFunction: () async {
+                  final url = projectController.text.trim();
+
+                  /// EMPTY VALIDATION
+                  if (url.isEmpty) {
+                    AppAlertUtils.showToast(
+                      message: "Please enter project URL",
+                      isError: true,
+                    );
+                    return;
+                  }
+
+                  /// URL VALIDATION
+                  final uri = Uri.tryParse(url);
+
+                  if (uri == null ||
+                      !(uri.isScheme("http") || uri.isScheme("https"))) {
+                    AppAlertUtils.showToast(
+                      message: "Please enter valid URL",
+                      isError: true,
+                    );
+                    return;
+                  }
+
+                  await _submitProject();
+
+                  /// AFTER SUCCESS
+                  if (internController.getResponseCode() == 200 ||
+                      internController.getResponseCode() == 201) {
+                    setLocalState(() {
+                      isProjectSubmitted = true;
+                      isEditingProject = false;
+                    });
+                  }
+                },
+
+                buttonText: isProjectSubmitted && !isEditingProject
+                    ? "Submitted!"
+                    : isEditingProject
+                    ? "Re-Submit URL"
+                    : "Submit URL",
+
+                disable:
+                    !canSubmitProject ||
+                    (isProjectSubmitted && !isEditingProject),
               ),
             ],
           ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            prefixWidget: const Icon(
-              Icons.assignment_outlined,
-              color: AppColors.primaryColor,
-            ),
-            controller: projectController,
-            isEnabled: canSubmitProject,
-            hintText: "Paste your project url here..",
-            onChanged: (value) => projectController.text = value,
-          ),
-          const SizedBox(height: 10),
-          CustomButtonWidget(
-            height: 35,
-            isLoading: internController.weeklyUpdateLoading,
-            buttonFunction: () async => await _submitProject(),
-            buttonText: "Submit URL",
-            disable: !canSubmitProject,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

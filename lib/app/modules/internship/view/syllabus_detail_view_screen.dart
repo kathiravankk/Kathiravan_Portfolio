@@ -160,7 +160,7 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               // ── Scrollable content ──────────────

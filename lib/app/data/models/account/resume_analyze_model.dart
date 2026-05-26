@@ -298,7 +298,7 @@ class ExtractedResumeDataModel {
     return {
       "personal_info": jsonEncode(personalInfo?.toJson()),
 
-      "profile_summary": profileSummary,
+      "profile_summary": profileSummary ?? "",
 
       "skills": jsonEncode(skills ?? []),
       "projects": jsonEncode(projects?.map((e) => e.toJson()).toList() ?? []),

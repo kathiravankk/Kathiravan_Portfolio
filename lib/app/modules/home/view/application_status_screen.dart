@@ -122,9 +122,9 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blackColor,
+      backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
-        backgroundColor: AppColors.blackColor,
+        backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
@@ -140,7 +140,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
               )
             : SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     spacing: 15,
                     crossAxisAlignment: CrossAxisAlignment.start,

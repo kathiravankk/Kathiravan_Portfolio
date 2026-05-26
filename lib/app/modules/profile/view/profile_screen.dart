@@ -127,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 body: Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(20),
                   child: SingleChildScrollView(
                     child: Column(
                       spacing: 20,

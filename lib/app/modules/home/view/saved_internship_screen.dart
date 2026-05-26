@@ -87,7 +87,7 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
               ? Stack(
                   children: [
                     ListView.separated(
-                      padding: EdgeInsets.all(15),
+                      padding: EdgeInsets.all(20),
                       shrinkWrap: true,
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 10),

@@ -19,6 +19,7 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixWidget;
   final Widget? prefixWidget;
   final void Function(String)? onChanged;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     super.key,
@@ -35,6 +36,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixWidget,
     this.prefixWidget,
     this.isProfileFlow = false,
+    this.validator,
   });
 
   @override
@@ -54,7 +56,8 @@ class CustomTextField extends StatelessWidget {
         Container(
           constraints: BoxConstraints(minHeight: 55),
           width: width != null ? width! : double.maxFinite,
-          child: TextField(
+          child: TextFormField(
+            validator: validator,
             maxLines: maxLines,
             controller: controller,
             onChanged: onChanged,

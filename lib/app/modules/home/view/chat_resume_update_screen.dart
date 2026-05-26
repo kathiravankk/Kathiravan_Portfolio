@@ -453,7 +453,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             : Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
                         Expanded(

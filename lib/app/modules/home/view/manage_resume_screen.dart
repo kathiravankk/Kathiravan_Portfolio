@@ -63,7 +63,7 @@ class _ManageResumeScreenState extends State<ManageResumeScreen> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(20),
           child: Column(
             spacing: 15,
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
@@ -203,15 +204,15 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           ),
           body: Obx(
             () => Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
-                spacing: 15,
+                spacing: 20,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Secure Your Account",
                     style: AppStyles.customTextStyle(
-                      size: 16,
+                      size: 24,
                       color: AppColors.secondaryColor,
                       weight: FontWeight.w700,
                     ),
@@ -233,7 +234,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                         //"Upload Your\nCollege ID Card & Aadhaar Card",
                         "Upload Your College ID Card",
                         style: AppStyles.customTextStyle(
-                          size: 16,
+                          size: 18,
                           color: AppColors.whiteColor,
                           weight: FontWeight.w700,
                           lineSpace: 1.5,
@@ -274,7 +275,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                   Center(
                     child: CustomButtonWidget(
                       width: 300,
-                      height: 45,
+                      height: 50,
                       isLoading: registerController.kycVerificationLoading,
                       buttonFunction: () async {
                         await updateKYC();
@@ -448,12 +449,12 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
   Widget _buildEmptyState(String title) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 10,
+      spacing: 15,
       children: [
-        const Icon(Icons.cloud_upload_outlined, color: Colors.white, size: 50),
-        Text(title, style: AppStyles.customTextStyle(size: 16, color: AppColors.primaryColor, weight: FontWeight.w700)),
-        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
-        Text("* Please upload your clear image of your id card", style: AppStyles.customTextStyle(size: 10, color: AppColors.lightColorText, weight: FontWeight.w300)),
+         Icon(CupertinoIcons.cloud_upload, color: Colors.white, size: 100),
+        Text(title, style: AppStyles.customTextStyle(size: 18, color: AppColors.primaryColor, weight: FontWeight.w700)),
+        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 14, color: AppColors.lightColorText, weight: FontWeight.w300)),
+        Text("* Please upload your clear image of your id card", style: AppStyles.customTextStyle(size: 12, color: AppColors.lightColorText, weight: FontWeight.w300)),
       ],
     );
   }
@@ -482,7 +483,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
             Text("${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
             const SizedBox(height: 15),
             CustomButtonWidget(
-              height: 40,
+              height: 45,
               buttonFunction: onSelect,
               buttonText: "Replace",
               bgColor: AppColors.secButtonColor,

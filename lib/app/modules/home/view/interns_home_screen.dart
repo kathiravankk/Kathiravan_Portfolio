@@ -113,7 +113,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 drawer: HomeDrawer(),
                 backgroundColor: AppColors.appBgColor_2,
                 appBar: AppBar(
-                  backgroundColor: AppColors.transparentColor,
+                  backgroundColor: AppColors.appBgColor_2,
                   elevation: 0,
                   leading: IconButton(
                     icon:  Icon(

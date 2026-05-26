@@ -49,9 +49,9 @@ class _RecommentedInternshipScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blackColor,
+      backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
-        backgroundColor: AppColors.blackColor,
+        backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
@@ -77,7 +77,7 @@ class _RecommentedInternshipScreenState
             ? Stack(
                 children: [
                   ListView.separated(
-                    padding: EdgeInsets.all(15),
+                    padding: EdgeInsets.all(20),
                     shrinkWrap: true,
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     itemCount: dashboardController

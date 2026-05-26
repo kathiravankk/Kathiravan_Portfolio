@@ -314,7 +314,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 15,

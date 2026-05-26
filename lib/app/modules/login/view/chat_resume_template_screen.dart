@@ -259,7 +259,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   Widget build(BuildContext context) {
     final template = templates[currentTemplateIndex];
 
-    return Scaffold(
+    return Obx(()=>Scaffold(
       backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
         backgroundColor: AppColors.appBgColor_2,
@@ -297,15 +297,14 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
           const SizedBox(width: 10),
         ],
       ),
-      body: Obx(
-        () => registerController.studentDetailsLoading
+      body: registerController.studentDetailsLoading
             ? Center(
                 child: CupertinoActivityIndicator(
                   color: AppColors.secondaryColor,
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   spacing: 15,
                   children: [
@@ -386,7 +385,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                               await updateResumeFunc();
                             },
                             buttonText: "CONTINUE",
-                            bgColor: AppColors.appBgColor_2,
+                            bgColor: AppColors.primaryColor,
                           ),
                         ],
                       ),
@@ -394,8 +393,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                   ],
                 ),
               ),
-      ),
-    );
+    ));
   }
 
   Widget actionBar({required ResumeTemplateModel template}) {

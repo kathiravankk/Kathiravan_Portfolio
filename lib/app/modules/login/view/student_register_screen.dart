@@ -103,31 +103,39 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(20),
           child: SingleChildScrollView(
             child: Column(
               spacing: 15,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildHeader(),
+                //buildHeader(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(AssetImages.appLogoImage,  height: 100, width: 200,),
+                ],
+              ),
                 Text(
-                  "Let's get you\n\nVerified",
+                  "Let's get you\nVerified!",
                   style: AppStyles.customTextStyle(
-                    size: 20,
+                    size: 22,
+                    lineSpace: 1.4,
                     color: AppColors.secondaryColor,
                     weight: FontWeight.w700,
                   ),
                 ),
 
                 Text(
-                  "Complete the steps below to secure your \n\nIdentity",
+                  "Complete the steps below to secure your \nIdentity.",
                   style: AppStyles.customTextStyle(
-                    size: 12,
-                    color: AppColors.whiteColor,
+                    size: 14,
+                    lineSpace: 1.4,
+                    color: AppColors.lightText,
                     weight: FontWeight.w300,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 5),
                 CustomTextField(
                   controller: nameController,
                   labelText: "Name",
@@ -208,6 +216,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         visible: !isVerified,
                         child: Expanded(
                           child: CustomButtonWidget(
+                            height: 50,
                             disable: seconds > 0,
                             buttonText: text,
                             isLoading: registerController.sendMobileOtpLoading,
@@ -248,6 +257,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                       Expanded(
                         child: CustomButtonWidget(
                           width: 140,
+                          height: 50,
                           buttonText: registerController.isMobileVerified.value
                               ? "Verified"
                               : "Verify OTP",
@@ -316,6 +326,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                         visible: !isVerified,
                         child: Expanded(
                           child: CustomButtonWidget(
+                            height: 50,
                             disable: seconds > 0,
                             buttonText: text,
                             isLoading: registerController.sendEmailOtpLoading,
@@ -356,6 +367,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                       ),
                       Expanded(
                         child: CustomButtonWidget(
+                          height: 50,
                           width: 140,
                           buttonText: registerController.isEmailVerified.value
                               ? "Verified"
@@ -373,16 +385,17 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                     ],
                   );
                 }),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Text(
                   "🚀 Register Now & Get 200 FREE Credits 🎁",
                   textAlign: TextAlign.center,
                   style: AppStyles.customTextStyle(
                     size: 18,
                     color: AppColors.secondaryColor,
-                    weight: FontWeight.w700,
+                    weight: FontWeight.w500,
                   ),
                 ),
+                const SizedBox(height: 5,),
                 Obx(() {
                   final enabled =
                       registerController.isMobileVerified.value &&
@@ -390,6 +403,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
                   return Center(
                     child: CustomButtonWidget(
+                      height: 50,
                       width: 320,
                       buttonText: "Continue to Register",
                       disable: !enabled,
@@ -830,7 +844,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("assets/images/app_logo.png"),
+              image: AssetImage(AssetImages.appLogoImage),
             ),
           ),
         ),

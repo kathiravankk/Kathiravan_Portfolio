@@ -45,7 +45,7 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
       ),
       body: Obx(
         () => Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(20),
           child: Column(
             spacing: 15,
             crossAxisAlignment: CrossAxisAlignment.start,

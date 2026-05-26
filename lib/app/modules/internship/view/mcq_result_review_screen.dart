@@ -81,7 +81,7 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
         body: Obx(
           () => SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 spacing: 20,
                 children: [

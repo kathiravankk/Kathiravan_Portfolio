@@ -150,8 +150,8 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 24 : 16,
-              vertical: 10,
+              horizontal: isTablet ? 24 : 20,
+              vertical: 20,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

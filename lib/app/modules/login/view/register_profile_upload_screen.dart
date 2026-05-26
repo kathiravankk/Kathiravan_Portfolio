@@ -111,9 +111,9 @@ class _RegisterProfileUploadScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.appColor,
+      backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -131,7 +131,6 @@ class _RegisterProfileUploadScreenState
             weight: FontWeight.w600,
           ),
         ),
-        centerTitle: true,
         actions: [
           if (controller != null && controller!.value.isInitialized)
             IconButton(
@@ -152,202 +151,198 @@ class _RegisterProfileUploadScreenState
           const SizedBox(width: 10),
         ],
       ),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          width: double.infinity,
-          height: double.infinity,
-          child: Column(
-            spacing: 15,
-            children: [
-              Text(
-                "Ready for your close-up? A great photo \n helps you stand out!",
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  color: AppColors.whiteColor,
-                  size: 16,
-                  lineSpace: 1.4,
-                  weight: FontWeight.w400,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          spacing: 15,
+          children: [
+            Text(
+              "Ready for your close-up? A great photo \n helps you stand out!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                color: AppColors.whiteColor,
+                size: 16,
+                lineSpace: 1.4,
+                weight: FontWeight.w400,
               ),
+            ),
 
-              const SizedBox(height: 10),
-              // Camera Preview with Enhanced Frame
-              Expanded(
-                child: Center(
-                  child: AspectRatio(
-                    aspectRatio: 3 / 4,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primaryColor.withValues(
-                              alpha: 0.3,
-                            ),
-                            blurRadius: 30,
-                            spreadRadius: 5,
+            const SizedBox(height: 10),
+            // Camera Preview with Enhanced Frame
+            Expanded(
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: 3 / 4,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryColor.withValues(
+                            alpha: 0.3,
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
-                        child: Stack(
-                          children: [
-                            // Camera Preview
-                            if (controller == null ||
-                                !controller!.value.isInitialized)
-                              Container(
-                                color: AppColors.blackGradient1,
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                              )
-                            else
-                              SizedBox.expand(
-                                child: FittedBox(
-                                  fit: BoxFit.cover,
-                                  child: SizedBox(
-                                    width:
-                                        controller!.value.previewSize!.height,
-                                    height:
-                                        controller!.value.previewSize!.width,
-                                    child: CameraPreview(controller!),
-                                  ),
+                          blurRadius: 30,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Stack(
+                        children: [
+                          // Camera Preview
+                          if (controller == null ||
+                              !controller!.value.isInitialized)
+                            Container(
+                              color: AppColors.blackGradient1,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryColor,
                                 ),
                               ),
-
-                            // Overlay with Face Guide
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      AppColors.blackColor.withValues(
-                                        alpha: 0.3,
-                                      ),
-                                      AppColors.transparentColor,
-                                      AppColors.transparentColor,
-                                      AppColors.blackColor.withValues(
-                                        alpha: 0.3,
-                                      ),
-                                    ],
-                                  ),
+                            )
+                          else
+                            SizedBox.expand(
+                              child: FittedBox(
+                                fit: BoxFit.cover,
+                                child: SizedBox(
+                                  width:
+                                      controller!.value.previewSize!.height,
+                                  height:
+                                      controller!.value.previewSize!.width,
+                                  child: CameraPreview(controller!),
                                 ),
                               ),
                             ),
 
-                            // Face Oval Guide
-                            Center(
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.75,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppColors.primaryColor.withValues(
-                                      alpha: 0.8,
+                          // Overlay with Face Guide
+                          Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    AppColors.blackColor.withValues(
+                                      alpha: 0.3,
                                     ),
-                                    width: 3,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            // Corner Brackets (Enhanced)
-                            Positioned(
-                              top: 20,
-                              left: 20,
-                              child: _buildCornerBracket(true, true),
-                            ),
-                            Positioned(
-                              top: 20,
-                              right: 20,
-                              child: _buildCornerBracket(true, false),
-                            ),
-                            Positioned(
-                              bottom: 20,
-                              left: 20,
-                              child: _buildCornerBracket(false, true),
-                            ),
-                            Positioned(
-                              bottom: 20,
-                              right: 20,
-                              child: _buildCornerBracket(false, false),
-                            ),
-
-                            // Center Guide Icon
-                            Center(
-                              child: Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: AppColors.blackColor.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.face_retouching_natural,
-                                      size: 50,
-                                      color: AppColors.whiteColor.withValues(
-                                        alpha: 0.5,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "Align your face here",
-                                      style: AppStyles.customTextStyle(
-                                        color: AppColors.whiteColor.withValues(
-                                          alpha: 0.7,
-                                        ),
-                                        size: 14,
-                                        weight: FontWeight.w500,
-                                      ),
+                                    AppColors.transparentColor,
+                                    AppColors.transparentColor,
+                                    AppColors.blackColor.withValues(
+                                      alpha: 0.3,
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+
+                          // Face Oval Guide
+                          Center(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              height:
+                                  MediaQuery.of(context).size.width * 0.75,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.primaryColor.withValues(
+                                    alpha: 0.8,
+                                  ),
+                                  width: 3,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Corner Brackets (Enhanced)
+                          Positioned(
+                            top: 20,
+                            left: 20,
+                            child: _buildCornerBracket(true, true),
+                          ),
+                          Positioned(
+                            top: 20,
+                            right: 20,
+                            child: _buildCornerBracket(true, false),
+                          ),
+                          Positioned(
+                            bottom: 20,
+                            left: 20,
+                            child: _buildCornerBracket(false, true),
+                          ),
+                          Positioned(
+                            bottom: 20,
+                            right: 20,
+                            child: _buildCornerBracket(false, false),
+                          ),
+
+                          // Center Guide Icon
+                          Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: AppColors.blackColor.withValues(
+                                  alpha: 0.3,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.face_retouching_natural,
+                                    size: 50,
+                                    color: AppColors.whiteColor.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Align your face here",
+                                    style: AppStyles.customTextStyle(
+                                      color: AppColors.whiteColor.withValues(
+                                        alpha: 0.7,
+                                      ),
+                                      size: 14,
+                                      weight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 40),
+            const SizedBox(height: 40),
 
-              // Action Buttons
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildActionButton(
-                      onTap: pickGallery,
-                      icon: Icons.photo_library_outlined,
-                      label: "Gallery",
-                    ),
-                    _buildCaptureButton(onTap: takePhoto),
-                    _buildActionButton(
-                      onTap: switchCamera,
-                      icon: Icons.flip_camera_ios_outlined,
-                      label: "Flip",
-                    ),
-                  ],
-                ),
+            // Action Buttons
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildActionButton(
+                    onTap: pickGallery,
+                    icon: Icons.photo_library_outlined,
+                    label: "Gallery",
+                  ),
+                  _buildCaptureButton(onTap: takePhoto),
+                  _buildActionButton(
+                    onTap: switchCamera,
+                    icon: Icons.flip_camera_ios_outlined,
+                    label: "Flip",
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

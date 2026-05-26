@@ -272,7 +272,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
               )
             : SingleChildScrollView(
                 child: Container(
-                  margin: const EdgeInsets.all(15),
+                  margin: const EdgeInsets.all(20),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,

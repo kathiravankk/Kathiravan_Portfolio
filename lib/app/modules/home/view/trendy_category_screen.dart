@@ -22,9 +22,9 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blackColor,
+      backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
-        backgroundColor: AppColors.blackColor,
+        backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
@@ -40,7 +40,7 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
         ),
       ),
       body: GridView.builder(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.all(20),
         itemCount: dashboardController.categoryListModel.categoryList!.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,

@@ -56,7 +56,6 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
       },
       child: Scaffold(
         body: Container(
-          padding: const EdgeInsets.all(15),
           width: double.infinity,
           decoration: BoxDecoration(
             color: AppColors.appBgColor,
@@ -65,103 +64,106 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 20,
-            children: [
-              Text(
-                headerText,
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  size: 18,
-                  weight: FontWeight.w600,
-                  color: AppColors.secondaryColor,
-                  lineSpace: 1.3,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 25,
+              children: [
+                Text(
+                  headerText,
+                  textAlign: TextAlign.center,
+                  style: AppStyles.customTextStyle(
+                    size: 22,
+                    weight: FontWeight.w600,
+                    color: AppColors.secondaryColor,
+                    lineSpace: 1.3,
+                  ),
                 ),
-              ),
 
-              Text(
-                subHeaderText,
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  weight: FontWeight.w400,
-                  color: AppColors.whiteColor,
-                  lineSpace: 1.3,
+                Text(
+                  subHeaderText,
+                  textAlign: TextAlign.center,
+                  style: AppStyles.customTextStyle(
+                    size: 16,
+                    weight: FontWeight.w400,
+                    color: AppColors.whiteColor,
+                    lineSpace: 1.4,
+                  ),
                 ),
-              ),
 
-              // Step 1
-              StepCardWidget(
-                step: "Step 1",
-                title: activeStep > 1
-                    ? "Resume Uploaded Successfully"
-                    : "Upload Your Resume",
-                isActive: activeStep == 1,
-                isCompleted: activeStep > 1,
-                icon: _getStepIcon(1, activeStep),
-                onTap: () {
-                  if (activeStep == 1) {
-                    //Get.toNamed(AppRoutes.resumeReportPage);
-                  }
-                },
-              ),
-              // Step 2
-              StepCardWidget(
-                step: "Step 2",
-                title: activeStep > 2
-                    ? "Selfie Uploaded Successfully"
-                    : "Upload Your Selfie",
-                isActive: activeStep == 2,
-                isCompleted: activeStep > 2,
-                icon: _getStepIcon(2, activeStep),
-                onTap: () {
-                  if (activeStep == 2) {
-                    AppFunctions.navigateScreen(
+                // Step 1
+                StepCardWidget(
+                  step: "Step 1",
+                  title: activeStep > 1
+                      ? "Resume Uploaded Successfully"
+                      : "Upload Your Resume",
+                  isActive: activeStep == 1,
+                  isCompleted: activeStep > 1,
+                  icon: _getStepIcon(1, activeStep),
+                  onTap: () {
+                    if (activeStep == 1) {
+                      //Get.toNamed(AppRoutes.resumeReportPage);
+                    }
+                  },
+                ),
+                // Step 2
+                StepCardWidget(
+                  step: "Step 2",
+                  title: activeStep > 2
+                      ? "Selfie Uploaded Successfully"
+                      : "Upload Your Selfie",
+                  isActive: activeStep == 2,
+                  isCompleted: activeStep > 2,
+                  icon: _getStepIcon(2, activeStep),
+                  onTap: () {
+                    if (activeStep == 2) {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.registerProfileUpdateScreen,
+                      );
+                    }
+                  },
+                ),
+                // Step 3
+                StepCardWidget(
+                  step: "Step 3",
+                  title: activeStep > 3
+                      ? registerController.kycUpdateModel.name != "invalid" ||
+                                registerController.kycUpdateModel.aadhaarDocument !=
+                                    "invalid" ||
+                                registerController.kycUpdateModel.collegeId !=
+                                    "invalid"
+                            ? "KYC Verification Pending"
+                            : "KYC Verified Successfully"
+                      : "KYC Verification",
+                  isActive: activeStep == 3,
+                  isCompleted: activeStep > 3,
+                  icon: _getStepIcon(3, activeStep),
+                  onTap: () {
+                    if (activeStep == 3) {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.kycVerificationScreen,
+                        arguments: {"isRegisterFlow": true},
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 30),
+                CustomButtonWidget(
+                  height: 55,
+                  disable: activeStep < 4,
+                  buttonFunction: () {
+                    AppFunctions.navigateInitialScreen(
                       context,
-                      AppRoutes.registerProfileUpdateScreen,
+                      AppRoutes.dashBoardScreen,
                     );
-                  }
-                },
-              ),
-              // Step 3
-              StepCardWidget(
-                step: "Step 3",
-                title: activeStep > 3
-                    ? registerController.kycUpdateModel.name != "invalid" ||
-                              registerController.kycUpdateModel.aadhaarDocument !=
-                                  "invalid" ||
-                              registerController.kycUpdateModel.collegeId !=
-                                  "invalid"
-                          ? "KYC Verification Pending"
-                          : "KYC Verified Successfully"
-                    : "KYC Verification",
-                isActive: activeStep == 3,
-                isCompleted: activeStep > 3,
-                icon: _getStepIcon(3, activeStep),
-                onTap: () {
-                  if (activeStep == 3) {
-                    AppFunctions.navigateScreen(
-                      context,
-                      AppRoutes.kycVerificationScreen,
-                      arguments: {"isRegisterFlow": true},
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 30),
-              CustomButtonWidget(
-                height: 55,
-                disable: activeStep < 4,
-                buttonFunction: () {
-                  AppFunctions.navigateInitialScreen(
-                    context,
-                    AppRoutes.dashBoardScreen,
-                  );
-                },
-                buttonText: "Go to Intern's Page",
-              ),
-            ],
+                  },
+                  buttonText: "Go to Intern's Page",
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -174,8 +176,8 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
         // Completed - show tick
         return Image.asset(
           AssetImages.verificationIcon,
-          height: 35,
-          width: 35,
+          height: 40,
+          width: 40,
           color: AppColors.secondaryColor,
         );
       } else if (currentActiveStep == 1) {
@@ -183,7 +185,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
         return Icon(
           Icons.file_copy_outlined,
           color: AppColors.primaryColor,
-          size: 30,
+          size: 40,
         );
       }
     } else if (stepNumber == 2) {
@@ -191,8 +193,8 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
         // Completed - show tick
         return Image.asset(
           AssetImages.verificationIcon,
-          height: 35,
-          width: 35,
+          height: 40,
+          width: 40,
           color: AppColors.secondaryColor,
         );
       } else if (currentActiveStep == 2) {
@@ -200,14 +202,14 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
         return Icon(
           CupertinoIcons.photo_fill_on_rectangle_fill,
           color: AppColors.whiteColor,
-          size: 30,
+          size: 40,
         );
       } else {
         // Locked
         return Icon(
           Icons.lock_outline_sharp,
           color: AppColors.greyColor,
-          size: 30,
+          size: 40,
         );
       }
     } else if (stepNumber == 3) {
@@ -215,7 +217,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
         // Completed - show tick
         return Image.asset(
           AssetImages.verificationIcon,
-          height: 35,
+          height: 40,
           width: 35,
           color: AppColors.secondaryColor,
         );
@@ -223,19 +225,19 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
         return Icon(
           Icons.document_scanner_outlined,
           color: AppColors.whiteColor,
-          size: 30,
+          size: 40,
         );
       } else {
         // Locked
         return Icon(
           Icons.lock_outline_sharp,
           color: AppColors.greyColor,
-          size: 30,
+          size: 40,
         );
       }
     }
 
-    return const Icon(Icons.lock_outline, color: AppColors.greyColor, size: 30);
+    return const Icon(Icons.lock_outline, color: AppColors.greyColor, size: 40);
   }
 }
 
@@ -254,8 +256,8 @@ class StepCardWidget extends StatefulWidget {
     required this.isCompleted,
     required this.icon,
     this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<StepCardWidget> createState() => _StepCardWidgetState();
@@ -299,9 +301,9 @@ class _StepCardWidgetState extends State<StepCardWidget> {
             spacing: 15,
             children: [
               Container(
-                height: 50,
-                width: 50,
-                padding: const EdgeInsets.all(5),
+                // height: 50,
+                // width: 50,
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: widget.isCompleted
@@ -321,8 +323,8 @@ class _StepCardWidgetState extends State<StepCardWidget> {
                     style: AppStyles.customTextStyle(
                       color: (shouldHighlight || widget.isCompleted)
                           ? AppColors.whiteColor
-                          : AppColors.greyColor,
-                      size: 12,
+                          : AppColors.darkText,
+                      size: 14,
                       weight: FontWeight.w500,
                     ),
                   ),
@@ -331,8 +333,8 @@ class _StepCardWidgetState extends State<StepCardWidget> {
                     style: AppStyles.customTextStyle(
                       color: (shouldHighlight || widget.isCompleted)
                           ? AppColors.whiteColor
-                          : AppColors.greyColor,
-                      size: 14,
+                          : AppColors.darkText,
+                      size: 16,
                       weight: FontWeight.w600,
                     ),
                   ),
@@ -343,7 +345,7 @@ class _StepCardWidgetState extends State<StepCardWidget> {
                 const Icon(
                   Icons.arrow_forward_ios,
                   color: AppColors.primaryColor,
-                  size: 25,
+                  size: 30,
                 ),
             ],
           ),

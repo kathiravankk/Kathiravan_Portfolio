@@ -67,6 +67,22 @@ class AppFunctions {
     }
   }
 
+  static String? validateName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Name is required";
+    }
+
+    if (RegExp(r'[0-9]').hasMatch(value)) {
+      return "Name should not contain numbers";
+    }
+
+    if (!RegExp(r"^[a-zA-Z\s]+$").hasMatch(value.trim())) {
+      return "Enter valid name";
+    }
+
+    return null;
+  }
+
   static String getSubtitle({required String key, required double score}) {
     switch (key) {
       case "Profile Summary":

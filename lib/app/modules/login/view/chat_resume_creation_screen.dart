@@ -134,7 +134,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
                 ),
               )
             : Padding(
-                padding: const EdgeInsets.all(15),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     SizedBox(height: 20),
