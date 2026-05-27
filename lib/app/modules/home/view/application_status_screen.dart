@@ -148,7 +148,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                       Text(
                         appliedData!.jobData!.roleType ?? "",
                         style: AppStyles.customTextStyle(
-                          size: 18,
+                          size: 20,
                           color: AppColors.whiteColor,
                           weight: FontWeight.w700,
                         ),
@@ -157,7 +157,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                       Text(
                         appliedData!.jobData!.companyName ?? "",
                         style: AppStyles.customTextStyle(
-                          size: 16,
+                          size: 18,
                           color: AppColors.secondaryColor,
                           weight: FontWeight.w400,
                         ),
@@ -205,6 +205,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                           weight: FontWeight.w700,
                         ),
                       ),
+                      const SizedBox(height: 10,),
                       Column(
                         children: [
                           _buildStatusItem(
@@ -274,30 +275,38 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                           ),
                           Visibility(
                             visible:
-                                appliedData!.jobType == "Fee" ||
-                                appliedData!.jobType == "fee",
+                            (appliedData!.jobType == "Fee" ||
+                                appliedData!.jobType == "fee") &&
+                                (appliedData!.status == "Selected" ||
+                                    appliedData!.status == "Shortlisted"),
+
                             child: _buildStatusItem(
                               iconWidget:
-                                  internController.paymentStatusModel.status ==
-                                      "completed"
+                              internController.paymentStatusModel.status == "completed"
                                   ? Icon(
-                                      Icons.check_circle_sharp,
-                                      color: AppColors.sucTextColor,
-                                      size: 20,
-                                    )
+                                Icons.check_circle_sharp,
+                                color: AppColors.sucTextColor,
+                                size: 20,
+                              )
                                   : Icon(
-                                      Icons.close,
-                                      color: AppColors.failTextColor,
-                                      size: 20,
-                                    ),
+                                Icons.close,
+                                color: AppColors.failTextColor,
+                                size: 20,
+                              ),
+
                               title:
-                                  internController.paymentStatusModel.message ??
-                                  "NA",
+                              internController.paymentStatusModel.status == "completed"
+                                  ? "Payment Completed"
+                                  : "Payment Pending",
+
                               showLine: false,
                             ),
                           ),
                           SizedBox(height: 10),
-                          if (appliedData!.jobType == "Fee")
+                          if ((appliedData!.jobType == "Fee" ||
+                              appliedData!.jobType == "fee") &&
+                              (appliedData!.status == "Selected" ||
+                                  appliedData!.status == "Shortlisted"))
                             _buildPaymentSection(),
                         ],
                       ),

@@ -211,8 +211,8 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
               ),
             )
           : Scaffold(
-            resizeToAvoidBottomInset: true,
-            backgroundColor: AppColors.appBgColor_2,
+              resizeToAvoidBottomInset: true,
+              backgroundColor: AppColors.appBgColor_2,
               appBar: _buildAppBar(),
               body: ListView(
                 padding: const EdgeInsets.all(20),
@@ -754,27 +754,37 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _projectSubmissionCard(),
-          CustomButtonWidget(
-            isLoading: internController.getMcqQuestionLoading,
-            buttonFunction: () async {
-              AppAlertUtils.showAppAlert(
-                context: context,
-                title: "Mock Test Instructions",
-                content:
-                    "This mock test contains 15 questions.\n\n"
-                    "Total test duration is 7 minutes 30 seconds.\n\n"
-                    "Please feel free to attend the test.\n"
-                    "Once the time is up, your answers will be automatically submitted.",
-                cancelText: "Do it later",
-                confirmText: "Attend Now",
-                onConfirm: () async {
-                  await _generateMcqQuestions();
-                },
-              );
-            },
-            buttonText: "Attend Mock Test",
-            disable: !canAttendMockTest,
-            height: 45,
+          GestureDetector(
+            onTap: canAttendMockTest
+                ? () {}
+                : () {
+                    AppAlertUtils.showToast(
+                      message: "Maximum attempts reached for this test!",
+                      isError: true,
+                    );
+                  },
+            child: CustomButtonWidget(
+              isLoading: internController.getMcqQuestionLoading,
+              buttonFunction: () async {
+                AppAlertUtils.showAppAlert(
+                  context: context,
+                  title: "Mock Test Instructions",
+                  content:
+                      "This mock test contains 15 questions.\n\n"
+                      "Total test duration is 7 minutes 30 seconds.\n\n"
+                      "Please feel free to attend the test.\n"
+                      "Once the time is up, your answers will be automatically submitted.",
+                  cancelText: "Do it later",
+                  confirmText: "Attend Now",
+                  onConfirm: () async {
+                    await _generateMcqQuestions();
+                  },
+                );
+              },
+              buttonText: "Attend Mock Test",
+              disable: !canAttendMockTest,
+              height: 45,
+            ),
           ),
           const SizedBox(height: 15),
         ],
@@ -935,10 +945,11 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                             isError: false,
                           );
                         },
-                        child: const Icon(
+                        child:  Icon(
                           Icons.copy,
                           size: 20,
-                          color: AppColors.primaryColor,
+                          color: canSubmitProject &&
+                              (!isProjectSubmitted || isEditingProject) ? AppColors.primaryColor : AppColors.greyColor,
                         ),
                       )
                     : null,

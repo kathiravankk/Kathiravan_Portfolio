@@ -40,10 +40,10 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
 
   @override
   void initState() {
-    super.initState();
     internshipId = Get.arguments["internshipId"] ?? "";
     isStatusFlow = Get.arguments["isStatusFlow"] ?? false;
     getDetailsData();
+    super.initState();
   }
 
   Future<void> getDetailsData() async {
@@ -68,175 +68,189 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.of(context).size.width > 600;
 
-    return Obx(() {
-      if (dashboardController.internshipDetailLoading ||
-          dashboardController.reviewDataLoading) {
-        return Center(
-          child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
-        );
-      }
+    // Obx(() {
+    // if (dashboardController.internshipDetailLoading ||
+    //     dashboardController.reviewDataLoading) {
+    //   return Center(
+    //     child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
+    //   );
+    // }
 
-      return Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        floatingActionButton: Visibility(
-          visible: !isStatusFlow,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: CustomButtonWidget(
-              disable: internship!.status!.isNotEmpty,
-              width: isTablet ? 400 : double.infinity,
-              height: 45,
-              isLoading: dashboardController.internshipApplyLoading,
-              buttonFunction: () async {
-                bool isVerified =
-                    await LocalStorageService.getVerifiedValue() ?? false;
-
-                if (!isVerified) {
-                  showKycVerifyAlertDialog();
-                } else {
-                  var banner = profileController.profileDataModel.studentBanner;
-                  bool hasBanner = banner != null && banner.isNotEmpty;
-
-                  if (!hasBanner) {
-                    showAiBannerRequirementDialog();
-                  } else {
-                    await internshipApplyFunc();
-                  }
-                }
-              },
-              buttonText: internship!.status!.isNotEmpty
-                  ? "Applied"
-                  : "Apply Now (20 Credits)",
-              buttonWidget: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Apply Now - ",
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                      fontFamily: "Roboto",
-                    ),
-                  ),
-                  Text(
-                    "20",
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                      fontFamily: "Roboto",
-                    ),
-                  ),
-                  Image.asset(
-                    AssetImages.creditsIconNew,
-                    height: 22,
-                    width: 22,
-                  ),
-                ],
+    return Obx(
+      () =>
+          dashboardController.internshipDetailLoading ||
+              dashboardController.reviewDataLoading
+          ? Center(
+              child: CupertinoActivityIndicator(
+                color: AppColors.secondaryColor,
               ),
-            ),
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        appBar: AppBar(
-          backgroundColor: AppColors.appBgColor_2,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 24 : 20,
-              vertical: 20,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                /// ROLE
-                Text(
-                  internship!.roleType ?? "",
-                  style: AppStyles.customTextStyle(
-                    size: isTablet ? 20 : 16,
-                    weight: FontWeight.w700,
-                    color: AppColors.whiteColor,
+            )
+          : Scaffold(
+              backgroundColor: AppColors.appBgColor_2,
+              floatingActionButton: Visibility(
+                visible: !isStatusFlow,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: CustomButtonWidget(
+                    disable: internship!.status!.isNotEmpty,
+                    width: isTablet ? 400 : double.infinity,
+                    height: 45,
+                    isLoading: dashboardController.internshipApplyLoading,
+                    buttonFunction: () async {
+                      bool isVerified =
+                          await LocalStorageService.getVerifiedValue() ?? false;
+
+                      if (!isVerified) {
+                        showKycVerifyAlertDialog();
+                      } else {
+                        var banner =
+                            profileController.profileDataModel.studentBanner;
+                        bool hasBanner = banner != null && banner.isNotEmpty;
+
+                        if (!hasBanner) {
+                          showAiBannerRequirementDialog();
+                        } else {
+                          await internshipApplyFunc();
+                        }
+                      }
+                    },
+                    buttonText: internship!.status!.isNotEmpty
+                        ? "Applied"
+                        : "Apply Now (20 Credits)",
+                    buttonWidget: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Apply Now - ",
+                          style: AppStyles.customTextStyle(
+                            size: 16,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w500,
+                            fontFamily: "Roboto",
+                          ),
+                        ),
+                        Text(
+                          "20",
+                          style: AppStyles.customTextStyle(
+                            size: 16,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w500,
+                            fontFamily: "Roboto",
+                          ),
+                        ),
+                        Image.asset(
+                          AssetImages.creditsIconNew,
+                          height: 22,
+                          width: 22,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-
-                const SizedBox(height: 6),
-
-                /// COMPANY + RATING (FIXED OVERFLOW)
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        internship!.companyName ?? "",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+              ),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              appBar: AppBar(
+                backgroundColor: AppColors.appBgColor_2,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Get.back(),
+                ),
+              ),
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isTablet ? 24 : 20,
+                    vertical: 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
+                    children: [
+                      /// ROLE
+                      Text(
+                        internship!.roleType ?? "",
                         style: AppStyles.customTextStyle(
-                          size: 14,
-                          weight: FontWeight.w700,
-                          color: AppColors.secondaryColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(
-                        "( ⭐ ${internship!.averageRating ?? 0} Reviews)",
-                        overflow: TextOverflow.ellipsis,
-                        style: AppStyles.customTextStyle(
-                          size: 11,
+                          size: isTablet ? 20 : 20,
                           weight: FontWeight.w700,
                           color: AppColors.whiteColor,
                         ),
                       ),
-                    ),
-                  ],
-                ),
 
-                const SizedBox(height: 5),
+                      const SizedBox(height: 5),
 
-                Text(
-                  "${internship!.totalApplication ?? 0} applicants",
-                  style: AppStyles.customTextStyle(
-                    size: 10,
-                    weight: FontWeight.w300,
-                    color: AppColors.secondaryColor,
-                  ),
-                ),
+                      /// COMPANY + RATING (FIXED OVERFLOW)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              internship!.companyName ?? "",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppStyles.customTextStyle(
+                                size: 16,
+                                weight: FontWeight.w700,
+                                color: AppColors.secondaryColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              "( ⭐ ${internship!.averageRating ?? 0} Reviews)",
+                              overflow: TextOverflow.ellipsis,
+                              style: AppStyles.customTextStyle(
+                                size: 12,
+                                weight: FontWeight.w700,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
 
-                const SizedBox(height: 10),
+                      const SizedBox(),
 
-                /// DURATION + STIPEND (FIXED OVERFLOW)
-                Row(spacing: 10, children: [durationWidget(), stipendWidget()]),
+                      Text(
+                        "${internship!.totalApplication ?? 0} applicants",
+                        style: AppStyles.customTextStyle(
+                          size: 10,
+                          weight: FontWeight.w300,
+                          color: AppColors.secondaryColor,
+                        ),
+                      ),
 
-                const SizedBox(height: 10),
+                      const SizedBox(),
 
-                /// TAB BAR
-                Expanded(
-                  child: CustomTabBar(
-                    tabController: TabController(length: 3, vsync: this),
-                    activeBoxColor: AppColors.selectedContColor,
-                    activeTextColor: AppColors.whiteColor,
-                    tabNames: tabNames,
-                    tabPages: [
-                      internshipDetailsWidget(),
-                      buildCompanyWidget(),
-                      buildReviewWidget(),
+                      /// DURATION + STIPEND (FIXED OVERFLOW)
+                      Row(
+                        spacing: 10,
+                        children: [durationWidget(), stipendWidget()],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      /// TAB BAR
+                      Expanded(
+                        child: CustomTabBar(
+                          tabController: TabController(length: 3, vsync: this),
+                          activeBoxColor: AppColors.selectedContColor,
+                          activeTextColor: AppColors.whiteColor,
+                          tabNames: tabNames,
+                          tabPages: [
+                            internshipDetailsWidget(),
+                            buildCompanyWidget(),
+                            buildReviewWidget(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      );
-    });
+    );
   }
 
   Future<void> internshipApplyFunc() async {
@@ -291,7 +305,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             style: AppStyles.customTextStyle(
               size: 16,
               weight: FontWeight.w700,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
             ),
           ),
           Text(
@@ -351,12 +365,13 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               ),
             ],
           ),
+          const SizedBox(height: 5),
           Text(
             "About Internship",
             style: AppStyles.customTextStyle(
               size: 16,
               weight: FontWeight.w700,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
             ),
           ),
           Text(
@@ -385,7 +400,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             style: AppStyles.customTextStyle(
               size: 16,
               weight: FontWeight.w700,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
             ),
           ),
           Text(
@@ -494,8 +509,10 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.contBorderColor2),
-                              shape: BoxShape.circle
+                              border: Border.all(
+                                color: AppColors.contBorderColor2,
+                              ),
+                              shape: BoxShape.circle,
                             ),
                             padding: EdgeInsets.all(5),
                             child: Icon(
@@ -509,7 +526,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                           if (loadingProgress == null) {
                             return child;
                           }
-                      
+
                           return SizedBox(
                             height: 25,
                             width: 25,
@@ -590,6 +607,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
 
   Widget companyCard() {
     return Column(
+      spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 10),
@@ -599,7 +617,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
           style: AppStyles.customTextStyle(
             size: 16,
             weight: FontWeight.w700,
-            color: AppColors.whiteColor,
+            color: AppColors.secondaryColor,
           ),
         ),
 
@@ -632,6 +650,19 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             ),
           ],
         ),
+        Row(
+          children: [
+            Text(
+              "( ⭐ ${internship!.averageRating ?? 0} Reviews)",
+              overflow: TextOverflow.ellipsis,
+              style: AppStyles.customTextStyle(
+                size: 12,
+                weight: FontWeight.w700,
+                color: AppColors.whiteColor,
+              ),
+            ),
+          ],
+        ),
 
         const SizedBox(height: 10),
 
@@ -647,52 +678,57 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
         const SizedBox(height: 10),
 
         /// 🔥 FIX WIDTH REMOVED
-        Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.contBorderColor2),
-            borderRadius: BorderRadius.circular(15),
-            color: AppColors.contColor2,
-          ),
-          child: Row(
-            spacing: 10,
-            children: [
-              Image.asset(AssetImages.mapViewImg, height: 50, width: 50),
-              //const Icon(Icons.map_outlined, size: 40),
-              Expanded(
-                child: Column(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${internship!.companyCity}, ${internship!.companyState}",
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w500,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        AppFunctions.openGoogleMap(internship!.locationLink!);
-                      },
-                      child: Text(
-                        "View on Map",
+        GestureDetector(
+          onTap: () {
+            AppFunctions.openGoogleMap(internship!.locationLink!);
+          },
+          child: Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.contBorderColor2),
+              borderRadius: BorderRadius.circular(15),
+              color: AppColors.contColor2,
+            ),
+            child: Row(
+              spacing: 10,
+              children: [
+                Image.asset(AssetImages.mapViewImg, height: 50, width: 50),
+                //const Icon(Icons.map_outlined, size: 40),
+                Expanded(
+                  child: Column(
+                    spacing: 10,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${internship!.companyCity}, ${internship!.companyState}",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: AppStyles.customTextStyle(
-                          size: 12,
-                          isUnderlined: true,
-                          underlineColor: AppColors.whiteColor,
-                          weight: FontWeight.w400,
+                          size: 14,
                           color: AppColors.whiteColor,
+                          weight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                  ],
+                      GestureDetector(
+                        onTap: () {
+                          AppFunctions.openGoogleMap(internship!.locationLink!);
+                        },
+                        child: Text(
+                          "View on Map",
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            isUnderlined: true,
+                            underlineColor: AppColors.whiteColor,
+                            weight: FontWeight.w400,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -701,16 +737,25 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
 
   Widget durationWidget() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       decoration: BoxDecoration(
-        color: AppColors.secondaryColor,
-        borderRadius: BorderRadius.circular(15),
+        color: AppColors.correctBg,
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(15),
+          bottomLeft: Radius.circular(15),
+          bottomRight: Radius.circular(15),
+        ),
+        border: Border.all(color: AppColors.correctBorder),
       ),
       child: Row(
         spacing: 5,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.access_time, size: 14),
+          const Icon(
+            Icons.access_time,
+            size: 14,
+            color: AppColors.lightWhiteCont,
+          ),
           Text(
             internship!.internshipDuration != null &&
                     internship!.internshipDuration!.isNotEmpty
@@ -719,7 +764,8 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             overflow: TextOverflow.ellipsis,
             style: AppStyles.customTextStyle(
               size: 10,
-              color: AppColors.blackLight,
+              color: AppColors.lightWhiteCont,
+              weight: FontWeight.w500,
             ),
           ),
         ],
@@ -729,14 +775,25 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
 
   Widget stipendWidget() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       decoration: BoxDecoration(
-        color: AppColors.lightWhiteCont,
-        borderRadius: BorderRadius.circular(15),
+        color: AppColors.contLightColor.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(15),
+          bottomLeft: Radius.circular(15),
+          bottomRight: Radius.circular(15),
+        ),
+        border: Border.all(
+          color: AppColors.secondaryColor.withValues(alpha: 0.5),
+        ),
       ),
       child: Row(
         children: [
-          const Icon(Icons.currency_rupee, size: 14),
+          const Icon(
+            Icons.currency_rupee,
+            size: 14,
+            color: AppColors.lightWhiteCont,
+          ),
           const SizedBox(width: 5),
           Text(
             internship!.internshipStipend != "N/A"
@@ -748,7 +805,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             overflow: TextOverflow.ellipsis,
             style: AppStyles.customTextStyle(
               size: 10,
-              color: AppColors.blackLight,
+              color: AppColors.lightWhiteCont,
             ),
           ),
         ],

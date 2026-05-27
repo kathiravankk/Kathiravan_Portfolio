@@ -333,7 +333,7 @@ class AppAlertUtils {
                     },
                     buttonText: cancelText,
                     height: 35,
-                    bgColor: AppColors.fieldBgColor,
+                    bgColor: AppColors.disableButtonColor3,
                   ),
                 ),
               ],
