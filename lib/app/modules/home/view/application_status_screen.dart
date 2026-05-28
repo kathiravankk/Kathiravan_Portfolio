@@ -122,9 +122,9 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.blackColor,
+      backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
-        backgroundColor: AppColors.blackColor,
+        backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
@@ -140,7 +140,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
               )
             : SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     spacing: 15,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +148,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                       Text(
                         appliedData!.jobData!.roleType ?? "",
                         style: AppStyles.customTextStyle(
-                          size: 18,
+                          size: 20,
                           color: AppColors.whiteColor,
                           weight: FontWeight.w700,
                         ),
@@ -157,7 +157,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                       Text(
                         appliedData!.jobData!.companyName ?? "",
                         style: AppStyles.customTextStyle(
-                          size: 16,
+                          size: 18,
                           color: AppColors.secondaryColor,
                           weight: FontWeight.w400,
                         ),
@@ -205,6 +205,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                           weight: FontWeight.w700,
                         ),
                       ),
+                      const SizedBox(height: 10,),
                       Column(
                         children: [
                           _buildStatusItem(
@@ -274,30 +275,38 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                           ),
                           Visibility(
                             visible:
-                                appliedData!.jobType == "Fee" ||
-                                appliedData!.jobType == "fee",
+                            (appliedData!.jobType == "Fee" ||
+                                appliedData!.jobType == "fee") &&
+                                (appliedData!.status == "Selected" ||
+                                    appliedData!.status == "Shortlisted"),
+
                             child: _buildStatusItem(
                               iconWidget:
-                                  internController.paymentStatusModel.status ==
-                                      "completed"
+                              internController.paymentStatusModel.status == "completed"
                                   ? Icon(
-                                      Icons.check_circle_sharp,
-                                      color: AppColors.sucTextColor,
-                                      size: 20,
-                                    )
+                                Icons.check_circle_sharp,
+                                color: AppColors.sucTextColor,
+                                size: 20,
+                              )
                                   : Icon(
-                                      Icons.close,
-                                      color: AppColors.failTextColor,
-                                      size: 20,
-                                    ),
+                                Icons.close,
+                                color: AppColors.failTextColor,
+                                size: 20,
+                              ),
+
                               title:
-                                  internController.paymentStatusModel.message ??
-                                  "NA",
+                              internController.paymentStatusModel.status == "completed"
+                                  ? "Payment Completed"
+                                  : "Payment Pending",
+
                               showLine: false,
                             ),
                           ),
                           SizedBox(height: 10),
-                          if (appliedData!.jobType == "Fee")
+                          if ((appliedData!.jobType == "Fee" ||
+                              appliedData!.jobType == "fee") &&
+                              (appliedData!.status == "Selected" ||
+                                  appliedData!.status == "Shortlisted"))
                             _buildPaymentSection(),
                         ],
                       ),

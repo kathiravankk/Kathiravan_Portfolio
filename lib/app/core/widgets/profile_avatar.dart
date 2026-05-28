@@ -41,8 +41,8 @@ class ProfileAvatar extends StatelessWidget {
               alignment: Alignment.bottomRight,
               children: [
                 Container(
-                  height: 100,
-                  width: 100,
+                  height: 120,
+                  width: 120,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
@@ -77,22 +77,23 @@ class ProfileAvatar extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            name,
-            style: AppStyles.customTextStyle(
-              size: 14,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w700,
-            ),
-          ),
-          Text(
-            collegeName.isEmpty ? 'NA' : collegeName,
-            style: AppStyles.customTextStyle(
-              size: 14,
-              color: AppColors.primaryColor,
-              weight: FontWeight.w700,
-            ),
-          ),
+          // Text(
+          //   name,
+          //   style: AppStyles.customTextStyle(
+          //     size: 14,
+          //     color: AppColors.whiteColor,
+          //     weight: FontWeight.w700,
+          //   ),
+          // ),
+          // Text(
+          //   collegeName.isEmpty ? 'NA' : collegeName,
+          //   style: AppStyles.customTextStyle(
+          //     size: 14,
+          //     color: AppColors.primaryColor,
+          //     weight: FontWeight.w700,
+          //   ),
+          // ),
+          const SizedBox(height: 10,)
         ],
       ),
     );

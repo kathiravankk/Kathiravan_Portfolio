@@ -163,7 +163,7 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
             return const CustomEmptyWidget();
           }
           return ListView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(20),
             itemCount: list.length,
             itemBuilder: (context, index) {
               final item = list[index];

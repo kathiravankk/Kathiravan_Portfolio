@@ -45,6 +45,7 @@ class AppColors {
   static const Color disableContBorder = Color.fromRGBO(51, 65, 85, 1);
   static const Color disableContColor = Color.fromRGBO(51, 65, 85, 0.5);
   static const Color disableButtonColor2 = Color.fromRGBO(60, 60, 59, 1);
+  static const Color disableButtonColor3 = Color.fromRGBO(53, 53, 53, 1);
   static const Color fieldBorderColor = Color.fromRGBO(253, 253, 253, 0.3);
   static final Color contLightText2 = Color.fromRGBO(203, 213, 225, 1);
   static const Color whiteColor = Colors.white;

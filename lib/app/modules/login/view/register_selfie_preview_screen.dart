@@ -56,9 +56,9 @@ class _RegisterSelfiePreviewScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.appBgColor,
+      backgroundColor: AppColors.appBgColor_2,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.appBgColor_2,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(
@@ -69,7 +69,7 @@ class _RegisterSelfiePreviewScreenState
           onPressed: () => Get.back(),
         ),
         title: Text(
-          "Upload Selfie",
+          "Review your upload",
           style: AppStyles.customTextStyle(
             size: 18,
             color: AppColors.whiteColor,
@@ -99,13 +99,13 @@ class _RegisterSelfiePreviewScreenState
               spacing: 30,
               children: [
                 Text(
-                  "its an cool look! your creativity brings this \n moment to life. Let’s add the final \ntouches to unique one",
+                  "Its an cool look! your creativity brings this \n moment to life. Let’s add the final \ntouches to unique one",
                   textAlign: TextAlign.center,
                   style: AppStyles.customTextStyle(
-                    color: AppColors.whiteColor,
+                    color: AppColors.lightColorText,
                     size: 16,
                     lineSpace: 1.4,
-                    weight: FontWeight.w400,
+                    weight: FontWeight.w300,
                   ),
                 ),
                 Container(

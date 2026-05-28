@@ -138,7 +138,7 @@ class _RegisterResumeUploadScreenState
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.all(20),
             child: Center(
               child: Column(
                 spacing: 15,
@@ -206,64 +206,61 @@ class _RegisterResumeUploadScreenState
                       statusText = "Extraction complete!";
                     }
 
-                    return Padding(
+                    return Container(
                       padding: const EdgeInsets.all(15),
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: AppColors.iconContColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: AppColors.iconBgColor,
-                                  child: Icon(
-                                    Icons.picture_as_pdf,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    fileName ?? "Uploading file",
-                                    style: AppStyles.customTextStyle(
-                                      size: 14,
-                                      weight: FontWeight.w500,
-                                      color: AppColors.whiteColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            LinearProgressIndicator(
-                              value: progress,
-                              minHeight: 6,
-                              backgroundColor: AppColors.lightTextColor,
-                              valueColor: const AlwaysStoppedAnimation(
-                                AppColors.secondaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                progress == 1.0
-                                    ? "Completed"
-                                    : "${(progress * 100).toInt()}% • $statusText",
-                                style: AppStyles.customTextStyle(
-                                  size: 10,
-                                  weight: FontWeight.w600,
-                                  color: AppColors.lightTextColor,
+                      decoration: BoxDecoration(
+                        color: AppColors.iconContColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 20,
+                                backgroundColor: AppColors.iconBgColor,
+                                child: Icon(
+                                  Icons.picture_as_pdf,
+                                  color: AppColors.primaryColor,
                                 ),
                               ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  fileName ?? "Uploading file",
+                                  style: AppStyles.customTextStyle(
+                                    size: 14,
+                                    weight: FontWeight.w500,
+                                    color: AppColors.whiteColor,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 6,
+                            backgroundColor: AppColors.lightTextColor,
+                            valueColor: const AlwaysStoppedAnimation(
+                              AppColors.secondaryColor,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 6),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              progress == 1.0
+                                  ? "Completed"
+                                  : "${(progress * 100).toInt()}% • $statusText",
+                              style: AppStyles.customTextStyle(
+                                size: 10,
+                                weight: FontWeight.w600,
+                                color: AppColors.lightTextColor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   }),
@@ -297,8 +294,8 @@ class _RegisterResumeUploadScreenState
         spacing: 15,
         children: [
           Container(
-            width: 120,
-            height: 120,
+            width: 100,
+            height: 100,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(AssetImages.resumeUploadImage),
@@ -333,7 +330,7 @@ class _RegisterResumeUploadScreenState
               //AppFunctions.navigateScreen(context, AppRoutes.stepUpdateScreen, arguments: {"activeStep": 3});
             },
             child: Container(
-              width: 322,
+              width: 320,
               height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
@@ -385,8 +382,8 @@ class _RegisterResumeUploadScreenState
         spacing: 15,
         children: [
           Container(
-            width: 120,
-            height: 120,
+            width: 100,
+            height: 100,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(AssetImages.resumeCreateImage),
@@ -423,7 +420,7 @@ class _RegisterResumeUploadScreenState
               );
             },
             child: Container(
-              width: 322,
+              width: 320,
               height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),

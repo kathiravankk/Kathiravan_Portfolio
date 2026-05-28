@@ -79,9 +79,10 @@ class _CustomTabBarState extends State<CustomTabBar>
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 20,
       children: [
         Container(
-          height: 45,
+          height: 50,
           padding: const EdgeInsets.only(bottom: 10.0, top: 10.0),
           child: ListView.builder(
             controller: _scrollController,
@@ -131,7 +132,6 @@ class _CustomTabBarState extends State<CustomTabBar>
             },
           ),
         ),
-        SizedBox(height: 10,),
         Expanded(
           child: widget.isLoading!
               ? const Center(

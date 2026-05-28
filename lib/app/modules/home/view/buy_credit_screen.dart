@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/credit_plan_card.dart';
 import 'package:internsharks/app/data/models/home/credit_plan_model.dart';
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
@@ -271,10 +272,10 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
               )
             : SingleChildScrollView(
                 child: Container(
-                  margin: const EdgeInsets.all(15),
+                  margin: const EdgeInsets.all(20),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
@@ -282,10 +283,12 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
                     children: [
                       // ── Title ─────────────────────────────────────────────
                       Row(
+                        spacing: 5,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          Image.asset(AssetImages.creditsIconNew, height: 25,width: 25,),
                           Text(
-                            "💰 Buy Credits",
+                            "Buy Credits",
                             style: AppStyles.customTextStyle(
                               size: 16,
                               weight: FontWeight.w700,

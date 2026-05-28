@@ -60,6 +60,7 @@ class AppAlertUtils {
           actions: [
             if (confirmText != null)
               Row(
+                spacing: 10,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
@@ -81,7 +82,7 @@ class AppAlertUtils {
                         onCancel?.call();
                       },
                       buttonText: cancelText,
-                      bgColor: AppColors.fieldBgColor,
+                      bgColor: AppColors.disableButtonColor3,
                       height: 35,
                     ),
                   ),
@@ -168,7 +169,7 @@ class AppAlertUtils {
                         onCancel?.call();
                       },
                       buttonText: cancelText,
-                      bgColor: AppColors.fieldBgColor,
+                      bgColor: AppColors.disableButtonColor3,
                       //width: 130,
                       height: 35,
                     ),
@@ -254,7 +255,7 @@ class AppAlertUtils {
                         onCancel?.call();
                       },
                       buttonText: cancelText,
-                      bgColor: AppColors.fieldBgColor,
+                      bgColor: AppColors.disableButtonColor3,
                       //width: 130,
                       height: 35,
                     ),
@@ -332,7 +333,7 @@ class AppAlertUtils {
                     },
                     buttonText: cancelText,
                     height: 35,
-                    bgColor: AppColors.fieldBgColor,
+                    bgColor: AppColors.disableButtonColor3,
                   ),
                 ),
               ],

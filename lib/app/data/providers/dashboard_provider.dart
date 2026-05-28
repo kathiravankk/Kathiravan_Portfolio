@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
@@ -353,6 +354,26 @@ class DashboardProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return CreditOrderVerifyModel.fromJson(err.response!.data);
+    }
+  }
+
+  // DELETE STUDENT ACCOUNT
+
+  Future<CommonPostModel> removeStudentAccount() async {
+    Map<String, dynamic> header = await AppApiHeader.header();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.delete(
+        AppApiUrls.studentDeleteAccount,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return CommonPostModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CommonPostModel.fromJson(err.response!.data);
     }
   }
 }

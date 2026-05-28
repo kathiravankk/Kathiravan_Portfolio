@@ -41,7 +41,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
       () => Scaffold(
         backgroundColor: AppColors.appBgColor_2,
         appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
+          backgroundColor: AppColors.appBgColor_2,
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -33,7 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
 
         if (shouldExit) {
-          Get.back(); // ✅ Actually exit app/screen
+          SystemNavigator.pop();
         }
       },
       child: Scaffold(

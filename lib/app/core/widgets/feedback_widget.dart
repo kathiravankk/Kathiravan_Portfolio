@@ -23,16 +23,34 @@ class _FeedbackWidgetState extends State<FeedbackWidget>
 
   final TextEditingController feedbackController = TextEditingController();
 
+  /// ✅ NEW
+  bool isSubmitted = false;
+
   void submitFeedback() async {
-    if (rating == 0) return;
-    await widget.onSubmit(rating, feedbackController.text.trim());
+    /// ✅ Prevent multiple submit
+    if (rating == 0 || isSubmitted || widget.isLoading) return;
+
+    await widget.onSubmit(
+      rating,
+      feedbackController.text.trim(),
+    );
+
+    /// ✅ Disable widget after success
+    if (mounted) {
+      setState(() {
+        isSubmitted = true;
+      });
+    }
   }
 
   Widget buildStar(int index) {
     bool isSelected = index < rating;
 
     return GestureDetector(
-      onTap: () {
+      /// ✅ Disable star selection
+      onTap: isSubmitted
+          ? null
+          : () {
         setState(() {
           rating = index + 1;
         });
@@ -43,9 +61,13 @@ class _FeedbackWidgetState extends State<FeedbackWidget>
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           child: Icon(
-            isSelected ? CupertinoIcons.star_fill : CupertinoIcons.star,
+            isSelected
+                ? CupertinoIcons.star_fill
+                : CupertinoIcons.star,
             key: ValueKey(isSelected),
-            color: isSelected ? AppColors.secondaryColor : AppColors.greyIcon,
+            color: isSelected
+                ? AppColors.secondaryColor
+                : AppColors.greyIcon,
             size: 25,
           ),
         ),
@@ -57,95 +79,124 @@ class _FeedbackWidgetState extends State<FeedbackWidget>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: AppColors.contColor2,
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColors.contBorderColor2),
-          ),
-          child: Column(
-            spacing: 15,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "HOW WAS YOUR EXPERIENCE WITH THIS \n MOCK TEST?",
-                textAlign: TextAlign.center,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  weight: FontWeight.w500,
-                  lineSpace: 1.3,
-                  color: AppColors.whiteColor,
+        IgnorePointer(
+          /// ✅ Disable all interactions
+          ignoring: isSubmitted,
+          child: Opacity(
+            /// ✅ Slight faded UI after submit
+            opacity: isSubmitted ? 0.6 : 1,
+            child: Container(
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: AppColors.contColor2,
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: AppColors.contBorderColor2,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 5,
-                children: List.generate(5, buildStar),
-              ),
-              TextField(
-                cursorColor: AppColors.primaryColor,
-                controller: feedbackController,
-                style: AppStyles.customTextStyle(
-                  fontFamily: "Roboto",
-                  color: AppColors.whiteColor,
-                  size: 14,
-                  weight: FontWeight.w500,
-                ),
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: "Your feedback about Internship",
-                  hintStyle: AppStyles.customTextStyle(
-                    fontFamily: "Roboto",
-                    color: AppColors.greyColor,
-                    size: 12,
-                    weight: FontWeight.w200,
-                  ),
-                  fillColor: AppColors.contBorderColor2,
-                  filled: true,
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsetsGeometry.symmetric(
-                    vertical: 18,
-                    horizontal: 20,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: const BorderSide(
-                      color: AppColors.fieldBorderColor,
+              child: Column(
+                spacing: 15,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    isSubmitted
+                        ? "THANK YOU FOR YOUR FEEDBACK ❤️"
+                        : "HOW WAS YOUR EXPERIENCE WITH THIS \n MOCK TEST?",
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      weight: FontWeight.w500,
+                      lineSpace: 1.3,
+                      color: AppColors.whiteColor,
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: const BorderSide(color: AppColors.primaryColor),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 5,
+                    children: List.generate(5, buildStar),
                   ),
-                  suffixIcon: GestureDetector(
-                    onTap: submitFeedback,
-                    child: Container(
-                      margin: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryColor,
-                        shape: BoxShape.circle,
+
+                  TextField(
+                    enabled: !isSubmitted,
+                    cursorColor: AppColors.primaryColor,
+                    controller: feedbackController,
+                    style: AppStyles.customTextStyle(
+                      fontFamily: "Roboto",
+                      color: AppColors.whiteColor,
+                      size: 14,
+                      weight: FontWeight.w500,
+                    ),
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      hintText: "Your feedback about Internship",
+                      hintStyle: AppStyles.customTextStyle(
+                        fontFamily: "Roboto",
+                        color: AppColors.greyColor,
+                        size: 12,
+                        weight: FontWeight.w200,
                       ),
-                      child: const Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 20,
+                      fillColor: AppColors.contBorderColor2,
+                      filled: true,
+                      border: InputBorder.none,
+                      contentPadding:
+                      const EdgeInsets.symmetric(
+                        vertical: 18,
+                        horizontal: 20,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: const BorderSide(
+                          color: AppColors.fieldBorderColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+
+                      /// ✅ Hide send button after submit
+                      suffixIcon: isSubmitted
+                          ? const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                      )
+                          : GestureDetector(
+                        onTap: submitFeedback,
+                        child: Container(
+                          margin: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.send,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+
+                  Text(
+                    isSubmitted
+                        ? "Feedback submitted successfully!"
+                        : "Your feedback helps us improve!",
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      color: AppColors.contLightText,
+                      weight: FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                "Your feedback helps us improve!",
-                style: AppStyles.customTextStyle(
-                  size: 10,
-                  color: AppColors.contLightText,
-                  weight: FontWeight.w400,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
+
         if (widget.isLoading)
           Positioned.fill(
             child: Container(

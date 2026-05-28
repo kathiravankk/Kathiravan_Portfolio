@@ -368,7 +368,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
                             profileController.profileDataModel.studentBanner !=
@@ -572,15 +572,18 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                     );
                                   }),
                                   _actionItem2("Update", () {
+                                    final templateId = int.tryParse(
+                                      profileController.profileDataModel.templateNumber ?? "",
+                                    );
+                                    debugPrint(
+                                      profileController.profileDataModel.templateNumber.toString(),
+                                    );
+
                                     AppFunctions.navigateScreen(
                                       context,
                                       AppRoutes.chatResumeUpdateScreen,
                                       arguments: {
-                                        "templateId": int.parse(
-                                          profileController
-                                              .profileDataModel
-                                              .templateNumber!,
-                                        ),
+                                        "templateId": templateId ?? 1,
                                       },
                                     );
                                   }),

@@ -79,7 +79,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
                   ),
                 )
               : Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(20),
                   child: SingleChildScrollView(
                     child: Column(
                       spacing: 25,

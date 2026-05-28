@@ -1,6 +1,7 @@
 class AssetImages {
   static const String loginBgImage = "assets/images/login_bg.png";
-  static const String appLogoImage = "assets/images/app_logo.png";
+  //static const String appLogoImage = "assets/images/app_logo.png";
+  static const String appLogoImage = "assets/images/app_new_logo.png";
   static const String appAlertImage = "assets/images/alert_image.png";
   static const String resumeUploadImage = "assets/images/resume_upload_img.png";
   static const String resumeCreateImage = "assets/images/resume_create_image.png";
@@ -20,7 +21,8 @@ class AssetImages {
   static const String editIconImg = "assets/images/edit_icon_img.png";
   static const String resDpBannerImg = "assets/images/res_dp_banner_image.png";
   static const String creditIcon = "assets/images/credit_icon.png";
-  static const String aiLoadingGif = "assets/images/ai_loading.gif";
+  //static const String aiLoadingGif = "assets/images/ai_loading.gif";
+  static const String aiLoadingGif = "assets/images/new_ai_loading.gif";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

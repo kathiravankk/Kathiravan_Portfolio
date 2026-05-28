@@ -32,10 +32,10 @@ class _CustomNavBarState extends State<CustomNavBar> {
             Container(
               decoration: const BoxDecoration(
                 color: AppColors.navBarColor,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(43),
-                  topLeft: Radius.circular(43),
-                ),
+                // borderRadius: BorderRadius.only(
+                //   topRight: Radius.circular(43),
+                //   topLeft: Radius.circular(43),
+                // ),
                 // boxShadow: [
                 //   BoxShadow(
                 //       color: Colors.black38,
@@ -65,7 +65,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
                   weight: FontWeight.w500,
                   color: AppColors.whiteColor,
                 ),
-                items: _trainerNavBarsItems(),
+                items: _appNavBarsItems(),
                 onTap: (index) {
                   setState(() {
                     currentIndex.value = index;
@@ -79,7 +79,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     );
   }
 
-  List<BottomNavigationBarItem> _trainerNavBarsItems() {
+  List<BottomNavigationBarItem> _appNavBarsItems() {
     return [
       const BottomNavigationBarItem(
         icon: Icon(Icons.home_outlined, color: AppColors.whiteColor),

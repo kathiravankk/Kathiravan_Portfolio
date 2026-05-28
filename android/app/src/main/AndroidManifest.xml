@@ -14,7 +14,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="internsharks"
+        android:label="Internsharks"
         android:allowBackup="false"
         android:fullBackupContent="false">
 
