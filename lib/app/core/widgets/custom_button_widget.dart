@@ -34,52 +34,73 @@ class CustomButtonWidget extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: ElevatedButton(
-        onPressed: disable ? null : buttonFunction,
-        style: ButtonStyle(
-          elevation: WidgetStatePropertyAll(0),
-          backgroundColor: WidgetStatePropertyAll(
-            disable ? AppColors.disableButtonColor2 : bgColor,
-          ),
-          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 10)),
-          maximumSize: WidgetStatePropertyAll(Size(double.infinity, 40)),
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: disable
-                    ? AppColors.transparentColor
-                    : bgColor,
+      child:
+      Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(25)),
+          gradient: disable
+              ? null
+              : const LinearGradient(
+                  colors: [AppColors.buttonGrad1, AppColors.buttonGrad2],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+          color: disable ? AppColors.disableButColor : null,
+        ),
+        child: ElevatedButton(
+          onPressed: disable ? null : buttonFunction,
+          style: ButtonStyle(
+            elevation: const WidgetStatePropertyAll(0),
+            backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+            shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(vertical: 10),
+            ),
+            maximumSize: const WidgetStatePropertyAll(
+              Size(double.infinity, 40),
+            ),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                side: BorderSide(
+                  width: 1,
+                  color: disable
+                      ? AppColors.transparentColor
+                      : Colors
+                            .transparent,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
-              borderRadius: BorderRadius.all(Radius.circular(25)),
             ),
           ),
-        ),
-        child: isLoading
-            ? SizedBox(
-                height: 20,
-                width: 20,
-                child: CupertinoActivityIndicator(color: AppColors.whiteColor),
-              )
-            : buttonWidget ??
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      buttonIcon ?? Container(),
-                      SizedBox(width: buttonIcon != null ? 5 : 0),
-                      Text(
-                        buttonText,
-                        style:
-                            buttonTextStyle ??
-                            AppStyles.customTextStyle(
-                              size: 16,
-                              color: AppColors.whiteColor,
-                              weight: FontWeight.w500,
-                              fontFamily: "Roboto",
-                            ),
-                      ),
-                    ],
+          child: isLoading
+              ? SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CupertinoActivityIndicator(
+                    color: AppColors.whiteColor,
                   ),
+                )
+              : buttonWidget ??
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buttonIcon ?? Container(),
+                        SizedBox(width: buttonIcon != null ? 5 : 0),
+                        Text(
+                          buttonText,
+                          style:
+                              buttonTextStyle ??
+                              AppStyles.customTextStyle(
+                                size: 18,
+                                color: disable ? AppColors.whiteColor : AppColors.blackColor,
+                                weight: FontWeight.w700,
+                                fontFamily: "Roboto",
+                              ),
+                        ),
+                      ],
+                    ),
+        ),
       ),
     );
   }

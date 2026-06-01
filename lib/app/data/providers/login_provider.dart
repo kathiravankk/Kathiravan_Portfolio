@@ -41,7 +41,8 @@ class LoginProvider {
   Future loginVerifyOtp({
     required String mobileNumber,
     required String otpNumber,
-    required String userType
+    required String userType,
+    required String fcmToken,
   }) async {
     try {
       client!.interceptors.add(
@@ -51,7 +52,12 @@ class LoginProvider {
       Response response = await client!
           .post(
             AppApiUrls.verifyLoginOtp,
-            data: {"mobile": mobileNumber, "otp": otpNumber, "userType": userType},
+            data: {
+              "mobile": mobileNumber,
+              "otp": otpNumber,
+              "userType": userType,
+              "fcmToken": fcmToken,
+            },
           )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;

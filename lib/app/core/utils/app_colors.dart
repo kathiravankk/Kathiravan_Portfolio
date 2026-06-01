@@ -69,6 +69,11 @@ class AppColors {
   static const Color lightTextColor = Color.fromRGBO(255, 255, 255, 0.23);
   static const Color contLightText = Color.fromRGBO(107, 114, 128, 1);
   static const Color paymentContColor = Color.fromRGBO(71, 233, 233, 0.1);
+  static const Color buttonGrad1 = Color.fromRGBO(132, 255, 255, 1);
+  static const Color buttonGrad2 = Color.fromRGBO(1, 205, 205, 1);
+  static const Color disableButColor = Color.fromRGBO(104, 104, 104, 1);
+  static const Color buttonGradient1 = Color.fromRGBO(37, 197, 197, 1);
+  static const Color buttonGradient2 = Color.fromRGBO(1, 205, 205, 1);
   static const Color gradientColor3 = Color(0xff161e16);
 static const Color iconBgColor = Color(0xFF123B34);
 static const Color iconContColor = Color(0xFF192226);

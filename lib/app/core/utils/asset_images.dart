@@ -23,6 +23,13 @@ class AssetImages {
   static const String creditIcon = "assets/images/credit_icon.png";
   //static const String aiLoadingGif = "assets/images/ai_loading.gif";
   static const String aiLoadingGif = "assets/images/new_ai_loading.gif";
+  static const String welcomeScreenBg = "assets/images/welcome_screen_bg.png";
+  static const String loginBg = "assets/images/login_bg_new.png";
+  static const String appLogoNew = "assets/images/app_logo_new.png";
+  static const String appBgNew = "assets/images/app_bg_new.png";
+  static const String uploadResumeImg = "assets/images/upload_resume_img.png";
+  static const String createResumeImg = "assets/images/create_resume_img.png";
+  static const String appBackgroundImg = "assets/images/app_background_img.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

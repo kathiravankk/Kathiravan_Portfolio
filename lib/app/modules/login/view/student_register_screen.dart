@@ -76,7 +76,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
+          image: AssetImage(AssetImages.appBackgroundImg),
           fit: BoxFit.cover,
         ),
       ),
@@ -110,12 +110,16 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //buildHeader(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(AssetImages.appLogoImage,  height: 100, width: 200,),
-                ],
-              ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AssetImages.appLogoImage,
+                      height: 100,
+                      width: 200,
+                    ),
+                  ],
+                ),
                 Text(
                   "Let's get you\nVerified!",
                   style: AppStyles.customTextStyle(
@@ -194,7 +198,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                           //   print(value);
                           // },
                           onChanged: (value) {
-                            if (value.isNotEmpty && RegExp(r'^[0-5]').hasMatch(value)) {
+                            if (value.isNotEmpty &&
+                                RegExp(r'^[0-5]').hasMatch(value)) {
                               AppAlertUtils.showToast(
                                 message: "Number must start from 6-9",
                                 isError: true,
@@ -395,7 +400,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                     weight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: 5,),
+                const SizedBox(height: 5),
                 Obx(() {
                   final enabled =
                       registerController.isMobileVerified.value &&
@@ -435,12 +440,16 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     );
   }
 
+  String? fcmToken = "";
+
   Future<void> studentRegisterFunc() async {
     debugPrint(registerController.resumeExtractModel.extractedData!.toString());
+    fcmToken = await LocalStorageService.getFcmToken() ?? "";
+    debugPrint(fcmToken ?? "");
     final resumePath = await ResumeStorageService.getResumePath();
     Map<String, dynamic> registerData = {
       "studmobileno": mobileController.text,
-
+      "fcmToken": fcmToken ?? "",
       "studemail": emailController.text,
 
       "studname": nameController.text,
@@ -498,7 +507,14 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       ),
       "studprogramminglang":
           registerController.resumeExtractModel.extractedData!.skills ?? [],
-      "college": jsonEncode(registerController.resumeExtractModel.extractedData!.education!.college ?? []),
+      "college": jsonEncode(
+        registerController
+                .resumeExtractModel
+                .extractedData!
+                .education!
+                .college ??
+            [],
+      ),
       // "studgender":
       //     registerController
       //         .resumeExtractModel
@@ -732,7 +748,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       // ResumeStorageService.saveNetworkResume(
       //   resumeFile: studentProfileModel.studentResume!,
       // );
-      if(mounted) {
+      if (mounted) {
         AppFunctions.navigateScreen(
           context,
           AppRoutes.registerResumeReportScreen,
@@ -755,13 +771,12 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       return;
     }
 
-    await registerController.sendMobileOtp(
-      mobileNumber: mobileController.text,
-    );
+    await registerController.sendMobileOtp(mobileNumber: mobileController.text);
 
     if (registerController.getResponseCode() == 200) {
       AppAlertUtils.showToast(
-        message: registerController.sendMobileOtpModel.message ??
+        message:
+            registerController.sendMobileOtpModel.message ??
             "OTP sent to your mobile!",
         isError: false,
       );
@@ -843,9 +858,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           height: 40,
           padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(AssetImages.appLogoImage),
-            ),
+            image: DecorationImage(image: AssetImage(AssetImages.appLogoImage)),
           ),
         ),
         Text(

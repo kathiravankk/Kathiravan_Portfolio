@@ -155,14 +155,14 @@ class CustomTextField extends StatelessWidget {
               ),
 
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(20),
                 borderSide: const BorderSide(
                   color: AppColors.fieldBorderColor,
                 ),
               ),
 
               disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(20),
                 borderSide: BorderSide(
                   color: isProfileFlow
                       ? AppColors.fieldBorderColor
@@ -171,14 +171,14 @@ class CustomTextField extends StatelessWidget {
               ),
 
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(20),
                 borderSide: const BorderSide(
                   color: AppColors.fieldBorderColor,
                 ),
               ),
 
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(20),
                 borderSide: const BorderSide(
                   color: AppColors.primaryColor,
                 ),
