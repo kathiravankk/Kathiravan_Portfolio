@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:lottie/lottie.dart';
 
 class AppAlertUtils {
   static Future<bool> showAppExitAlert({
@@ -371,7 +373,10 @@ class AppAlertUtils {
                   spacing: 5,
                   children: [
                     _paymentRow("COURSE", courseName),
-                    const Divider(color: AppColors.dividerContColor, thickness: 0.5,),
+                    const Divider(
+                      color: AppColors.dividerContColor,
+                      thickness: 0.5,
+                    ),
                     _paymentRow(
                       "AMOUNT",
                       "₹ $amount",
@@ -388,12 +393,22 @@ class AppAlertUtils {
     );
   }
 
+  static Widget customLoader() {
+    return Center(
+      child: Lottie.asset(
+        AssetImages.loadingIndicator,
+        height: 200,
+        width: 200
+      ),
+    );
+  }
+
   static Widget _paymentRow(
-      String title,
-      String value, {
-        Color valueColor = AppColors.whiteColor,
-        bool isAmount = false,
-      }) {
+    String title,
+    String value, {
+    Color valueColor = AppColors.whiteColor,
+    bool isAmount = false,
+  }) {
     return Row(
       children: [
         /// LEFT TEXT

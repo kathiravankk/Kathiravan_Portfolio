@@ -50,7 +50,7 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
+          image: AssetImage(AssetImages.appBackgroundImg),
           fit: BoxFit.cover,
         ),
       ),
@@ -78,11 +78,7 @@ class _SavedInternshipScreenState extends State<SavedInternshipScreen> {
         ),
         body: Obx(
           () => profileController.savedJobsLoading
-              ? Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
-                  ),
-                )
+              ? AppAlertUtils.customLoader()
               : savedJobs!.isNotEmpty
               ? Stack(
                   children: [

@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/filter_bottom_sheet.dart';
 import 'package:internsharks/app/core/widgets/internship_card.dart';
@@ -203,33 +205,41 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          'Search Internships',
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          spacing: 10,
-          children: [
-            _buildSearchBar(),
-            if (_hasActiveFilters) _buildActiveFilterRow(),
-            Expanded(child: _buildBody()),
-          ],
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            'Search Internships',
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            spacing: 10,
+            children: [
+              _buildSearchBar(),
+              if (_hasActiveFilters) _buildActiveFilterRow(),
+              Expanded(child: _buildBody()),
+            ],
+          ),
         ),
       ),
     );
@@ -242,9 +252,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
       if ((dashboardController.allInternshipLoading &&
               internshipList.isEmpty) ||
           profileController.filterLoading) {
-        return Center(
-          child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
-        );
+        return AppAlertUtils.customLoader();
       }
 
       if (internshipList.isEmpty) {

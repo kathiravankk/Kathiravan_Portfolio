@@ -49,7 +49,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
+          image: AssetImage(AssetImages.appBackgroundImg),
           fit: BoxFit.cover,
         ),
       ),
@@ -73,11 +73,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
         ),
         body: Obx(
           () => registerController.updateProfileLoading
-              ? Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
-                  ),
-                )
+              ?AppAlertUtils.customLoader()
               : Padding(
                   padding: const EdgeInsets.all(20),
                   child: SingleChildScrollView(

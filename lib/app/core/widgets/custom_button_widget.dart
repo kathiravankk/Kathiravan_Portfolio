@@ -92,7 +92,7 @@ class CustomButtonWidget extends StatelessWidget {
                           style:
                               buttonTextStyle ??
                               AppStyles.customTextStyle(
-                                size: 18,
+                                size: 16,
                                 color: disable ? AppColors.whiteColor : AppColors.blackColor,
                                 weight: FontWeight.w700,
                                 fontFamily: "Roboto",

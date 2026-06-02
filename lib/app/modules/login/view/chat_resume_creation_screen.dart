@@ -128,11 +128,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
         () =>
             registerController.studentDetailsLoading ||
                 registerController.studentRegisterLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
+            ? AppAlertUtils.customLoader()
             : Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(

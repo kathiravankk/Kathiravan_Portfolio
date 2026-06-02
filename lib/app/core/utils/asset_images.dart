@@ -30,6 +30,9 @@ class AssetImages {
   static const String uploadResumeImg = "assets/images/upload_resume_img.png";
   static const String createResumeImg = "assets/images/create_resume_img.png";
   static const String appBackgroundImg = "assets/images/app_background_img.png";
+  static const String customLoaderGif = "assets/images/custom_loader.svg";
+  static const String loadingIndicator = "assets/images/loading_indicator.json";
+  static const String aiLoadingIndicator = "assets/images/ai_loading_indicator.json";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

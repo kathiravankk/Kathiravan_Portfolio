@@ -77,11 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       child: Obx(
         () => profileController.profileDataLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
+            ? AppAlertUtils.customLoader()
             : Scaffold(
                 backgroundColor: AppColors.transparentColor,
                 appBar: AppBar(

@@ -133,11 +133,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
       ),
       body: Obx(
         () => internController.paymentStatusCheckLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
+            ? AppAlertUtils.customLoader()
             : SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(20),

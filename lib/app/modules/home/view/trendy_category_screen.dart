@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart'
     show DashboardController;
 import '../../../core/utils/app_functions.dart' show AppFunctions;
@@ -21,44 +22,52 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          "Trendy Categories",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
       ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(20),
-        itemCount: dashboardController.categoryListModel.categoryList!.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          childAspectRatio: 1.0,
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            "Trendy Categories",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
         ),
-        itemBuilder: (context, index) => buildCategoryCard(
-          categoryName:
-              dashboardController
-                  .categoryListModel
-                  .categoryList![index]
-                  .categoryName ??
-              "",
-          categoryData:
-              dashboardController.categoryListModel.categoryList![index],
-          categoryCount:
-              dashboardController.categoryListModel.categoryList![index].count,
+        body: GridView.builder(
+          padding: const EdgeInsets.all(20),
+          itemCount: dashboardController.categoryListModel.categoryList!.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 1.0,
+          ),
+          itemBuilder: (context, index) => buildCategoryCard(
+            categoryName:
+                dashboardController
+                    .categoryListModel
+                    .categoryList![index]
+                    .categoryName ??
+                "",
+            categoryData:
+                dashboardController.categoryListModel.categoryList![index],
+            categoryCount:
+                dashboardController.categoryListModel.categoryList![index].count,
+          ),
         ),
       ),
     );

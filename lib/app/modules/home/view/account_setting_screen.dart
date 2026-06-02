@@ -25,254 +25,262 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          "Account Settings",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.secondaryColor,
-            weight: FontWeight.w600,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
       ),
-      body: Obx(
-        () => Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            spacing: 15,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Security ──────────────────────────────────────────────────
-              Text(
-                "Security",
-                style: AppStyles.customTextStyle(
-                  color: AppColors.whiteColor,
-                  size: 16,
-                  weight: FontWeight.w700,
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            "Account Settings",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.secondaryColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ),
+        body: Obx(
+          () => Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              spacing: 15,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Security ──────────────────────────────────────────────────
+                Text(
+                  "Security",
+                  style: AppStyles.customTextStyle(
+                    color: AppColors.whiteColor,
+                    size: 16,
+                    weight: FontWeight.w700,
+                  ),
                 ),
-              ),
 
-              _settingsCard(
-                children: [
-                  _settingsTile(
-                    icon: CupertinoIcons.phone_arrow_up_right,
-                    title: "Change Mobile Number",
-                    onTap: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.mobileUpdateScreen,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 5),
-                  Divider(color: AppColors.contBorderColor),
-                  const SizedBox(height: 5),
-                  _settingsTile(
-                    icon: CupertinoIcons.mail,
-                    title: "Change Email",
-                    onTap: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.emailUpdateScreen,
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-
-              // ── Privacy Policy & Terms ────────────────────────────────────
-              Text(
-                "Support & Legal",
-                style: AppStyles.customTextStyle(
-                  color: AppColors.whiteColor,
-                  size: 16,
-                  weight: FontWeight.w700,
+                _settingsCard(
+                  children: [
+                    _settingsTile(
+                      icon: CupertinoIcons.phone_arrow_up_right,
+                      title: "Change Mobile Number",
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.mobileUpdateScreen,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 5),
+                    Divider(color: AppColors.contBorderColor),
+                    const SizedBox(height: 5),
+                    _settingsTile(
+                      icon: CupertinoIcons.mail,
+                      title: "Change Email",
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.emailUpdateScreen,
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ),
+                const SizedBox(height: 10),
 
-              _settingsCard(
-                children: [
-                  _settingsTile(
-                    icon: CupertinoIcons.lock_shield,
-                    title: "Privacy Policy",
-                    onTap: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.privacyPolicyScreen,
-                      );
-                    },
+                // ── Privacy Policy & Terms ────────────────────────────────────
+                Text(
+                  "Support & Legal",
+                  style: AppStyles.customTextStyle(
+                    color: AppColors.whiteColor,
+                    size: 16,
+                    weight: FontWeight.w700,
                   ),
-                  const SizedBox(height: 5),
-                  Divider(color: AppColors.contBorderColor),
-                  const SizedBox(height: 5),
-                  _settingsTile(
-                    icon: CupertinoIcons.doc_text,
-                    title: "Terms and Conditions",
-                    onTap: () {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.termsAndConditionsScreen,
-                      );
-                    },
-                  ),
-                ],
-              ),
+                ),
 
-              // ── Delete Account ────────────────────────────────────────────
-              const SizedBox(height: 10),
-              _settingsCard(
-                children: [
-                  _settingsTile(
-                    isDelete: true,
-                    icon: CupertinoIcons.delete,
-                    title: "Delete Account",
-                    isLoading: dashboardController.studentDeleteLoading,
-                    onTap: dashboardController.studentDeleteLoading
-                        ? () {}
-                        : () {
-                            AppAlertUtils.showAppAlert(
-                              context: context,
-                              title: "Delete Account",
-                              content:
-                                  "Are you sure you want to permanently delete your account?\n\nThis action cannot be undone.",
-                              confirmText: "DELETE",
-                              cancelText: "CANCEL",
-                              onConfirm: () async {
-                                try {
-                                  await dashboardController
-                                      .deleteStudentAccount();
+                _settingsCard(
+                  children: [
+                    _settingsTile(
+                      icon: CupertinoIcons.lock_shield,
+                      title: "Privacy Policy",
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.privacyPolicyScreen,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 5),
+                    Divider(color: AppColors.contBorderColor),
+                    const SizedBox(height: 5),
+                    _settingsTile(
+                      icon: CupertinoIcons.doc_text,
+                      title: "Terms and Conditions",
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.termsAndConditionsScreen,
+                        );
+                      },
+                    ),
+                  ],
+                ),
 
-                                  if (dashboardController.getResponseCode() ==
-                                          200 ||
-                                      dashboardController.getResponseCode() ==
-                                          201) {
-                                    AppAlertUtils.showToast(
-                                      message:
-                                          dashboardController
-                                              .commonPostModel
-                                              .message ??
-                                          "Account deleted successfully!",
-                                      isError: false,
-                                    );
+                // ── Delete Account ────────────────────────────────────────────
+                const SizedBox(height: 10),
+                _settingsCard(
+                  children: [
+                    _settingsTile(
+                      isDelete: true,
+                      icon: CupertinoIcons.delete,
+                      title: "Delete Account",
+                      isLoading: dashboardController.studentDeleteLoading,
+                      onTap: dashboardController.studentDeleteLoading
+                          ? () {}
+                          : () {
+                              AppAlertUtils.showAppAlert(
+                                context: context,
+                                title: "Delete Account",
+                                content:
+                                    "Are you sure you want to permanently delete your account?\n\nThis action cannot be undone.",
+                                confirmText: "DELETE",
+                                cancelText: "CANCEL",
+                                onConfirm: () async {
+                                  try {
+                                    await dashboardController
+                                        .deleteStudentAccount();
 
-                                    if (mounted) {
-                                      await Future.delayed(
-                                        const Duration(milliseconds: 500),
+                                    if (dashboardController.getResponseCode() ==
+                                            200 ||
+                                        dashboardController.getResponseCode() ==
+                                            201) {
+                                      AppAlertUtils.showToast(
+                                        message:
+                                            dashboardController
+                                                .commonPostModel
+                                                .message ??
+                                            "Account deleted successfully!",
+                                        isError: false,
                                       );
 
-                                      AppFunctions.logOutFunc(context);
-                                    }
-                                  } else {
-                                    AppFunctions.apiErrorHandling(
-                                      dashboardController.getResponseCode(),
-                                      dashboardController
-                                              .commonPostModel
-                                              .message ??
-                                          "Failed to delete account!",
-                                    );
-                                  }
-                                } catch (e) {
-                                  AppAlertUtils.showToast(
-                                    message: "Something went wrong!",
-                                    isError: true,
-                                  );
+                                      if (mounted) {
+                                        await Future.delayed(
+                                          const Duration(milliseconds: 500),
+                                        );
 
-                                  debugPrint("Delete account error: $e");
-                                }
-                              },
-                            );
-                          },
-                  ),
-                  // _settingsTile(
-                  //   isDelete: true,
-                  //   icon: CupertinoIcons.delete,
-                  //   title: "Delete Account",
-                  //   onTap: () {
-                  //     AppAlertUtils.showAppAlert(
-                  //       context: context,
-                  //       title: "Delete Account",
-                  //       confirmText: "OKAY",
-                  //       customContent: Column(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         children: [
-                  //           Text(
-                  //             "Please contact admin to Delete your Account!",
-                  //             textAlign: TextAlign.center,
-                  //             style: AppStyles.customTextStyle(
-                  //               lineSpace: 1.3,
-                  //               size: 14,
-                  //               color: AppColors.whiteColor,
-                  //               weight: FontWeight.w300,
-                  //             ),
-                  //           ),
-                  //           const SizedBox(height: 10),
-                  //
-                  //           /// Copyable Email
-                  //           GestureDetector(
-                  //             onTap: () {
-                  //               Clipboard.setData(
-                  //                 const ClipboardData(
-                  //                   text: "info@internsharks.ai",
-                  //                 ),
-                  //               );
-                  //               AppAlertUtils.showToast(
-                  //                 message: "Email copied!",
-                  //               );
-                  //             },
-                  //             //onTap: _launchEmail,
-                  //             child: Container(
-                  //               padding: const EdgeInsets.symmetric(
-                  //                 horizontal: 12,
-                  //                 vertical: 8,
-                  //               ),
-                  //               decoration: BoxDecoration(
-                  //                 color: AppColors.primaryColor.withOpacity(
-                  //                   0.2,
-                  //                 ),
-                  //                 borderRadius: BorderRadius.circular(8),
-                  //                 border: Border.all(
-                  //                   color: AppColors.primaryColor,
-                  //                 ),
-                  //               ),
-                  //               child: Row(
-                  //                 mainAxisSize: MainAxisSize.min,
-                  //                 children: [
-                  //                   Text(
-                  //                     "info@internsharks.ai",
-                  //                     style: AppStyles.customTextStyle(
-                  //                       size: 14,
-                  //                       color: AppColors.primaryColor,
-                  //                       weight: FontWeight.w600,
-                  //                     ),
-                  //                   ),
-                  //                   const SizedBox(width: 6),
-                  //                   const Icon(
-                  //                     Icons.copy,
-                  //                     size: 16,
-                  //                     color: AppColors.primaryColor,
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       content: '',
-                  //     );
-                  //   },
-                  // ),
-                ],
-              ),
-            ],
+                                        AppFunctions.logOutFunc(context);
+                                      }
+                                    } else {
+                                      AppFunctions.apiErrorHandling(
+                                        dashboardController.getResponseCode(),
+                                        dashboardController
+                                                .commonPostModel
+                                                .message ??
+                                            "Failed to delete account!",
+                                      );
+                                    }
+                                  } catch (e) {
+                                    AppAlertUtils.showToast(
+                                      message: "Something went wrong!",
+                                      isError: true,
+                                    );
+
+                                    debugPrint("Delete account error: $e");
+                                  }
+                                },
+                              );
+                            },
+                    ),
+                    // _settingsTile(
+                    //   isDelete: true,
+                    //   icon: CupertinoIcons.delete,
+                    //   title: "Delete Account",
+                    //   onTap: () {
+                    //     AppAlertUtils.showAppAlert(
+                    //       context: context,
+                    //       title: "Delete Account",
+                    //       confirmText: "OKAY",
+                    //       customContent: Column(
+                    //         mainAxisSize: MainAxisSize.min,
+                    //         children: [
+                    //           Text(
+                    //             "Please contact admin to Delete your Account!",
+                    //             textAlign: TextAlign.center,
+                    //             style: AppStyles.customTextStyle(
+                    //               lineSpace: 1.3,
+                    //               size: 14,
+                    //               color: AppColors.whiteColor,
+                    //               weight: FontWeight.w300,
+                    //             ),
+                    //           ),
+                    //           const SizedBox(height: 10),
+                    //
+                    //           /// Copyable Email
+                    //           GestureDetector(
+                    //             onTap: () {
+                    //               Clipboard.setData(
+                    //                 const ClipboardData(
+                    //                   text: "info@internsharks.ai",
+                    //                 ),
+                    //               );
+                    //               AppAlertUtils.showToast(
+                    //                 message: "Email copied!",
+                    //               );
+                    //             },
+                    //             //onTap: _launchEmail,
+                    //             child: Container(
+                    //               padding: const EdgeInsets.symmetric(
+                    //                 horizontal: 12,
+                    //                 vertical: 8,
+                    //               ),
+                    //               decoration: BoxDecoration(
+                    //                 color: AppColors.primaryColor.withOpacity(
+                    //                   0.2,
+                    //                 ),
+                    //                 borderRadius: BorderRadius.circular(8),
+                    //                 border: Border.all(
+                    //                   color: AppColors.primaryColor,
+                    //                 ),
+                    //               ),
+                    //               child: Row(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   Text(
+                    //                     "info@internsharks.ai",
+                    //                     style: AppStyles.customTextStyle(
+                    //                       size: 14,
+                    //                       color: AppColors.primaryColor,
+                    //                       weight: FontWeight.w600,
+                    //                     ),
+                    //                   ),
+                    //                   const SizedBox(width: 6),
+                    //                   const Icon(
+                    //                     Icons.copy,
+                    //                     size: 16,
+                    //                     color: AppColors.primaryColor,
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       content: '',
+                    //     );
+                    //   },
+                    // ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
