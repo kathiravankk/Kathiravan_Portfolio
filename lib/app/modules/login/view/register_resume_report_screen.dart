@@ -124,7 +124,7 @@ class _RegisterResumeReportScreenState
           context: context,
           title: "Are you sure? ⚠️",
           content:
-          "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
+              "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
 
           confirmText: "OK, Go Back",
           onConfirm: () {
@@ -136,117 +136,120 @@ class _RegisterResumeReportScreenState
         onRefresh: () async {
           await getResumeScore();
         },
-        child: Scaffold(
-          backgroundColor: AppColors.appBgColor_2,
-          appBar: AppBar(
-            backgroundColor: AppColors.transparentColor,
-            automaticallyImplyLeading: false,
-            elevation: 0,
-            title: Text(
-              'Resume Report',
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                size: 25,
-                color: AppColors.whiteColor,
-              ),
-              onPressed: () {
-                AppAlertUtils.showAppAlert(
-                  context: context,
-                  title: "Are you sure? ⚠️",
-                  content:
-                  "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
-
-                  confirmText: "OK, Go Back",
-                  onConfirm: () {
-                    Get.offAllNamed(AppRoutes.dashBoardScreen);
-                  },
-                );
-              },
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(AssetImages.appBackgroundImg),
+              fit: BoxFit.cover,
             ),
           ),
-          body: Obx(
-                () => registerController.resumeScoreLoading ||
-                registerController.studentDetailsLoading
-                ? Center(
-              child: CupertinoActivityIndicator(
-                color: AppColors.secondaryColor,
+          child: Scaffold(
+            backgroundColor: AppColors.transparentColor,
+            appBar: AppBar(
+              backgroundColor: AppColors.transparentColor,
+              automaticallyImplyLeading: false,
+              elevation: 0,
+              title: Text(
+                'Resume Report',
+                style: AppStyles.customTextStyle(
+                  size: 18,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w600,
+                ),
               ),
-            )
-                : Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                            children: [
-                            /// 🔹 TOP STATIC
-                            Expanded(
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  size: 25,
+                  color: AppColors.whiteColor,
+                ),
+                onPressed: () {
+                  AppAlertUtils.showAppAlert(
+                    context: context,
+                    title: "Are you sure? ⚠️",
+                    content:
+                        "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
+
+                    confirmText: "OK, Go Back",
+                    onConfirm: () {
+                      Get.offAllNamed(AppRoutes.dashBoardScreen);
+                    },
+                  );
+                },
+              ),
+            ),
+            body: Obx(
+              () =>
+                  registerController.resumeScoreLoading ||
+                      registerController.studentDetailsLoading
+                  ? AppAlertUtils.customLoader()
+                  : Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          /// 🔹 TOP STATIC
+                          Expanded(
                             flex: 4,
-                              child: Column(
-                                children: [
-                  Expanded(
-                    child: resumePreview(),
-                  ),
+                            child: Column(
+                              children: [
+                                Expanded(child: resumePreview()),
 
-                  const SizedBox(height: 12),
+                                const SizedBox(height: 12),
 
-                  buildScoreCard(),
-                                ],
-                              ),
+                                buildScoreCard(),
+                              ],
                             ),
+                          ),
 
-                            const SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
-                            /// 🔹 BOTTOM SCROLLABLE
-                            Expanded(
-                              flex: 6,
-                              child: RefreshIndicator(
-                                onRefresh: () async {
-                  await getResumeScore();
-                                },
-                                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      buildAllSections(),
+                          /// 🔹 BOTTOM SCROLLABLE
+                          Expanded(
+                            flex: 6,
+                            child: RefreshIndicator(
+                              onRefresh: () async {
+                                await getResumeScore();
+                              },
+                              child: SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: Column(
+                                  children: [
+                                    buildAllSections(),
 
-                      buildStrengthCard(
-                        isStrength: true,
-                        list: registerController
-                            .resumeAnalyzeModel
-                            .analysis!
-                            .strengths,
-                        title: "Strengths",
-                      ),
+                                    buildStrengthCard(
+                                      isStrength: true,
+                                      list: registerController
+                                          .resumeAnalyzeModel
+                                          .analysis!
+                                          .strengths,
+                                      title: "Strengths",
+                                    ),
 
-                      const SizedBox(height: 15),
+                                    const SizedBox(height: 15),
 
-                      buildStrengthCard(
-                        isStrength: false,
-                        list: registerController
-                            .resumeAnalyzeModel
-                            .analysis!
-                            .improvements,
-                        title: "Improvements",
-                      ),
+                                    buildStrengthCard(
+                                      isStrength: false,
+                                      list: registerController
+                                          .resumeAnalyzeModel
+                                          .analysis!
+                                          .improvements,
+                                      title: "Improvements",
+                                    ),
 
-                      const SizedBox(height: 30),
+                                    const SizedBox(height: 30),
 
-                      buildBottomButtons(),
+                                    buildBottomButtons(),
 
-                      const SizedBox(height: 30),
-                    ],
-                  ),
+                                    const SizedBox(height: 30),
+                                  ],
                                 ),
                               ),
                             ),
-                            ],
                           ),
-                ),
+                        ],
+                      ),
+                    ),
+            ),
           ),
         ),
       ),
@@ -259,7 +262,7 @@ class _RegisterResumeReportScreenState
       onTap: () {
         if (networkResumePath != null && networkResumePath!.isNotEmpty) {
           Get.to(
-                () => FullPdfViewerScreen(
+            () => FullPdfViewerScreen(
               pdfUrl: networkResumePath!,
               title: "Resume Preview",
             ),
@@ -275,39 +278,39 @@ class _RegisterResumeReportScreenState
         clipBehavior: Clip.hardEdge,
         child: networkResumePath == null || networkResumePath!.isEmpty
             ? Center(
-          child: CupertinoActivityIndicator(
-            color: AppColors.secondaryColor,
-          ),
-        )
+                child: CupertinoActivityIndicator(
+                  color: AppColors.secondaryColor,
+                ),
+              )
             : Stack(
-          children: [
-            SfPdfViewer.network(
-              networkResumePath ?? "",
-              canShowScrollHead: false,
-              canShowScrollStatus: false,
-              enableDoubleTapZooming: false,
-              pageLayoutMode: PdfPageLayoutMode.single,
-            ),
+                children: [
+                  SfPdfViewer.network(
+                    networkResumePath ?? "",
+                    canShowScrollHead: false,
+                    canShowScrollStatus: false,
+                    enableDoubleTapZooming: false,
+                    pageLayoutMode: PdfPageLayoutMode.single,
+                  ),
 
-            /// Optional Preview Overlay
-            Positioned(
-              right: 15,
-              top: 15,
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.fullscreen,
-                  color: Colors.white,
-                  size: 22,
-                ),
+                  /// Optional Preview Overlay
+                  Positioned(
+                    right: 15,
+                    top: 15,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.fullscreen,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -391,7 +394,9 @@ class _RegisterResumeReportScreenState
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: isStrength! ? AppColors.correctBg : AppColors.contLightColor.withValues(alpha: 0.5),
+        color: isStrength!
+            ? AppColors.correctBg
+            : AppColors.contLightColor.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(
           color: isStrength
@@ -430,29 +435,29 @@ class _RegisterResumeReportScreenState
             children: list
                 .map(
                   (e) => Row(
-                spacing: 5,
-                children: [
-                  Icon(
-                    Icons.star_outline,
-                    color: isStrength
-                        ? AppColors.correctText
-                        : AppColors.secondaryColor,
-                    size: 15,
-                  ),
-                  Expanded(
-                    child: Text(
-                      e,
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        lineSpace: 1.4,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w300,
+                    spacing: 5,
+                    children: [
+                      Icon(
+                        Icons.star_outline,
+                        color: isStrength
+                            ? AppColors.correctText
+                            : AppColors.secondaryColor,
+                        size: 15,
                       ),
-                    ),
+                      Expanded(
+                        child: Text(
+                          e,
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            lineSpace: 1.4,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w300,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
+                )
                 .toList(),
           ),
         ],
@@ -647,7 +652,7 @@ class _RegisterResumeReportScreenState
           ],
         ),
         ...suggestions.map(
-              (s) => Row(
+          (s) => Row(
             children: [
               Checkbox(
                 activeColor: AppColors.primaryColor,
@@ -727,7 +732,8 @@ class _RegisterResumeReportScreenState
               registerController
                   .resumeAnalyzeModel
                   .extractedData!
-                  .updatedExperience = _suggestionSelection["Experience"]?.entries
+                  .updatedExperience = _suggestionSelection["Experience"]
+                  ?.entries
                   .where((e) => e.value)
                   .map((e) => e.key)
                   .toList();
@@ -747,13 +753,13 @@ class _RegisterResumeReportScreenState
                   .map((e) => e.key)
                   .toList();
               registerController
-                  .resumeAnalyzeModel
-                  .extractedData!
-                  .updatedProfileSummary = _suggestionSelection["Profile Summary"]
-                  ?.entries
-                  .where((e) => e.value)
-                  .map((e) => e.key)
-                  .toList();
+                      .resumeAnalyzeModel
+                      .extractedData!
+                      .updatedProfileSummary =
+                  _suggestionSelection["Profile Summary"]?.entries
+                      .where((e) => e.value)
+                      .map((e) => e.key)
+                      .toList();
 
               debugPrint(
                 registerController.resumeAnalyzeModel.extractedData!.toString(),
@@ -787,7 +793,7 @@ class _RegisterResumeReportScreenState
                   "Update - ",
                   style: AppStyles.customTextStyle(
                     size: 16,
-                    color: AppColors.whiteColor,
+                    color: AppColors.blackColor,
                     weight: FontWeight.w500,
                     fontFamily: "Roboto",
                   ),
@@ -796,23 +802,24 @@ class _RegisterResumeReportScreenState
                   "50",
                   style: AppStyles.customTextStyle(
                     size: 16,
-                    color: AppColors.whiteColor,
+                    color: AppColors.blackColor,
                     weight: FontWeight.w500,
                     fontFamily: "Roboto",
                   ),
                 ),
-                Image.asset(
-                  AssetImages.creditsIconNew,
-                  height: 22,
-                  width: 22,
-                ),
+                Image.asset(AssetImages.creditsIconNew, height: 22, width: 22),
               ],
             ),
           ),
         ),
         Expanded(
           child: CustomButtonWidget(
-            bgColor: AppColors.disableButtonColor3,
+            bgColor: AppColors.disableButtonColor2,
+            buttonTextStyle: AppStyles.customTextStyle(
+              size: 16,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w700,
+            ),
             //width: 150,
             height: 45,
             isLoading: registerController.updateResumeTemplateLoading,
@@ -828,9 +835,11 @@ class _RegisterResumeReportScreenState
 
   Future<void> updateSkipProfileFunc() async {
     final studentId = await LocalStorageService.getStudentId();
-    registerController.extractedResumeModel.templateNumber  = "1";
+    registerController.extractedResumeModel.templateNumber = "1";
     registerController.extractedResumeModel.studentId = studentId!;
-    debugPrint(registerController.extractedResumeModel.profileSummary.toString());
+    debugPrint(
+      registerController.extractedResumeModel.profileSummary.toString(),
+    );
     await registerController.updateResumeProfileData(
       updateData: registerController.resumeAnalyzeModel.extractedData!,
     );
@@ -850,7 +859,7 @@ class _RegisterResumeReportScreenState
     } else {
       AppAlertUtils.showToast(
         message:
-        registerController.updateProfileModel.message ??
+            registerController.updateProfileModel.message ??
             "Something went wrong!,Please try again later!",
         isError: true,
       );

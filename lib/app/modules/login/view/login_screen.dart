@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
               spacing: 15,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 /// ---------------- MOBILE FIELD ----------------
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 CustomTextField(
                   labelText: "Mobile Number",
 
@@ -213,7 +213,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     text: TextSpan(
                       text: "If you’re new to Internsharks, ",
                       style: AppStyles.customTextStyle(
-                        size: 16,
+                        size: 14,
+                        lineSpace: 1.4,
                         weight: FontWeight.w300,
                         color: AppColors.lightText,
                       ),
@@ -221,8 +222,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextSpan(
                           text: "Register now",
                           style: AppStyles.customTextStyle(
-                            size: 16,
+                            size: 15,
                             weight: FontWeight.w300,
+                            lineSpace: 1.4,
                             color: AppColors.secondaryColor,
                             isUnderlined: true,
                           ),

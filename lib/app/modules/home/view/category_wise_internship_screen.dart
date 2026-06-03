@@ -149,6 +149,10 @@ class _CategoryWiseInternshipScreenState
                                           .jobs![index]
                                           .isSaved ??
                                       false,
+                                  position: dashboardController
+                                      .categoryInternshipModel
+                                      .jobs![index]
+                                      .noOfPosition ??0,
                                   postedDate: dashboardController
                                       .categoryInternshipModel
                                       .jobs![index]

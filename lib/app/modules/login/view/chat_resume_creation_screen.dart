@@ -102,53 +102,61 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 25,
-            color: AppColors.whiteColor,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          "Create Resume",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
       ),
-      body: Obx(
-        () =>
-            registerController.studentDetailsLoading ||
-                registerController.studentRegisterLoading
-            ? AppAlertUtils.customLoader()
-            : Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20),
-                    Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        itemCount: messages.length,
-                        itemBuilder: (context, i) =>
-                            _buildChatBubble(messages[i]),
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 25,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            "Create Resume",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ),
+        body: Obx(
+          () =>
+              registerController.studentDetailsLoading ||
+                  registerController.studentRegisterLoading
+              ? AppAlertUtils.customLoader()
+              : Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: scrollController,
+                          itemCount: messages.length,
+                          itemBuilder: (context, i) =>
+                              _buildChatBubble(messages[i]),
+                        ),
                       ),
-                    ),
-                    if (registerController.chatResumeLoading)
-                      loadingContainer(),
-                    _buildInputArea(currentKeyboard),
-                    SizedBox(height: 10),
-                  ],
+                      if (registerController.chatResumeLoading)
+                        loadingContainer(),
+                      _buildInputArea(currentKeyboard),
+                      SizedBox(height: 10),
+                    ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

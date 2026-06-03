@@ -43,14 +43,14 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10,
+      spacing: 15,
       children: [
         Text(
           labelText,
           style: AppStyles.customTextStyle(
             color: AppColors.whiteColor,
             size: 14,
-            weight: FontWeight.w500,
+            weight: FontWeight.w700,
           ),
         ),
         Container(
@@ -68,7 +68,7 @@ class CustomTextField extends StatelessWidget {
             style: AppStyles.customTextStyle(
               fontFamily: "Roboto",
               color: AppColors.whiteColor,
-              size: 14,
+              size: 15,
               weight: FontWeight.w500,
             ),
             inputFormatters: [
@@ -94,8 +94,8 @@ class CustomTextField extends StatelessWidget {
               hintStyle: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
                 color: AppColors.greyColor,
-                size: 12,
-                weight: FontWeight.w200,
+                size: 15,
+                weight: FontWeight.w500,
               ),
 
               filled: true,

@@ -111,6 +111,11 @@ class _RecommentedInternshipScreenState
                             .internshipList![index]
                             .isSaved ??
                             false,
+                        position:  dashboardController
+                            .recommentedModel
+                            .internshipList![index]
+                            .noOfPosition ??
+                            0,
                         // saveFunc: () {
                         //   internshipList![index].isSaved!
                         //       ? removeToSaved(jobId: internshipList![index].sId!)

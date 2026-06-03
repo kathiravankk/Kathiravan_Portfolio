@@ -419,92 +419,100 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 25,
-            color: AppColors.whiteColor,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        elevation: 0,
-        title: Text(
-          "Update Resume",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
       ),
-      body: Obx(
-        () =>
-            dashboardController.getUpdateChatLoading ||
-                registerController.updateProfileLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
-            : Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            controller: scrollController,
-                            itemCount: messages.length,
-                            itemBuilder: (context, i) =>
-                                _buildChatBubble(messages[i]),
-                          ),
-                        ),
-                        if (dashboardController.resumeUpdateChatLoading)
-                          loadingContainer(),
-                        if (availableOptions.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: _buildOptionsChips(),
-                          ),
-
-                        _buildInputArea(),
-                      ],
-                    ),
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 25,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () => Get.back(),
+          ),
+          elevation: 0,
+          title: Text(
+            "Update Resume",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ),
+        body: Obx(
+          () =>
+              dashboardController.getUpdateChatLoading ||
+                  registerController.updateProfileLoading
+              ? Center(
+                  child: CupertinoActivityIndicator(
+                    color: AppColors.secondaryColor,
                   ),
-                  // Visibility(
-                  //   visible:
-                  //       registerController.updateProfileLoading ||
-                  //       registerController.updateProfileLoading,
-                  //   child: Positioned(
-                  //     child: Center(
-                  //       child: Column(
-                  //         mainAxisAlignment: MainAxisAlignment.center,
-                  //         crossAxisAlignment: CrossAxisAlignment.center,
-                  //         children: [
-                  //           CupertinoActivityIndicator(
-                  //             color: AppColors.secondaryColor,
-                  //           ),
-                  //           Text(
-                  //             "AI Updating your resume..!",
-                  //             textAlign: TextAlign.center,
-                  //             style: AppStyles.customTextStyle(
-                  //               size: 14,
-                  //               weight: FontWeight.w600,
-                  //               color: AppColors.secondaryColor,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
+                )
+              : Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              controller: scrollController,
+                              itemCount: messages.length,
+                              itemBuilder: (context, i) =>
+                                  _buildChatBubble(messages[i]),
+                            ),
+                          ),
+                          if (dashboardController.resumeUpdateChatLoading)
+                            loadingContainer(),
+                          if (availableOptions.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: _buildOptionsChips(),
+                            ),
+
+                          _buildInputArea(),
+                        ],
+                      ),
+                    ),
+                    // Visibility(
+                    //   visible:
+                    //       registerController.updateProfileLoading ||
+                    //       registerController.updateProfileLoading,
+                    //   child: Positioned(
+                    //     child: Center(
+                    //       child: Column(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         crossAxisAlignment: CrossAxisAlignment.center,
+                    //         children: [
+                    //           CupertinoActivityIndicator(
+                    //             color: AppColors.secondaryColor,
+                    //           ),
+                    //           Text(
+                    //             "AI Updating your resume..!",
+                    //             textAlign: TextAlign.center,
+                    //             style: AppStyles.customTextStyle(
+                    //               size: 14,
+                    //               weight: FontWeight.w600,
+                    //               color: AppColors.secondaryColor,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+        ),
       ),
     );
   }

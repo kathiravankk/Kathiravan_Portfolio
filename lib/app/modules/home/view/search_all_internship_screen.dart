@@ -286,6 +286,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
                 );
               },
               isSaved: item.isSaved ?? false,
+              position: item.noOfPosition ??0,
               // saveFunc: () =>
               //     dashboardController.searchFilterSaveFunc(index),
               // saveFunc: () async {

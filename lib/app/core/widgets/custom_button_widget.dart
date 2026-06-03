@@ -11,7 +11,7 @@ class CustomButtonWidget extends StatelessWidget {
   final double height;
   final bool disable;
   final bool isLoading;
-  final Color bgColor;
+  final Color? bgColor;
   final TextStyle? buttonTextStyle;
   final Widget? buttonWidget;
 
@@ -24,30 +24,39 @@ class CustomButtonWidget extends StatelessWidget {
     this.height = 50,
     this.disable = false,
     this.isLoading = false,
-    this.bgColor = AppColors.primaryColor,
+    this.bgColor,
     this.buttonTextStyle,
     this.buttonWidget,
   });
 
   @override
   Widget build(BuildContext context) {
+    // 1. Determine the background color or gradient based on priority
+    final bool hasCustomBgColor = bgColor != null;
+
+    final BoxDecoration containerDecoration = hasCustomBgColor
+        ? BoxDecoration(
+      color: bgColor,
+      borderRadius: const BorderRadius.all(Radius.circular(25)),
+    )
+        : BoxDecoration(
+      borderRadius: const BorderRadius.all(Radius.circular(25)),
+      gradient: disable
+          ? null
+          : const LinearGradient(
+        colors: [AppColors.buttonGrad1, AppColors.buttonGrad2],
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ),
+      color: disable ? AppColors.disableButColor : null,
+    );
+
     return SizedBox(
       width: width,
       height: height,
-      child:
-      Container(
+      child: Container(
         clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(25)),
-          gradient: disable
-              ? null
-              : const LinearGradient(
-                  colors: [AppColors.buttonGrad1, AppColors.buttonGrad2],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-          color: disable ? AppColors.disableButColor : null,
-        ),
+        decoration: containerDecoration,
         child: ElevatedButton(
           onPressed: disable ? null : buttonFunction,
           style: ButtonStyle(
@@ -66,40 +75,40 @@ class CustomButtonWidget extends StatelessWidget {
                   width: 1,
                   color: disable
                       ? AppColors.transparentColor
-                      : Colors
-                            .transparent,
+                      : Colors.transparent,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(25)),
               ),
             ),
           ),
           child: isLoading
-              ? SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.whiteColor,
-                  ),
-                )
+              ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CupertinoActivityIndicator(
+              color: AppColors.whiteColor,
+            ),
+          )
               : buttonWidget ??
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        buttonIcon ?? Container(),
-                        SizedBox(width: buttonIcon != null ? 5 : 0),
-                        Text(
-                          buttonText,
-                          style:
-                              buttonTextStyle ??
-                              AppStyles.customTextStyle(
-                                size: 16,
-                                color: disable ? AppColors.whiteColor : AppColors.blackColor,
-                                weight: FontWeight.w700,
-                                fontFamily: "Roboto",
-                              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buttonIcon ?? const SizedBox.shrink(),
+                  if (buttonIcon != null) const SizedBox(width: 5),
+                  Text(
+                    buttonText,
+                    style: buttonTextStyle ??
+                        AppStyles.customTextStyle(
+                          size: 16,
+                          color: disable
+                              ? AppColors.whiteColor
+                              : AppColors.blackColor,
+                          weight: FontWeight.w700,
+                          fontFamily: "Roboto",
                         ),
-                      ],
-                    ),
+                  ),
+                ],
+              ),
         ),
       ),
     );

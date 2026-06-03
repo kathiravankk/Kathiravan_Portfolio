@@ -80,11 +80,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
       () =>
           dashboardController.internshipDetailLoading ||
               dashboardController.reviewDataLoading
-          ? Center(
-              child: CupertinoActivityIndicator(
-                color: AppColors.secondaryColor,
-              ),
-            )
+          ? AppAlertUtils.customLoader()
           : Container(
             decoration: BoxDecoration(
               image: DecorationImage(

@@ -306,8 +306,8 @@ class _RegisterResumeUploadScreenState
           Text(
             "Upload Your Resume",
             style: AppStyles.customTextStyle(
-              size: 16,
-              weight: FontWeight.w600,
+              size: 18,
+              weight: FontWeight.w700,
               color: AppColors.whiteColor,
             ),
           ),
@@ -394,8 +394,8 @@ class _RegisterResumeUploadScreenState
           Text(
             "Create Your Resume",
             style: AppStyles.customTextStyle(
-              size: 16,
-              weight: FontWeight.w600,
+              size: 18,
+              weight: FontWeight.w700,
               color: AppColors.whiteColor,
             ),
           ),

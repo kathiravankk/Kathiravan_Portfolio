@@ -56,6 +56,7 @@ class ProfileDataModel {
   List<Secondary>? secondary;
   CreditData? studentCreditId;
   bool? isVerified;
+  bool? isWaterMarkRemoved;
   String? createdAt;
   String? updatedAt;
   int? vId;
@@ -119,6 +120,7 @@ class ProfileDataModel {
     this.secondary,
     this.studentCreditId,
     this.isVerified,
+    this.isWaterMarkRemoved,
     this.createdAt,
     this.updatedAt,
     this.vId,
@@ -214,6 +216,7 @@ class ProfileDataModel {
           .map<Secondary>((e) => Secondary.fromJson(e))
           .toList(),
       isVerified: json['isVerified'],
+      isWaterMarkRemoved: json['isWaterMarkRemoved'] ?? false,
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
       vId: json['__v'],
@@ -303,6 +306,7 @@ class ProfileDataModel {
       'studentCreditId': studentCreditId?.toJson(),
 
       'isVerified': isVerified,
+      'isWaterMarkRemoved': isWaterMarkRemoved,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       '__v': vId,

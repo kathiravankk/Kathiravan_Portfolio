@@ -440,6 +440,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 return InternshipCard(
                   width: 360,
                   companyName: recommentedList.companyName ?? "",
+                  position: recommentedList.noOfPosition ?? 0,
                   //duration: recommentedList.internshipDuration ?? "",
                   duration:
                       recommentedList.internshipDuration!.isNotEmpty &&

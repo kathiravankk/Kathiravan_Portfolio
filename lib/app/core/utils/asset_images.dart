@@ -33,6 +33,7 @@ class AssetImages {
   static const String customLoaderGif = "assets/images/custom_loader.svg";
   static const String loadingIndicator = "assets/images/loading_indicator.json";
   static const String aiLoadingIndicator = "assets/images/ai_loading_indicator.json";
+  static const String appScreenBg = "assets/images/new_app_screen_bg.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

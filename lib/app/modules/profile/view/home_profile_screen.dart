@@ -52,6 +52,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   WebViewController? webViewController;
   bool isLoading = true;
   bool waterMarkValue = false;
+  bool isWaterMarkRemoved = false;
 
   Future<void> getProfileData() async {
     studentId = await LocalStorageService.getStudentId();
@@ -60,6 +61,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       await getResumeData();
+      isWaterMarkRemoved = profileController.profileDataModel.isWaterMarkRemoved ?? false;
     } else {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),
@@ -153,6 +155,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           updateData: {
             "student_banner":
                 profileController.waterMarkModel.watermarkData!.imageUrl ?? "",
+            "isWaterMarkRemoved": true
           },
         );
         final code = registerController.getResponseCode();
@@ -926,7 +929,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             ),
 
           /// ✏ REMOVE WATERMARK
-          if (bannerUrl.isNotEmpty && !(waterMarkValue))
+          if (bannerUrl.isNotEmpty && !isWaterMarkRemoved)
             iconWidget(
               icon: CupertinoIcons.pencil_outline,
               onTap: () async {

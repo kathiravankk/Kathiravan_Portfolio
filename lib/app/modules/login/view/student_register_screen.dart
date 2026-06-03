@@ -75,6 +75,17 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     super.dispose();
   }
 
+  String _formatTime(int totalSeconds) {
+    final int minutes = totalSeconds ~/ 60;
+    final int seconds = totalSeconds % 60;
+
+    // padLeft(2, '0') ensures single digits get a leading zero (e.g., 5 becomes 05)
+    final String minutesStr = minutes.toString().padLeft(2, '0');
+    final String secondsStr = seconds.toString().padLeft(2, '0');
+
+    return "$minutesStr:$secondsStr";
+  }
+
   void _startMobileResendTimer() {
     setState(() => _mobileResendSeconds = 60);
     _mobileTimer?.cancel();
@@ -114,10 +125,10 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       weight: FontWeight.w600,
     ),
     decoration: BoxDecoration(
-      color: AppColors.whiteColor.withValues(alpha: 0.08),
+      color: AppColors.fieldBgColor,
       borderRadius: BorderRadius.circular(25),
       border: Border.all(
-        color: AppColors.whiteColor.withValues(alpha: 0.25),
+        color: AppColors.fieldBorderColor,
         width: 1.5,
       ),
     ),
@@ -125,22 +136,22 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
   PinTheme get _focusedPinTheme => _defaultPinTheme.copyWith(
     decoration: BoxDecoration(
-      color: AppColors.whiteColor.withValues(alpha: 0.10),
+      color: AppColors.fieldBgColor,
       borderRadius: BorderRadius.circular(25),
       border: Border.all(
-        color: AppColors.secondaryColor,
-        width: 2,
+        color: AppColors.primaryColor,
+        width: 1.5,
       ),
     ),
   );
 
   PinTheme get _submittedPinTheme => _defaultPinTheme.copyWith(
     decoration: BoxDecoration(
-      color: AppColors.secondaryColor.withValues(alpha: 0.15),
+      color: AppColors.fieldBgColor,
       borderRadius: BorderRadius.circular(25),
       border: Border.all(
-        color: AppColors.secondaryColor,
-        width: 2,
+        color: AppColors.primaryColor,
+        width: 1.5,
       ),
     ),
   );
@@ -174,52 +185,58 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.transparentColor,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 25,
-              color: AppColors.whiteColor,
+          automaticallyImplyLeading: false,
+          // leading: IconButton(
+          //   icon: const Icon(
+          //     Icons.arrow_back,
+          //     size: 25,
+          //     color: AppColors.whiteColor,
+          //   ),
+          //   onPressed: () {
+          //     if (_currentStep > 0) {
+          //       setState(() => _currentStep--);
+          //     } else {
+          //       Get.back();
+          //     }
+          //   },
+          // ),
+          title:  Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset(AssetImages.appLogoNew, height: 50, width: 150),
+                Text(
+                  "Step ${_currentStep + 1} of 3",
+                  style: AppStyles.customTextStyle(
+                    size: 13,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            onPressed: () {
-              if (_currentStep > 0) {
-                setState(() => _currentStep--);
-              } else {
-                Get.back();
-              }
-            },
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            spacing: 20,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(AssetImages.appLogoNew, height: 40, width: 150),
-                  Text(
-                    "Step ${_currentStep + 1} of 3",
-                    style: AppStyles.customTextStyle(
-                      size: 13,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              _buildProgressBar(),
-              //const SizedBox(height: 10),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: _currentStep == 0
-                    ? _buildStep0()
-                    : _currentStep == 1
-                    ? _buildStep1()
-                    : _buildStep2(),
-              ),
-            ],
+          padding: const EdgeInsets.fromLTRB(20,15,20, 20),
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 10,
+              children: [
+                const SizedBox(height: 10),
+                _buildProgressBar(),
+                const SizedBox(height: 10),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: _currentStep == 0
+                      ? _buildStep0()
+                      : _currentStep == 1
+                      ? _buildStep1()
+                      : _buildStep2(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -237,12 +254,12 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
         return Expanded(
           child: Container(
             margin: EdgeInsets.only(right: i < 2 ? 6 : 0),
-            height: 10,
+            height: 15,
             decoration: BoxDecoration(
               color: filled
                   ? AppColors.whiteColor
                   : AppColors.whiteColor.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
         );
@@ -257,12 +274,11 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   Widget _buildStep0() {
     return SingleChildScrollView(
       key: const ValueKey(0),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      //padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
-        spacing: 5,
+        spacing: 15,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 16),
           Text(
             "Enter Mobile Number and\nEmail for Verification",
             style: AppStyles.customTextStyle(
@@ -272,17 +288,16 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               weight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
           Text(
             "Let's start with your contact information to\nsecure your account",
             style: AppStyles.customTextStyle(
-              size: 14,
+              size: 15,
               lineSpace: 1.4,
               color: AppColors.lightText,
               weight: FontWeight.w300,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 2),
           CustomTextField(
             controller: nameController,
             labelText: "Name",
@@ -295,7 +310,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
             ),
             isNumberKeyboard: false,
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 2),
           CustomTextField(
             controller: mobileController,
             labelText: "Mobile Number",
@@ -317,7 +332,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
             },
             isNumberKeyboard: true,
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 2),
           CustomTextField(
             controller: emailController,
             labelText: "Email Address",
@@ -330,9 +345,9 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
             isNumberKeyboard: false,
             onChanged: (_) => setState(() {}),
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 30),
           _buildContinueButton(enabled: _step0Valid, onTap: _onStep0Continue),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -357,11 +372,12 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   Widget _buildStep1() {
     return SingleChildScrollView(
       key: const ValueKey(1),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      //padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 15,
         children: [
-          const SizedBox(height: 16),
+          //const SizedBox(height: 10),
           Text(
             "Mobile Verification",
             style: AppStyles.customTextStyle(
@@ -370,7 +386,6 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               weight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
           Text(
             "Enter the One-Time password (OTP) sent to\nyour mobile number +91 ${mobileController.text}",
             style: AppStyles.customTextStyle(
@@ -380,16 +395,16 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               weight: FontWeight.w300,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 5),
           Text(
             "Enter the OTP",
             style: AppStyles.customTextStyle(
               size: 14,
               color: AppColors.whiteColor,
-              weight: FontWeight.w500,
+              weight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(),
           Center(
             child: Pinput(
               length: 4,
@@ -401,18 +416,18 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               focusedPinTheme: _focusedPinTheme,
               submittedPinTheme: _submittedPinTheme,
               errorPinTheme: _errorPinTheme,
-              separatorBuilder: (_) => const SizedBox(width: 12),
+              separatorBuilder: (_) => const SizedBox(width: 15),
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onChanged: (_) => setState(() {}),
               onCompleted: (_) => setState(() {}),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 10),
           _buildResendRow(
             seconds: _mobileResendSeconds,
             onResend: _sendMobileOtp,
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 40),
           Obx(
                 () => _buildContinueButton(
               enabled: mobileOtpController.text.length == 4,
@@ -420,7 +435,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               onTap: _onStep1Continue,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -443,11 +458,12 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
   Widget _buildStep2() {
     return SingleChildScrollView(
       key: const ValueKey(2),
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      //padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 15,
         children: [
-          const SizedBox(height: 16),
+          //const SizedBox(height: 10),
           Text(
             "Email Verification",
             style: AppStyles.customTextStyle(
@@ -456,17 +472,16 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               weight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 8),
           Text(
             "Enter the code sent to your email address\n${emailController.text} to complete verification",
             style: AppStyles.customTextStyle(
               size: 14,
-              lineSpace: 1.4,
+              lineSpace: 1.5,
               color: AppColors.lightText,
               weight: FontWeight.w300,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 5),
           Text(
             "Enter the OTP",
             style: AppStyles.customTextStyle(
@@ -475,7 +490,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               weight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(),
           Center(
             child: Pinput(
               length: 4,
@@ -493,12 +508,12 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               onCompleted: (_) => setState(() {}),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 10),
           _buildResendRow(
             seconds: _emailResendSeconds,
             onResend: _sendEmailOtp,
           ),
-          const SizedBox(height: 48),
+          const SizedBox(height: 40),
           Obx(
                 () => _buildContinueButton(
               enabled: emailOtpController.text.length == 4,
@@ -506,7 +521,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
               onTap: _onStep2Continue,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -528,33 +543,38 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     required VoidCallback onResend,
   }) {
     return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
+        spacing: 15,
         children: [
           Text(
-            "Didn't receive the code? ",
-            style: AppStyles.customTextStyle(
-              size: 14,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w300,
-            ),
+            _formatTime(seconds),
+            style: AppStyles.customTextStyle(size: 20, color: AppColors.whiteColor, weight: FontWeight.w700),
           ),
-          GestureDetector(
-            onTap: seconds > 0 ? null : onResend,
-            child: Text(
-              seconds > 0 ? "Resend OTP ($seconds)" : "Resend OTP",
-              style: AppStyles.customTextStyle(
-                isUnderlined: true,
-                underlineColor: seconds > 0
-                    ? AppColors.lightText
-                    : AppColors.secondaryColor,
-                size: 14,
-                color: seconds > 0
-                    ? AppColors.lightText
-                    : AppColors.secondaryColor,
-                weight: FontWeight.w600,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Didn't receive the code? ",
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w500,
+                ),
               ),
-            ),
+              GestureDetector(
+                onTap: seconds > 0 ? null : onResend,
+                child: Text(
+                  seconds > 0 ? "Resend OTP" : "Resend OTP",
+                  style: AppStyles.customTextStyle(
+                    isUnderlined: true,
+                    underlineColor: AppColors.secondaryColor,
+                    size: 14,
+                    color: AppColors.secondaryColor,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

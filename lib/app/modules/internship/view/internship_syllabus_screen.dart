@@ -6,6 +6,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
@@ -205,23 +206,27 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       () =>
           internController.syllabusDataLoading ||
               internController.internStatusLoading
-          ? Center(
-              child: CupertinoActivityIndicator(
-                color: AppColors.secondaryColor,
+          ? AppAlertUtils.customLoader()
+          : Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(AssetImages.appBackgroundImg),
+                fit: BoxFit.cover,
               ),
-            )
-          : Scaffold(
-              resizeToAvoidBottomInset: true,
-              backgroundColor: AppColors.appBgColor_2,
-              appBar: _buildAppBar(),
-              body: ListView(
-                padding: const EdgeInsets.all(20),
-                children: syllabus?.isMonthBased == true
-                    ? _buildMonthSections()
-                    : _buildDaySections(),
-              ),
-              bottomNavigationBar: _bottomActionSection(),
             ),
+            child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: AppColors.transparentColor,
+                appBar: _buildAppBar(),
+                body: ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: syllabus?.isMonthBased == true
+                      ? _buildMonthSections()
+                      : _buildDaySections(),
+                ),
+                bottomNavigationBar: _bottomActionSection(),
+              ),
+          ),
     );
   }
 
@@ -231,7 +236,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
         : "${syllabus?.totalDays ?? 0} days Total";
 
     return AppBar(
-      backgroundColor: AppColors.appBgColor_2,
+      backgroundColor: AppColors.transparentColor,
       leading: IconButton(
         icon: const Icon(
           Icons.arrow_back,
