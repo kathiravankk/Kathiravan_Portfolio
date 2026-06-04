@@ -163,7 +163,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparentColor,
       builder: (_) => DraggableScrollableSheet(
         initialChildSize: 0.85,
         minChildSize: 0.5,
@@ -361,9 +361,9 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
               decoration: InputDecoration(
                 hintText: 'Search here..',
                 hintStyle: AppStyles.customTextStyle(
-                  size: 12,
+                  size: 13,
                   color: AppColors.lightHintText,
-                  weight: FontWeight.w400,
+                  weight: FontWeight.w500,
                 ),
                 border: InputBorder.none,
               ),

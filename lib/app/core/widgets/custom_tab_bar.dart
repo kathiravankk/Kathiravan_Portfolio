@@ -120,7 +120,7 @@ class _CustomTabBarState extends State<CustomTabBar>
                         widget.tabNames![index],
                         style: AppStyles.customTextStyle(
                           weight: FontWeight.w400,
-                          size: 10,
+                          size: 12,
                           color: _selectedIndex == index
                               ? widget.activeTextColor
                               : AppColors.blackColor,

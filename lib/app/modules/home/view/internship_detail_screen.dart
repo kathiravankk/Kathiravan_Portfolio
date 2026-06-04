@@ -219,7 +219,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                         Text(
                           "${internship!.totalApplication ?? 0} applicants",
                           style: AppStyles.customTextStyle(
-                            size: 10,
+                            size: 12,
                             weight: FontWeight.w300,
                             color: AppColors.secondaryColor,
                           ),
@@ -232,8 +232,15 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                           spacing: 10,
                           children: [durationWidget(), stipendWidget()],
                         ),
-
-                        const SizedBox(height: 10),
+                        const SizedBox(),
+                        Text(
+                          "Posted ${AppFunctions.convertPostedDate(internship!.createdAt ?? "")}",
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            weight: FontWeight.w300,
+                            color: AppColors.whiteColor,
+                          ),
+                        ),
 
                         /// TAB BAR
                         Expanded(
@@ -768,7 +775,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                 : "Duration: ${internship!.days} Days",
             overflow: TextOverflow.ellipsis,
             style: AppStyles.customTextStyle(
-              size: 10,
+              size: 12,
               color: AppColors.lightWhiteCont,
               weight: FontWeight.w500,
             ),
@@ -809,7 +816,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppStyles.customTextStyle(
-              size: 10,
+              size: 12,
               color: AppColors.lightWhiteCont,
             ),
           ),

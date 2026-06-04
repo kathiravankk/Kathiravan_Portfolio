@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/card_widgets.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
@@ -45,9 +46,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
           topRight: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
-        color: AppColors.navBarColor,
+        color: AppColors.fieldBgColor,
       ),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(15),
       child: Column(
         spacing: 15,
         children: [
@@ -123,21 +124,20 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                 ],
               ),
-              Expanded(
-                child: IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(
-                    Icons.close_sharp,
-                    color: AppColors.failTextColor,
-                    size: 22,
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: IconButton(
+              //     onPressed: () {
+              //       Get.back();
+              //     },
+              //     icon: Icon(
+              //       Icons.close_sharp,
+              //       color: AppColors.failTextColor,
+              //       size: 22,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
-
           Divider(color: AppColors.contBorderColor),
           Visibility(
             visible: !isVerified!,
@@ -196,8 +196,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
           ),
 
           Column(
+            spacing: 20,
             children: [
-              _drawerItem(
+              CardWidgets.settingsTile(
                 icon: Icons.category_outlined,
                 title: "Profile",
                 onTap: () {
@@ -207,7 +208,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   );
                 },
               ),
-              _drawerItem(
+
+              CardWidgets.settingsTile(
                 icon: Icons.description_outlined,
                 title: "My Applications",
                 onTap: () {
@@ -217,7 +219,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   );
                 },
               ),
-              _drawerItem(
+              CardWidgets.settingsTile(
                 icon: Icons.bookmark_border_sharp,
                 title: "Saved Post",
                 onTap: () {
@@ -227,7 +229,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   );
                 },
               ),
-              _drawerItem(
+              CardWidgets.settingsTile(
                 icon: CupertinoIcons.settings,
                 title: "Settings",
                 onTap: () {
@@ -237,7 +239,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   );
                 },
               ),
-              _drawerItem(
+              CardWidgets.settingsTile(
                 icon: Icons.card_membership_sharp,
                 title: "Certificates",
                 onTap: () {
@@ -247,7 +249,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   );
                 },
               ),
-              _drawerItem(
+              CardWidgets.settingsTile(
                 icon: Icons.currency_exchange_sharp,
                 title: "Buy Credits",
                 onTap: () {
@@ -257,22 +259,26 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   );
                 },
               ),
-              _drawerItem(
-                isLogOut: true,
-                icon: Icons.logout_sharp,
-                title: "Logout",
-                onTap: () {
-                  //showLogoutPopup(context);
-                  AppAlertUtils.showAppAlert(
-                    context: context,
-                    content: "Are you sure you want to logout?",
-                    confirmText: "Confirm",
+              CardWidgets.settingsCard(
+                children: [
+                  CardWidgets.settingsTile(
+                    isDelete: true,
+                    icon: Icons.logout_sharp,
                     title: "Logout",
-                    onConfirm: () {
-                      AppFunctions.logOutFunc(context);
+                    onTap: () {
+                      //showLogoutPopup(context);
+                      AppAlertUtils.showAppAlert(
+                        context: context,
+                        content: "Are you sure you want to logout?",
+                        confirmText: "Confirm",
+                        title: "Logout",
+                        onConfirm: () {
+                          AppFunctions.logOutFunc(context);
+                        },
+                      );
                     },
-                  );
-                },
+                  ),
+                ],
               ),
             ],
           ),

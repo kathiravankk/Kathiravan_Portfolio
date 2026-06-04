@@ -112,9 +112,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
   bool get _step0Valid =>
       nameController.text.trim().isNotEmpty &&
-          mobileController.text.trim().length >= 10 &&
-          emailController.text.trim().contains('@');
-
+      mobileController.text.trim().length >= 10 &&
+      emailController.text.trim().contains('@');
 
   PinTheme get _defaultPinTheme => PinTheme(
     width: 65,
@@ -127,10 +126,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     decoration: BoxDecoration(
       color: AppColors.fieldBgColor,
       borderRadius: BorderRadius.circular(25),
-      border: Border.all(
-        color: AppColors.fieldBorderColor,
-        width: 1.5,
-      ),
+      border: Border.all(color: AppColors.fieldBorderColor, width: 1.5),
     ),
   );
 
@@ -138,10 +134,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     decoration: BoxDecoration(
       color: AppColors.fieldBgColor,
       borderRadius: BorderRadius.circular(25),
-      border: Border.all(
-        color: AppColors.primaryColor,
-        width: 1.5,
-      ),
+      border: Border.all(color: AppColors.primaryColor, width: 1.5),
     ),
   );
 
@@ -149,10 +142,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     decoration: BoxDecoration(
       color: AppColors.fieldBgColor,
       borderRadius: BorderRadius.circular(25),
-      border: Border.all(
-        color: AppColors.primaryColor,
-        width: 1.5,
-      ),
+      border: Border.all(color: AppColors.primaryColor, width: 1.5),
     ),
   );
 
@@ -160,10 +150,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     decoration: BoxDecoration(
       color: Colors.red.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(25),
-      border: Border.all(
-        color: Colors.redAccent,
-        width: 1.5,
-      ),
+      border: Border.all(color: Colors.redAccent, width: 1.5),
     ),
   );
 
@@ -200,7 +187,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           //     }
           //   },
           // ),
-          title:  Padding(
+          title: Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -218,26 +205,27 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(20,15,20, 20),
-          child: SingleChildScrollView(
-            child: Column(
-              spacing: 10,
-              children: [
-                const SizedBox(height: 10),
-                _buildProgressBar(),
-                const SizedBox(height: 10),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: _currentStep == 0
-                      ? _buildStep0()
-                      : _currentStep == 1
-                      ? _buildStep1()
-                      : _buildStep2(),
-                ),
-              ],
-            ),
+        body: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 15,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 30,
           ),
+          children: [
+            const SizedBox(height: 20),
+            _buildProgressBar(),
+            const SizedBox(height: 20),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _currentStep == 0
+                  ? _buildStep0()
+                  : _currentStep == 1
+                  ? _buildStep1()
+                  : _buildStep2(),
+            ),
+          ],
         ),
       ),
     );
@@ -429,7 +417,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           ),
           const SizedBox(height: 40),
           Obx(
-                () => _buildContinueButton(
+            () => _buildContinueButton(
               enabled: mobileOtpController.text.length == 4,
               isLoading: registerController.verifyMobileOtpLoading,
               onTap: _onStep1Continue,
@@ -515,7 +503,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           ),
           const SizedBox(height: 40),
           Obx(
-                () => _buildContinueButton(
+            () => _buildContinueButton(
               enabled: emailOtpController.text.length == 4,
               isLoading: registerController.studentRegisterLoading,
               onTap: _onStep2Continue,
@@ -548,7 +536,11 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
         children: [
           Text(
             _formatTime(seconds),
-            style: AppStyles.customTextStyle(size: 20, color: AppColors.whiteColor, weight: FontWeight.w700),
+            style: AppStyles.customTextStyle(
+              size: 20,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w700,
+            ),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -606,7 +598,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     await registerController.sendMobileOtp(mobileNumber: mobileController.text);
     if (registerController.getResponseCode() == 200) {
       AppAlertUtils.showToast(
-        message: registerController.sendMobileOtpModel.message ??
+        message:
+            registerController.sendMobileOtpModel.message ??
             "OTP sent to your mobile!",
         isError: false,
       );
@@ -627,7 +620,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     );
     if (registerController.getResponseCode() == 200) {
       AppAlertUtils.showToast(
-        message: registerController.verifyMobileOtpModel.message ??
+        message:
+            registerController.verifyMobileOtpModel.message ??
             "OTP verified successfully!",
         isError: false,
       );
@@ -644,7 +638,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     await registerController.sendEmailOtp(emailAddress: emailController.text);
     if (registerController.getResponseCode() == 200) {
       AppAlertUtils.showToast(
-        message: registerController.sendEmailOtpModel.message ??
+        message:
+            registerController.sendEmailOtpModel.message ??
             "OTP sent to your Email!",
         isError: false,
       );
@@ -665,7 +660,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     );
     if (registerController.getResponseCode() == 200) {
       AppAlertUtils.showToast(
-        message: registerController.verifyEmailOtpModel.message ??
+        message:
+            registerController.verifyEmailOtpModel.message ??
             "OTP verified successfully!",
         isError: false,
       );
@@ -691,13 +687,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
       "studemail": emailController.text,
       "studname": nameController.text,
       "studentdegree":
-      extractedData.education?.college != null &&
-          extractedData.education!.college!.isNotEmpty
+          extractedData.education?.college != null &&
+              extractedData.education!.college!.isNotEmpty
           ? extractedData.education!.college!.first.degree ?? ""
           : "",
       "studentcollegename":
-      extractedData.education?.college != null &&
-          extractedData.education!.college!.isNotEmpty
+          extractedData.education?.college != null &&
+              extractedData.education!.college!.isNotEmpty
           ? extractedData.education!.college!.first.institution ?? ""
           : "",
       "studentresume": await MultipartFile.fromFile(
@@ -715,7 +711,8 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       AppAlertUtils.showToast(
-        message: registerController.studentRegisterModel.message ??
+        message:
+            registerController.studentRegisterModel.message ??
             "Student registered successfully!",
         isError: false,
       );

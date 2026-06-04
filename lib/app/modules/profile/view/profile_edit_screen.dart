@@ -692,24 +692,137 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   Future<void> selectDob() async {
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime(2002),
+      // initialDate: DateTime(
+      //   DateTime.now().year - 18,
+      //   DateTime.now().month,
+      //   DateTime.now().day,
+      // ),
       firstDate: DateTime(1950),
+      initialDate: DateTime(2000),
       lastDate: DateTime.now(),
+      helpText: "SELECT DATE OF BIRTH",
+      cancelText: "CANCEL",
+      confirmText: "CONFIRM",
+
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: AppColors.primaryColor,
-              surface: AppColors.fieldBgColor,
-              onPrimary: Colors.black,
-              onSurface: Colors.white,
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: AppColors.primaryColor,
+              selectionColor: AppColors.whiteColor,
+              selectionHandleColor: AppColors.secondaryColor,
             ),
-            dialogBackgroundColor: AppColors.fieldBgColor,
+            textTheme: TextTheme(
+              labelMedium: AppStyles.customTextStyle(
+                size: 12,
+                color: AppColors.primaryColor,
+                weight: FontWeight.w500,
+              ),
+            ),
+            dialogTheme: DialogThemeData(
+              backgroundColor: AppColors.fieldBgColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+                side: const BorderSide(color: AppColors.fieldBorderColor),
+              ),
+            ),
+
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primaryColor, // selected day
+              onPrimary: AppColors.blackColor, // selected day text
+              surface: AppColors.fieldBgColor, // dialog bg
+              onSurface: AppColors.whiteColor, // default text
+            ),
+
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primaryColor,
+                textStyle: AppStyles.customTextStyle(
+                  size: 14,
+                  weight: FontWeight.w700,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(
+                    color: AppColors.fieldBorderColor,
+                  ),
+                ),
+
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(
+                    color: AppColors.primaryColor,
+                  ),
+              ),
+            ),
+
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: AppColors.fieldBgColor,
+
+              headerBackgroundColor: AppColors.fieldBgColor,
+
+              headerForegroundColor: AppColors.secondaryColor,
+
+              dividerColor: AppColors.fieldBorderColor,
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+
+              todayBorder: const BorderSide(
+                color: AppColors.primaryColor,
+                width: 1.5,
+              ),
+
+              todayForegroundColor: WidgetStateProperty.all(
+                AppColors.primaryColor,
+              ),
+
+              dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.blackColor;
+                }
+                return AppColors.whiteColor;
+              }),
+
+              dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.primaryColor;
+                }
+                return Colors.transparent;
+              }),
+
+              yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.blackColor;
+                }
+                return AppColors.whiteColor;
+              }),
+
+              yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.primaryColor;
+                }
+                return Colors.transparent;
+              }),
+            ),
           ),
           child: child!,
         );
       },
     );
+
+    if (pickedDate != null) {
+      dobController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+
+      selectedDobForApi = DateFormat('yyyy-MM-dd').format(pickedDate);
+
+      setState(() {});
+    }
 
     if (pickedDate != null) {
       /// UI Format

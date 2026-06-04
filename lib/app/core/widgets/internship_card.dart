@@ -299,22 +299,26 @@ class InternshipCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    "Posted ${AppFunctions.convertPostedDate(postedDate)}",
-                    style: AppStyles.customTextStyle(
-                      size: 10,
-                      color: AppColors.selectedContColor,
-                    ),
+                  child: Row(
+                    spacing: 15,
+                    children: [
+                      Text(
+                        "Posted ${AppFunctions.convertPostedDate(postedDate)}",
+                        style: AppStyles.customTextStyle(
+                          size: 10,
+                          color: AppColors.selectedContColor,
+                        ),
+                      ),
+                      Text(
+                        "Available: $position",
+                        style: AppStyles.customTextStyle(
+                          size: 10,
+                          color: AppColors.redColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Text(
-                  "Available: $position",
-                  style: AppStyles.customTextStyle(
-                    size: 10,
-                    color: AppColors.redColor,
-                  ),
-                ),
-                const SizedBox(width: 10),
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.selectedContColor,

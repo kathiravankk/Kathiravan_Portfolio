@@ -667,7 +667,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                     borderRadius: BorderRadius.circular(15),
                     child: Image.network(
                       profileController.profileDataModel.studentBanner ?? "",
-                      height: 180,
+                      //height: 180,
                       width: double.infinity,
                       fit: BoxFit.fill,
 
@@ -703,8 +703,10 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           right: 10,
           left: 10,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [aiPoweredContainer(), likeShareContainer()],
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              //aiPoweredContainer(),
+              likeShareContainer()],
           ),
         ),
       ],

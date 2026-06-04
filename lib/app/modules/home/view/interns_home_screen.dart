@@ -261,9 +261,9 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   Text(
                     "Tap to search..!",
                     style: AppStyles.customTextStyle(
-                      size: 12,
+                      size: 13,
                       color: AppColors.lightHintText,
-                      weight: FontWeight.w400,
+                      weight: FontWeight.w500,
                     ),
                   ),
                   IconButton(
@@ -506,7 +506,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   Widget _buildTrendyCategories() {
     return SizedBox(
-      height: 120,
+      height: 130,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: dashboardController.categoryListModel.categoryList!.length,
@@ -530,11 +530,13 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
               color: AppColors.primaryColor.withValues(alpha: .05),
               borderRadius: BorderRadius.circular(23),
               border: Border.all(
-                color: AppColors.primaryColor.withValues(alpha: 0.1),
+                //color: AppColors.primaryColor.withValues(alpha: 0.1),
+                color: AppColors.primaryColor,
               ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               spacing: 20,
               children: [
                 // SizedBox(
@@ -569,8 +571,9 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                           .categoryName ??
                       "",
                   textAlign: TextAlign.center,
+                  maxLines: 2,
                   style: AppStyles.customTextStyle(
-                    size: 10,
+                    size: 12,
                     lineSpace: 1.4,
                     color: AppColors.primaryColor,
                     weight: FontWeight.w700,
@@ -596,7 +599,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             child: Text(
               count == 0 ? "0" : value.toInt().toString(),
               style: AppStyles.customTextStyle(
-                size: 24,
+                size: 25,
                 color: AppColors.whiteColor,
                 weight: FontWeight.w700,
                 fontFamily: "Roboto",

@@ -224,7 +224,14 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                       ? _buildMonthSections()
                       : _buildDaySections(),
                 ),
-                bottomNavigationBar: _bottomActionSection(),
+               // bottomNavigationBar: _bottomActionSection(),
+              bottomNavigationBar: AnimatedPadding(
+                duration: const Duration(milliseconds: 250),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: _bottomActionSection(),
+              ),
               ),
           ),
     );
