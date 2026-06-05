@@ -422,7 +422,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBackgroundImg),
+          image: AssetImage(AssetImages.chatScreenBg),
           fit: BoxFit.cover,
         ),
       ),

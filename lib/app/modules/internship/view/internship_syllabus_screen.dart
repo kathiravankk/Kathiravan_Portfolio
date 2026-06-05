@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1053,12 +1055,14 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       AiLoadingWidget.show(context, type: LoadingDialogType.mcqTest);
 
       await Future.delayed(const Duration(milliseconds: 100));
+      //print(jsonEncode(internController.syllabusModel.syllabusViewData!.monthData));
 
       await internController.getMcqQuestions(
         weekData: internController.syllabusModel.syllabusViewData!.isMonthBased
             ? internController.syllabusModel.syllabusViewData!.monthData
             : internController.syllabusModel.syllabusViewData!.daysData,
       );
+
 
       if (internController.getResponseCode() == 200 ||
           internController.getResponseCode() == 201) {

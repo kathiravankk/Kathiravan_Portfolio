@@ -185,7 +185,7 @@ class _LoadingDialogContentState extends State<_LoadingDialogContent> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.95,
+        width: MediaQuery.of(context).size.width * 0.85,
         height: MediaQuery.of(context).size.height * 0.35,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -195,12 +195,14 @@ class _LoadingDialogContentState extends State<_LoadingDialogContent> {
             BoxShadow(blurRadius: 20, color: AppColors.iconBgColor),
           ],
         ),
+        alignment: Alignment.center,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               AssetImages.internsharksAiLoading,
-              height: 200,
+              height: 150,
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 20),

@@ -61,7 +61,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       await getResumeData();
-      isWaterMarkRemoved = profileController.profileDataModel.isWaterMarkRemoved ?? false;
+      isWaterMarkRemoved =
+          profileController.profileDataModel.isWaterMarkRemoved ?? false;
     } else {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),
@@ -155,7 +156,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           updateData: {
             "student_banner":
                 profileController.waterMarkModel.watermarkData!.imageUrl ?? "",
-            "isWaterMarkRemoved": true
+            "isWaterMarkRemoved": true,
           },
         );
         final code = registerController.getResponseCode();
@@ -363,16 +364,16 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             const SizedBox(width: 20),
           ],
         ),
-        body: RefreshIndicator(
-          color: AppColors.primaryColor,
-          backgroundColor: AppColors.appBgColor_2,
-          onRefresh: () async {
-            await getProfileData();
-          },
-          child: Obx(() {
-            return profileController.profileDataLoading
-                ? AppAlertUtils.customLoader()
-                : CustomScrollView(
+        body: Obx(() {
+          return profileController.profileDataLoading
+              ? AppAlertUtils.customLoader()
+              : RefreshIndicator(
+                  color: AppColors.primaryColor,
+                  backgroundColor: AppColors.appBgColor_2,
+                  onRefresh: () async {
+                    await getProfileData();
+                  },
+                  child: CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     slivers: [
                       SliverToBoxAdapter(
@@ -451,7 +452,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                     alpha: .07,
                                   ),
                                   borderRadius: BorderRadius.circular(30),
-                                  border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.1)),
+                                  border: Border.all(
+                                    color: AppColors.primaryColor.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                  ),
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
@@ -635,9 +640,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                         ),
                       ),
                     ],
-                  );
-          }),
-        ),
+                  ),
+                );
+        }),
       ),
     );
   }
@@ -706,7 +711,8 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               //aiPoweredContainer(),
-              likeShareContainer()],
+              likeShareContainer(),
+            ],
           ),
         ),
       ],

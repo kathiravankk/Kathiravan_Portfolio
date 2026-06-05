@@ -124,53 +124,49 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      backgroundColor: AppColors.appBgColor_2,
-      color: AppColors.primaryColor,
-      onRefresh: () => getAllCertificates(),
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AssetImages.appBackgroundImg),
-            fit: BoxFit.cover,
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          title: Text(
+            "My Certificates",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.secondaryColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 25,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () => Get.back(),
           ),
         ),
-        child: Scaffold(
-          backgroundColor: AppColors.transparentColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.transparentColor,
-            elevation: 0,
-            title: Text(
-              "My Certificates",
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.secondaryColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                size: 25,
-                color: AppColors.whiteColor,
-              ),
-              onPressed: () => Get.back(),
-            ),
-          ),
-          body: Obx(() {
-            if (internController.certificateLoading) {
-              return Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              );
-            }
-            final list = internController.certificateModel.certificatesList;
+        body: Obx(() {
+          if (internController.certificateLoading) {
+            return AppAlertUtils.customLoader();
+          }
+          final list = internController.certificateModel.certificatesList;
 
-            if (list == null || list.isEmpty) {
-              return const CustomEmptyWidget();
-            }
-            return ListView.builder(
+          if (list == null || list.isEmpty) {
+            return const CustomEmptyWidget();
+          }
+          return RefreshIndicator(
+            backgroundColor: AppColors.appBgColor_2,
+            color: AppColors.primaryColor,
+            onRefresh: () => getAllCertificates(),
+            child: ListView.builder(
               padding: const EdgeInsets.all(20),
               itemCount: list.length,
               itemBuilder: (context, index) {
@@ -188,9 +184,10 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
                       child: Column(
                         children: [
                           certificateCard(
-                            certificate: item.certificate ??
+                            certificate:
+                                item.certificate ??
                                 "https://static.vecteezy.com/system/resources/thumbnails/002/349/754/small_2x/modern-elegant-certificate-template-free-vector.jpg",
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -204,24 +201,19 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
                   ],
                 );
               },
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
 
-  Widget certificateCard({required String certificate,}){
+  Widget certificateCard({required String certificate}) {
     return GestureDetector(
       onTap: () {
-        final imageUrl =
-            certificate ;
+        final imageUrl = certificate;
 
-        Get.to(
-              () => FullScreenImagePreview(
-            imageUrl: imageUrl,
-          ),
-        );
+        Get.to(() => FullScreenImagePreview(imageUrl: imageUrl));
       },
       child: Hero(
         tag: certificate,
@@ -233,14 +225,9 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
             width: double.infinity,
             fit: BoxFit.fill,
 
-            errorBuilder: (_, __, ___) =>
-            const Icon(Icons.broken_image),
+            errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
 
-            loadingBuilder: (
-                context,
-                child,
-                loadingProgress,
-                ) {
+            loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) {
                 return child;
               }
@@ -251,13 +238,9 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
                 child: Center(
                   child: CircularProgressIndicator(
                     color: AppColors.primaryColor,
-                    value:
-                    loadingProgress.expectedTotalBytes !=
-                        null
-                        ? loadingProgress
-                        .cumulativeBytesLoaded /
-                        loadingProgress
-                            .expectedTotalBytes!
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
                         : null,
                   ),
                 ),

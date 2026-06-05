@@ -35,6 +35,9 @@ class AssetImages {
   static const String aiLoadingIndicator = "assets/images/ai_loading_indicator.json";
   static const String appScreenBg = "assets/images/new_app_screen_bg.png";
   static const String internsharksAiLoading = "assets/images/intersharks_ai_loading.gif";
+  static const String chatScreenBg = "assets/images/chat_screen_bg.jpeg";
+  static const String profileStepIcon = "assets/images/profile_step_icon.png";
+  static const String kycStepIcon = "assets/images/kyc_step_icon.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

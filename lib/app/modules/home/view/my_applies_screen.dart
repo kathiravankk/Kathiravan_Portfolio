@@ -49,39 +49,39 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      backgroundColor: AppColors.appBgColor_2,
-      color: AppColors.primaryColor,
-      onRefresh: () => getInternshipData(),
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AssetImages.appBackgroundImg),
-            fit: BoxFit.cover,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
-        child: Scaffold(
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.whiteColor),
           backgroundColor: AppColors.transparentColor,
-          appBar: AppBar(
-            iconTheme: const IconThemeData(color: AppColors.whiteColor),
-            backgroundColor: AppColors.transparentColor,
-            elevation: 0,
-            automaticallyImplyActions: false,
-            centerTitle: true,
-            title: Text(
-              "My Application",
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w600,
-              ),
+          elevation: 0,
+          automaticallyImplyActions: false,
+          centerTitle: true,
+          title: Text(
+            "My Application",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
             ),
           ),
-          body: Obx(
-            () => dashboardController.appliedInternshipLoading
-                ? AppAlertUtils.customLoader()
-                : appliedList!.isNotEmpty
-                ? ListView.separated(
+        ),
+        body: Obx(
+          () => dashboardController.appliedInternshipLoading
+              ? AppAlertUtils.customLoader()
+              : appliedList!.isNotEmpty
+              ? RefreshIndicator(
+            backgroundColor: AppColors.appBgColor_2,
+            color: AppColors.primaryColor,
+            onRefresh: () => getInternshipData(),
+                child: ListView.separated(
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     itemCount: appliedList!.length,
                     shrinkWrap: true,
@@ -123,9 +123,9 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                             : "",
                       );
                     },
-                  )
-                : CustomEmptyWidget(),
-          ),
+                  ),
+              )
+              : CustomEmptyWidget(),
         ),
       ),
     );

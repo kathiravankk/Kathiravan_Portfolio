@@ -130,7 +130,9 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                   step: "Step 3",
                   title: activeStep > 3
                       ? registerController.kycUpdateModel.name != "invalid" ||
-                                registerController.kycUpdateModel.aadhaarDocument !=
+                                registerController
+                                        .kycUpdateModel
+                                        .aadhaarDocument !=
                                     "invalid" ||
                                 registerController.kycUpdateModel.collegeId !=
                                     "invalid"
@@ -199,11 +201,12 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
         );
       } else if (currentActiveStep == 2) {
         // Active - show image icon
-        return Icon(
-          CupertinoIcons.photo_fill_on_rectangle_fill,
-          color: AppColors.whiteColor,
-          size: 40,
-        );
+        return Image.asset(AssetImages.profileStepIcon, height: 40, width: 40);
+        //   Icon(
+        //   CupertinoIcons.photo_fill_on_rectangle_fill,
+        //   color: AppColors.whiteColor,
+        //   size: 40,
+        // );
       } else {
         // Locked
         return Icon(
@@ -222,11 +225,12 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
           color: AppColors.secondaryColor,
         );
       } else if (currentActiveStep == 3) {
-        return Icon(
-          Icons.document_scanner_outlined,
-          color: AppColors.whiteColor,
-          size: 40,
-        );
+        return Image.asset(AssetImages.kycStepIcon, height: 40, width: 40);
+        //   Icon(
+        //   Icons.document_scanner_outlined,
+        //   color: AppColors.whiteColor,
+        //   size: 40,
+        // );
       } else {
         // Locked
         return Icon(
