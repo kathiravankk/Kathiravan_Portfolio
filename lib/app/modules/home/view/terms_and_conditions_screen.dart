@@ -12,7 +12,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
+          image: AssetImage(AssetImages.appBgNew),
           fit: BoxFit.cover,
         ),
       ),

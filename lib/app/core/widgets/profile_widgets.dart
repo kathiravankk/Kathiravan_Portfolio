@@ -41,7 +41,7 @@ class ProfileWidgets {
   static Widget sectionHeader(String emoji, String title,
       {VoidCallback? onAdd, String addLabel = '+ Add'}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

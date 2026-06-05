@@ -5,10 +5,12 @@ import 'package:firebase_messaging/firebase_messaging.dart'; // 👈 Add this im
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/slider_button_widget.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:slider_button/slider_button.dart';
 import '../../../data/repositories/local_storage_service.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -27,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _setupAndNavigate();
+    //_setupAndNavigate();
   }
 
   Future<void> _setupAndNavigate() async {
@@ -41,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final shouldBlock = await _checkVersion();
 
     if (!shouldBlock) {
-      await Future.delayed(const Duration(milliseconds: 500));
+      //await Future.delayed(const Duration(milliseconds: 200));
       await _checkLoginStatus();
     }
   }
@@ -73,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
         await prefs.setString('fcm_token', fcmToken);
 
         // Alternatively, if your LocalStorageService has a method for it, use:
-        // await LocalStorageService.saveFcmToken(fcmToken);
+        await LocalStorageService.saveFcmToken(fcmToken: fcmToken);
       }
     } catch (e) {
       debugPrint("Error fetching FCM token: $e");
@@ -107,8 +109,21 @@ class _SplashScreenState extends State<SplashScreen> {
         onWillPop: () async => false,
         child: AlertDialog(
           backgroundColor: AppColors.fieldBgColor,
-          title: Text("Update Required", style: AppStyles.customTextStyle(size: 16, color: AppColors.whiteColor, weight: FontWeight.w600)),
-          content: Text("A new version is available. Please update to continue.", style: AppStyles.customTextStyle(size: 13, color: AppColors.whiteColor)),
+          title: Text(
+            "Update Required",
+            style: AppStyles.customTextStyle(
+              size: 16,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+          content: Text(
+            "A new version is available. Please update to continue.",
+            style: AppStyles.customTextStyle(
+              size: 13,
+              color: AppColors.whiteColor,
+            ),
+          ),
           actions: [
             CustomButtonWidget(
               buttonFunction: () => _newVersion.launchAppStore(updateUrl),
@@ -147,7 +162,7 @@ class _SplashScreenState extends State<SplashScreen> {
         height: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(AssetImages.newAppBg),
+            image: AssetImage(AssetImages.welcomeScreenBg),
             fit: BoxFit.cover,
           ),
         ),
@@ -163,6 +178,54 @@ class _SplashScreenState extends State<SplashScreen> {
                 style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
+            Positioned(
+              bottom: 40,
+              left: 30,
+              right: 30,
+              child: SliderButtonWidget(
+                onCompleted: () async {
+                  await _setupAndNavigate();
+                },
+              ),
+            ),
+            // Positioned(
+            //   bottom: 40,
+            //   left: 10,
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(30),
+            //       gradient: RadialGradient(colors: [
+            //         AppColors.buttonGrad1, AppColors.buttonGrad2
+            //       ])
+            //     ),
+            //     child: SliderButton(
+            //       action: () async {
+            //         ///Do something here OnSlide
+            //         return false; //return false if you want to avoid dismissing the widget in the tree.
+            //       },
+            //
+            //       ///Put label over here
+            //       label: Text(
+            //         "Get Started!",
+            //         style: AppStyles.customTextStyle(
+            //           size: 26,
+            //           color: AppColors.blackColor,
+            //           weight: FontWeight.bold,
+            //         ),
+            //       ),
+            //       icon: Center(
+            //         child: Icon(
+            //           Icons.arrow_forward_sharp,
+            //           color: AppColors.whiteColor,
+            //         ),
+            //       ),
+            //       buttonColor: AppColors.blackColor,
+            //       backgroundColor: AppColors.transparentColor,
+            //       highlightedColor: Colors.white,
+            //       baseColor: Colors.red,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

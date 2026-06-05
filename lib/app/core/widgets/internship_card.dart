@@ -21,6 +21,7 @@ class InternshipCard extends StatelessWidget {
   final String location;
   final double width;
   final bool isSaved;
+  final int position;
   final bool isCategoryFlow;
   final List<String> skillList;
 
@@ -28,6 +29,7 @@ class InternshipCard extends StatelessWidget {
     super.key,
     this.viewFunc,
     this.duration = "0",
+    this.position = 0,
     this.role = "",
     this.location = "NA",
     this.internFees = "NA",
@@ -219,7 +221,7 @@ class InternshipCard extends StatelessWidget {
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 150),
                   child: Text(
-                    "Available: ${skillList.join(", ")}",
+                    "Skills: ${skillList.join(", ")}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppStyles.customTextStyle(
@@ -297,12 +299,24 @@ class InternshipCard extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    "Posted ${AppFunctions.convertPostedDate(postedDate)}",
-                    style: AppStyles.customTextStyle(
-                      size: 10,
-                      color: AppColors.blackLight,
-                    ),
+                  child: Row(
+                    spacing: 15,
+                    children: [
+                      Text(
+                        "Posted ${AppFunctions.convertPostedDate(postedDate)}",
+                        style: AppStyles.customTextStyle(
+                          size: 10,
+                          color: AppColors.selectedContColor,
+                        ),
+                      ),
+                      Text(
+                        "Available: $position",
+                        style: AppStyles.customTextStyle(
+                          size: 10,
+                          color: AppColors.redColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(

@@ -189,7 +189,7 @@ class _LoadingDialogContentState extends State<_LoadingDialogContent> {
         height: MediaQuery.of(context).size.height * 0.35,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppColors.fieldBgColor,
+          color: AppColors.blackColor,
           borderRadius: BorderRadius.circular(25),
           boxShadow: const [
             BoxShadow(blurRadius: 20, color: AppColors.iconBgColor),
@@ -199,7 +199,7 @@ class _LoadingDialogContentState extends State<_LoadingDialogContent> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              AssetImages.aiLoadingGif,
+              AssetImages.internsharksAiLoading,
               height: 200,
               fit: BoxFit.contain,
             ),

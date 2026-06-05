@@ -114,7 +114,7 @@ class _RegisterResumeUploadScreenState
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBgImage),
+          image: AssetImage(AssetImages.appBackgroundImg),
           fit: BoxFit.cover,
         ),
       ),
@@ -141,10 +141,9 @@ class _RegisterResumeUploadScreenState
             padding: const EdgeInsets.all(20),
             child: Center(
               child: Column(
-                spacing: 15,
+                spacing: 20,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 20),
                  resumeUploadContainer(),
                   //const SizedBox(height: 20),
 
@@ -298,7 +297,7 @@ class _RegisterResumeUploadScreenState
             height: 100,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(AssetImages.resumeUploadImage),
+                image: AssetImage(AssetImages.uploadResumeImg),
                 fit: BoxFit.fill,
               ),
             ),
@@ -307,8 +306,8 @@ class _RegisterResumeUploadScreenState
           Text(
             "Upload Your Resume",
             style: AppStyles.customTextStyle(
-              size: 16,
-              weight: FontWeight.w600,
+              size: 18,
+              weight: FontWeight.w700,
               color: AppColors.whiteColor,
             ),
           ),
@@ -386,7 +385,7 @@ class _RegisterResumeUploadScreenState
             height: 100,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(AssetImages.resumeCreateImage),
+                image: AssetImage(AssetImages.createResumeImg),
                 fit: BoxFit.fill,
               ),
             ),
@@ -395,8 +394,8 @@ class _RegisterResumeUploadScreenState
           Text(
             "Create Your Resume",
             style: AppStyles.customTextStyle(
-              size: 16,
-              weight: FontWeight.w600,
+              size: 18,
+              weight: FontWeight.w700,
               color: AppColors.whiteColor,
             ),
           ),

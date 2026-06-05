@@ -60,7 +60,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
           decoration: BoxDecoration(
             color: AppColors.appBgColor,
             image: DecorationImage(
-              image: AssetImage(AssetImages.appBgImage),
+              image: AssetImage(AssetImages.appScreenBg),
               fit: BoxFit.cover,
             ),
           ),
@@ -68,7 +68,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
             padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 25,
+              spacing: 30,
               children: [
                 Text(
                   headerText,
@@ -330,6 +330,7 @@ class _StepCardWidgetState extends State<StepCardWidget> {
                   ),
                   Text(
                     widget.title,
+                    overflow: TextOverflow.ellipsis,
                     style: AppStyles.customTextStyle(
                       color: (shouldHighlight || widget.isCompleted)
                           ? AppColors.whiteColor

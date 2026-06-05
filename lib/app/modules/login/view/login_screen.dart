@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBgImage),
+          image: AssetImage(AssetImages.loginBg),
           fit: BoxFit.cover,
         ),
       ),
@@ -45,19 +45,22 @@ class _LoginScreenState extends State<LoginScreen> {
               spacing: 15,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 100),
+                const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(AssetImages.appLogoImage, height: 100, width: 270),
+                    Image.asset(
+                      AssetImages.appLogoNew,
+                      height: 120,
+                      width: 280,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 5,),
                 Text(
                   "Welcome!",
                   style: AppStyles.customTextStyle(
                     color: AppColors.secondaryColor,
-                    size: 26,
+                    size: 30,
                     weight: FontWeight.w700,
                   ),
                 ),
@@ -72,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 /// ---------------- MOBILE FIELD ----------------
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 CustomTextField(
                   labelText: "Mobile Number",
 
@@ -177,7 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
-                          disable: loginController.loginVerifyLoading || otpController.text.length != 4,
+                          disable:
+                              loginController.loginVerifyLoading ||
+                              otpController.text.length != 4,
                         ),
                         const SizedBox(height: 10),
                       ],
@@ -208,7 +213,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     text: TextSpan(
                       text: "If you’re new to Internsharks, ",
                       style: AppStyles.customTextStyle(
-                        size: 16,
+                        size: 14,
+                        lineSpace: 1.4,
                         weight: FontWeight.w300,
                         color: AppColors.lightText,
                       ),
@@ -216,8 +222,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextSpan(
                           text: "Register now",
                           style: AppStyles.customTextStyle(
-                            size: 16,
+                            size: 15,
                             weight: FontWeight.w300,
+                            lineSpace: 1.4,
                             color: AppColors.secondaryColor,
                             isUnderlined: true,
                           ),
@@ -287,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     try {
-      otpController.text ="";
+      otpController.text = "";
       await loginController.sendLoginOtp(mobileNumber: mobileNumber);
 
       if (loginController.getResponseCode() == 200 ||
@@ -325,12 +332,17 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  String? fcmToken = "";
+
   Future<void> verifyOtpFunc() async {
     try {
+      fcmToken = await LocalStorageService.getFcmToken() ?? "";
+      debugPrint(fcmToken ?? "");
       await loginController.verifyLoginOtp(
         mobileNumber: mobileController.text,
         otpNumber: otpController.text,
         userType: loginController.commonPostModel.userType ?? "student",
+        fcmToken: fcmToken ?? ""
       );
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {

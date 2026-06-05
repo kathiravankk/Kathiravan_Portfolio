@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -307,68 +309,73 @@ class _ResumeTemplatePreviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          "Resume Preview",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.secondaryColor,
-            weight: FontWeight.w600,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
       ),
-      body: Stack(
-        children: [
-          WebViewWidget(controller: _controller),
-          if (isLoading)
-            Container(
-              color: Colors.black45,
-              child: const Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CupertinoActivityIndicator(
-                      color: AppColors.primaryColor,
-                      radius: 16,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      "Processing...",
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ],
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            "Resume Preview",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.secondaryColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ),
+        body: Stack(
+          children: [
+            WebViewWidget(controller: _controller),
+            if (isLoading)
+              Container(
+                color: Colors.black45,
+                child:  Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                     AppAlertUtils.customLoader(),
+                      SizedBox(height: 12),
+                      Text(
+                        "Processing...",
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+          ],
+        ),
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton(
+              heroTag: "download",
+              backgroundColor: AppColors.primaryColor,
+              onPressed: isLoading ? null : _handleDownload,
+              tooltip: "Download PDF",
+              child: const Icon(Icons.download, color: Colors.white),
             ),
-        ],
-      ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            heroTag: "download",
-            backgroundColor: AppColors.primaryColor,
-            onPressed: isLoading ? null : _handleDownload,
-            tooltip: "Download PDF",
-            child: const Icon(Icons.download, color: Colors.white),
-          ),
-          const SizedBox(height: 16),
-          FloatingActionButton(
-            heroTag: "share",
-            backgroundColor: AppColors.primaryColor,
-            onPressed: isLoading ? null : _handleShare,
-            tooltip: "Share PDF",
-            child: const Icon(Icons.share, color: Colors.white),
-          ),
-        ],
+            const SizedBox(height: 16),
+            FloatingActionButton(
+              heroTag: "share",
+              backgroundColor: AppColors.primaryColor,
+              onPressed: isLoading ? null : _handleShare,
+              tooltip: "Share PDF",
+              child: const Icon(Icons.share, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }

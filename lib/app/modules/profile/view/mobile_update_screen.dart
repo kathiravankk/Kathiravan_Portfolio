@@ -49,7 +49,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.loginBgImage),
+          image: AssetImage(AssetImages.appBackgroundImg),
           fit: BoxFit.cover,
         ),
       ),
@@ -73,11 +73,7 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
         ),
         body: Obx(
           () => registerController.updateProfileLoading
-              ? Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
-                  ),
-                )
+              ?AppAlertUtils.customLoader()
               : Padding(
                   padding: const EdgeInsets.all(20),
                   child: SingleChildScrollView(
@@ -86,16 +82,17 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
                       //crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 15),
                         Image.asset(
                           AssetImages.appIconImage,
                           height: 100,
                           width: 100,
                         ),
                         Text(
-                          "Enter a new number to secure your account!",
+                          "Enter a new number to secure your Account!",
+                          textAlign: TextAlign.center,
                           style: AppStyles.customTextStyle(
                             size: 16,
+                            lineSpace: 1.5,
                             color: AppColors.secondaryColor,
                             weight: FontWeight.w500,
                           ),

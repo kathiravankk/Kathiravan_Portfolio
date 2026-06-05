@@ -79,6 +79,7 @@ class InternshipModel {
   String? updatedAt;
   int? v;
   bool? isSaved;
+  int? noOfPosition;
 
   InternshipModel({
     this.id,
@@ -109,11 +110,13 @@ class InternshipModel {
     this.updatedAt,
     this.v,
     this.isSaved,
+    this.noOfPosition,
   });
 
   factory InternshipModel.fromJson(Map<String, dynamic> json) {
     return InternshipModel(
       id: json['_id'],
+      noOfPosition: json['noofposition']??0,
       companyName: json['companyname'],
       aboutCompany: json['aboutcompany'],
       companyWebsite: json['companywebsite'],
@@ -153,6 +156,7 @@ class InternshipModel {
   Map<String, dynamic> toJson() {
     return {
       "_id": id,
+      "noofposition": noOfPosition,
       "companyname": companyName,
       "aboutcompany": aboutCompany,
       "companywebsite": companyWebsite,

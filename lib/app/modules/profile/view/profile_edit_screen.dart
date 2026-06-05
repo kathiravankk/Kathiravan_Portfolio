@@ -8,10 +8,12 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/core/widgets/custom_date_picker_widget.dart';
 import 'package:internsharks/app/core/widgets/education_card.dart';
 import 'package:internsharks/app/core/widgets/item_card_widget.dart';
 import 'package:internsharks/app/core/widgets/profile_avatar.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -40,6 +42,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _linkedinCtrl = TextEditingController();
   final _websiteCtrl = TextEditingController();
   final _bioCtrl = TextEditingController();
+  final TextEditingController dobController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+
+  String? selectedDobForApi; // yyyy-MM-dd
 
   // State
   String? _studentId;
@@ -231,6 +237,18 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           },
         )
         .toList();
+    locationController.text = p.location ?? "";
+
+    if ((p.studentDob ?? "").isNotEmpty) {
+      final date = DateTime.parse(p.studentDob!);
+
+      dobController.text = DateFormat('dd/MM/yyyy').format(date);
+
+      selectedDobForApi = DateFormat('yyyy-MM-dd').format(date);
+    } else {
+      dobController.clear();
+      selectedDobForApi = null;
+    }
 
     if (mounted) setState(() {});
   }
@@ -268,378 +286,553 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         if (didPop) return;
         await _handleBackPress();
       },
-      child: Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        appBar: AppBar(
-          backgroundColor: AppColors.appBgColor_2,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 25,
-              color: AppColors.whiteColor,
-            ),
-            onPressed: _handleBackPress,
-          ),
-          title: Text(
-            'Edit Profile',
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
-            ),
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
           ),
         ),
-        body: Obx(() {
-          if (profileController.profileDataLoading) {
-            return const Center(
-              child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
-            );
-          }
-          return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Avatar ────────────────────────────────────────────────
-                  ProfileAvatar(
-                    imageUrl: _profileImageUrl ?? '',
-                    pickedFile: _pickedImage,
-                    name: _nameCtrl.text,
-                    collegeName:
-                        profileController.profileDataModel.collegeName ?? '',
-                    onTap: _showImageSourceSheet,
-                  ),
-                  const SizedBox(height: 20),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                size: 25,
+                color: AppColors.whiteColor,
+              ),
+              onPressed: _handleBackPress,
+            ),
+            title: Text(
+              'Edit Profile',
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.secondaryColor,
+                weight: FontWeight.w600,
+              ),
+            ),
+          ),
+          body: Obx(() {
+            if (profileController.profileDataLoading) {
+              return AppAlertUtils.customLoader();
+            }
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  spacing: 5,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Avatar ────────────────────────────────────────────────
+                    ProfileAvatar(
+                      imageUrl: _profileImageUrl ?? '',
+                      pickedFile: _pickedImage,
+                      name: _nameCtrl.text,
+                      collegeName:
+                          profileController.profileDataModel.collegeName ?? '',
+                      onTap: _showImageSourceSheet,
+                    ),
+                    const SizedBox(height: 20),
 
-                  // ── Personal Info ─────────────────────────────────────────
-                  ProfileWidgets.sectionHeader('📋', 'Personal Information'),
-                  _pfield(Icons.person_outline_sharp, _nameCtrl, 'Full Name', validator: AppFunctions.validateName),
-                  const SizedBox(height: 12),
-                  _pfield(
-                    Icons.email_outlined,
-                    _emailCtrl,
-                    'Email Address',
-                    isEnable: false,
-                    isProfileFlow: false,
-                  ),
-                  const SizedBox(height: 12),
-                  _pfield(
-                    Icons.phone_outlined,
-                    _mobileCtrl,
-                    'Mobile Number',
-                    isNum: true,
-                    isEnable: false,
-                    isProfileFlow: false,
-                  ),
-                  const SizedBox(height: 12),
-                  _pfield(
-                    Icons.dataset_linked_outlined,
-                    _linkedinCtrl,
-                    'LinkedIn Profile',
-                  ),
-                  const SizedBox(height: 12),
-                  _pfield(
-                    Icons.language_outlined,
-                    _websiteCtrl,
-                    'Portfolio/Personal Website',
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── Bio ───────────────────────────────────────────────────
-                  ProfileWidgets.sectionHeader('📝', 'Professional Summary'),
-                  CustomTextField(
-                    isNumberKeyboard: false,
-                    isProfileFlow: true,
-                    prefixWidget: Icon(
+                    // ── Personal Info ─────────────────────────────────────────
+                    ProfileWidgets.sectionHeader('📋', 'Personal Information'),
+                    _pfield(
                       Icons.person_outline_sharp,
-                      color: AppColors.primaryColor,
-                      size: 23,
+                      _nameCtrl,
+                      'Full Name',
+                      validator: AppFunctions.validateName,
                     ),
-                    hintText: 'Passionate about building impactful products...',
-                    controller: _bioCtrl,
-                    labelText: 'Bio',
-                    maxLines: 4,
-                    onChanged: (_) {},
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── Certifications ────────────────────────────────────────
-                  ProfileWidgets.sectionHeader(
-                    '🏅',
-                    'Certification',
-                    onAdd: () => _certSheet(),
-                  ),
-                  ..._certifications.asMap().entries.map(
-                    (e) => ItemCard(
-                      title: e.value['name'] ?? '',
-                      subtitle: e.value['issuer'] ?? '',
-                      onEdit: () => _certSheet(editIndex: e.key),
+                    const SizedBox(height: 12),
+                    _pfield(
+                      Icons.email_outlined,
+                      _emailCtrl,
+                      'Email Address',
+                      isEnable: false,
+                      isProfileFlow: false,
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  //
-                  // // ── Work Experience ───────────────────────────────────────
-                  // ProfileWidgets.sectionHeader(
-                  //   '💼',
-                  //   'Work Experience',
-                  //   onAdd: () => _expSheet(),
-                  // ),
-                  // if (_experiences.isNotEmpty)
-                  //   ProfileWidgets.infoCard(
-                  //     Column(
-                  //       children: _experiences.asMap().entries.map((e) {
-                  //         final exp = e.value;
-                  //         return Column(
-                  //           crossAxisAlignment: CrossAxisAlignment.start,
-                  //           children: [
-                  //             ExperienceCard(
-                  //               role: exp['role'] ?? '',
-                  //               company: exp['company'] ?? '',
-                  //               meta:
-                  //                   '${exp['type'] ?? ''} | ${exp['duration'] ?? ''}',
-                  //               onEdit: () => _expSheet(editIndex: e.key),
-                  //               onDelete: () =>
-                  //                   setState(() => _experiences.removeAt(e.key)),
-                  //             ),
-                  //             if (e.key < _experiences.length - 1)
-                  //               const Divider(color: Colors.white12),
-                  //           ],
-                  //         );
-                  //       }).toList(),
-                  //     ),
-                  //   ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 12),
+                    _pfield(
+                      Icons.phone_outlined,
+                      _mobileCtrl,
+                      'Mobile Number',
+                      isNum: true,
+                      isEnable: false,
+                      isProfileFlow: false,
+                    ),
+                    const SizedBox(height: 12),
 
-                  // ── Education ─────────────────────────────────────────────
-                  ProfileWidgets.sectionHeader(
-                    '🏫',
-                    'Education',
-                    onAdd: () => _eduSheet(),
-                  ),
-                  ProfileWidgets.infoCard(
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (_collegeData != null) ...[
-                          EducationCard(
-                            level: 'College',
-                            title:
-                                '${_collegeData!['degree']} - ${_collegeData!['department']}',
-                            subtitle: _collegeData!['institution'] ?? '',
-                            meta:
-                                '${_collegeData!['start_year']} - ${_collegeData!['end_year']}',
-                            extra: 'Full Time',
-                            onEdit: () => _eduSheet(),
-                          ),
-                          const Divider(color: Colors.white12),
-                        ],
-                        if (_higherSecData != null) ...[
-                          EducationCard(
-                            level: 'Class XII',
-                            title: _higherSecData!['institution'] ?? '',
-                            subtitle: _higherSecData!['board'] ?? '',
-                            meta: _higherSecData!['year'] ?? '',
-                            extra: '${_higherSecData!['percentage']}%',
-                            onEdit: () => _eduSheet(),
-                          ),
-                          const Divider(color: Colors.white12),
-                        ],
-                        if (_secondaryData != null)
-                          EducationCard(
-                            level: 'Class X',
-                            title: _secondaryData!['institution'] ?? '',
-                            subtitle: _secondaryData!['board'] ?? '',
-                            meta: _secondaryData!['year'] ?? '',
-                            extra: '${_secondaryData!['percentage']}%',
-                            onEdit: () => _eduSheet(),
-                          ),
-                        if (_collegeData == null &&
-                            _higherSecData == null &&
-                            _secondaryData == null)
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Text(
-                                'No education added yet',
-                                style: AppStyles.customTextStyle(
-                                  color: AppColors.lightText,
-                                  size: 13,
-                                  weight: FontWeight.w400,
+                    CustomDatePickerField(
+                      labelText: "Date of Birth",
+                      controller: dobController,
+                      onTap: selectDob,
+                    ),
+                    const SizedBox(height: 12),
+                    CustomTextField(
+                      controller: locationController,
+                      labelText: "Location",
+                      hintText: "Enter Location",
+                      isNumberKeyboard: false,
+                    ),
+                    const SizedBox(height: 12),
+                    _pfield(
+                      Icons.dataset_linked_outlined,
+                      _linkedinCtrl,
+                      'LinkedIn Profile',
+                    ),
+                    const SizedBox(height: 12),
+                    _pfield(
+                      Icons.language_outlined,
+                      _websiteCtrl,
+                      'Portfolio/Personal Website',
+                    ),
+                    const SizedBox(height: 20),
+
+                    // ── Bio ───────────────────────────────────────────────────
+                    ProfileWidgets.sectionHeader('📝', 'Professional Summary'),
+                    CustomTextField(
+                      isNumberKeyboard: false,
+                      isProfileFlow: true,
+                      prefixWidget: Icon(
+                        Icons.person_outline_sharp,
+                        color: AppColors.primaryColor,
+                        size: 23,
+                      ),
+                      hintText:
+                          'Passionate about building impactful products...',
+                      controller: _bioCtrl,
+                      labelText: 'Bio',
+                      maxLines: 4,
+                      onChanged: (_) {},
+                    ),
+                    const SizedBox(height: 20),
+
+                    // ── Certifications ────────────────────────────────────────
+                    ProfileWidgets.sectionHeader(
+                      '🏅',
+                      'Certification',
+                      onAdd: () => _certSheet(),
+                    ),
+                    ..._certifications.asMap().entries.map(
+                      (e) => ItemCard(
+                        title: e.value['name'] ?? '',
+                        subtitle: e.value['issuer'] ?? '',
+                        onEdit: () => _certSheet(editIndex: e.key),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    //
+                    // // ── Work Experience ───────────────────────────────────────
+                    // ProfileWidgets.sectionHeader(
+                    //   '💼',
+                    //   'Work Experience',
+                    //   onAdd: () => _expSheet(),
+                    // ),
+                    // if (_experiences.isNotEmpty)
+                    //   ProfileWidgets.infoCard(
+                    //     Column(
+                    //       children: _experiences.asMap().entries.map((e) {
+                    //         final exp = e.value;
+                    //         return Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: [
+                    //             ExperienceCard(
+                    //               role: exp['role'] ?? '',
+                    //               company: exp['company'] ?? '',
+                    //               meta:
+                    //                   '${exp['type'] ?? ''} | ${exp['duration'] ?? ''}',
+                    //               onEdit: () => _expSheet(editIndex: e.key),
+                    //               onDelete: () =>
+                    //                   setState(() => _experiences.removeAt(e.key)),
+                    //             ),
+                    //             if (e.key < _experiences.length - 1)
+                    //               const Divider(color: Colors.white12),
+                    //           ],
+                    //         );
+                    //       }).toList(),
+                    //     ),
+                    //   ),
+                    const SizedBox(height: 20),
+
+                    // ── Education ─────────────────────────────────────────────
+                    ProfileWidgets.sectionHeader(
+                      '🏫',
+                      'Education',
+                      onAdd: () => _eduSheet(),
+                    ),
+                    ProfileWidgets.infoCard(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (_collegeData != null) ...[
+                            EducationCard(
+                              level: 'College',
+                              title:
+                                  '${_collegeData!['degree']} - ${_collegeData!['department']}',
+                              subtitle: _collegeData!['institution'] ?? '',
+                              meta:
+                                  '${_collegeData!['start_year']} - ${_collegeData!['end_year']}',
+                              extra: 'Full Time',
+                              onEdit: () => _eduSheet(),
+                            ),
+                            const Divider(color: Colors.white12),
+                          ],
+                          if (_higherSecData != null) ...[
+                            EducationCard(
+                              level: 'Class XII',
+                              title: _higherSecData!['institution'] ?? '',
+                              subtitle: _higherSecData!['board'] ?? '',
+                              meta: _higherSecData!['year'] ?? '',
+                              extra: '${_higherSecData!['percentage']}%',
+                              onEdit: () => _eduSheet(),
+                            ),
+                            const Divider(color: Colors.white12),
+                          ],
+                          if (_secondaryData != null)
+                            EducationCard(
+                              level: 'Class X',
+                              title: _secondaryData!['institution'] ?? '',
+                              subtitle: _secondaryData!['board'] ?? '',
+                              meta: _secondaryData!['year'] ?? '',
+                              extra: '${_secondaryData!['percentage']}%',
+                              onEdit: () => _eduSheet(),
+                            ),
+                          if (_collegeData == null &&
+                              _higherSecData == null &&
+                              _secondaryData == null)
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Text(
+                                  'No education added yet',
+                                  style: AppStyles.customTextStyle(
+                                    color: AppColors.lightText,
+                                    size: 13,
+                                    weight: FontWeight.w400,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── Skills ────────────────────────────────────────────────
-                  ProfileWidgets.sectionHeader(
-                    '💡',
-                    'Skills',
-                    onAdd: () => _skillSheet(),
-                    addLabel: '+ Add Skills',
-                  ),
-                  if (_programmingSkills.isNotEmpty) ...[
-                    Text(
-                      'Programming Skills',
-                      style: AppStyles.customTextStyle(
-                        color: AppColors.whiteColor,
-                        size: 14,
-                        weight: FontWeight.w600,
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      children: _programmingSkills
-                          .asMap()
-                          .entries
-                          .map(
-                            (e) => ProfileWidgets.chip(
-                              e.value,
-                              () => setState(
-                                () => _programmingSkills.removeAt(e.key),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                    const SizedBox(height: 20),
+
+                    // ── Skills ────────────────────────────────────────────────
+                    ProfileWidgets.sectionHeader(
+                      '💡',
+                      'Skills',
+                      onAdd: () => _skillSheet(),
+                      addLabel: '+ Add Skills',
                     ),
-                    const SizedBox(height: 10),
-                  ],
-                  if (_toolsSkills.isNotEmpty) ...[
-                    Text(
-                      'Tools Technologies',
-                      style: AppStyles.customTextStyle(
-                        color: AppColors.whiteColor,
-                        size: 14,
-                        weight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      children: _toolsSkills
-                          .asMap()
-                          .entries
-                          .map(
-                            (e) => ProfileWidgets.chip(
-                              e.value,
-                              () => setState(() => _toolsSkills.removeAt(e.key)),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ],
-                  const SizedBox(height: 20),
-
-                  // ── Projects ──────────────────────────────────────────────
-                  ProfileWidgets.sectionHeader(
-                    '🚀',
-                    'Projects',
-                    onAdd: () => _projectSheet(),
-                    addLabel: '+ Add Projects',
-                  ),
-                  ..._projects.asMap().entries.map(
-                    (e) => ItemCard(
-                      title: e.value['title'] ?? '',
-                      subtitle: e.value['description'] ?? '',
-                      onEdit: () => _projectSheet(editIndex: e.key),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  ProfileWidgets.sectionHeader(
-                    '💼',
-                    'Internships',
-                    onAdd: () => _internshipSheet(),
-                  ),
-
-                  ..._internships.asMap().entries.map(
-                    (e) => ItemCard(
-                      title: e.value['company'] ?? '',
-                      subtitle: e.value['duration'] ?? '',
-                      onEdit: () => _internshipSheet(editIndex: e.key),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-                  ProfileWidgets.sectionHeader(
-                    '🏭',
-                    'Industrial Visits',
-                    onAdd: () => _industrialVisitSheet(),
-                  ),
-
-                  ..._industrialVisits.asMap().entries.map(
-                    (e) => ItemCard(
-                      title: e.value['company'] ?? '',
-                      subtitle: '${e.value['location']} • ${e.value['date']}',
-                      onEdit: () => _industrialVisitSheet(editIndex: e.key),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-                  ProfileWidgets.sectionHeader(
-                    '📄',
-                    'Paper Presentations',
-                    onAdd: () => _paperPresentationSheet(),
-                  ),
-
-                  ..._paperPresentations.asMap().entries.map(
-                    (e) => ItemCard(
-                      title: e.value['title'] ?? '',
-                      subtitle: '${e.value['event']} • ${e.value['year']}',
-                      onEdit: () => _paperPresentationSheet(editIndex: e.key),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  ProfileWidgets.sectionHeader(
-                    '📘',
-                    'Additional Information',
-                    onAdd: () => _additionalInfoSheet(),
-                  ),
-
-                  ProfileWidgets.infoCard(
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildInfoWrap('Languages Known', _languagesKnown),
-                        _buildInfoWrap('Hobbies', _hobbies),
-                        _buildInfoWrap('Areas of Interest', _areasOfInterest),
-                        _buildInfoWrap('Achievements', _achievements),
-                        _buildInfoWrap(
-                          'Volunteer Experience',
-                          _volunteerExperience,
+                    if (_programmingSkills.isNotEmpty) ...[
+                      Text(
+                        'Programming Skills',
+                        style: AppStyles.customTextStyle(
+                          color: AppColors.whiteColor,
+                          size: 14,
+                          weight: FontWeight.w600,
                         ),
-                        _buildInfoWrap('Leadership', _leadership),
-                        _buildInfoWrap('Publications', _publications),
-                        _buildInfoWrap('Workshops', _workshops),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        children: _programmingSkills
+                            .asMap()
+                            .entries
+                            .map(
+                              (e) => ProfileWidgets.chip(
+                                e.value,
+                                () => setState(
+                                  () => _programmingSkills.removeAt(e.key),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                    if (_toolsSkills.isNotEmpty) ...[
+                      Text(
+                        'Tools Technologies',
+                        style: AppStyles.customTextStyle(
+                          color: AppColors.whiteColor,
+                          size: 14,
+                          weight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        children: _toolsSkills
+                            .asMap()
+                            .entries
+                            .map(
+                              (e) => ProfileWidgets.chip(
+                                e.value,
+                                () => setState(
+                                  () => _toolsSkills.removeAt(e.key),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
+                    const SizedBox(height: 20),
 
-                  // ── Save ──────────────────────────────────────────────────
-                  CustomButtonWidget(
-                    isLoading: registerController.updateProfileLoading,
-                    buttonFunction: () {
-                      if (_formKey.currentState!.validate()) {
-                        _isSaving ? null : _saveAll();
-                      }
-                    },
-                    buttonText: _isSaving ? 'Saving...' : 'Save Changes',
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    // ── Projects ──────────────────────────────────────────────
+                    ProfileWidgets.sectionHeader(
+                      '🚀',
+                      'Projects',
+                      onAdd: () => _projectSheet(),
+                      addLabel: '+ Add Projects',
+                    ),
+                    ..._projects.asMap().entries.map(
+                      (e) => ItemCard(
+                        title: e.value['title'] ?? '',
+                        subtitle: e.value['description'] ?? '',
+                        onEdit: () => _projectSheet(editIndex: e.key),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ProfileWidgets.sectionHeader(
+                      '💼',
+                      'Internships',
+                      onAdd: () => _internshipSheet(),
+                    ),
+
+                    ..._internships.asMap().entries.map(
+                      (e) => ItemCard(
+                        title: e.value['company'] ?? '',
+                        subtitle: e.value['duration'] ?? '',
+                        onEdit: () => _internshipSheet(editIndex: e.key),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+                    ProfileWidgets.sectionHeader(
+                      '🏭',
+                      'Industrial Visits',
+                      onAdd: () => _industrialVisitSheet(),
+                    ),
+
+                    ..._industrialVisits.asMap().entries.map(
+                      (e) => ItemCard(
+                        title: e.value['company'] ?? '',
+                        subtitle: '${e.value['location']} • ${e.value['date']}',
+                        onEdit: () => _industrialVisitSheet(editIndex: e.key),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+                    ProfileWidgets.sectionHeader(
+                      '📄',
+                      'Paper Presentations',
+                      onAdd: () => _paperPresentationSheet(),
+                    ),
+
+                    ..._paperPresentations.asMap().entries.map(
+                      (e) => ItemCard(
+                        title: e.value['title'] ?? '',
+                        subtitle: '${e.value['event']} • ${e.value['year']}',
+                        onEdit: () => _paperPresentationSheet(editIndex: e.key),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    ProfileWidgets.sectionHeader(
+                      '📘',
+                      'Additional Information',
+                      onAdd: () => _additionalInfoSheet(),
+                    ),
+
+                    ProfileWidgets.infoCard(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoWrap('Languages Known', _languagesKnown),
+                          _buildInfoWrap('Hobbies', _hobbies),
+                          _buildInfoWrap('Areas of Interest', _areasOfInterest),
+                          _buildInfoWrap('Achievements', _achievements),
+                          _buildInfoWrap(
+                            'Volunteer Experience',
+                            _volunteerExperience,
+                          ),
+                          _buildInfoWrap('Leadership', _leadership),
+                          _buildInfoWrap('Publications', _publications),
+                          _buildInfoWrap('Workshops', _workshops),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // ── Save ──────────────────────────────────────────────────
+                    CustomButtonWidget(
+                      isLoading: registerController.updateProfileLoading,
+                      buttonFunction: () {
+                        if (_formKey.currentState!.validate()) {
+                          _isSaving ? null : _saveAll();
+                        }
+                      },
+                      buttonText: _isSaving ? 'Saving...' : 'Save Changes',
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
+  }
+
+  Future<void> selectDob() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      // initialDate: DateTime(
+      //   DateTime.now().year - 18,
+      //   DateTime.now().month,
+      //   DateTime.now().day,
+      // ),
+      firstDate: DateTime(1950),
+      initialDate: DateTime(2000),
+      lastDate: DateTime.now(),
+      helpText: "SELECT DATE OF BIRTH",
+      cancelText: "CANCEL",
+      confirmText: "CONFIRM",
+
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: AppColors.primaryColor,
+              selectionColor: AppColors.whiteColor,
+              selectionHandleColor: AppColors.secondaryColor,
+            ),
+            textTheme: TextTheme(
+              labelMedium: AppStyles.customTextStyle(
+                size: 12,
+                color: AppColors.primaryColor,
+                weight: FontWeight.w500,
+              ),
+            ),
+            dialogTheme: DialogThemeData(
+              backgroundColor: AppColors.fieldBgColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+                side: const BorderSide(color: AppColors.fieldBorderColor),
+              ),
+            ),
+
+            colorScheme: const ColorScheme.dark(
+              primary: AppColors.primaryColor, // selected day
+              onPrimary: AppColors.blackColor, // selected day text
+              surface: AppColors.fieldBgColor, // dialog bg
+              onSurface: AppColors.whiteColor, // default text
+            ),
+
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primaryColor,
+                textStyle: AppStyles.customTextStyle(
+                  size: 14,
+                  weight: FontWeight.w700,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(
+                    color: AppColors.fieldBorderColor,
+                  ),
+                ),
+
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(
+                    color: AppColors.primaryColor,
+                  ),
+              ),
+            ),
+
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: AppColors.fieldBgColor,
+
+              headerBackgroundColor: AppColors.fieldBgColor,
+
+              headerForegroundColor: AppColors.secondaryColor,
+
+              dividerColor: AppColors.fieldBorderColor,
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+
+              todayBorder: const BorderSide(
+                color: AppColors.primaryColor,
+                width: 1.5,
+              ),
+
+              todayForegroundColor: WidgetStateProperty.all(
+                AppColors.primaryColor,
+              ),
+
+              dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.blackColor;
+                }
+                return AppColors.whiteColor;
+              }),
+
+              dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.primaryColor;
+                }
+                return Colors.transparent;
+              }),
+
+              yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.blackColor;
+                }
+                return AppColors.whiteColor;
+              }),
+
+              yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppColors.primaryColor;
+                }
+                return Colors.transparent;
+              }),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      dobController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+
+      selectedDobForApi = DateFormat('yyyy-MM-dd').format(pickedDate);
+
+      setState(() {});
+    }
+
+    if (pickedDate != null) {
+      /// UI Format
+      dobController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+
+      /// API Format
+      selectedDobForApi = DateFormat('yyyy-MM-dd').format(pickedDate);
+
+      setState(() {});
+    }
   }
 
   String _generateProfileSnapshot() {
@@ -687,7 +880,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       context: context,
       title: 'Discard Changes?',
       content:
-      'You have unsaved changes in your profile. If you go back now, all modified data will be lost.',
+          'You have unsaved changes in your profile. If you go back now, all modified data will be lost.',
       confirmText: 'Discard',
       cancelText: 'Stay',
       isDestructive: true,
@@ -918,6 +1111,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'studmobileno': _mobileCtrl.text.trim(),
       'linkedIn': _linkedinCtrl.text.trim(),
       'github': _websiteCtrl.text.trim(),
+      "studdob": selectedDobForApi ?? "",
+      "location": locationController.text.trim(),
       //'isVerified': false,
       //"role": "Software Developer",
       //"templateNumber": "1",
@@ -1032,14 +1227,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   // helper for personal-info fields
   Widget _pfield(
-      IconData icon,
-      TextEditingController ctrl,
-      String label, {
-        bool isNum = false,
-        bool isEnable = true,
-        bool isProfileFlow = true,
-        String? Function(String?)? validator,
-      }) => CustomTextField(
+    IconData icon,
+    TextEditingController ctrl,
+    String label, {
+    bool isNum = false,
+    bool isEnable = true,
+    bool isProfileFlow = true,
+    String? Function(String?)? validator,
+  }) => CustomTextField(
     isEnabled: isEnable,
     isNumberKeyboard: isNum,
     isProfileFlow: isProfileFlow,
@@ -1334,14 +1529,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
               const SizedBox(height: 5),
 
-                  CustomTextField(
-                    isProfileFlow: true,
-                    controller: secondaryInstitutionCtrl,
-                    labelText: 'Institution',
-                    onChanged: (_) {},
-                    isNumberKeyboard: false,
-
-                  ),
+              CustomTextField(
+                isProfileFlow: true,
+                controller: secondaryInstitutionCtrl,
+                labelText: 'Institution',
+                onChanged: (_) {},
+                isNumberKeyboard: false,
+              ),
               CustomTextField(
                 isProfileFlow: true,
                 controller: secondaryBoardCtrl,
@@ -1361,7 +1555,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       labelText: 'Percentage / CGPA',
                       onChanged: (_) {},
                       isNumberKeyboard: false,
-
                     ),
                   ),
                   Expanded(

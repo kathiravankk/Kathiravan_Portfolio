@@ -174,7 +174,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBgImage),
+          image: AssetImage(AssetImages.appScreenBg),
           fit: BoxFit.cover,
         ),
       ),

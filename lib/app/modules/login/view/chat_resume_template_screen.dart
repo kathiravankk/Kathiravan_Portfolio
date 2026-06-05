@@ -61,6 +61,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   List<int> templateHistory = [];
 
   int latestGeneratedTemplateIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -111,9 +112,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   }
 
   void setInitialTemplate() {
-
     if (isRegisterFlow == true) {
-
       currentTemplateIndex = 0;
       latestGeneratedTemplateIndex = 0;
 
@@ -124,7 +123,6 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     if (templateId != null &&
         templateId! > 0 &&
         templateId! <= templates.length) {
-
       currentTemplateIndex = templateId! - 1;
 
       /// latest generated template
@@ -133,11 +131,9 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
       /// store all previous templates
       templateHistory = List.generate(
         currentTemplateIndex + 1,
-            (index) => index,
+        (index) => index,
       );
-
     } else {
-
       currentTemplateIndex = 0;
       latestGeneratedTemplateIndex = 0;
 
@@ -177,7 +173,6 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   }
 
   Future<void> nextTemplate() async {
-
     /// stop refresh after template 10
     if (latestGeneratedTemplateIndex >= templates.length - 1) {
       return;
@@ -187,11 +182,9 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-
       await getCreditData(creditId: creditIdString);
 
       setState(() {
-
         /// move only from latest generated template
         latestGeneratedTemplateIndex++;
 
@@ -203,9 +196,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
           templateHistory.add(currentTemplateIndex);
         }
       });
-
     } else {
-
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
         "Something went wrong!, Try again later!",
@@ -259,141 +250,154 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   Widget build(BuildContext context) {
     final template = templates[currentTemplateIndex];
 
-    return Obx(()=>Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          onPressed: () => Get.back(),
-        ),
-        title: Text(
-          "Resume Template",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
+    return Obx(
+      () => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
           ),
         ),
-        actions: [
-          registerController.creditDataLoading
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              "Resume Template",
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w600,
+              ),
+            ),
+            actions: [
+              registerController.creditDataLoading
+                  ? Center(
+                      child: CupertinoActivityIndicator(
+                        color: AppColors.secondaryColor,
+                      ),
+                    )
+                  : ProfileWidgets.creditContainer(
+                      viewFunc: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.buyCreditsScreen,
+                        );
+                      },
+                      creditCount:
+                          registerController
+                              .creditDataModel
+                              .creditData!
+                              .balance ??
+                          0,
+                    ),
+              const SizedBox(width: 10),
+            ],
+          ),
+          body: registerController.studentDetailsLoading
               ? Center(
                   child: CupertinoActivityIndicator(
                     color: AppColors.secondaryColor,
                   ),
                 )
-              : ProfileWidgets.creditContainer(
-                  viewFunc: () {
-                    AppFunctions.navigateScreen(
-                      context,
-                      AppRoutes.buyCreditsScreen,
-                    );
-                  },
-                  creditCount:
-                      registerController.creditDataModel.creditData!.balance ??
-                      0,
-                ),
-          const SizedBox(width: 10),
-        ],
-      ),
-      body: registerController.studentDetailsLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
-            : Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  spacing: 15,
-                  children: [
-                    Expanded(
-                      flex: 8,
-                      child: Column(
-                        spacing: 15,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: Colors.white,
-                              ),
-                              clipBehavior: Clip.hardEdge,
-                              child: registerController.templateRefreshLoading
-                                  ? Center(
-                                      child: CupertinoActivityIndicator(
-                                        color: AppColors.primaryColor,
+              : Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    spacing: 15,
+                    children: [
+                      Expanded(
+                        flex: 8,
+                        child: Column(
+                          spacing: 15,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.white,
+                                ),
+                                clipBehavior: Clip.hardEdge,
+                                child: registerController.templateRefreshLoading
+                                    ? Center(
+                                        child: CupertinoActivityIndicator(
+                                          color: AppColors.primaryColor,
+                                        ),
+                                      )
+                                    : ResumeThumbnailCard(
+                                        template: template,
+                                        onTap: () {
+                                          AppFunctions.navigateScreen(
+                                            context,
+                                            AppRoutes.resumeTemplateViewScreen,
+                                            arguments: {
+                                              "templateData": template,
+                                              "resumeData": resumeData,
+                                              "isChatFlow": true,
+                                            },
+                                          );
+                                        },
                                       ),
-                                    )
-                                  : ResumeThumbnailCard(
-                                      template: template,
-                                      onTap: () {
-                                        AppFunctions.navigateScreen(
-                                          context,
-                                          AppRoutes.resumeTemplateViewScreen,
-                                          arguments: {
-                                            "templateData": template,
-                                            "resumeData": resumeData,
-                                            "isChatFlow": true,
-                                          },
-                                        );
-                                      },
-                                    ),
+                              ),
                             ),
-                          ),
-                          actionBar(template: template),
-                        ],
+                            actionBar(template: template),
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            spacing: 10,
-                            children: [
-                              Text(
-                                "Wow! Your Ready to Impress..!",
-                                textAlign: TextAlign.center,
-                                style: AppStyles.customTextStyle(
-                                  size: 16,
-                                  weight: FontWeight.w600,
-                                  color: AppColors.secondaryColor,
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              spacing: 10,
+                              children: [
+                                Text(
+                                  "Wow! Your Ready to Impress..!",
+                                  textAlign: TextAlign.center,
+                                  style: AppStyles.customTextStyle(
+                                    size: 16,
+                                    weight: FontWeight.w700,
+                                    color: AppColors.secondaryColor,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                "Your resume shines! It's perfectly crafted to catch employers' eyes. highlighting your unique strengths and achievements. You're ready to make a powerful impression!",
-                                textAlign: TextAlign.center,
-                                style: AppStyles.customTextStyle(
-                                  size: 14,
-                                  lineSpace: 1.3,
-                                  color: AppColors.whiteColor,
-                                  weight: FontWeight.w400,
+                                Text(
+                                  "Your resume shines! It's perfectly crafted to catch employers' eyes.",
+                                  textAlign: TextAlign.center,
+                                  style: AppStyles.customTextStyle(
+                                    size: 14,
+                                    lineSpace: 1.3,
+                                    color: AppColors.whiteColor,
+                                    weight: FontWeight.w400,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          CustomButtonWidget(
-                            width: double.infinity,
-                            height: 45,
-                            isLoading:
-                                registerController.updateResumeTemplateLoading,
-                            buttonFunction: () async {
-                              await updateResumeFunc();
-                            },
-                            buttonText: "CONTINUE",
-                            bgColor: AppColors.primaryColor,
-                          ),
-                        ],
+                              ],
+                            ),
+                            CustomButtonWidget(
+                              width: double.infinity,
+                              height: 45,
+                              isLoading: registerController
+                                  .updateResumeTemplateLoading,
+                              buttonFunction: () async {
+                                await updateResumeFunc();
+                              },
+                              buttonText: "CONTINUE",
+                              bgColor: AppColors.primaryColor,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-    ));
+        ),
+      ),
+    );
   }
 
   Widget actionBar({required ResumeTemplateModel template}) {
@@ -489,7 +493,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
             ),
             borderRadius: BorderRadius.circular(25),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -572,22 +576,18 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
               /// Refresh
               if (latestGeneratedTemplateIndex < templates.length - 1) ...[
-
                 SizedBox(
                   height: 35,
-                  width: 50,
+                  width: 35,
                   child: FloatingActionButton(
                     shape: const CircleBorder(),
                     elevation: 0,
                     mini: true,
                     backgroundColor: AppColors.primaryColor,
                     onPressed: () async {
-
                       await nextTemplate();
 
-                       _initWebView(
-                        templates[currentTemplateIndex],
-                      );
+                      _initWebView(templates[currentTemplateIndex]);
                     },
                     child: const Icon(
                       Icons.refresh,
@@ -597,11 +597,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                   ),
                 ),
 
-                Image.asset(
-                  AssetImages.creditsIconNew,
-                  height: 28,
-                  width: 28,
-                ),
+                Image.asset(AssetImages.creditsIconNew, height: 25, width: 25),
 
                 Text(
                   "25",
@@ -692,17 +688,13 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     /// ALWAYS SAVE LATEST GENERATED TEMPLATE
     final selectedTemplate = templates[latestGeneratedTemplateIndex];
 
-    resumeData!.templateNumber =
-        templates[currentTemplateIndex].id.toString();
+    resumeData!.templateNumber = templates[currentTemplateIndex].id.toString();
     debugPrint(
       "FINAL templateNumber => "
       "${resumeData!.templateNumber}",
     );
 
-
-    debugPrint(
-      "UPDATED TEMPLATE => ${templates[currentTemplateIndex].id}",
-    );
+    debugPrint("UPDATED TEMPLATE => ${templates[currentTemplateIndex].id}");
 
     resumeData!.studentId = studentId;
 

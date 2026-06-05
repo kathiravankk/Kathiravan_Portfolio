@@ -52,6 +52,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   WebViewController? webViewController;
   bool isLoading = true;
   bool waterMarkValue = false;
+  bool isWaterMarkRemoved = false;
 
   Future<void> getProfileData() async {
     studentId = await LocalStorageService.getStudentId();
@@ -60,6 +61,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       await getResumeData();
+      isWaterMarkRemoved = profileController.profileDataModel.isWaterMarkRemoved ?? false;
     } else {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),
@@ -153,6 +155,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           updateData: {
             "student_banner":
                 profileController.waterMarkModel.watermarkData!.imageUrl ?? "",
+            "isWaterMarkRemoved": true
           },
         );
         final code = registerController.getResponseCode();
@@ -319,380 +322,391 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: AppColors.whiteColor),
-        backgroundColor: AppColors.appBgColor_2,
-        elevation: 0,
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-        //   onPressed: () => Get.back(),
-        // ),
-        //automaticallyImplyLeading: false,
-        title: Text(
-          "My Profile",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.secondaryColor,
-            weight: FontWeight.w600,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
-        actions: [
-          ProfileWidgets.creditContainer(
-            creditCount:
-                profileController.profileDataModel.studentCreditId!.balance ??
-                0,
-            viewFunc: () {
-              AppFunctions.navigateScreen(context, AppRoutes.buyCreditsScreen);
-            },
-          ),
-          const SizedBox(width: 20),
-        ],
       ),
-      body: RefreshIndicator(
-        color: AppColors.primaryColor,
-        backgroundColor: AppColors.appBgColor_2,
-        onRefresh: () async {
-          await getProfileData();
-        },
-        child: Obx(() {
-          return profileController.profileDataLoading
-              ? Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
-                  ),
-                )
-              : CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            profileController.profileDataModel.studentBanner !=
-                                        null &&
-                                    profileController
-                                        .profileDataModel
-                                        .studentBanner!
-                                        .isNotEmpty
-                                ? resDpContainer()
-                                : aiBannerContainer(),
-                            SizedBox(height: 15),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.5,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                // child: WebViewWidget(
-                                //   controller: profileController.webViewController!,
-                                // ),
-                                child: webViewController == null
-                                    ? const Center(
-                                        child: CupertinoActivityIndicator(
-                                          color: AppColors.secondaryColor,
-                                        ),
-                                      )
-                                    : Stack(
-                                        children: [
-                                          WebViewWidget(
-                                            controller: webViewController!,
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.whiteColor),
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          // leading: IconButton(
+          //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+          //   onPressed: () => Get.back(),
+          // ),
+          //automaticallyImplyLeading: false,
+          title: Text(
+            "My Profile",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.secondaryColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+          actions: [
+            ProfileWidgets.creditContainer(
+              creditCount:
+                  profileController.profileDataModel.studentCreditId!.balance ??
+                  0,
+              viewFunc: () {
+                AppFunctions.navigateScreen(
+                  context,
+                  AppRoutes.buyCreditsScreen,
+                );
+              },
+            ),
+            const SizedBox(width: 20),
+          ],
+        ),
+        body: RefreshIndicator(
+          color: AppColors.primaryColor,
+          backgroundColor: AppColors.appBgColor_2,
+          onRefresh: () async {
+            await getProfileData();
+          },
+          child: Obx(() {
+            return profileController.profileDataLoading
+                ? AppAlertUtils.customLoader()
+                : CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            children: [
+                              profileController
+                                              .profileDataModel
+                                              .studentBanner !=
+                                          null &&
+                                      profileController
+                                          .profileDataModel
+                                          .studentBanner!
+                                          .isNotEmpty
+                                  ? resDpContainer()
+                                  : aiBannerContainer(),
+                              SizedBox(height: 15),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  // child: WebViewWidget(
+                                  //   controller: profileController.webViewController!,
+                                  // ),
+                                  child: webViewController == null
+                                      ? const Center(
+                                          child: CupertinoActivityIndicator(
+                                            color: AppColors.secondaryColor,
                                           ),
-                                          if (isLoading)
-                                            Container(
-                                              color: Colors.black45,
-                                              child: Center(
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    CupertinoActivityIndicator(
-                                                      color: AppColors
-                                                          .primaryColor,
-                                                      radius: 16,
-                                                    ),
-                                                    SizedBox(height: 12),
-                                                    Text(
-                                                      "Processing...",
-                                                      style:
-                                                          AppStyles.customTextStyle(
-                                                            size: 14,
-                                                            color: AppColors
-                                                                .greyColor,
-                                                            weight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                    ),
-                                                  ],
+                                        )
+                                      : Stack(
+                                          children: [
+                                            WebViewWidget(
+                                              controller: webViewController!,
+                                            ),
+                                            if (isLoading)
+                                              Container(
+                                                color: Colors.black45,
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      CupertinoActivityIndicator(
+                                                        color: AppColors
+                                                            .primaryColor,
+                                                        radius: 16,
+                                                      ),
+                                                      SizedBox(height: 12),
+                                                      Text(
+                                                        "Processing...",
+                                                        style:
+                                                            AppStyles.customTextStyle(
+                                                              size: 14,
+                                                              color: AppColors
+                                                                  .greyColor,
+                                                              weight: FontWeight
+                                                                  .w500,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                        ],
-                                      ),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            Container(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: AppColors.creditContColor,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  _actionItem(
-                                    Icons.download,
-                                    "Download",
-                                    _handleDownload,
-                                  ),
-                                  _actionItem(
-                                    Icons.share,
-                                    "Share",
-                                    _handleShare,
-                                  ),
-                                  _actionItem(Icons.remove_red_eye, "View", () {
-                                    AppFunctions.navigateScreen(
-                                      context,
-                                      AppRoutes.resumeTemplatePreviewScreen,
-                                      arguments: {
-                                        "templateId": int.parse(
-                                          profileController
-                                                          .profileDataModel
-                                                          .templateNumber !=
-                                                      null &&
-                                                  profileController
-                                                      .profileDataModel
-                                                      .templateNumber!
-                                                      .isNotEmpty
-                                              ? profileController
-                                                    .profileDataModel
-                                                    .templateNumber!
-                                              : "1",
+                                          ],
                                         ),
-                                        //"templateId": 1,
-                                        "resumeData": ExtractedResumeDataModel(
-                                          personalInfo: PersonalInfoModel(
-                                            name:
-                                                profileController
-                                                    .profileDataModel
-                                                    .studentName ??
-                                                '',
-                                            gender: profileController
-                                                .profileDataModel
-                                                .studentGender,
-                                            email: profileController
-                                                .profileDataModel
-                                                .studEmail!,
-                                            phone: profileController
-                                                .profileDataModel
-                                                .studMobileNo!,
-                                            linkedIn: profileController
-                                                .profileDataModel
-                                                .linkedIn,
-                                            github: profileController
-                                                .profileDataModel
-                                                .github,
-                                            location: "",
-                                          ),
-                                          internships: profileController
-                                              .profileDataModel
-                                              .internships!,
-                                          hobbies: profileController
-                                              .profileDataModel
-                                              .hobbies,
-                                          areasOfInterest: profileController
-                                              .profileDataModel
-                                              .areasOfInterest,
-                                          languages: profileController
-                                              .profileDataModel
-                                              .languagesKnown,
-                                          volunteerExperience: profileController
-                                              .profileDataModel
-                                              .volunteerExperience,
-                                          leaderships: profileController
-                                              .profileDataModel
-                                              .leadership,
-                                          achievements: profileController
-                                              .profileDataModel
-                                              .achievements,
-                                          publications: profileController
-                                              .profileDataModel
-                                              .publications,
-                                          workShops: profileController
-                                              .profileDataModel
-                                              .workshops,
-                                          paperPresentations: profileController
-                                              .profileDataModel
-                                              .paperPresentations,
-                                          certifications: profileController
-                                              .profileDataModel
-                                              .studentCertificate,
-                                          educationData: profileController
-                                              .profileDataModel
-                                              .education,
-                                          industrialVisits: profileController
-                                              .profileDataModel
-                                              .industrialVisits,
-                                          projects: profileController
-                                              .profileDataModel
-                                              .projects!,
-                                          skills: profileController
-                                              .profileDataModel
-                                              .studProgrammingLang,
-                                          profileSummary: profileController
-                                              .profileDataModel
-                                              .profileSummary!,
-                                          colleges: profileController
-                                              .profileDataModel
-                                              .collegeData!,
-                                          degree: [],
-                                          experience: profileController
-                                              .profileDataModel
-                                              .experience,
-                                          trainings: [],
-                                          studentId: profileController
-                                              .profileDataModel
-                                              .id,
-                                          higherSecondary: profileController
-                                              .profileDataModel
-                                              .education!
-                                              .school!
-                                              .higherSecondary,
-                                          institution: [],
-                                          parents: [],
-                                          secondary: profileController
-                                              .profileDataModel
-                                              .education!
-                                              .school!
-                                              .secondary,
-                                        ),
-                                      },
-                                    );
-                                  }),
-                                  _actionItem2("Update", () {
-                                    final templateId = int.tryParse(
-                                      profileController.profileDataModel.templateNumber ?? "",
-                                    );
-                                    debugPrint(
-                                      profileController.profileDataModel.templateNumber.toString(),
-                                    );
-
-                                    AppFunctions.navigateScreen(
-                                      context,
-                                      AppRoutes.chatResumeUpdateScreen,
-                                      arguments: {
-                                        "templateId": templateId ?? 1,
-                                      },
-                                    );
-                                  }),
-                                  //_actionItem(Icons.refresh, "Update", () {}),
-                                  _actionItem(
-                                    CupertinoIcons.create,
-                                    "Edit Profile",
-                                    () {
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              Container(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor.withValues(
+                                    alpha: .07,
+                                  ),
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.1)),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _actionItem(
+                                      Icons.download,
+                                      "Download",
+                                      _handleDownload,
+                                    ),
+                                    _actionItem(
+                                      Icons.share,
+                                      "Share",
+                                      _handleShare,
+                                    ),
+                                    _actionItem(Icons.remove_red_eye, "View", () {
                                       AppFunctions.navigateScreen(
                                         context,
-                                        AppRoutes.profileEditScreen,
+                                        AppRoutes.resumeTemplatePreviewScreen,
+                                        arguments: {
+                                          "templateId": int.parse(
+                                            profileController
+                                                            .profileDataModel
+                                                            .templateNumber !=
+                                                        null &&
+                                                    profileController
+                                                        .profileDataModel
+                                                        .templateNumber!
+                                                        .isNotEmpty
+                                                ? profileController
+                                                      .profileDataModel
+                                                      .templateNumber!
+                                                : "1",
+                                          ),
+                                          //"templateId": 1,
+                                          "resumeData":
+                                              ExtractedResumeDataModel(
+                                                personalInfo: PersonalInfoModel(
+                                                  name:
+                                                      profileController
+                                                          .profileDataModel
+                                                          .studentName ??
+                                                      '',
+                                                  gender: profileController
+                                                      .profileDataModel
+                                                      .studentGender,
+                                                  email: profileController
+                                                      .profileDataModel
+                                                      .studEmail!,
+                                                  phone: profileController
+                                                      .profileDataModel
+                                                      .studMobileNo!,
+                                                  linkedIn: profileController
+                                                      .profileDataModel
+                                                      .linkedIn,
+                                                  github: profileController
+                                                      .profileDataModel
+                                                      .github,
+                                                  location: "",
+                                                ),
+                                                internships: profileController
+                                                    .profileDataModel
+                                                    .internships!,
+                                                hobbies: profileController
+                                                    .profileDataModel
+                                                    .hobbies,
+                                                areasOfInterest:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .areasOfInterest,
+                                                languages: profileController
+                                                    .profileDataModel
+                                                    .languagesKnown,
+                                                volunteerExperience:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .volunteerExperience,
+                                                leaderships: profileController
+                                                    .profileDataModel
+                                                    .leadership,
+                                                achievements: profileController
+                                                    .profileDataModel
+                                                    .achievements,
+                                                publications: profileController
+                                                    .profileDataModel
+                                                    .publications,
+                                                workShops: profileController
+                                                    .profileDataModel
+                                                    .workshops,
+                                                paperPresentations:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .paperPresentations,
+                                                certifications:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .studentCertificate,
+                                                educationData: profileController
+                                                    .profileDataModel
+                                                    .education,
+                                                industrialVisits:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .industrialVisits,
+                                                projects: profileController
+                                                    .profileDataModel
+                                                    .projects!,
+                                                skills: profileController
+                                                    .profileDataModel
+                                                    .studProgrammingLang,
+                                                profileSummary:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .profileSummary!,
+                                                colleges: profileController
+                                                    .profileDataModel
+                                                    .collegeData!,
+                                                degree: [],
+                                                experience: profileController
+                                                    .profileDataModel
+                                                    .experience,
+                                                trainings: [],
+                                                studentId: profileController
+                                                    .profileDataModel
+                                                    .id,
+                                                higherSecondary:
+                                                    profileController
+                                                        .profileDataModel
+                                                        .education!
+                                                        .school!
+                                                        .higherSecondary,
+                                                institution: [],
+                                                parents: [],
+                                                secondary: profileController
+                                                    .profileDataModel
+                                                    .education!
+                                                    .school!
+                                                    .secondary,
+                                              ),
+                                        },
                                       );
-                                    },
-                                  ),
-                                ],
+                                    }),
+                                    _actionItem2("Update", () {
+                                      final templateId = int.tryParse(
+                                        profileController
+                                                .profileDataModel
+                                                .templateNumber ??
+                                            "",
+                                      );
+                                      debugPrint(
+                                        profileController
+                                            .profileDataModel
+                                            .templateNumber
+                                            .toString(),
+                                      );
+
+                                      AppFunctions.navigateScreen(
+                                        context,
+                                        AppRoutes.chatResumeUpdateScreen,
+                                        arguments: {
+                                          "templateId": templateId ?? 1,
+                                        },
+                                      );
+                                    }),
+                                    //_actionItem(Icons.refresh, "Update", () {}),
+                                    _actionItem(
+                                      CupertinoIcons.create,
+                                      "Edit Profile",
+                                      () {
+                                        AppFunctions.navigateScreen(
+                                          context,
+                                          AppRoutes.profileEditScreen,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-        }),
+                    ],
+                  );
+          }),
+        ),
       ),
     );
   }
 
-  Widget resDpContainer(){
+  Widget resDpContainer() {
     return Stack(
       children: [
         profileController.waterMarkLoading ||
-            profileController.aiBannerLikeLoading
+                profileController.aiBannerLikeLoading
             ? Center(
-          child: CupertinoActivityIndicator(
-            color: AppColors.secondaryColor,
-          ),
-        )
-            : GestureDetector(
-          onTap: () {
-            final imageUrl =
-                profileController.profileDataModel.studentBanner ?? "";
-
-            if (imageUrl.isNotEmpty) {
-              Get.to(
-                    () => FullScreenImagePreview(
-                  imageUrl: imageUrl,
+                child: CupertinoActivityIndicator(
+                  color: AppColors.secondaryColor,
                 ),
-              );
-            }
-          },
-          child: Hero(
-            tag:
-            profileController.profileDataModel.studentBanner ?? "",
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Image.network(
-                profileController.profileDataModel.studentBanner ?? "",
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.fill,
+              )
+            : GestureDetector(
+                onTap: () {
+                  final imageUrl =
+                      profileController.profileDataModel.studentBanner ?? "";
 
-                loadingBuilder:
-                    (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
+                  if (imageUrl.isNotEmpty) {
+                    Get.to(() => FullScreenImagePreview(imageUrl: imageUrl));
                   }
-
-                  return Container(
-                    height: 180,
-                    color: AppColors.thirdColor,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primaryColor,
-                        value:
-                        loadingProgress.expectedTotalBytes !=
-                            null
-                            ? loadingProgress
-                            .cumulativeBytesLoaded /
-                            loadingProgress
-                                .expectedTotalBytes!
-                            : null,
-                      ),
-                    ),
-                  );
                 },
+                child: Hero(
+                  tag: profileController.profileDataModel.studentBanner ?? "",
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      profileController.profileDataModel.studentBanner ?? "",
+                      //height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.fill,
 
-                errorBuilder:
-                    (
-                    context,
-                    error,
-                    stackTrace,
-                    ) => const Icon(Icons.photo),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
+
+                        return Container(
+                          height: 180,
+                          color: AppColors.thirdColor,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.photo),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
 
         Positioned(
           top: 10,
           right: 10,
           left: 10,
           child: Row(
-            mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              aiPoweredContainer(),
-              likeShareContainer(),
-            ],
+              //aiPoweredContainer(),
+              likeShareContainer()],
           ),
         ),
       ],
@@ -716,9 +730,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         children: [
           GestureDetector(
             onTap: () {
-              AppAlertUtils.showToast(
-                message: "Generate your ResDp First!",
-              );
+              AppAlertUtils.showToast(message: "Generate your ResDp First!");
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -919,7 +931,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             ),
 
           /// ✏ REMOVE WATERMARK
-          if (bannerUrl.isNotEmpty && !(waterMarkValue))
+          if (bannerUrl.isNotEmpty && !isWaterMarkRemoved)
             iconWidget(
               icon: CupertinoIcons.pencil_outline,
               onTap: () async {

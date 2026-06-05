@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 
@@ -119,7 +120,7 @@ class _CustomTabBarState extends State<CustomTabBar>
                         widget.tabNames![index],
                         style: AppStyles.customTextStyle(
                           weight: FontWeight.w400,
-                          size: 10,
+                          size: 12,
                           color: _selectedIndex == index
                               ? widget.activeTextColor
                               : AppColors.blackColor,
@@ -134,11 +135,7 @@ class _CustomTabBarState extends State<CustomTabBar>
         ),
         Expanded(
           child: widget.isLoading!
-              ? const Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
-                  ),
-                )
+              ? AppAlertUtils.customLoader()
               : TabBarView(
                   physics: const NeverScrollableScrollPhysics(),
                   controller: _tabController,

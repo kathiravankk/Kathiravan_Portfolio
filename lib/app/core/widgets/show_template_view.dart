@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -57,7 +58,7 @@ class _ShowTemplateViewState extends State<ShowTemplateView> {
     return Stack(
       children: [
         WebViewWidget(controller: _controller),
-        if (_isLoading) const Center(child: CupertinoActivityIndicator(color: AppColors.primaryColor,)),
+        if (_isLoading)  AppAlertUtils.customLoader(),
       ],
     );
   }

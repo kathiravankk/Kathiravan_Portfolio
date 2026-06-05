@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
@@ -127,77 +128,85 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
       backgroundColor: AppColors.appBgColor_2,
       color: AppColors.primaryColor,
       onRefresh: () => getAllCertificates(),
-      child: Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        appBar: AppBar(
-          backgroundColor: AppColors.appBgColor_2,
-          elevation: 0,
-          title: Text(
-            "My Certificates",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
-            ),
-          ),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 25,
-              color: AppColors.whiteColor,
-            ),
-            onPressed: () => Get.back(),
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
           ),
         ),
-        body: Obx(() {
-          if (internController.certificateLoading) {
-            return Center(
-              child: CupertinoActivityIndicator(
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            elevation: 0,
+            title: Text(
+              "My Certificates",
+              style: AppStyles.customTextStyle(
+                size: 18,
                 color: AppColors.secondaryColor,
+                weight: FontWeight.w600,
               ),
-            );
-          }
-          final list = internController.certificateModel.certificatesList;
-
-          if (list == null || list.isEmpty) {
-            return const CustomEmptyWidget();
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.all(20),
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              final item = list[index];
-              return Stack(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: AppColors.fieldBgColor,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: AppColors.contBorderColor),
-                    ),
-                    child: Column(
-                      children: [
-                        certificateCard(
-                          certificate: item.certificate ??
-                              "https://static.vecteezy.com/system/resources/thumbnails/002/349/754/small_2x/modern-elegant-certificate-template-free-vector.jpg",
-                        )
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 5,
-                    right: 10,
-                    child: downloadShareContainer(
-                      certificate: item.certificate ?? "",
-                    ),
-                  ),
-                ],
+            ),
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                size: 25,
+                color: AppColors.whiteColor,
+              ),
+              onPressed: () => Get.back(),
+            ),
+          ),
+          body: Obx(() {
+            if (internController.certificateLoading) {
+              return Center(
+                child: CupertinoActivityIndicator(
+                  color: AppColors.secondaryColor,
+                ),
               );
-            },
-          );
-        }),
+            }
+            final list = internController.certificateModel.certificatesList;
+
+            if (list == null || list.isEmpty) {
+              return const CustomEmptyWidget();
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                final item = list[index];
+                return Stack(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: AppColors.fieldBgColor,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: AppColors.contBorderColor),
+                      ),
+                      child: Column(
+                        children: [
+                          certificateCard(
+                            certificate: item.certificate ??
+                                "https://static.vecteezy.com/system/resources/thumbnails/002/349/754/small_2x/modern-elegant-certificate-template-free-vector.jpg",
+                          )
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 5,
+                      right: 10,
+                      child: downloadShareContainer(
+                        certificate: item.certificate ?? "",
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          }),
+        ),
       ),
     );
   }

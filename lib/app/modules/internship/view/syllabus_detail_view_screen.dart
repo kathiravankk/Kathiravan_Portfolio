@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/code_example_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 
@@ -19,7 +21,7 @@ class SyllabusDetailViewScreen extends StatefulWidget {
 
 class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
   final InternshipController internController =
-      Get.find<InternshipController>();
+  Get.find<InternshipController>();
 
   // ── Arguments ────────────────────────────
   DayData? dayData;
@@ -27,12 +29,29 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
   int? weekNumber;
   int? dayNumber;
 
-  /// true  → opened from a completed day (view-only, no Mark as Complete)
-  /// false → day not yet completed, show Mark as Complete
+  /// true  → view-only (already completed)
+  /// false → show Mark as Complete
   bool isDayCompleted = false;
 
   // ── Derived ──────────────────────────────
   DayDetail? _dayDetail;
+
+  // ── Project submission ────────────────────
+  final TextEditingController projectController = TextEditingController();
+
+  bool get _hasProject => (_dayDetail?.projectSchedule ?? []).isNotEmpty;
+
+  bool get _isUrlValid {
+    final url = projectController.text.trim();
+    if (url.isEmpty) return false;
+    final uri = Uri.tryParse(url);
+    return uri != null && (uri.isScheme("http") || uri.isScheme("https"));
+  }
+
+  /// Mark as Complete only enabled when:
+  ///  • no project  → always enabled
+  ///  • has project → only when URL field contains a valid http/https URL
+  bool get _canMarkComplete => !_hasProject || _isUrlValid;
 
   @override
   void initState() {
@@ -42,9 +61,13 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
     weekNumber = Get.arguments["weekNumber"] ?? 0;
     dayNumber = Get.arguments["dayNumber"] ?? 0;
     isDayCompleted = Get.arguments["isDayCompleted"] ?? false;
-
-    // DayData.dayList is the correct property per the model
     _dayDetail = dayData?.dayList?.first;
+  }
+
+  @override
+  void dispose() {
+    projectController.dispose();
+    super.dispose();
   }
 
   // ─────────────────────────────────────────
@@ -55,9 +78,10 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
     await internController.updateInternDailyStatus(
       weeklyData: {
         "studentId":
-            internController.syllabusModel.syllabusViewData?.student ?? "",
+        internController.syllabusModel.syllabusViewData?.student ?? "",
         "jobId": internController.syllabusModel.syllabusViewData?.job ?? "",
         "dayNumber": dayNumber,
+        "drivelink": projectController.text.trim(),
       },
     );
 
@@ -65,10 +89,9 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
         internController.getResponseCode() == 201) {
       AppAlertUtils.showToast(
         message:
-            internController.weeklyUpdateModel.message ??
+        internController.weeklyUpdateModel.message ??
             "Day $dayNumber Completed Successfully!",
       );
-      // Pass true so the list screen knows to refresh
       Get.back(result: true);
     }
   }
@@ -80,23 +103,26 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
   @override
   Widget build(BuildContext context) {
     if (_dayDetail == null) {
-      return Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        appBar: AppBar(
-          backgroundColor: AppColors.appBgColor_2,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 25,
-              color: AppColors.whiteColor,
-            ),
-            onPressed: () => Get.back(),
+      return Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
           ),
         ),
-        body: const Center(
-          child: Text(
-            "No content available.",
-            style: TextStyle(color: Colors.white),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, size: 25,
+                  color: AppColors.whiteColor),
+              onPressed: () => Get.back(),
+            ),
+          ),
+          body: const Center(
+            child: Text("No content available.",
+                style: TextStyle(color: Colors.white)),
           ),
         ),
       );
@@ -105,95 +131,215 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
     final topics = _dayDetail!.topics ?? [];
     final projectSchedule = _dayDetail!.projectSchedule ?? [];
 
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor_2,
-      appBar: AppBar(
-        backgroundColor: AppColors.appBgColor_2,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 25,
-            color: AppColors.whiteColor,
-          ),
-          onPressed: () => Get.back(),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
-        elevation: 0,
-        title: Text(
-          "Day - ${_dayDetail!.day}",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.secondaryColor,
-            weight: FontWeight.w600,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25,
+                color: AppColors.whiteColor),
+            onPressed: () => Get.back(),
           ),
-        ),
-        // Show "Completed" badge in the AppBar when already done
-        actions: [
-          if (isDayCompleted)
-            Container(
-              margin: const EdgeInsets.only(right: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.completedColor,
-                borderRadius: BorderRadius.circular(20),
+          title: Text(
+            "Day - ${_dayDetail!.day}",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.secondaryColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+          actions: [
+            if (isDayCompleted)
+              Container(
+                margin: const EdgeInsets.only(right: 12),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColors.completedColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.check_circle_outline,
+                        color: AppColors.whiteColor, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      "Completed",
+                      style: AppStyles.customTextStyle(
+                        size: 12,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.check_circle_outline,
-                    color: AppColors.whiteColor,
-                    size: 14,
+          ],
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      ...topics.map((t) => _topicSection(t)),
+                      const SizedBox(height: 15),
+                      if (projectSchedule.isNotEmpty)
+                        ...projectSchedule.map((p) => _projectTaskCard(p)),
+                      // Submission card — only for incomplete days with a project
+                      if (projectSchedule.isNotEmpty && !isDayCompleted) ...[
+                        const SizedBox(height: 8),
+                        _projectSubmissionCard(),
+                      ],
+                      const SizedBox(height: 30),
+                    ],
                   ),
-                  const SizedBox(width: 4),
+                ),
+
+                // Mark as Complete button
+                if (!isDayCompleted) ...[
+                  const SizedBox(height: 10),
+                  Obx(() => CustomButtonWidget(
+                    isLoading: internController.weeklyUpdateLoading,
+                    height: 44,
+                    disable: !_canMarkComplete,
+                    buttonFunction:
+                    _canMarkComplete ? _markDayComplete : () {},
+                    buttonText: "Mark as Complete",
+                  )),
+                  const SizedBox(height: 10),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────
+  // PROJECT SUBMISSION CARD
+  // ─────────────────────────────────────────
+
+  Widget _projectSubmissionCard() {
+    final bool hasText = projectController.text.trim().isNotEmpty;
+    final bool urlError = hasText && !_isUrlValid;
+
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: AppColors.contColor2,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.contBorderColor2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Header ──────────────────────────
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Project Submission",
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w300,
+                ),
+              ),
+              // Copy button (visible only when URL is filled)
+              if (hasText)
+                GestureDetector(
+                  onTap: () async {
+                    await Clipboard.setData(
+                      ClipboardData(text: projectController.text.trim()),
+                    );
+                    AppAlertUtils.showToast(
+                      message: "Project URL copied!",
+                      isError: false,
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppColors.disableContColor,
+                      borderRadius: BorderRadius.circular(6),
+                      border:
+                      Border.all(color: AppColors.disableContBorder),
+                    ),
+                    child: const Icon(Icons.copy_rounded,
+                        size: 16, color: AppColors.whiteColor),
+                  ),
+                ),
+            ],
+          ),
+
+          const SizedBox(height: 15),
+
+          // ── URL field ────────────────────────
+          CustomTextField(
+            maxLines: 2,
+            isNumberKeyboard: false,
+            prefixWidget: const Icon(
+              Icons.assignment_outlined,
+              color: AppColors.primaryColor,
+            ),
+            controller: projectController,
+            isEnabled: true,
+            hintText: "Paste your GitHub / Drive / Live URL here..",
+            onChanged: (_) => setState(() {}),
+            suffixWidget: hasText
+                ? GestureDetector(
+              onTap: () async {
+                await Clipboard.setData(
+                  ClipboardData(text: projectController.text.trim()),
+                );
+                AppAlertUtils.showToast(
+                  message: "Copied successfully!",
+                  isError: false,
+                );
+              },
+              child: const Icon(Icons.copy,
+                  size: 20, color: AppColors.primaryColor),
+            )
+                : null,
+          ),
+
+          // ── Validation error ─────────────────
+          if (urlError) ...[
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.only(left: 5),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline,
+                      size: 13, color: AppColors.failTextColor),
+                  const SizedBox(width: 5),
                   Text(
-                    "Completed",
+                    "Please enter a valid URL (https://...)",
                     style: AppStyles.customTextStyle(
-                      size: 12,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w600,
+                      size: 11,
+                      color: AppColors.failTextColor,
+                      weight: FontWeight.w400,
                     ),
                   ),
                 ],
               ),
             ),
+          ],
         ],
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // ── Scrollable content ──────────────
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    ...topics.map((topic) => _topicSection(topic)),
-                    const SizedBox(height: 15),
-                    if (projectSchedule.isNotEmpty)
-                      ...projectSchedule.map((p) => _projectTaskCard(p)),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-
-              // ── Mark Complete button  ───────────
-              // Hidden entirely when day is already completed
-              if (!isDayCompleted) ...[
-                const SizedBox(height: 10),
-                Obx(
-                  () => CustomButtonWidget(
-                    isLoading: internController.weeklyUpdateLoading,
-                    height: 44,
-                    buttonFunction: _markDayComplete,
-                    buttonText: "Mark as Complete",
-                  ),
-                ),
-                const SizedBox(height: 10),
-              ],
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -229,11 +375,8 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
         const SizedBox(height: 14),
         Row(
           children: [
-            const Icon(
-              Icons.edit_document,
-              color: AppColors.primaryColor,
-              size: 15,
-            ),
+            const Icon(Icons.edit_document,
+                color: AppColors.primaryColor, size: 15),
             const SizedBox(width: 8),
             Text(
               "Teacher's Notes",
@@ -281,16 +424,13 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
           ),
           const SizedBox(height: 8),
           ...items.map(
-            (hw) => Padding(
+                (hw) => Padding(
               padding: const EdgeInsets.only(top: 6),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.check_circle_outline,
-                    color: AppColors.primaryColor,
-                    size: 18,
-                  ),
+                  const Icon(Icons.check_circle_outline,
+                      color: AppColors.primaryColor, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -330,11 +470,8 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.assignment_outlined,
-                color: AppColors.primaryColor,
-                size: 18,
-              ),
+              const Icon(Icons.assignment_outlined,
+                  color: AppColors.primaryColor, size: 18),
               const SizedBox(width: 6),
               Text(
                 "Project Task – Day ${project.day}",

@@ -103,13 +103,15 @@ class LoginController extends GetxController {
     required String mobileNumber,
     required String otpNumber,
     required String userType,
+    required String fcmToken,
   }) async {
     try {
       loginVerifyLoading = true;
       studentRegisterModel = await loginProvider!.loginVerifyOtp(
         mobileNumber: mobileNumber,
         otpNumber: otpNumber,
-        userType: userType
+        userType: userType,
+        fcmToken: fcmToken
       );
       loginVerifyLoading = false;
     } catch (err) {

@@ -46,6 +46,7 @@ class FilterDropdownWidget extends StatelessWidget {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
+
               value: selected,
               hint: Text(
                 hint,
@@ -57,7 +58,7 @@ class FilterDropdownWidget extends StatelessWidget {
                 ),
               ),
               isExpanded: true,
-              dropdownColor: AppColors.appBgColor_2,
+              dropdownColor: AppColors.fieldBgColor,
               icon: Icon(
                 Icons.keyboard_arrow_down,
                 color: AppColors.primaryColor,
