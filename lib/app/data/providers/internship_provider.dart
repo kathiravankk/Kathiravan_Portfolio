@@ -51,7 +51,9 @@ class InternshipProvider {
 
   // GET INTERNSHIP SYLLABUS DATA
 
-  Future<InternSyllabusResponseModel> fetchSyllabusData({required String jobId}) async {
+  Future<InternSyllabusResponseModel> fetchSyllabusData({
+    required String jobId,
+  }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
@@ -253,7 +255,6 @@ class InternshipProvider {
       return PaymentCreateModel.fromJson(err.response!.data);
     }
   }
-
 
   // VERIFY PAYMENT ORDER
 

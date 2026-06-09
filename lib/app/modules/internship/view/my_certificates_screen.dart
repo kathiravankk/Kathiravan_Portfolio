@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
@@ -123,14 +124,17 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      backgroundColor: AppColors.appBgColor_2,
-      color: AppColors.primaryColor,
-      onRefresh: () => getAllCertificates(),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
+        backgroundColor: AppColors.transparentColor,
         appBar: AppBar(
-          backgroundColor: AppColors.appBgColor_2,
+          backgroundColor: AppColors.transparentColor,
           elevation: 0,
           title: Text(
             "My Certificates",
@@ -151,68 +155,65 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
         ),
         body: Obx(() {
           if (internController.certificateLoading) {
-            return Center(
-              child: CupertinoActivityIndicator(
-                color: AppColors.secondaryColor,
-              ),
-            );
+            return AppAlertUtils.customLoader();
           }
           final list = internController.certificateModel.certificatesList;
 
           if (list == null || list.isEmpty) {
             return const CustomEmptyWidget();
           }
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: list.length,
-            itemBuilder: (context, index) {
-              final item = list[index];
-              return Stack(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: AppColors.fieldBgColor,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: AppColors.contBorderColor),
+          return RefreshIndicator(
+            backgroundColor: AppColors.appBgColor_2,
+            color: AppColors.primaryColor,
+            onRefresh: () => getAllCertificates(),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                final item = list[index];
+                return Stack(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: AppColors.fieldBgColor,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: AppColors.contBorderColor),
+                      ),
+                      child: Column(
+                        children: [
+                          certificateCard(
+                            certificate:
+                                item.certificate ??
+                                "https://static.vecteezy.com/system/resources/thumbnails/002/349/754/small_2x/modern-elegant-certificate-template-free-vector.jpg",
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        certificateCard(
-                          certificate: item.certificate ??
-                              "https://static.vecteezy.com/system/resources/thumbnails/002/349/754/small_2x/modern-elegant-certificate-template-free-vector.jpg",
-                        )
-                      ],
+                    Positioned(
+                      top: 5,
+                      right: 10,
+                      child: downloadShareContainer(
+                        certificate: item.certificate ?? "",
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    top: 5,
-                    right: 10,
-                    child: downloadShareContainer(
-                      certificate: item.certificate ?? "",
-                    ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           );
         }),
       ),
     );
   }
 
-  Widget certificateCard({required String certificate,}){
+  Widget certificateCard({required String certificate}) {
     return GestureDetector(
       onTap: () {
-        final imageUrl =
-            certificate ;
+        final imageUrl = certificate;
 
-        Get.to(
-              () => FullScreenImagePreview(
-            imageUrl: imageUrl,
-          ),
-        );
+        Get.to(() => FullScreenImagePreview(imageUrl: imageUrl));
       },
       child: Hero(
         tag: certificate,
@@ -224,14 +225,9 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
             width: double.infinity,
             fit: BoxFit.fill,
 
-            errorBuilder: (_, __, ___) =>
-            const Icon(Icons.broken_image),
+            errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
 
-            loadingBuilder: (
-                context,
-                child,
-                loadingProgress,
-                ) {
+            loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) {
                 return child;
               }
@@ -242,13 +238,9 @@ class _MyCertificatesScreenState extends State<MyCertificatesScreen> {
                 child: Center(
                   child: CircularProgressIndicator(
                     color: AppColors.primaryColor,
-                    value:
-                    loadingProgress.expectedTotalBytes !=
-                        null
-                        ? loadingProgress
-                        .cumulativeBytesLoaded /
-                        loadingProgress
-                            .expectedTotalBytes!
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
                         : null,
                   ),
                 ),

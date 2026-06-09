@@ -57,6 +57,7 @@ class RecommentedData {
   int? iV;
   bool? applied;
   bool? isSaved;
+  int? noOfPosition;
 
   RecommentedData({
     this.syllabusData,
@@ -88,11 +89,13 @@ class RecommentedData {
     this.iV,
     this.applied,
     this.internshipMode,
-    this.isSaved
+    this.isSaved,
+    this.noOfPosition
   });
 
   RecommentedData.fromJson(Map<String, dynamic> json) {
     syllabusData = json['syllabusdata'] ?? "";
+    noOfPosition = json['noofposition'] ?? 0;
     internFees = json['fee'] ?? "";
     sId = json['_id'] ?? "";
     companyName = json['companyname'] ?? "";

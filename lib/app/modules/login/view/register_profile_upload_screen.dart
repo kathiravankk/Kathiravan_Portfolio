@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class RegisterProfileUploadScreen extends StatefulWidget {
@@ -110,53 +111,56 @@ class _RegisterProfileUploadScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 25,
-            color: AppColors.whiteColor,
-          ),
-          onPressed: () => Get.back(),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
-        title: Text(
-          "Upload Selfie",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          if (controller != null && controller!.value.isInitialized)
-            IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: AppColors.whiteColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isFlashOn ? Icons.flash_on : Icons.flash_off,
-                  size: 25,
-                  color: AppColors.whiteColor,
-                ),
-              ),
-              onPressed: toggleFlash,
-            ),
-          const SizedBox(width: 10),
-        ],
       ),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          width: double.infinity,
-          height: double.infinity,
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 25,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            "Upload Selfie",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+          actions: [
+            if (controller != null && controller!.value.isInitialized)
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isFlashOn ? Icons.flash_on : Icons.flash_off,
+                    size: 25,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+                onPressed: toggleFlash,
+              ),
+            const SizedBox(width: 10),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20),
           child: Column(
             spacing: 15,
             children: [

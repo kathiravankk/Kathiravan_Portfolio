@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide MultipartFile;
 import 'package:http/http.dart' hide MultipartFile;
@@ -173,7 +174,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBgImage),
+          image: AssetImage(AssetImages.appScreenBg),
           fit: BoxFit.cover,
         ),
       ),
@@ -203,15 +204,15 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
           ),
           body: Obx(
             () => Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
-                spacing: 15,
+                spacing: 20,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Secure Your Account",
                     style: AppStyles.customTextStyle(
-                      size: 16,
+                      size: 24,
                       color: AppColors.secondaryColor,
                       weight: FontWeight.w700,
                     ),
@@ -233,7 +234,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                         //"Upload Your\nCollege ID Card & Aadhaar Card",
                         "Upload Your College ID Card",
                         style: AppStyles.customTextStyle(
-                          size: 16,
+                          size: 18,
                           color: AppColors.whiteColor,
                           weight: FontWeight.w700,
                           lineSpace: 1.5,
@@ -274,7 +275,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
                   Center(
                     child: CustomButtonWidget(
                       width: 300,
-                      height: 45,
+                      height: 50,
                       isLoading: registerController.kycVerificationLoading,
                       buttonFunction: () async {
                         await updateKYC();
@@ -296,23 +297,32 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
 
   Future<void> updateKYC() async {
     final studentName = await LocalStorageService.getStudentName();
-    //final studentId = await LocalStorageService.getStudentId();
 
-    if (!collegeIdImg!.existsSync()) {
-      AppAlertUtils.showToast(message: "College ID image is required!");
+    if (collegeIdImg == null || !collegeIdImg!.existsSync()) {
+      AppAlertUtils.showToast(
+        message: "College ID image is required!",
+      );
       return;
     }
 
+    bool loaderVisible = false;
+
     try {
-      if(mounted) {
-        AiLoadingWidget.show(context, type: LoadingDialogType.kyc);
+      /// ✅ SHOW LOADER
+      if (mounted) {
+        AiLoadingWidget.show(
+          context,
+          type: LoadingDialogType.kyc,
+        );
+        loaderVisible = true;
       }
 
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 150));
 
       final collegeIdFile = await MultipartFile.fromFile(
         collegeIdImg!.path,
-        filename: "college_id_${DateTime.now().millisecondsSinceEpoch}.jpg",
+        filename:
+        "college_id_${DateTime.now().millisecondsSinceEpoch}.jpg",
         contentType: MediaType("image", "jpeg"),
       );
 
@@ -326,75 +336,77 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
         ),
       };
 
-      await registerController.verifyKycData(kycData: kycData);
+      /// ✅ API CALL
+      await registerController.verifyKycData(
+        kycData: kycData,
+      );
 
-      /// ✅ hide loader immediately after API
-      if(mounted) {
+      /// ✅ HIDE LOADER BEFORE DIALOG / TOAST
+      if (loaderVisible && mounted) {
         AiLoadingWidget.hide(context);
+        loaderVisible = false;
       }
 
-      if (registerController.getResponseCode() == 200 ||
-          registerController.getResponseCode() == 201) {
-        Map<String, dynamic> updateProfileData = {
-          "isVerified":
-          (registerController.kycUpdateModel.name == "valid" &&
-              registerController.kycUpdateModel.collegeId == "valid" &&
-              registerController.kycUpdateModel.collegeName == "valid")
-              ? true
-              : false,
-        };
+      final responseCode = registerController.getResponseCode();
 
-        await registerController.updateStudentProfileData(
-          updateData: updateProfileData,
-        );
-
+      if (responseCode == 200 || responseCode == 201) {
         final isValid =
             registerController.kycUpdateModel.name == "valid" &&
                 registerController.kycUpdateModel.collegeId == "valid" &&
                 registerController.kycUpdateModel.collegeName == "valid";
 
-        if (isValid) {
-          AppAlertUtils.showToast(
-            message: "KYC details verified successfully!",
-            isError: false,
-          );
-
-          if (isRegisterFlow == true) {
-            if(mounted) {
-              AppFunctions.navigateScreen(
-                context,
-                AppRoutes.stepUpdateScreen,
-                arguments: {"activeStep": 4},
-              );
-            }
-          } else {
-            Get.back();
-          }
-        } else {
-          /// ✅ now dialog opens without loader behind it
-          if(mounted) {
-            showKycResultDialog(
-              context: context,
-              model: registerController.kycUpdateModel,
-              isRegisterFlow: isRegisterFlow,
-            );
-          }
-        }
-      } else {
-        AppFunctions.apiErrorHandling(
-          registerController.getResponseCode(),
-          "Failed to verify your KYC details!",
+        /// ✅ UPDATE PROFILE VERIFIED STATUS
+        await registerController.updateStudentProfileData(
+          updateData: {
+            "isVerified": isValid,
+          },
         );
-      }
-    } catch (e) {
-      if(mounted) {
-        AiLoadingWidget.hide(context);
 
-        debugPrint("KYC error: $e");
+        /// ✅ SUCCESS TOAST
         AppAlertUtils.showToast(
-          message: "Something went wrong. Try again.",
-          isError: true,
+          message: isValid
+              ? "KYC details verified successfully!"
+              : "KYC verification completed",
+          isError: false,
         );
+
+        /// ✅ SMALL DELAY FOR SMOOTH UI
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        /// ✅ ALWAYS SHOW RESULT DIALOG
+        if (mounted) {
+          showKycResultDialog(
+            context: context,
+            model: registerController.kycUpdateModel,
+            isRegisterFlow: isRegisterFlow,
+          );
+        }
+
+        return;
+      }
+
+      /// ❌ API FAILED
+      AppFunctions.apiErrorHandling(
+        responseCode,
+        "Failed to verify your KYC details!",
+      );
+    } catch (e) {
+      debugPrint("KYC error: $e");
+
+      /// ✅ HIDE LOADER SAFELY
+      if (loaderVisible && mounted) {
+        AiLoadingWidget.hide(context);
+        loaderVisible = false;
+      }
+
+      AppAlertUtils.showToast(
+        message: "Something went wrong. Try again.",
+        isError: true,
+      );
+    } finally {
+      /// ✅ EXTRA SAFETY
+      if (loaderVisible && mounted) {
+        AiLoadingWidget.hide(context);
       }
     }
   }
@@ -437,12 +449,12 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
   Widget _buildEmptyState(String title) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 10,
+      spacing: 15,
       children: [
-        const Icon(Icons.cloud_upload_outlined, color: Colors.white, size: 50),
-        Text(title, style: AppStyles.customTextStyle(size: 16, color: AppColors.primaryColor, weight: FontWeight.w700)),
-        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
-        Text("* Please upload your clear image of your id card", style: AppStyles.customTextStyle(size: 10, color: AppColors.lightColorText, weight: FontWeight.w300)),
+         Icon(CupertinoIcons.cloud_upload, color: Colors.white, size: 100),
+        Text(title, style: AppStyles.customTextStyle(size: 18, color: AppColors.primaryColor, weight: FontWeight.w700)),
+        Text("PNG, JPG, JPEG up to 10MB", style: AppStyles.customTextStyle(size: 14, color: AppColors.lightColorText, weight: FontWeight.w300)),
+        Text("* Please upload your clear image of your id card", style: AppStyles.customTextStyle(size: 12, color: AppColors.lightColorText, weight: FontWeight.w300)),
       ],
     );
   }
@@ -471,7 +483,7 @@ class _KycVerificationScreenState extends State<KycVerificationScreen> {
             Text("${(file.lengthSync() / 1024 / 1024).toStringAsFixed(1)} MB", style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor, weight: FontWeight.w300)),
             const SizedBox(height: 15),
             CustomButtonWidget(
-              height: 40,
+              height: 45,
               buttonFunction: onSelect,
               buttonText: "Replace",
               bgColor: AppColors.secButtonColor,

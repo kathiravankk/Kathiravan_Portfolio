@@ -53,6 +53,7 @@ class InternshipData {
   String? updatedAt;
   int? v;
   bool? isSaved;
+  int? noOfPosition;
   bool? isSyllabusGenerated;
   bool? isCertificateGenerated;
   int? totalApplication;
@@ -92,11 +93,13 @@ class InternshipData {
     this.totalReviews,
     this.averageRating,
     this.status,
+    this.noOfPosition
   });
 
   factory InternshipData.fromJson(Map<String, dynamic> json) {
     return InternshipData(
       syllabusData: json['syllabusdata'],
+      noOfPosition: json['noofposition']??0,
       sId: json['_id'],
       companyName: json['companyname'],
       aboutCompany: json['aboutcompany'],

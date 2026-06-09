@@ -90,138 +90,142 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      color: AppColors.primaryColor,
-      backgroundColor: AppColors.appBgColor_2,
-      onRefresh: () async {
-        await getHomeScreenData();
-        await getCreditData();
-      },
-      child: Obx(
-        () =>
-            profileController.profileDataLoading ||
-                dashboardController.getCategoryLoading ||
-                dashboardController.recommentedInternshipLoading ||
-                registerController.creditDataLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
+    return Obx(
+      () =>
+          profileController.profileDataLoading ||
+              dashboardController.getCategoryLoading ||
+              dashboardController.recommentedInternshipLoading ||
+              registerController.creditDataLoading
+          ? AppAlertUtils.customLoader()
+          : RefreshIndicator(
+            color: AppColors.primaryColor,
+            backgroundColor: AppColors.appBgColor_2,
+            onRefresh: () async {
+              await getHomeScreenData();
+              await getCreditData();
+            },
+            child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(AssetImages.appBackgroundImg),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              )
-            : Scaffold(
-                key: _scaffoldKey,
-                drawer: HomeDrawer(),
-                backgroundColor: AppColors.appBgColor_2,
-                appBar: AppBar(
+                child: Scaffold(
+                  key: _scaffoldKey,
+                  drawer: HomeDrawer(),
                   backgroundColor: AppColors.transparentColor,
-                  elevation: 0,
-                  leading: IconButton(
-                    icon: const Icon(
-                      Icons.menu_sharp,
-                      size: 30,
-                      color: Colors.white,
+                  appBar: AppBar(
+                    backgroundColor: AppColors.transparentColor,
+                    elevation: 0,
+                    leading: IconButton(
+                      icon: Icon(
+                        CupertinoIcons.list_bullet,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                     ),
-                    onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-                  ),
-                  title: Text(
-                    "Welcome ${profileController.profileDataModel.studentName ?? "User"}!",
-                    style: AppStyles.customTextStyle(
-                      size: 17,
-                      color: AppColors.secondaryColor,
-                      weight: FontWeight.w600,
+                    title: Text(
+                      "Hi ${profileController.profileDataModel.studentName ?? "User"}!",
+                      style: AppStyles.customTextStyle(
+                        size: 17,
+                        color: AppColors.secondaryColor,
+                        weight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  actions: [
-                    ProfileWidgets.creditContainer(
-                      creditCount: creditBalance ?? 0,
-                      viewFunc: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.buyCreditsScreen,
-                        );
-                      },
-                    ),
+                    actions: [
+                      ProfileWidgets.creditContainer(
+                        creditCount: creditBalance ?? 0,
+                        viewFunc: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.buyCreditsScreen,
+                          );
+                        },
+                      ),
 
-                    const SizedBox(width: 10),
-                  ],
-                  // actions: [
-                  //   Stack(
-                  //     children: [
-                  //       Container(
-                  //         padding: EdgeInsets.all(6),
-                  //         decoration: BoxDecoration(
-                  //           color: AppColors.appBgColor,
-                  //           borderRadius: BorderRadius.circular(12),
-                  //         ),
-                  //         child: const Icon(
-                  //           Icons.notifications_active_outlined,
-                  //           color: AppColors.whiteColor,
-                  //           size: 25,
-                  //         ),
-                  //       ),
-                  //       Positioned(
-                  //         right: 7,
-                  //         top: 5,
-                  //         child: Container(
-                  //           width: 7,
-                  //           height: 7,
-                  //           decoration: const BoxDecoration(
-                  //             color: Color(0xFFFF1493),
-                  //             shape: BoxShape.circle,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  //
-                  //   SizedBox(width: 10),
-                  // ],
-                ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
-                      children: [
-                        _buildSearchBar(),
-                        const SizedBox(height: 10),
-                        _buildBannerCarousel(),
-                        _buildSectionHeader(
-                          title: "Recommented Internship",
-                          onTabPage: () {
-                            AppFunctions.navigateScreen(
-                              context,
-                              AppRoutes.recommentedInternshipScreen,
-                            );
-                          },
-                        ),
-                        _buildRecommendedInternships(),
-                        _buildSectionHeader(
-                          title: "Trendy Categories",
-                          onTabPage: () {
-                            AppFunctions.navigateScreen(
-                              context,
-                              AppRoutes.trendyCategoryScreen,
-                            );
-                          },
-                        ),
-                        dashboardController.categoryListModel.categoryList ==
-                                    null ||
-                                dashboardController
-                                    .categoryListModel
-                                    .categoryList!
-                                    .isEmpty
-                            ? CustomEmptyWidget()
-                            : _buildTrendyCategories(),
+                      const SizedBox(width: 10),
+                    ],
+                    // actions: [
+                    //   Stack(
+                    //     children: [
+                    //       Container(
+                    //         padding: EdgeInsets.all(6),
+                    //         decoration: BoxDecoration(
+                    //           color: AppColors.appBgColor,
+                    //           borderRadius: BorderRadius.circular(12),
+                    //         ),
+                    //         child: const Icon(
+                    //           Icons.notifications_active_outlined,
+                    //           color: AppColors.whiteColor,
+                    //           size: 25,
+                    //         ),
+                    //       ),
+                    //       Positioned(
+                    //         right: 7,
+                    //         top: 5,
+                    //         child: Container(
+                    //           width: 7,
+                    //           height: 7,
+                    //           decoration: const BoxDecoration(
+                    //             color: Color(0xFFFF1493),
+                    //             shape: BoxShape.circle,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    //
+                    //   SizedBox(width: 10),
+                    // ],
+                  ),
+                  body: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 10,
+                        children: [
+                          _buildSearchBar(),
+                          const SizedBox(height: 10),
+                          _buildBannerCarousel(),
+                          _buildSectionHeader(
+                            title: "Recommented Internship",
+                            onTabPage: () {
+                              AppFunctions.navigateScreen(
+                                context,
+                                AppRoutes.recommentedInternshipScreen,
+                              );
+                            },
+                          ),
+                          _buildRecommendedInternships(),
+                          _buildSectionHeader(
+                            title: "Trendy Categories",
+                            onTabPage: () {
+                              AppFunctions.navigateScreen(
+                                context,
+                                AppRoutes.trendyCategoryScreen,
+                              );
+                            },
+                          ),
+                          dashboardController.categoryListModel.categoryList ==
+                                      null ||
+                                  dashboardController
+                                      .categoryListModel
+                                      .categoryList!
+                                      .isEmpty
+                              ? CustomEmptyWidget()
+                              : _buildTrendyCategories(),
 
-                        const SizedBox(height: 20),
-                      ],
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-      ),
+          ),
     );
   }
 
@@ -252,9 +256,9 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   Text(
                     "Tap to search..!",
                     style: AppStyles.customTextStyle(
-                      size: 12,
+                      size: 13,
                       color: AppColors.lightHintText,
-                      weight: FontWeight.w400,
+                      weight: FontWeight.w500,
                     ),
                   ),
                   IconButton(
@@ -330,7 +334,6 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
       ],
     );
   }
-
 
   // Widget _buildBannerCarousel() {
   //   List<String> images = [
@@ -432,10 +435,11 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                 return InternshipCard(
                   width: 360,
                   companyName: recommentedList.companyName ?? "",
+                  position: recommentedList.noOfPosition ?? 0,
                   //duration: recommentedList.internshipDuration ?? "",
                   duration:
-                  recommentedList.internshipDuration!.isNotEmpty &&
-                      recommentedList.internshipDuration != null
+                      recommentedList.internshipDuration!.isNotEmpty &&
+                          recommentedList.internshipDuration != null
                       ? "${recommentedList.internshipDuration!} Months"
                       : "${recommentedList.days} Days",
                   internFees: recommentedList.internFees ?? "",
@@ -457,8 +461,9 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                     );
                   },
                   eligibility: recommentedList.eligibilityCriteria ?? "",
-                  qualification:
-                      recommentedList.studentQualification!.join(", "),
+                  qualification: recommentedList.studentQualification!.join(
+                    ", ",
+                  ),
                   stipendRupees: recommentedList.internshipStipend ?? "",
                   description: recommentedList.internshipDescription ?? "",
                   imageUrl: recommentedList.companyLogo ?? "",
@@ -496,7 +501,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   Widget _buildTrendyCategories() {
     return SizedBox(
-      height: 120,
+      height: 130,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: dashboardController.categoryListModel.categoryList!.length,
@@ -516,13 +521,18 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             width: 140,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.transparentColor,
+              //color: AppColors.transparentColor,
+              color: AppColors.primaryColor.withValues(alpha: .05),
               borderRadius: BorderRadius.circular(23),
-              border: Border.all(color: AppColors.contBorderColor2),
+              border: Border.all(
+                //color: AppColors.primaryColor.withValues(alpha: 0.1),
+                color: AppColors.primaryColor,
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 15,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 20,
               children: [
                 // SizedBox(
                 //   height: 35,
@@ -555,8 +565,11 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                           .categoryList![index]
                           .categoryName ??
                       "",
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
                   style: AppStyles.customTextStyle(
-                    size: 10,
+                    size: 12,
+                    lineSpace: 1.4,
                     color: AppColors.primaryColor,
                     weight: FontWeight.w700,
                   ),
@@ -581,11 +594,11 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
             child: Text(
               count == 0 ? "0" : value.toInt().toString(),
               style: AppStyles.customTextStyle(
-                      size: 20,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w700,
-                      fontFamily: "Roboto",
-                    ),
+                size: 25,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w700,
+                fontFamily: "Roboto",
+              ),
             ),
           ),
         );

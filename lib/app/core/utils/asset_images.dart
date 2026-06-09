@@ -1,6 +1,7 @@
 class AssetImages {
   static const String loginBgImage = "assets/images/login_bg.png";
-  static const String appLogoImage = "assets/images/app_logo.png";
+  //static const String appLogoImage = "assets/images/app_logo.png";
+  static const String appLogoImage = "assets/images/app_new_logo.png";
   static const String appAlertImage = "assets/images/alert_image.png";
   static const String resumeUploadImage = "assets/images/resume_upload_img.png";
   static const String resumeCreateImage = "assets/images/resume_create_image.png";
@@ -20,7 +21,23 @@ class AssetImages {
   static const String editIconImg = "assets/images/edit_icon_img.png";
   static const String resDpBannerImg = "assets/images/res_dp_banner_image.png";
   static const String creditIcon = "assets/images/credit_icon.png";
-  static const String aiLoadingGif = "assets/images/ai_loading.gif";
+  //static const String aiLoadingGif = "assets/images/ai_loading.gif";
+  static const String aiLoadingGif = "assets/images/new_ai_loading.gif";
+  static const String welcomeScreenBg = "assets/images/welcome_screen_bg.png";
+  static const String loginBg = "assets/images/login_bg_new.png";
+  static const String appLogoNew = "assets/images/app_logo_new.png";
+  static const String appBgNew = "assets/images/app_bg_new.png";
+  static const String uploadResumeImg = "assets/images/upload_resume_img.png";
+  static const String createResumeImg = "assets/images/create_resume_img.png";
+  static const String appBackgroundImg = "assets/images/app_background_img.png";
+  static const String customLoaderGif = "assets/images/custom_loader.svg";
+  static const String loadingIndicator = "assets/images/loading_indicator.json";
+  static const String aiLoadingIndicator = "assets/images/ai_loading_indicator.json";
+  static const String appScreenBg = "assets/images/new_app_screen_bg.png";
+  static const String internsharksAiLoading = "assets/images/intersharks_ai_loading.gif";
+  static const String chatScreenBg = "assets/images/chat_screen_bg.jpeg";
+  static const String profileStepIcon = "assets/images/profile_step_icon.png";
+  static const String kycStepIcon = "assets/images/kyc_step_icon.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

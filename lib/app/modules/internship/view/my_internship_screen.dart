@@ -5,6 +5,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart' show AssetImages;
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/internship_syllabus_card.dart';
 import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
@@ -74,14 +75,17 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      backgroundColor: AppColors.appBgColor_2,
-      color: AppColors.primaryColor,
-      onRefresh: () => getInternshipData(),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
+        backgroundColor: AppColors.transparentColor,
         appBar: AppBar(
-          backgroundColor: AppColors.appBgColor_2,
+          backgroundColor: AppColors.transparentColor,
           elevation: 0,
           automaticallyImplyActions: false,
           centerTitle: true,
@@ -95,37 +99,40 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
           ),
         ),
         body: Obx(
-          () => internController.internSyllabusLoading || internController.paymentCreateLoading
-              ? Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
-                  ),
-                )
+          () =>
+              internController.internSyllabusLoading ||
+                  internController.paymentCreateLoading
+              ? AppAlertUtils.customLoader()
               : syllabusList!.isNotEmpty
-              ? ListView.separated(
-                  separatorBuilder: (context, index) => SizedBox(height: 10),
-                  itemCount: syllabusList!.length,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(16),
-                  itemBuilder: (context, index) {
-                    final item = syllabusList![index];
-                    return InternSyllabusCard(
-                      title: item.subject ?? "NA",
-                      subTitle: "Introduction to Software Developer",
-                      totalWeeks: item.totalDays ?? 0,
-                      totalTopics: item.meta!.totalTopics ?? 0,
-                      isLoading: internController.paymentStatusCheckLoading,
-                      viewFunc: () async {
-                        selectedJobId = item.job;
-                        selectedCourse = item.subject;
+              ? RefreshIndicator(
+                  backgroundColor: AppColors.appBgColor_2,
+                  color: AppColors.primaryColor,
+                  onRefresh: () => getInternshipData(),
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) => SizedBox(height: 10),
+                    itemCount: syllabusList!.length,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(20),
+                    itemBuilder: (context, index) {
+                      final item = syllabusList![index];
+                      return InternSyllabusCard(
+                        title: item.subject ?? "NA",
+                        subTitle: "Introduction to Software Developer",
+                        totalWeeks: item.totalDays ?? 0,
+                        totalTopics: item.meta!.totalTopics ?? 0,
+                        isLoading: internController.paymentStatusCheckLoading,
+                        viewFunc: () async {
+                          selectedJobId = item.job;
+                          selectedCourse = item.subject;
 
-                        await checkPaymentStatus(
-                          jobId: item.job ?? "",
-                          course: item.subject ?? "",
-                        );
-                      },
-                    );
-                  },
+                          await checkPaymentStatus(
+                            jobId: item.job ?? "",
+                            course: item.subject ?? "",
+                          );
+                        },
+                      );
+                    },
+                  ),
                 )
               : CustomEmptyWidget(),
         ),
@@ -193,7 +200,9 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
   }) {
     try {
       final session = CFSessionBuilder()
-          .setEnvironment(CFEnvironment.PRODUCTION) // Need to change to  PRODUCTION for live
+          .setEnvironment(
+            CFEnvironment.PRODUCTION,
+          ) // Need to change to  PRODUCTION for live
           .setOrderId(orderId)
           .setPaymentSessionId(paymentSessionId)
           .build();

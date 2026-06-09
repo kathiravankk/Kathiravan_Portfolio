@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/internship/add_review_data_model.dart';
 import 'package:internsharks/app/data/models/internship/all_cerifications_model.dart';
@@ -67,7 +70,8 @@ class InternshipController extends GetxController {
 
   InternSyllabusResponseModel get syllabusModel => _syllabusModel.value;
 
-  set syllabusModel(InternSyllabusResponseModel value) => _syllabusModel.value = value;
+  set syllabusModel(InternSyllabusResponseModel value) =>
+      _syllabusModel.value = value;
 
   Future<void> getSyllabusData({required String jobId}) async {
     try {
@@ -166,16 +170,19 @@ class InternshipController extends GetxController {
 
   McqQuestionModel get mcqQuesModel => _mcqQuesModel.value;
 
-  set mcqQuesModel(McqQuestionModel value) =>
-      _mcqQuesModel.value = value;
+  set mcqQuesModel(McqQuestionModel value) => _mcqQuesModel.value = value;
 
-  Future<void> getMcqQuestions({
-    required List<dynamic>? weekData,
-  }) async {
+  Future<void> getMcqQuestions({required List<dynamic>? weekData}) async {
     try {
+      debugPrint('');
+      var parseddata = weekData == null
+          ? []
+          : weekData.map((e) => e.toJson()).toList();
+      jsonEncode(parseddata);
+
       getMcqQuestionLoading = true;
       mcqQuesModel = await internshipProvider!.fetchMcqQuestions(
-        weekData: weekData,
+        weekData: parseddata,
       );
       getMcqQuestionLoading = false;
     } catch (err) {
@@ -192,7 +199,8 @@ class InternshipController extends GetxController {
 
   bool get validateMcqAnswerLoading => _validateMcqAnswerLoading.value;
 
-  set validateMcqAnswerLoading(bool value) => _validateMcqAnswerLoading.value = value;
+  set validateMcqAnswerLoading(bool value) =>
+      _validateMcqAnswerLoading.value = value;
 
   // Model
 
@@ -200,8 +208,7 @@ class InternshipController extends GetxController {
 
   TestResultModel get testResultModel => _testResultModel.value;
 
-  set testResultModel(TestResultModel value) =>
-      _testResultModel.value = value;
+  set testResultModel(TestResultModel value) => _testResultModel.value = value;
 
   Future<void> validateMcqAnswer({
     required Map<String, dynamic> answerData,
@@ -236,10 +243,14 @@ class InternshipController extends GetxController {
 
   set reviewModel(AddReviewDataModel value) => _reviewModel.value = value;
 
-  Future<void> giveFeedBackReview({required Map<String, dynamic> feedBackData}) async {
+  Future<void> giveFeedBackReview({
+    required Map<String, dynamic> feedBackData,
+  }) async {
     try {
       feedBackLoading = true;
-      reviewModel = await internshipProvider!.giveFeedBackReview(feedBackData: feedBackData);
+      reviewModel = await internshipProvider!.giveFeedBackReview(
+        feedBackData: feedBackData,
+      );
       feedBackLoading = false;
     } catch (err) {
       feedBackLoading = false;
@@ -268,7 +279,9 @@ class InternshipController extends GetxController {
   Future<void> saveTestResult({required Map<String, dynamic> testData}) async {
     try {
       saveTestLoading = true;
-      saveTestModel = await internshipProvider!.saveTestResult(testData: testData);
+      saveTestModel = await internshipProvider!.saveTestResult(
+        testData: testData,
+      );
       saveTestLoading = false;
     } catch (err) {
       saveTestLoading = false;
@@ -284,7 +297,8 @@ class InternshipController extends GetxController {
 
   bool get paymentStatusCheckLoading => _paymentStatusCheckLoading.value;
 
-  set paymentStatusCheckLoading(bool value) => _paymentStatusCheckLoading.value = value;
+  set paymentStatusCheckLoading(bool value) =>
+      _paymentStatusCheckLoading.value = value;
 
   //Model
 
@@ -292,12 +306,17 @@ class InternshipController extends GetxController {
 
   PaymentStatusModel get paymentStatusModel => _paymentStatusModel.value;
 
-  set paymentStatusModel(PaymentStatusModel value) => _paymentStatusModel.value = value;
+  set paymentStatusModel(PaymentStatusModel value) =>
+      _paymentStatusModel.value = value;
 
-  Future<void> checkPaymentStatus({required Map<String, dynamic> jobData}) async {
+  Future<void> checkPaymentStatus({
+    required Map<String, dynamic> jobData,
+  }) async {
     try {
       paymentStatusCheckLoading = true;
-      paymentStatusModel = await internshipProvider!.checkPaymentStatus(jobData : jobData);
+      paymentStatusModel = await internshipProvider!.checkPaymentStatus(
+        jobData: jobData,
+      );
       paymentStatusCheckLoading = false;
     } catch (err) {
       paymentStatusCheckLoading = false;
@@ -321,12 +340,17 @@ class InternshipController extends GetxController {
 
   PaymentCreateModel get paymentCreateModel => _paymentCreateModel.value;
 
-  set paymentCreateModel(PaymentCreateModel value) => _paymentCreateModel.value = value;
+  set paymentCreateModel(PaymentCreateModel value) =>
+      _paymentCreateModel.value = value;
 
-  Future<void> createPaymentOrder({required Map<String, dynamic> jobData}) async {
+  Future<void> createPaymentOrder({
+    required Map<String, dynamic> jobData,
+  }) async {
     try {
       paymentCreateLoading = true;
-      paymentCreateModel = await internshipProvider!.createPaymentOrder(jobData : jobData);
+      paymentCreateModel = await internshipProvider!.createPaymentOrder(
+        jobData: jobData,
+      );
       paymentCreateLoading = false;
     } catch (err) {
       paymentCreateLoading = false;
@@ -344,11 +368,14 @@ class InternshipController extends GetxController {
 
   set paymentVerifyLoading(bool value) => _paymentVerifyLoading.value = value;
 
-
-  Future<void> verifyPaymentOrder({required Map<String, dynamic> jobData}) async {
+  Future<void> verifyPaymentOrder({
+    required Map<String, dynamic> jobData,
+  }) async {
     try {
       paymentCreateLoading = true;
-      paymentCreateModel = await internshipProvider!.verifyPaymentOrder(jobData : jobData);
+      paymentCreateModel = await internshipProvider!.verifyPaymentOrder(
+        jobData: jobData,
+      );
       paymentCreateLoading = false;
     } catch (err) {
       paymentCreateLoading = false;
@@ -372,7 +399,8 @@ class InternshipController extends GetxController {
 
   AllCertificationsModel get certificateModel => _certificateModel.value;
 
-  set certificateModel(AllCertificationsModel value) => _certificateModel.value = value;
+  set certificateModel(AllCertificationsModel value) =>
+      _certificateModel.value = value;
 
   Future<void> getAllCertificates() async {
     try {
@@ -384,6 +412,4 @@ class InternshipController extends GetxController {
       rethrow;
     }
   }
-
-
 }

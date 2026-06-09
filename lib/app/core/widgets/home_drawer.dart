@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/card_widgets.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
@@ -45,9 +46,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
           topRight: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
-        color: AppColors.navBarColor,
+        color: AppColors.fieldBgColor,
       ),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(15),
       child: Column(
         spacing: 15,
         children: [
@@ -123,21 +124,20 @@ class _HomeDrawerState extends State<HomeDrawer> {
                   ),
                 ],
               ),
-              Expanded(
-                child: IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(
-                    Icons.close_sharp,
-                    color: AppColors.failTextColor,
-                    size: 22,
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: IconButton(
+              //     onPressed: () {
+              //       Get.back();
+              //     },
+              //     icon: Icon(
+              //       Icons.close_sharp,
+              //       color: AppColors.failTextColor,
+              //       size: 22,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
-
           Divider(color: AppColors.contBorderColor),
           Visibility(
             visible: !isVerified!,
@@ -195,86 +195,96 @@ class _HomeDrawerState extends State<HomeDrawer> {
             ),
           ),
 
-          Column(
-            children: [
-              _drawerItem(
-                icon: Icons.category_outlined,
-                title: "Profile",
-                onTap: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.homeProfileScreen,
-                  );
-                },
-              ),
-              _drawerItem(
-                icon: Icons.description_outlined,
-                title: "My Applications",
-                onTap: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.myAppliesScreen,
-                  );
-                },
-              ),
-              _drawerItem(
-                icon: Icons.bookmark_border_sharp,
-                title: "Saved Post",
-                onTap: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.savedInternshipScreen,
-                  );
-                },
-              ),
-              _drawerItem(
-                icon: CupertinoIcons.settings,
-                title: "Settings",
-                onTap: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.accountSettingScreen,
-                  );
-                },
-              ),
-              _drawerItem(
-                icon: Icons.card_membership_sharp,
-                title: "Certificates",
-                onTap: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.myCertificatesScreen,
-                  );
-                },
-              ),
-              _drawerItem(
-                icon: Icons.currency_exchange_sharp,
-                title: "Buy Credits",
-                onTap: () {
-                  AppFunctions.navigateScreen(
-                    context,
-                    AppRoutes.buyCreditsScreen,
-                  );
-                },
-              ),
-              _drawerItem(
-                isLogOut: true,
-                icon: Icons.logout_sharp,
-                title: "Logout",
-                onTap: () {
-                  //showLogoutPopup(context);
-                  AppAlertUtils.showAppAlert(
-                    context: context,
-                    content: "Are you sure you want to logout?",
-                    confirmText: "Confirm",
-                    title: "Logout",
-                    onConfirm: () {
-                      AppFunctions.logOutFunc(context);
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 20,
+                children: [
+                  CardWidgets.settingsTile(
+                    icon: Icons.category_outlined,
+                    title: "Profile",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.homeProfileScreen,
+                      );
                     },
-                  );
-                },
+                  ),
+
+                  CardWidgets.settingsTile(
+                    icon: Icons.description_outlined,
+                    title: "My Applications",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.myAppliesScreen,
+                      );
+                    },
+                  ),
+                  CardWidgets.settingsTile(
+                    icon: Icons.bookmark_border_sharp,
+                    title: "Saved Post",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.savedInternshipScreen,
+                      );
+                    },
+                  ),
+                  CardWidgets.settingsTile(
+                    icon: CupertinoIcons.settings,
+                    title: "Settings",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.accountSettingScreen,
+                      );
+                    },
+                  ),
+                  CardWidgets.settingsTile(
+                    icon: Icons.card_membership_sharp,
+                    title: "Certificates",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.myCertificatesScreen,
+                      );
+                    },
+                  ),
+                  CardWidgets.settingsTile(
+                    icon: Icons.currency_exchange_sharp,
+                    title: "Buy Credits",
+                    onTap: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.buyCreditsScreen,
+                      );
+                    },
+                  ),
+                  CardWidgets.settingsCard(
+                    children: [
+                      CardWidgets.settingsTile(
+                        isDelete: true,
+                        icon: Icons.logout_sharp,
+                        title: "Logout",
+                        onTap: () {
+                          //showLogoutPopup(context);
+                          AppAlertUtils.showAppAlert(
+                            context: context,
+                            content: "Are you sure you want to logout?",
+                            confirmText: "Confirm",
+                            title: "Logout",
+                            onConfirm: () {
+                              AppFunctions.logOutFunc(context);
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ],
       ),

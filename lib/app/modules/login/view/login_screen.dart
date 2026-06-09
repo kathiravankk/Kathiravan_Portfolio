@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBgImage),
+          image: AssetImage(AssetImages.loginBg),
           fit: BoxFit.cover,
         ),
       ),
@@ -42,16 +42,25 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
-              spacing: 10,
+              spacing: 15,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 100),
-                Image.asset(AssetImages.appLogoImage, height: 100, width: 250),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AssetImages.appLogoNew,
+                      height: 120,
+                      width: 280,
+                    ),
+                  ],
+                ),
                 Text(
                   "Welcome!",
                   style: AppStyles.customTextStyle(
                     color: AppColors.secondaryColor,
-                    size: 25,
+                    size: 30,
                     weight: FontWeight.w700,
                   ),
                 ),
@@ -59,14 +68,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Secure access portal.Please enter your credentials.",
                   style: AppStyles.customTextStyle(
                     lineSpace: 1.4,
-                    color: AppColors.whiteColor,
-                    size: 15,
+                    color: AppColors.lightText,
+                    size: 16,
                     weight: FontWeight.w300,
                   ),
                 ),
 
                 /// ---------------- MOBILE FIELD ----------------
-                SizedBox(height: 15),
+                SizedBox(height: 10),
                 CustomTextField(
                   labelText: "Mobile Number",
 
@@ -162,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 30),
                         CustomButtonWidget(
-                          height: 45,
+                          height: 50,
                           buttonFunction: loginController.loginVerifyLoading
                               ? () {}
                               : () async {
@@ -171,7 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
-                          disable: loginController.loginVerifyLoading || otpController.text.length != 4,
+                          disable:
+                              loginController.loginVerifyLoading ||
+                              otpController.text.length != 4,
                         ),
                         const SizedBox(height: 10),
                       ],
@@ -185,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // 📤 SEND OTP BUTTON (OTP NOT SENT)
                   return CustomButtonWidget(
-                    height: 45,
+                    height: 50,
                     buttonFunction: isValid
                         ? () => sendOtpFunc(mobileNumber: mobileController.text)
                         : () {},
@@ -194,76 +205,78 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 }),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
                 /// ---------------- REGISTER LINK ----------------
-                // Center(
-                //   child: RichText(
-                //     text: TextSpan(
-                //       text: "If you’re new to Internshark, ",
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "If you’re new to Internsharks, ",
+                      style: AppStyles.customTextStyle(
+                        size: 14,
+                        lineSpace: 1.4,
+                        weight: FontWeight.w300,
+                        color: AppColors.lightText,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "Register now",
+                          style: AppStyles.customTextStyle(
+                            size: 15,
+                            weight: FontWeight.w300,
+                            lineSpace: 1.4,
+                            color: AppColors.secondaryColor,
+                            isUnderlined: true,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              AppFunctions.navigateScreen(
+                                context,
+                                AppRoutes.registerResumeUploadScreen,
+                              );
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // const SizedBox(height: 30),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Text(
+                //         "If you’re new to Internsharks, ",
+                //         style: AppStyles.customTextStyle(
+                //           size: 15,
+                //           weight: FontWeight.w300,
+                //           color: AppColors.whiteColor,
+                //         )
+                //     )
+                //   ],
+                // ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     TextButton(
+                //       onPressed: () {
+                //         AppFunctions.navigateScreen(
+                //           context,
+                //           AppRoutes.registerResumeUploadScreen,
+                //         );
+                //       },
+                //       child: Text(
+                //       "Register now",
                 //       style: AppStyles.customTextStyle(
                 //         size: 15,
                 //         weight: FontWeight.w300,
-                //         color: AppColors.whiteColor,
+                //         color: AppColors.secondaryColor,
+                //         isUnderlined: true,
+                //         underlineColor: AppColors.secondaryColor
                 //       ),
-                //       children: [
-                //         TextSpan(
-                //           text: "Register now",
-                //           style: AppStyles.customTextStyle(
-                //             size: 15,
-                //             weight: FontWeight.w300,
-                //             color: AppColors.secondaryColor,
-                //             isUnderlined: true,
-                //           ),
-                //           recognizer: TapGestureRecognizer()
-                //             ..onTap = () {
-                //               AppFunctions.navigateScreen(
-                //                 context,
-                //                 AppRoutes.registerResumeUploadScreen,
-                //               );
-                //             },
-                //         ),
-                //       ],
                 //     ),
-                //   ),
+                //     )
+                //   ],
                 // ),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                        "If you’re new to Internsharks, ",
-                        style: AppStyles.customTextStyle(
-                          size: 15,
-                          weight: FontWeight.w300,
-                          color: AppColors.whiteColor,
-                        )
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.registerResumeUploadScreen,
-                        );
-                      },
-                      child: Text(
-                      "Register now",
-                      style: AppStyles.customTextStyle(
-                        size: 15,
-                        weight: FontWeight.w300,
-                        color: AppColors.secondaryColor,
-                        isUnderlined: true,
-                        underlineColor: AppColors.secondaryColor
-                      ),
-                    ),
-                    )
-                  ],
-                ),
               ],
             ),
           ),
@@ -281,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     try {
-      otpController.text ="";
+      otpController.text = "";
       await loginController.sendLoginOtp(mobileNumber: mobileNumber);
 
       if (loginController.getResponseCode() == 200 ||
@@ -319,12 +332,17 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  String? fcmToken = "";
+
   Future<void> verifyOtpFunc() async {
     try {
+      fcmToken = await LocalStorageService.getFcmToken() ?? "";
+      debugPrint(fcmToken ?? "");
       await loginController.verifyLoginOtp(
         mobileNumber: mobileController.text,
         otpNumber: otpController.text,
         userType: loginController.commonPostModel.userType ?? "student",
+        fcmToken: fcmToken ?? ""
       );
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {

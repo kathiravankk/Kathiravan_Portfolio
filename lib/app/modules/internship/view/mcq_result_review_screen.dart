@@ -4,6 +4,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/feedback_widget.dart';
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
@@ -51,120 +52,131 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-
-
       canPop: false,
-      child: Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        floatingActionButton: CustomButtonWidget(
-          width: 300,
-          height: 45,
-          buttonFunction: () {
-            AppAlertUtils.showAppAlert(
-              context: context,
-              title: "Test Completed",
-              content:
-                  "Thank you for attending this test.\n\nRecruiter will contact you soon.\n\nYou will now be redirected to your dashboard.",
-              confirmText: "OKAY",
-              cancelText: "CLOSE",
-              onConfirm: () {
-                AppFunctions.navigateInitialScreen(
-                  context,
-                  AppRoutes.dashBoardScreen,
-                );
-              },
-            );
-          },
-          buttonText: "Next",
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
+          ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        body: Obx(
-          () => SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                spacing: 20,
-                children: [
-                  scoreCircle(correct, answers!.length),
-                  reviewContent(),
-                  Text(
-                    "Review your Test Result",
-                    textAlign: TextAlign.center,
-                    style: AppStyles.customTextStyle(
-                      size: 18,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w700,
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          floatingActionButton: CustomButtonWidget(
+            width: 300,
+            height: 45,
+            buttonFunction: () {
+              AppAlertUtils.showAppAlert(
+                context: context,
+                title: "Test Completed",
+                content:
+                    "Thank you for attending this test.\n\nRecruiter will contact you soon.\n\nYou will now be redirected to your dashboard.",
+                confirmText: "OKAY",
+                cancelText: "CLOSE",
+                onConfirm: () {
+                  AppFunctions.navigateInitialScreen(
+                    context,
+                    AppRoutes.dashBoardScreen,
+                  );
+                },
+              );
+            },
+            buttonText: "Next",
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          body: Obx(
+            () => SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  spacing: 20,
+                  children: [
+                    scoreCircle(correct, answers!.length),
+                    reviewContent(),
+                    Text(
+                      "Review your Test Result",
+                      textAlign: TextAlign.center,
+                      style: AppStyles.customTextStyle(
+                        size: 18,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w700,
+                      ),
                     ),
-                  ),
 
-                  Row(
-                    spacing: 20,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      statCard(
-                        "Correct",
-                        correct.toString(),
-                        Icon(
-                          Icons.check,
-                          color: AppColors.sucTextColor,
-                          size: 20,
+                    Row(
+                      spacing: 20,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        statCard(
+                          "Correct",
+                          correct.toString(),
+                          Icon(
+                            Icons.check,
+                            color: AppColors.sucTextColor,
+                            size: 20,
+                          ),
                         ),
-                      ),
-                      statCard(
-                        "Incorrect",
-                        incorrect.toString(),
-                        Icon(
-                          Icons.close,
-                          color: AppColors.failTextColor,
-                          size: 20,
+                        statCard(
+                          "Incorrect",
+                          incorrect.toString(),
+                          Icon(
+                            Icons.close,
+                            color: AppColors.failTextColor,
+                            size: 20,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  Row(
-                    spacing: 20,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      statCard(
-                        "Skipped",
-                        skipped.toString(),
-                        Icon(
-                          Icons.skip_next,
-                          color: AppColors.greyIcon,
-                          size: 20,
+                    Row(
+                      spacing: 20,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        statCard(
+                          "Skipped",
+                          skipped.toString(),
+                          Icon(
+                            Icons.skip_next,
+                            color: AppColors.greyIcon,
+                            size: 20,
+                          ),
                         ),
-                      ),
-                      statCard(
-                        "Time Taken",
-                        testDuration,
-                        Icon(
-                          Icons.access_time_sharp,
-                          color: AppColors.selectedContColor,
-                          size: 20,
+                        statCard(
+                          "Time Taken",
+                          testDuration,
+                          Icon(
+                            Icons.access_time_sharp,
+                            color: AppColors.selectedContColor,
+                            size: 20,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  FeedbackWidget(
-                    isLoading: internController.feedBackLoading,
-                    onSubmit: (rating, feedback) async {
-                      debugPrint(rating.toString());
-                      debugPrint(feedback);
-                      await addFeedbackReview(rating: rating, review: feedback);
-                    },
-                  ),
-                  ListView.separated(
-                    separatorBuilder: (context, index) => SizedBox(height: 10),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: answers!.length,
-                    itemBuilder: (context, index) {
-                      return questionCard(answers![index], index);
-                    },
-                  ),
-                  const SizedBox(height: 50),
-                ],
+                      ],
+                    ),
+                    FeedbackWidget(
+                      isLoading: internController.feedBackLoading,
+                      onSubmit: (rating, feedback) async {
+                        debugPrint(rating.toString());
+                        debugPrint(feedback);
+                        await addFeedbackReview(
+                          rating: rating,
+                          review: feedback,
+                        );
+                      },
+                    ),
+                    ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: answers!.length,
+                      itemBuilder: (context, index) {
+                        return questionCard(answers![index], index);
+                      },
+                    ),
+                    const SizedBox(height: 50),
+                  ],
+                ),
               ),
             ),
           ),

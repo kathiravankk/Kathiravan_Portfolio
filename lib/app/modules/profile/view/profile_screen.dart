@@ -77,11 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       child: Obx(
         () => profileController.profileDataLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
+            ? AppAlertUtils.customLoader()
             : Scaffold(
                 backgroundColor: AppColors.transparentColor,
                 appBar: AppBar(
@@ -127,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 body: Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(20),
                   child: SingleChildScrollView(
                     child: Column(
                       spacing: 20,

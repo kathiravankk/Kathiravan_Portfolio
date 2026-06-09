@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/data/models/account/common_post_model.dart';
 import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
@@ -632,6 +633,38 @@ class DashboardController extends GetxController {
       verifyCreditLoading = false;
     } catch (err) {
       verifyCreditLoading = false;
+      rethrow;
+    }
+  }
+
+  // DELETE ACCOUNT
+
+  // Loading
+
+  final _studentDeleteLoading = false.obs;
+
+  bool get studentDeleteLoading => _studentDeleteLoading.value;
+
+  set studentDeleteLoading(bool value) => _studentDeleteLoading.value = value;
+
+  // Model
+
+  final _commonPostModel = CommonPostModel().obs;
+
+  CommonPostModel get commonPostModel =>
+      _commonPostModel.value;
+
+  set commonPostModel(CommonPostModel value) =>
+      _commonPostModel.value = value;
+
+  Future<void> deleteStudentAccount() async {
+    try {
+      studentDeleteLoading = true;
+      commonPostModel = await dashboardProvider!.removeStudentAccount(
+      );
+      studentDeleteLoading = false;
+    } catch (err) {
+      studentDeleteLoading = false;
       rethrow;
     }
   }

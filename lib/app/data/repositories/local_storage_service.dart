@@ -8,6 +8,7 @@ class LocalStorageService {
   static const _studentKey = 'student_data';
   static const _studentIdKey = 'student_id';
   static const studentNameKey = 'student_name';
+  static const fcmTokenKey = 'fcm_token';
   static const _isVerifiedKey = 'student_verified';
   static const studentCreditId = 'student_creditId';
   static const waterMarkKey = 'isWaterMarkRemoved';
@@ -39,6 +40,18 @@ class LocalStorageService {
   static Future<void> saveName({String? studentName}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(studentNameKey, studentName ?? "");
+  }
+
+  /// Save FCM token
+  static Future<void> saveFcmToken({String? fcmToken}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(fcmTokenKey, fcmToken ?? "");
+  }
+
+  ///Get FCM token
+  static Future<String?> getFcmToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(fcmTokenKey);
   }
 
   /// Save student creditId

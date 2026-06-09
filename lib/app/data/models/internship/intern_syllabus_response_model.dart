@@ -20,12 +20,11 @@ class InternSyllabusResponseModel {
       message: json['message'],
       success: json['success'],
       syllabusViewData: json['syllabus'] != null && json['syllabus'] is Map
-          ? SyllabusViewData.fromJson(
-          json['syllabus'] as Map<String, dynamic>)
+          ? SyllabusViewData.fromJson(json['syllabus'] as Map<String, dynamic>)
           : null,
       weeklyProgressList: _parseList<WeeklyProgressListData>(
         json['weeklyprogress'],
-            (e) => WeeklyProgressListData.fromJson(e),
+        (e) => WeeklyProgressListData.fromJson(e),
       ),
       currentWeek: json['currentWeek'],
       internStartedAt: json['internstarted'],
@@ -122,7 +121,6 @@ class SyllabusViewData {
   };
 }
 
-
 class SyllabusMeta {
   final int? totalTopics;
   final int? projectDays;
@@ -140,8 +138,6 @@ class SyllabusMeta {
   };
 }
 
-
-
 class MonthData {
   final String? title;
   final String? id;
@@ -152,10 +148,7 @@ class MonthData {
   factory MonthData.fromJson(Map<String, dynamic> json) => MonthData(
     title: json['title'],
     id: json['_id'],
-    data: _parseList<WeekData>(
-      json['data'],
-          (e) => WeekData.fromJson(e),
-    ),
+    data: _parseList<WeekData>(json['data'], (e) => WeekData.fromJson(e)),
   );
 
   Map<String, dynamic> toJson() => {
@@ -175,10 +168,7 @@ class WeekData {
   factory WeekData.fromJson(Map<String, dynamic> json) => WeekData(
     title: json['title'],
     id: json['_id'],
-    daysList: _parseList<DayData>(
-      json['data'],
-          (e) => DayData.fromJson(e),
-    ),
+    daysList: _parseList<DayData>(json['data'], (e) => DayData.fromJson(e)),
   );
 
   Map<String, dynamic> toJson() => {
@@ -198,16 +188,14 @@ class DayData {
   factory DayData.fromJson(Map<String, dynamic> json) => DayData(
     title: json['title'],
     id: json['_id'],
-    dayList: _parseList<DayDetail>(
-      json['data'],
-          (e) => DayDetail.fromJson(e),
-    ),
+    dayList: _parseList<DayDetail>(json['data'], (e) => DayDetail.fromJson(e)),
   );
 
   Map<String, dynamic> toJson() => {
     'title': title,
     '_id': id,
     'data': dayList?.map((e) => e.toJson()).toList(),
+    "days": dayList?.map((e) => e.toJson()).toList(),
   };
 }
 
@@ -222,13 +210,10 @@ class DayDetail {
   factory DayDetail.fromJson(Map<String, dynamic> json) => DayDetail(
     day: json['day'],
     id: json['_id'],
-    topics: _parseList<TopicData>(
-      json['topics'],
-          (e) => TopicData.fromJson(e),
-    ),
+    topics: _parseList<TopicData>(json['topics'], (e) => TopicData.fromJson(e)),
     projectSchedule: _parseList<ProjectSchedule>(
       json['project_schedule'],
-          (e) => ProjectSchedule.fromJson(e),
+      (e) => ProjectSchedule.fromJson(e),
     ),
   );
 
@@ -246,6 +231,16 @@ class TopicData {
   final List<String>? codeExamples;
   final List<String>? homework;
   final String? id;
+  final String? visualExplanation;
+
+  factory TopicData.fromJson(Map<String, dynamic> json) => TopicData(
+    title: json['title'],
+    explanation: json['explanation'],
+    visualExplanation: json['visual_explanation'],
+    codeExamples: _parseStringList(json['code_examples']),
+    homework: _parseStringList(json['homework']),
+    id: json['_id'],
+  );
 
   TopicData({
     this.title,
@@ -253,15 +248,8 @@ class TopicData {
     this.codeExamples,
     this.homework,
     this.id,
+    this.visualExplanation,
   });
-
-  factory TopicData.fromJson(Map<String, dynamic> json) => TopicData(
-    title: json['title'],
-    explanation: json['explanation'],
-    codeExamples: _parseStringList(json['code_examples']),
-    homework: _parseStringList(json['homework']),
-    id: json['_id'],
-  );
 
   Map<String, dynamic> toJson() => {
     'title': title,
@@ -269,6 +257,7 @@ class TopicData {
     'code_examples': codeExamples,
     'homework': homework,
     '_id': id,
+    'visual_explanation': visualExplanation,
   };
 }
 
@@ -296,7 +285,6 @@ class ProjectSchedule {
   };
 }
 
-
 class WeeklyProgressListData {
   final int? weekNumber;
   final String? status;
@@ -309,16 +297,10 @@ class WeeklyProgressListData {
         status: json['status'],
       );
 
-  Map<String, dynamic> toJson() => {
-    'weekNumber': weekNumber,
-    'status': status,
-  };
+  Map<String, dynamic> toJson() => {'weekNumber': weekNumber, 'status': status};
 }
 
-List<T>? _parseList<T>(
-    dynamic raw,
-    T Function(Map<String, dynamic>) fromJson,
-    ) {
+List<T>? _parseList<T>(dynamic raw, T Function(Map<String, dynamic>) fromJson) {
   if (raw == null || raw is! List) return null;
   final result = <T>[];
   for (final item in raw) {
@@ -326,6 +308,7 @@ List<T>? _parseList<T>(
       try {
         result.add(fromJson(item as Map<String, dynamic>));
       } catch (_) {
+        print("EEEEEER");
       }
     }
   }
@@ -334,9 +317,7 @@ List<T>? _parseList<T>(
 
 List<String>? _parseStringList(dynamic raw) {
   if (raw == null || raw is! List) return null;
-  final result = raw
-      .where((e) => e != null)
-      .map((e) => e.toString())
-      .toList();
+  final result = raw.where((e) => e != null).map((e) => e.toString()).toList();
   return result.isEmpty ? null : result;
 }
+

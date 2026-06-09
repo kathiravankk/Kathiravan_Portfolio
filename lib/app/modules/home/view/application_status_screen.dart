@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/internship_card.dart';
@@ -121,330 +122,343 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.blackColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.blackColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          onPressed: () => Get.back(),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
       ),
-      body: Obx(
-        () => internController.paymentStatusCheckLoading
-            ? Center(
-                child: CupertinoActivityIndicator(
-                  color: AppColors.secondaryColor,
-                ),
-              )
-            : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    spacing: 15,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        appliedData!.jobData!.roleType ?? "",
-                        style: AppStyles.customTextStyle(
-                          size: 18,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w700,
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+        ),
+        body: Obx(
+          () => internController.paymentStatusCheckLoading
+              ? AppAlertUtils.customLoader()
+              : SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      spacing: 15,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          appliedData!.jobData!.roleType ?? "",
+                          style: AppStyles.customTextStyle(
+                            size: 20,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w700,
+                          ),
                         ),
-                      ),
 
-                      Text(
-                        appliedData!.jobData!.companyName ?? "",
-                        style: AppStyles.customTextStyle(
-                          size: 16,
-                          color: AppColors.secondaryColor,
-                          weight: FontWeight.w400,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.internshipDetailScreen,
-                            arguments: {
-                              "internshipId": appliedData!.jobData!.sId,
-                              "isStatusFlow": true,
-                            },
-                          );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
+                        Text(
+                          appliedData!.jobData!.companyName ?? "",
+                          style: AppStyles.customTextStyle(
+                            size: 18,
                             color: AppColors.secondaryColor,
-                            borderRadius: BorderRadius.circular(25),
+                            weight: FontWeight.w400,
                           ),
-                          child: Text(
-                            "View Details",
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppStyles.customTextStyle(
-                              size: 12,
-                              color: AppColors.lightBlackText2,
-                              weight: FontWeight.w400,
-                              //isUnderlined: true,
-                              //underlineColor: AppColors.lightBlackText2,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.internshipDetailScreen,
+                              arguments: {
+                                "internshipId": appliedData!.jobData!.sId,
+                                "isStatusFlow": true,
+                              },
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryColor,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: Text(
+                              "View Details",
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppStyles.customTextStyle(
+                                size: 12,
+                                color: AppColors.lightBlackText2,
+                                weight: FontWeight.w400,
+                                //isUnderlined: true,
+                                //underlineColor: AppColors.lightBlackText2,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Your Application Status',
-                        style: AppStyles.customTextStyle(
-                          size: 16,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w700,
+                        const SizedBox(height: 10),
+                        Text(
+                          'Your Application Status',
+                          style: AppStyles.customTextStyle(
+                            size: 16,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      Column(
-                        children: [
-                          _buildStatusItem(
-                            iconWidget: Icon(
-                              Icons.check_circle_sharp,
-                              color: AppColors.selectedContColor,
-                              size: 20,
+                        const SizedBox(height: 10,),
+                        Column(
+                          children: [
+                            _buildStatusItem(
+                              iconWidget: Icon(
+                                Icons.check_circle_sharp,
+                                color: AppColors.selectedContColor,
+                                size: 20,
+                              ),
+                              title: 'Applied',
+                              date: AppFunctions.formatIsoDate(
+                                appliedData!.jobData!.createdAt ?? "",
+                              ),
+                              showLine: true,
                             ),
-                            title: 'Applied',
-                            date: AppFunctions.formatIsoDate(
-                              appliedData!.jobData!.createdAt ?? "",
+                            _buildStatusItem(
+                              iconWidget: Icon(
+                                Icons.check_circle_sharp,
+                                color: AppColors.selectedContColor,
+                                size: 20,
+                              ),
+                              title: 'Application Sent',
+                              date: AppFunctions.formatIsoDate(
+                                appliedData!.jobData!.createdAt ?? "",
+                              ),
+                              showLine: true,
                             ),
-                            showLine: true,
-                          ),
-                          _buildStatusItem(
-                            iconWidget: Icon(
-                              Icons.check_circle_sharp,
-                              color: AppColors.selectedContColor,
-                              size: 20,
-                            ),
-                            title: 'Application Sent',
-                            date: AppFunctions.formatIsoDate(
-                              appliedData!.jobData!.createdAt ?? "",
-                            ),
-                            showLine: true,
-                          ),
-                          _buildStatusItem(
-                            iconWidget: appliedData!.status != "Applied"
-                                ? Icon(
-                                    Icons.check_circle_sharp,
-                                    color: AppColors.selectedContColor,
-                                    size: 20,
-                                  )
-                                : Icon(
-                                    Icons.circle_outlined,
-                                    color: AppColors.whiteColor,
-                                    size: 20,
-                                  ),
-                            title: 'Application viewed by recruiter',
-                            showLine: appliedData!.status != "Applied"
-                                ? true
-                                : false,
-                          ),
-                          Visibility(
-                            visible: appliedData!.status != "Applied",
-                            child: _buildStatusItem(
-                              iconWidget:
-                                  appliedData!.status == "Selected" ||
-                                      appliedData!.status == "Shortlisted"
+                            _buildStatusItem(
+                              iconWidget: appliedData!.status != "Applied"
                                   ? Icon(
                                       Icons.check_circle_sharp,
-                                      color: AppColors.sucTextColor,
+                                      color: AppColors.selectedContColor,
                                       size: 20,
                                     )
                                   : Icon(
-                                      Icons.close,
-                                      color: AppColors.failTextColor,
+                                      Icons.circle_outlined,
+                                      color: AppColors.whiteColor,
                                       size: 20,
                                     ),
-                              title: appliedData!.status!,
-                              showLine:
-                                  appliedData!.jobType == "Fee" ||
-                                      appliedData!.jobType == "fee"
+                              title: 'Application viewed by recruiter',
+                              showLine: appliedData!.status != "Applied"
                                   ? true
                                   : false,
                             ),
-                          ),
-                          Visibility(
-                            visible:
-                                appliedData!.jobType == "Fee" ||
-                                appliedData!.jobType == "fee",
-                            child: _buildStatusItem(
-                              iconWidget:
-                                  internController.paymentStatusModel.status ==
-                                      "completed"
-                                  ? Icon(
-                                      Icons.check_circle_sharp,
-                                      color: AppColors.sucTextColor,
-                                      size: 20,
-                                    )
-                                  : Icon(
-                                      Icons.close,
-                                      color: AppColors.failTextColor,
-                                      size: 20,
-                                    ),
-                              title:
-                                  internController.paymentStatusModel.message ??
-                                  "NA",
-                              showLine: false,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          if (appliedData!.jobType == "Fee")
-                            _buildPaymentSection(),
-                        ],
-                      ),
-
-                      const SizedBox(height: 10),
-                      Text(
-                        'Similar Internship',
-                        style: AppStyles.customTextStyle(
-                          size: 16,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w700,
-                        ),
-                      ),
-
-                      dashboardController.similarInternshipLoading
-                          ? Center(
-                              child: CupertinoActivityIndicator(
-                                color: AppColors.secondaryColor,
+                            Visibility(
+                              visible: appliedData!.status != "Applied",
+                              child: _buildStatusItem(
+                                iconWidget:
+                                    appliedData!.status == "Selected" ||
+                                        appliedData!.status == "Shortlisted"
+                                    ? Icon(
+                                        Icons.check_circle_sharp,
+                                        color: AppColors.sucTextColor,
+                                        size: 20,
+                                      )
+                                    : Icon(
+                                        Icons.close,
+                                        color: AppColors.failTextColor,
+                                        size: 20,
+                                      ),
+                                title: appliedData!.status!,
+                                showLine:
+                                    appliedData!.jobType == "Fee" ||
+                                        appliedData!.jobType == "fee"
+                                    ? true
+                                    : false,
                               ),
-                            )
-                          : SizedBox(
-                              height: 220,
-                              child:
-                                  dashboardController
-                                      .similarInternshipModel
-                                      .similarList!
-                                      .isNotEmpty
-                                  ? ListView.separated(
-                                      separatorBuilder: (context, index) =>
-                                          SizedBox(width: 10),
-                                      shrinkWrap: true,
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: dashboardController
-                                          .similarInternshipModel
-                                          .similarList!
-                                          .length,
-                                      itemBuilder: (context, index) {
-                                        // RecommentedData similar =
-                                        //     dashboardController
-                                        //         .similarInternshipModel
-                                        //         .similarList![index];
-                                        return InternshipCard(
-                                          width: 360,
-                                          companyName:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .companyName ??
-                                              "",
-                                          isSaved:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .isSaved ??
-                                              false,
-                                          duration:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .internshipDuration ??
-                                              "",
-                                          // saveFunc: () {
-                                          //   similar.isSaved!
-                                          //       ? removeToSaved(jobId: similar.sId!)
-                                          //       : addToSaved(jobId: similar.sId!);
-                                          // },
-                                          saveFunc: () async {
-                                            dashboardController.similarSaveFunc(
-                                              index,
-                                            );
-                                          },
-                                          viewFunc: () {
-                                            AppFunctions.navigateScreen(
-                                              context,
-                                              AppRoutes.internshipDetailScreen,
-                                              arguments: {
-                                                "internshipId":
-                                                    dashboardController
-                                                        .similarInternshipModel
-                                                        .similarList![index]
-                                                        .sId,
-                                              },
-                                            );
-                                          },
-                                          eligibility:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .eligibilityCriteria ??
-                                              "",
-                                          qualification:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .studentQualification!
-                                                  .join(", "),
-                                          stipendRupees:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .internshipStipend ??
-                                              "",
-                                          description:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .internshipDescription ??
-                                              "",
-                                          imageUrl:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .companyLogo ??
-                                              "",
-                                          internshipMode:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .internshipMode ??
-                                              "NA",
-                                          role:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .roleType ??
-                                              "",
-                                          postedDate:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .createdAt ??
-                                              "",
-                                          skillList:
-                                              dashboardController
-                                                  .similarInternshipModel
-                                                  .similarList![index]
-                                                  .requiredSkills ??
-                                              [],
-                                        );
-                                      },
-                                    )
-                                  : CustomEmptyWidget(),
                             ),
-                    ],
+                            Visibility(
+                              visible:
+                              (appliedData!.jobType == "Fee" ||
+                                  appliedData!.jobType == "fee") &&
+                                  (appliedData!.status == "Selected" ||
+                                      appliedData!.status == "Shortlisted"),
+
+                              child: _buildStatusItem(
+                                iconWidget:
+                                internController.paymentStatusModel.status == "completed"
+                                    ? Icon(
+                                  Icons.check_circle_sharp,
+                                  color: AppColors.sucTextColor,
+                                  size: 20,
+                                )
+                                    : Icon(
+                                  Icons.close,
+                                  color: AppColors.failTextColor,
+                                  size: 20,
+                                ),
+
+                                title:
+                                internController.paymentStatusModel.status == "completed"
+                                    ? "Payment Completed"
+                                    : "Payment Pending",
+
+                                showLine: false,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                            if ((appliedData!.jobType == "Fee" ||
+                                appliedData!.jobType == "fee") &&
+                                (appliedData!.status == "Selected" ||
+                                    appliedData!.status == "Shortlisted"))
+                              _buildPaymentSection(),
+                          ],
+                        ),
+
+                        const SizedBox(height: 10),
+                        Text(
+                          'Similar Internship',
+                          style: AppStyles.customTextStyle(
+                            size: 16,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w700,
+                          ),
+                        ),
+
+                        dashboardController.similarInternshipLoading
+                            ? Center(
+                                child: CupertinoActivityIndicator(
+                                  color: AppColors.secondaryColor,
+                                ),
+                              )
+                            : SizedBox(
+                                height: 220,
+                                child:
+                                    dashboardController
+                                        .similarInternshipModel
+                                        .similarList!
+                                        .isNotEmpty
+                                    ? ListView.separated(
+                                        separatorBuilder: (context, index) =>
+                                            SizedBox(width: 10),
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: dashboardController
+                                            .similarInternshipModel
+                                            .similarList!
+                                            .length,
+                                        itemBuilder: (context, index) {
+                                          // RecommentedData similar =
+                                          //     dashboardController
+                                          //         .similarInternshipModel
+                                          //         .similarList![index];
+                                          return InternshipCard(
+                                            width: 360,
+                                            companyName:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .companyName ??
+                                                "",
+                                            isSaved:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .isSaved ??
+                                                false,
+                                            duration:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .internshipDuration ??
+                                                "",
+                                            // saveFunc: () {
+                                            //   similar.isSaved!
+                                            //       ? removeToSaved(jobId: similar.sId!)
+                                            //       : addToSaved(jobId: similar.sId!);
+                                            // },
+                                            saveFunc: () async {
+                                              dashboardController.similarSaveFunc(
+                                                index,
+                                              );
+                                            },
+                                            viewFunc: () {
+                                              AppFunctions.navigateScreen(
+                                                context,
+                                                AppRoutes.internshipDetailScreen,
+                                                arguments: {
+                                                  "internshipId":
+                                                      dashboardController
+                                                          .similarInternshipModel
+                                                          .similarList![index]
+                                                          .sId,
+                                                },
+                                              );
+                                            },
+                                            eligibility:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .eligibilityCriteria ??
+                                                "",
+                                            qualification:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .studentQualification!
+                                                    .join(", "),
+                                            stipendRupees:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .internshipStipend ??
+                                                "",
+                                            description:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .internshipDescription ??
+                                                "",
+                                            imageUrl:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .companyLogo ??
+                                                "",
+                                            internshipMode:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .internshipMode ??
+                                                "NA",
+                                            role:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .roleType ??
+                                                "",
+                                            postedDate:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .createdAt ??
+                                                "",
+                                            skillList:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .requiredSkills ??
+                                                [],
+                                          );
+                                        },
+                                      )
+                                    : CustomEmptyWidget(),
+                              ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }

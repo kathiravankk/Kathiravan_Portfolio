@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
@@ -55,82 +56,90 @@ class _RegisterSelfiePreviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBgColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 25,
-            color: AppColors.whiteColor,
-          ),
-          onPressed: () => Get.back(),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
-        title: Text(
-          "Upload Selfie",
-          style: AppStyles.customTextStyle(
-            size: 18,
-            color: AppColors.whiteColor,
-            weight: FontWeight.w600,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.crop_sharp, color: AppColors.whiteColor, size: 30),
-            onPressed: () async {
-              final newPath = await cropImage(imagePath);
-              if (newPath != null) {
-                setState(() {
-                  imagePath = newPath;
-                });
-              }
-            },
-          ),
-        ],
       ),
-      body: Obx(
-        () => Padding(
-          padding: const EdgeInsets.all(15),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 30,
-              children: [
-                Text(
-                  "its an cool look! your creativity brings this \n moment to life. Let’s add the final \ntouches to unique one",
-                  textAlign: TextAlign.center,
-                  style: AppStyles.customTextStyle(
-                    color: AppColors.whiteColor,
-                    size: 16,
-                    lineSpace: 1.4,
-                    weight: FontWeight.w400,
-                  ),
-                ),
-                Container(
-                  width: 240,
-                  height: 240,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: FileImage(File(imagePath)),
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              size: 25,
+              color: AppColors.whiteColor,
+            ),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            "Review your upload",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.crop_sharp, color: AppColors.whiteColor, size: 30),
+              onPressed: () async {
+                final newPath = await cropImage(imagePath);
+                if (newPath != null) {
+                  setState(() {
+                    imagePath = newPath;
+                  });
+                }
+              },
+            ),
+          ],
+        ),
+        body: Obx(
+          () => Padding(
+            padding: const EdgeInsets.all(15),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 40,
+                children: [
+                  Text(
+                    "Its an cool look! your creativity brings this \n moment to life. Let’s add the final \ntouches to unique one",
+                    textAlign: TextAlign.center,
+                    style: AppStyles.customTextStyle(
+                      color: AppColors.lightColorText,
+                      size: 16,
+                      lineSpace: 1.5,
+                      weight: FontWeight.w300,
                     ),
                   ),
-                ),
-                Spacer(),
-                CustomButtonWidget(
-                  width: 300,
-                  height: 45,
-                  isLoading: registerController.updateProfileLoading,
-                  buttonFunction: () async {
-                    await uploadProfile();
-                  },
-                  buttonText: "Upload",
-                ),
-                const SizedBox(height: 20),
-              ],
+                  Container(
+                    width: 240,
+                    height: 240,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: FileImage(File(imagePath)),
+                      ),
+                    ),
+                  ),
+                  Spacer(),
+                  CustomButtonWidget(
+                    width: 300,
+                    height: 45,
+                    isLoading: registerController.updateProfileLoading,
+                    buttonFunction: () async {
+                      await uploadProfile();
+                    },
+                    buttonText: "Upload",
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),

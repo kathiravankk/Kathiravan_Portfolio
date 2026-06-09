@@ -1,6 +1,6 @@
 class AppApiUrls {
   // BASE URL
-  static const String baseUrl = newBaseUrl;
+  static const String baseUrl = newProdBaseUrl;
   static const String oldBaseUrl = "https://fulupo.selfietoons.com/api/";
   static const String newBaseUrl = "https://dev.api.internsharks.ai/api/";
   static const String newProdBaseUrl = "https://api.internsharks.ai/api/";
@@ -87,6 +87,7 @@ class AppApiUrls {
   static String generateResDp = "${baseUrl}generate-banner";
   static String removeWaterMark = "${baseUrl}removewater";
   static String bannerLike = "${baseUrl}studentlike";
+  static String studentDeleteAccount = "${baseUrl}student/delete";
 
   // INTERNSHIP FLOW
 

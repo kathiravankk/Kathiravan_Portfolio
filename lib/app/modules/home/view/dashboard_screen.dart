@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
@@ -33,18 +35,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
 
         if (shouldExit) {
-          Get.back(); // ✅ Actually exit app/screen
+          SystemNavigator.pop();
         }
       },
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        body: CustomNavBar(
-          screens: [
-            const InternsHomeScreen(),
-            const MyAppliesScreen(),
-            MyInternshipScreen(),
-            const HomeProfileScreen(),
-          ],
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          body: CustomNavBar(
+            screens: [
+              const InternsHomeScreen(),
+              const MyAppliesScreen(),
+              MyInternshipScreen(),
+              const HomeProfileScreen(),
+            ],
+          ),
         ),
       ),
     );

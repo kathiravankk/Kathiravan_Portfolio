@@ -4,6 +4,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/show_template_view.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -38,44 +39,52 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Scaffold(
-        backgroundColor: AppColors.appBgColor_2,
-        appBar: AppBar(
+      () => Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
           backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-          title: Text(
-            "Template ${templateData!.id}",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w600,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+              onPressed: () => Get.back(),
             ),
-          ),
-          actions: [
-            Visibility(
-              visible: !isChatFlow!,
-              child: CustomButtonWidget(
-                width: 130,
-                height: 35,
-                isLoading: registerController.updateResumeTemplateLoading,
-                buttonFunction: () async {
-                  await updateResumeFunc();
-                },
-                buttonText: "CONFIRM",
-                bgColor: AppColors.appBgColor,
+            title: Text(
+              "Template ${templateData!.id}",
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w600,
               ),
             ),
-            SizedBox(width: 10),
-          ],
-        ),
-        body: ShowTemplateView(
-          htmlAssetPath: templateData!.htmlPath,
-          resumeData: resumeData!,
-          //resumeData: ExtractedResumeDataModel(),
+            actions: [
+              Visibility(
+                visible: !isChatFlow!,
+                child: CustomButtonWidget(
+                  width: 130,
+                  height: 35,
+                  isLoading: registerController.updateResumeTemplateLoading,
+                  buttonFunction: () async {
+                    await updateResumeFunc();
+                  },
+                  buttonText: "CONFIRM",
+                  bgColor: AppColors.appBgColor,
+                ),
+              ),
+              SizedBox(width: 10),
+            ],
+          ),
+          body: ShowTemplateView(
+            htmlAssetPath: templateData!.htmlPath,
+            resumeData: resumeData!,
+            //resumeData: ExtractedResumeDataModel(),
+          ),
         ),
       ),
     );
