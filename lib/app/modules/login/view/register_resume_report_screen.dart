@@ -132,58 +132,58 @@ class _RegisterResumeReportScreenState
           },
         );
       },
-      child: RefreshIndicator(
-        onRefresh: () async {
-          await getResumeScore();
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(AssetImages.appBackgroundImg),
-              fit: BoxFit.cover,
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            title: Text(
+              'Resume Report',
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w600,
+              ),
+            ),
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                size: 25,
+                color: AppColors.whiteColor,
+              ),
+              onPressed: () {
+                AppAlertUtils.showAppAlert(
+                  context: context,
+                  title: "Are you sure? ⚠️",
+                  content:
+                      "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
+
+                  confirmText: "OK, Go Back",
+                  onConfirm: () {
+                    Get.offAllNamed(AppRoutes.dashBoardScreen);
+                  },
+                );
+              },
             ),
           ),
-          child: Scaffold(
-            backgroundColor: AppColors.transparentColor,
-            appBar: AppBar(
-              backgroundColor: AppColors.transparentColor,
-              automaticallyImplyLeading: false,
-              elevation: 0,
-              title: Text(
-                'Resume Report',
-                style: AppStyles.customTextStyle(
-                  size: 18,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-              leading: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 25,
-                  color: AppColors.whiteColor,
-                ),
-                onPressed: () {
-                  AppAlertUtils.showAppAlert(
-                    context: context,
-                    title: "Are you sure? ⚠️",
-                    content:
-                        "This action might not be available again.\n\nIf you go back, you'll be redirected to the Dashboard. Continue?",
-
-                    confirmText: "OK, Go Back",
-                    onConfirm: () {
-                      Get.offAllNamed(AppRoutes.dashBoardScreen);
-                    },
-                  );
-                },
-              ),
-            ),
-            body: Obx(
-              () =>
-                  registerController.resumeScoreLoading ||
-                      registerController.studentDetailsLoading
-                  ? AppAlertUtils.customLoader()
-                  : Padding(
+          body: Obx(
+            () =>
+                registerController.resumeScoreLoading ||
+                    registerController.studentDetailsLoading
+                ? AppAlertUtils.customLoader()
+                : RefreshIndicator(
+                  onRefresh: () async {
+                    await getResumeScore();
+                  },
+                  child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         children: [
@@ -249,7 +249,7 @@ class _RegisterResumeReportScreenState
                         ],
                       ),
                     ),
-            ),
+                ),
           ),
         ),
       ),

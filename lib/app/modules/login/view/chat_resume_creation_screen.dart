@@ -105,7 +105,7 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBackgroundImg),
+          image: AssetImage(AssetImages.chatScreenBg),
           fit: BoxFit.cover,
         ),
       ),

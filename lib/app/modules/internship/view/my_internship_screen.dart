@@ -75,38 +75,40 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      backgroundColor: AppColors.appBgColor_2,
-      color: AppColors.primaryColor,
-      onRefresh: () => getInternshipData(),
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AssetImages.appBackgroundImg),
-            fit: BoxFit.cover,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
-        child: Scaffold(
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
           backgroundColor: AppColors.transparentColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.transparentColor,
-            elevation: 0,
-            automaticallyImplyActions: false,
-            centerTitle: true,
-            title: Text(
-              "My Internships",
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w600,
-              ),
+          elevation: 0,
+          automaticallyImplyActions: false,
+          centerTitle: true,
+          title: Text(
+            "My Internships",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w600,
             ),
           ),
-          body: Obx(
-            () => internController.internSyllabusLoading || internController.paymentCreateLoading
-                ? AppAlertUtils.customLoader()
-                : syllabusList!.isNotEmpty
-                ? ListView.separated(
+        ),
+        body: Obx(
+          () =>
+              internController.internSyllabusLoading ||
+                  internController.paymentCreateLoading
+              ? AppAlertUtils.customLoader()
+              : syllabusList!.isNotEmpty
+              ? RefreshIndicator(
+                  backgroundColor: AppColors.appBgColor_2,
+                  color: AppColors.primaryColor,
+                  onRefresh: () => getInternshipData(),
+                  child: ListView.separated(
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     itemCount: syllabusList!.length,
                     shrinkWrap: true,
@@ -130,9 +132,9 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
                         },
                       );
                     },
-                  )
-                : CustomEmptyWidget(),
-          ),
+                  ),
+                )
+              : CustomEmptyWidget(),
         ),
       ),
     );
@@ -198,7 +200,9 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
   }) {
     try {
       final session = CFSessionBuilder()
-          .setEnvironment(CFEnvironment.PRODUCTION) // Need to change to  PRODUCTION for live
+          .setEnvironment(
+            CFEnvironment.PRODUCTION,
+          ) // Need to change to  PRODUCTION for live
           .setOrderId(orderId)
           .setPaymentSessionId(paymentSessionId)
           .build();

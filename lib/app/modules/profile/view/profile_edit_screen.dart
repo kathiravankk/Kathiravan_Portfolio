@@ -239,12 +239,28 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         .toList();
     locationController.text = p.location ?? "";
 
-    if ((p.studentDob ?? "").isNotEmpty) {
-      final date = DateTime.parse(p.studentDob!);
+    // if ((p.studentDob ?? "").isNotEmpty) {
+    //   final date = DateTime.parse(p.studentDob!);
+    //
+    //   dobController.text = DateFormat('dd/MM/yyyy').format(date);
+    //
+    //   selectedDobForApi = DateFormat('yyyy-MM-dd').format(date);
+    // } else {
+    //   dobController.clear();
+    //   selectedDobForApi = null;
+    // }
 
-      dobController.text = DateFormat('dd/MM/yyyy').format(date);
-
-      selectedDobForApi = DateFormat('yyyy-MM-dd').format(date);
+    // ── DOB parsing (handles "2002-02-21T00:00:00.000Z" format) ──
+    final rawDob = p.studentDob ?? "";
+    if (rawDob.isNotEmpty) {
+      try {
+        final date = DateTime.parse(rawDob).toLocal();
+        dobController.text = DateFormat('dd/MM/yyyy').format(date);
+        selectedDobForApi = DateFormat('yyyy-MM-dd').format(date);
+      } catch (_) {
+        dobController.clear();
+        selectedDobForApi = null;
+      }
     } else {
       dobController.clear();
       selectedDobForApi = null;
@@ -423,7 +439,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         onEdit: () => _certSheet(editIndex: e.key),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    //const SizedBox(height: 5),
                     //
                     // // ── Work Experience ───────────────────────────────────────
                     // ProfileWidgets.sectionHeader(
@@ -690,20 +706,30 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> selectDob() async {
+    // Parse existing DOB from controller to use as initialDate
+    DateTime initialDate = DateTime(2000);
+    if (selectedDobForApi != null && selectedDobForApi!.isNotEmpty) {
+      try {
+        initialDate = DateTime.parse(selectedDobForApi!);
+      } catch (_) {}
+    } else if ((profileController.profileDataModel.studentDob ?? "").isNotEmpty) {
+      try {
+        initialDate = DateTime.parse(
+          profileController.profileDataModel.studentDob!,
+        );
+      } catch (_) {}
+    }
+
     final pickedDate = await showDatePicker(
       context: context,
-      // initialDate: DateTime(
-      //   DateTime.now().year - 18,
-      //   DateTime.now().month,
-      //   DateTime.now().day,
-      // ),
+      initialDate: initialDate,
       firstDate: DateTime(1950),
-      initialDate: DateTime(2000),
       lastDate: DateTime.now(),
       helpText: "SELECT DATE OF BIRTH",
       cancelText: "CANCEL",
       confirmText: "CONFIRM",
-
+      // ← This is the key fix: forces calendar view, hides the text input field
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -726,14 +752,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 side: const BorderSide(color: AppColors.fieldBorderColor),
               ),
             ),
-
             colorScheme: const ColorScheme.dark(
-              primary: AppColors.primaryColor, // selected day
-              onPrimary: AppColors.blackColor, // selected day text
-              surface: AppColors.fieldBgColor, // dialog bg
-              onSurface: AppColors.whiteColor, // default text
+              primary: AppColors.primaryColor,
+              onPrimary: AppColors.blackColor,
+              surface: AppColors.fieldBgColor,
+              onSurface: AppColors.whiteColor,
             ),
-
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.primaryColor,
@@ -744,65 +768,39 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 ),
               ),
             ),
-            inputDecorationTheme: InputDecorationTheme(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(
-                    color: AppColors.fieldBorderColor,
-                  ),
-                ),
-
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(
-                    color: AppColors.primaryColor,
-                  ),
-              ),
-            ),
-
             datePickerTheme: DatePickerThemeData(
               backgroundColor: AppColors.fieldBgColor,
-
               headerBackgroundColor: AppColors.fieldBgColor,
-
               headerForegroundColor: AppColors.secondaryColor,
-
               dividerColor: AppColors.fieldBorderColor,
-
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
               ),
-
               todayBorder: const BorderSide(
                 color: AppColors.primaryColor,
                 width: 1.5,
               ),
-
               todayForegroundColor: WidgetStateProperty.all(
                 AppColors.primaryColor,
               ),
-
               dayForegroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
                   return AppColors.blackColor;
                 }
                 return AppColors.whiteColor;
               }),
-
               dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
                   return AppColors.primaryColor;
                 }
                 return Colors.transparent;
               }),
-
               yearForegroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
                   return AppColors.blackColor;
                 }
                 return AppColors.whiteColor;
               }),
-
               yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
                   return AppColors.primaryColor;
@@ -818,19 +816,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
     if (pickedDate != null) {
       dobController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
-
       selectedDobForApi = DateFormat('yyyy-MM-dd').format(pickedDate);
-
-      setState(() {});
-    }
-
-    if (pickedDate != null) {
-      /// UI Format
-      dobController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
-
-      /// API Format
-      selectedDobForApi = DateFormat('yyyy-MM-dd').format(pickedDate);
-
       setState(() {});
     }
   }

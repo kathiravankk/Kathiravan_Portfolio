@@ -90,26 +90,21 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      color: AppColors.primaryColor,
-      backgroundColor: AppColors.appBgColor_2,
-      onRefresh: () async {
-        await getHomeScreenData();
-        await getCreditData();
-      },
-      child: Obx(
-        () =>
-            profileController.profileDataLoading ||
-                dashboardController.getCategoryLoading ||
-                dashboardController.recommentedInternshipLoading ||
-                registerController.creditDataLoading
-            // ? Center(
-            //     child: CupertinoActivityIndicator(
-            //       color: AppColors.secondaryColor,
-            //     ),
-            //   )
-            ? AppAlertUtils.customLoader()
-            : Container(
+    return Obx(
+      () =>
+          profileController.profileDataLoading ||
+              dashboardController.getCategoryLoading ||
+              dashboardController.recommentedInternshipLoading ||
+              registerController.creditDataLoading
+          ? AppAlertUtils.customLoader()
+          : RefreshIndicator(
+            color: AppColors.primaryColor,
+            backgroundColor: AppColors.appBgColor_2,
+            onRefresh: () async {
+              await getHomeScreenData();
+              await getCreditData();
+            },
+            child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(AssetImages.appBackgroundImg),
@@ -230,7 +225,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   ),
                 ),
               ),
-      ),
+          ),
     );
   }
 
