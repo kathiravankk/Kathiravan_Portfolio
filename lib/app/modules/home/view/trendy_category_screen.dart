@@ -106,7 +106,8 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
               ),
               alignment: Alignment.center,
               padding: EdgeInsets.all(5),
-              child: buildAnimatedCount(categoryCount!),
+              child:
+              buildAnimatedCount(categoryCount!),
               // Text(
               //   textAlign: TextAlign.center,
               //   categoryCount.toString(),
@@ -116,7 +117,6 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
               //     weight: FontWeight.w700,
               //   ),
               // ),
-
               // Image.asset(
               //   AppFunctions.getCategoryImage(service: categoryName),
               //   height: 40,

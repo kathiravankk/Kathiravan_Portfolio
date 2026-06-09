@@ -49,7 +49,7 @@ class CustomTextField extends StatelessWidget {
           labelText,
           style: AppStyles.customTextStyle(
             color: AppColors.whiteColor,
-            size: 14,
+            size: 15,
             weight: FontWeight.w700,
           ),
         ),

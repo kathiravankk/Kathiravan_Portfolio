@@ -7,8 +7,9 @@ typedef TappedCallback = dynamic Function(int value);
 
 class CustomNavBar extends StatefulWidget {
   final List<Widget>? screens;
+  final GlobalKey<ScaffoldState>? scaffoldKey;   // <-- add this
 
-  const CustomNavBar({super.key, this.screens});
+  const CustomNavBar({super.key, this.screens, this.scaffoldKey});
 
   @override
   State<CustomNavBar> createState() => _CustomNavBarState();
@@ -20,109 +21,48 @@ class _CustomNavBarState extends State<CustomNavBar> {
   Widget getTabWidget(int index) {
     return widget.screens![index];
   }
-
+  @override
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: currentIndex,
       builder: (context, int value, child) {
-        return Column(
+        return Stack(
           children: [
-            Expanded(child: getTabWidget(value)),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                bottom: 20,
-              ),
-              child: Container(
-                height: 75,
-                decoration: BoxDecoration(
-                  color: AppColors.fieldBgColor,
-                  borderRadius: BorderRadius.circular(40),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.black.withOpacity(.4),
-                  //     blurRadius: 20,
-                  //     offset: const Offset(0, 8),
-                  //   ),
-                  // ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _navItem(
-                      index: 0,
-                      icon: Icons.home_rounded,
-                      label: "Home",
-                      selectedIndex: value,
-                    ),
-                    _navItem(
-                      index: 1,
-                      icon: CupertinoIcons.location_fill,
-                      label: "Applied",
-                      selectedIndex: value,
-                    ),
-                    _navItem(
-                      index: 2,
-                      icon: Icons.work,
-                      label: "Internships",
-                      selectedIndex: value,
-                    ),
-                    _navItem(
-                      index: 3,
-                      icon: Icons.person,
-                      label: "Profile",
-                      selectedIndex: value,
-                    ),
-                  ],
-                ),
-              ),
+            // Screen content fills full height
+            Positioned.fill(
+              child: getTabWidget(value),
             ),
-            // Container(
-            //   decoration: const BoxDecoration(
-            //     color: AppColors.navBarColor,
-            //     // borderRadius: BorderRadius.only(
-            //     //   topRight: Radius.circular(43),
-            //     //   topLeft: Radius.circular(43),
-            //     // ),
-            //     // boxShadow: [
-            //     //   BoxShadow(
-            //     //       color: Colors.black38,
-            //     //       spreadRadius: 0,
-            //     //       blurRadius: 10)
-            //     // ]
-            //   ),
-            //   padding: const EdgeInsets.only(top: 10, bottom: 10),
-            //   child: BottomNavigationBar(
-            //     elevation: 0,
-            //     currentIndex: value,
-            //     type: BottomNavigationBarType.fixed,
-            //     backgroundColor: AppColors.transparentColor,
-            //     showSelectedLabels: true,
-            //     showUnselectedLabels: true,
-            //     selectedItemColor: AppColors.secondaryColor,
-            //     unselectedItemColor: Colors.white,
-            //     useLegacyColorScheme: false,
-            //     iconSize: 25,
-            //     selectedLabelStyle: AppStyles.customTextStyle(
-            //       size: 12,
-            //       weight: FontWeight.w500,
-            //       color: AppColors.secondaryColor,
-            //     ),
-            //     unselectedLabelStyle: AppStyles.customTextStyle(
-            //       size: 12,
-            //       weight: FontWeight.w500,
-            //       color: AppColors.whiteColor,
-            //     ),
-            //     items: _appNavBarsItems(),
-            //     onTap: (index) {
-            //       setState(() {
-            //         currentIndex.value = index;
-            //       });
-            //     },
-            //   ),
-            // ),
+            // Nav bar floats at the bottom, fully transparent background
+            Positioned(
+              right: 20,
+              left: 20,
+              bottom: 20,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+               height: 75,
+                decoration: BoxDecoration(
+                 color: AppColors.fieldBgColor,
+                 borderRadius: BorderRadius.circular(40),
+                 boxShadow: [
+                   BoxShadow(
+                     color: Colors.black.withValues(alpha: 0.3),
+                     blurRadius: 15,
+                     offset: const Offset(0, 5),
+                   ),
+                 ],
+               ),
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                 children: [
+                   _navItem(index: 0, icon: Icons.home_rounded, label: "Home", selectedIndex: value),
+                   _navItem(index: 1, icon: CupertinoIcons.location_fill, label: "Applied", selectedIndex: value),
+                   _navItem(index: 2, icon: Icons.work, label: "Internships", selectedIndex: value),
+                   _navItem(index: 3, icon: Icons.person, label: "Profile", selectedIndex: value),
+                 ],
+               ),
+                              ),
+            ),
           ],
         );
       },

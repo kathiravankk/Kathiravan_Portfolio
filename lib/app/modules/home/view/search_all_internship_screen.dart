@@ -59,12 +59,27 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _scrollController.addListener(_onScroll);
+  //   getFilterOption();
+  //   _fetchPage(page: 1, isNewSearch: true);
+  // }
+
+  String screenTitle = "Search Internships";
+
   @override
   void initState() {
     super.initState();
+    screenTitle = Get.arguments?["screenTitle"] ?? "Search Internships";
+
     _scrollController.addListener(_onScroll);
-    getFilterOption();
-    _fetchPage(page: 1, isNewSearch: true);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await getFilterOption();
+      await _fetchPage(page: 1, isNewSearch: true);
+    });
   }
 
   @override
@@ -222,7 +237,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
             onPressed: () => Get.back(),
           ),
           title: Text(
-            'Search Internships',
+            screenTitle ?? "Search Internships",
             style: AppStyles.customTextStyle(
               size: 18,
               color: AppColors.whiteColor,
@@ -286,7 +301,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
                 );
               },
               isSaved: item.isSaved ?? false,
-              position: item.noOfPosition ??0,
+              position: item.noOfPosition ?? 0,
               // saveFunc: () =>
               //     dashboardController.searchFilterSaveFunc(index),
               // saveFunc: () async {

@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                   },
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
 
                 /// ---------------- OTP / BUTTON SECTION ----------------
                 Obx(() {
@@ -175,6 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           buttonFunction: loginController.loginVerifyLoading
                               ? () {}
                               : () async {
+                                  FocusScope.of(context).unfocus();
                                   await verifyOtpFunc();
                                 },
                           buttonText: loginController.loginVerifyLoading
@@ -342,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mobileNumber: mobileController.text,
         otpNumber: otpController.text,
         userType: loginController.commonPostModel.userType ?? "student",
-        fcmToken: fcmToken ?? ""
+        fcmToken: fcmToken ?? "",
       );
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
