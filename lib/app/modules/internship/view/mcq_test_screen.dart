@@ -119,16 +119,13 @@ class _McqTestScreenState extends State<McqTestScreen> {
       if (internController.getResponseCode() == 200 ||
           internController.getResponseCode() == 201 ||
           internController.testResultModel.success == true) {
-
         Map<String, dynamic> testData = {
           "jobId": jobId,
           "testresult": {
             "correct_answer":
-            internController.testResultModel.testResult?.correctAnswer,
-            "score":
-            internController.testResultModel.testResult?.score,
-            "stars":
-            internController.testResultModel.testResult?.stars,
+                internController.testResultModel.testResult?.correctAnswer,
+            "score": internController.testResultModel.testResult?.score,
+            "stars": internController.testResultModel.testResult?.stars,
           },
         };
 
@@ -140,11 +137,9 @@ class _McqTestScreenState extends State<McqTestScreen> {
 
         /// ⚠️ IMPORTANT: if this method navigates → loader must already be hidden
         await saveTestResult(testData: testData);
-
       } else {
         throw Exception("Validation failed");
       }
-
     } catch (error) {
       if (isLoaderVisible) {
         AiLoadingWidget.hide(context);
@@ -155,7 +150,6 @@ class _McqTestScreenState extends State<McqTestScreen> {
         internController.getResponseCode(),
         "Something went wrong!, Try again later!",
       );
-
     } finally {
       /// safety fallback (won’t double hide)
       if (isLoaderVisible) {
@@ -223,7 +217,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
             ),
             Expanded(
               child: Text(
-                value ?? "",
+               value ?? "",
                 style: AppStyles.customTextStyle(
                   size: 12,
                   color: AppColors.whiteColor,
@@ -372,24 +366,32 @@ class _McqTestScreenState extends State<McqTestScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      spacing: 15,
+                      children: [
+                        Text(
+                          question.question ?? "",
+                          style: AppStyles.customTextStyle(
+                            lineSpace: 1.3,
+                            size: 16,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
 
-                Text(
-                  question.question ?? "",
-                  style: AppStyles.customTextStyle(
-                    lineSpace: 1.3,
-                    size: 16,
-                    color: AppColors.whiteColor,
-                    weight: FontWeight.w700,
+                        optionTile("A", question.options?.a),
+                        optionTile("B", question.options?.b),
+                        optionTile("C", question.options?.c),
+                        optionTile("D", question.options?.d),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 5),
 
-                optionTile("A", question.options?.a),
-                optionTile("B", question.options?.b),
-                optionTile("C", question.options?.c),
-                optionTile("D", question.options?.d),
-
-                const Spacer(),
+                //const Spacer(),
                 Obx(
                   () => CustomButtonWidget(
                     isLoading:

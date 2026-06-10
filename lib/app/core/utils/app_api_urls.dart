@@ -69,8 +69,9 @@ class AppApiUrls {
     String role,
     int page,
     int limit,
+    String days,
   ) =>
-      "${baseUrl}jobpost/student/getalljobs?companystate=$state&companycity=$city&studentqualification=$qualification&internshipduration=$duration&internshipstipend=$stipend&internshipmode=$mode&roletype=$role&limit=10&page=$page";
+      "${baseUrl}jobpost/student/getalljobs?companystate=$state&companycity=$city&studentqualification=$qualification&internshipduration=$duration&internshipstipend=$stipend&internshipmode=$mode&roletype=$role&limit=10&page=$page&days=$days";
 
   // PROFILE FLOW
   static String getProfileData = "${baseUrl}student/getById";

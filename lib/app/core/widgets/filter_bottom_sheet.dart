@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/counter_text_field.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'filter_chip_widget.dart';
@@ -20,15 +21,14 @@ class FilterBottomSheet extends StatefulWidget {
 
   /// Called when user taps "Apply Filter"
   final void Function({
-    required String companyState,
-    required String companyCity,
-    required String qualification,
-    required String duration,
-    required String stipend,
-    required String internshipMode,
-    // required String initialRole
-  })
-  onApply;
+  required String companyState,
+  required String companyCity,
+  required String qualification,
+  required String duration,
+  required String days,          // ← new
+  required String stipend,
+  required String internshipMode,
+  }) onApply;
 
   const FilterBottomSheet({
     super.key,
@@ -77,20 +77,24 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           .where((s) => s.isNotEmpty)
           .toList();
 
-  static const _stipendOptions = ['Paid', 'Unpaid'];
+  static const _stipendOptions = ['Stipend', 'Fee', 'Free'];
 
-  static const _modeOptions = ['Remote', 'On-Site', "Hybrid"];
+  static const _modeOptions = ['Remote', 'Onsite', "Hybrid"];
+
+  // ── add to _FilterBottomSheetState fields ──
+  bool _isDaysBased = false;   // false = Months, true = Days
+  int _durationCount = 0;      // replaces _durationValue
 
   // ── helpers ──────────────────────────────────────────────────────────────────
 
   bool get _isAnyFilterActive =>
       _selectedState != null ||
-      _selectedCity != null ||
-      _selectedQualification != null ||
-      _durationValue > 0 ||
-      _selectedStipend != null ||
-      _selectedMode != null ||
-      _selectedRole != null;
+          _selectedCity != null ||
+          _selectedQualification != null ||
+          _durationCount > 0 ||          // ← was _durationValue > 0
+          _selectedStipend != null ||
+          _selectedMode != null ||
+          _selectedRole != null;
 
   String _stipendApiValue(String? label) {
     return label != null
@@ -105,7 +109,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       _selectedState = null;
       _selectedCity = null;
       _selectedQualification = null;
-      _durationValue = 0;
+      _durationCount = 0;            // ← was _durationValue = 0
+      _isDaysBased = false;
       _selectedStipend = null;
       _selectedMode = null;
       _selectedRole = null;
@@ -117,8 +122,14 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       companyState: _selectedState ?? '',
       companyCity: _selectedCity ?? '',
       qualification: _selectedQualification ?? '',
-      duration: _durationValue > 0 ? _durationValue.toInt().toString() : '',
-      stipend: _stipendApiValue(_selectedStipend),
+      // send whichever is active, empty string for the other
+      duration: !_isDaysBased && _durationCount > 0
+          ? _durationCount.toString()
+          : '',
+      days: _isDaysBased && _durationCount > 0
+          ? _durationCount.toString()
+          : '',
+      stipend: _selectedStipend ?? '',
       internshipMode: _selectedMode ?? '',
     );
     Get.back();
@@ -134,13 +145,14 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     _selectedQualification = widget.initialQualification.isEmpty
         ? null
         : widget.initialQualification;
-    _durationValue = double.tryParse(widget.initialDuration) ?? 0;
+    _durationCount = int.tryParse(widget.initialDuration) ?? 0;
     // Map API stipend back to label
-    if (widget.initialStipend == '1') {
-      _selectedStipend = 'Paid';
-    } else if (widget.initialStipend == '0') {
-      _selectedStipend = 'Unpaid';
-    }
+    // if (widget.initialStipend == '1') {
+    //   _selectedStipend = 'Paid';
+    // } else if (widget.initialStipend == '0') {
+    //   _selectedStipend = 'Unpaid';
+    // }
+    _selectedStipend = widget.initialStipend.isEmpty ? null : widget.initialStipend;
     _selectedMode = widget.initialMode.isEmpty ? null : widget.initialMode;
     _selectedRole = widget.initialRole.isEmpty ? null : widget.initialRole;
   }
@@ -164,7 +176,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(15),
               child: Column(
-                spacing: 15,
+                spacing: 20,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 1. Company State
@@ -291,7 +303,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   Widget _buildDurationSlider() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 10,
       children: [
+        // ── Label + preview badge ─────────────────────────────────────────
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -303,79 +317,98 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 weight: FontWeight.w500,
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                // color: _durationValue > 0
-                //     ? AppColors.secondaryColor.withOpacity(0.2)
-                //     : AppColors.lightWhiteCont,
-                color: AppColors.fieldBgColor,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  // color: _durationValue > 0
-                  //     ? AppColors.primaryColor
-                  //     :AppColors.lightWhiteCont,
-                  color: AppColors.primaryColor,
+            if (_durationCount > 0)
+              Container(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.fieldBgColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.primaryColor),
+                ),
+                child: Text(
+                  _isDaysBased
+                      ? 'Up to $_durationCount day${_durationCount > 1 ? "s" : ""}'
+                      : 'Up to $_durationCount month${_durationCount > 1 ? "s" : ""}',
+                  style: AppStyles.customTextStyle(
+                    size: 10,
+                    color: AppColors.primaryColor,
+                    weight: FontWeight.w600,
+                  ),
                 ),
               ),
-              child: Text(
-                _durationValue > 0
-                    ? 'Up to ${_durationValue.toInt()} month${_durationValue > 1 ? "s" : ""}'
-                    : 'Any',
-                style: AppStyles.customTextStyle(
-                  size: 10,
-                  // color: _durationValue > 0
-                  //     ? AppColors.secondaryColor
-                  //     : AppColors.lightHintText,
-                  color: AppColors.primaryColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-            ),
           ],
         ),
-        const SizedBox(height: 10),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: AppColors.primaryColor,
-            inactiveTrackColor: AppColors.lightWhiteCont,
-            thumbColor: AppColors.primaryColor,
-            overlayColor: AppColors.primaryColor.withOpacity(0.15),
-            trackHeight: 4,
-            valueIndicatorColor: AppColors.primaryColor,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-          ),
-          child: Slider(
-            value: _durationValue,
-            min: 0,
-            max: 12,
-            divisions: 12,
-            label: _durationValue > 0 ? '${_durationValue.toInt()} mo' : 'Any',
-            onChanged: (v) => setState(() => _durationValue = v),
-          ),
-        ),
+
+        // ── Month / Days radio toggle ──────────────────────────────────────
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: 20,
           children: [
-            Text(
-              '0',
-              style: AppStyles.customTextStyle(
-                size: 11,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w400,
-              ),
-            ),
-            Text(
-              '12 months',
-              style: AppStyles.customTextStyle(
-                size: 11,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w400,
-              ),
-            ),
+            _radioOption(label: "Month", value: false),
+            _radioOption(label: "Days", value: true),
           ],
+        ),
+
+        // ── Counter input ─────────────────────────────────────────────────
+        CounterTextField(
+          value: _durationCount,
+          min: 0,
+          max: _isDaysBased ? 365 : 12,
+          hintText: _isDaysBased ? "Enter days" : "Enter months",
+          onChanged: (v) => setState(() => _durationCount = v),
         ),
       ],
+    );
+  }
+
+  Widget _radioOption({required String label, required bool value}) {
+    final bool isSelected = _isDaysBased == value;
+    return GestureDetector(
+      onTap: () => setState(() {
+        _isDaysBased = value;
+        _durationCount = 0; // reset count on toggle
+      }),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 6,
+        children: [
+          Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isSelected
+                    ? AppColors.primaryColor
+                    : AppColors.fieldBorderColor,
+                width: 2,
+              ),
+            ),
+            child: isSelected
+                ? Center(
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            )
+                : null,
+          ),
+          Text(
+            label,
+            style: AppStyles.customTextStyle(
+              size: 13,
+              color: isSelected
+                  ? AppColors.primaryColor
+                  : AppColors.whiteColor,
+              weight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

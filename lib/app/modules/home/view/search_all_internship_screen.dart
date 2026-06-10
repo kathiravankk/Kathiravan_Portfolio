@@ -34,6 +34,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
   static const int limit = 10;
   int _currentPage = 1;
   int _totalPages = 1;
+  String days = '';
 
   /// Accumulated list across all loaded pages
   final List<InternshipModel> internshipList = [];
@@ -50,12 +51,10 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
   String internshipMode = '';
 
   bool get _hasActiveFilters =>
-      companyState.isNotEmpty ||
-      companyCity.isNotEmpty ||
-      qualification.isNotEmpty ||
-      duration.isNotEmpty ||
-      stipend.isNotEmpty ||
-      internshipMode.isNotEmpty;
+      companyState.isNotEmpty || companyCity.isNotEmpty ||
+          qualification.isNotEmpty || duration.isNotEmpty ||
+          days.isNotEmpty ||           // ← new
+          stipend.isNotEmpty || internshipMode.isNotEmpty;
 
   // ── Lifecycle ────────────────────────────────────────────────────────────────
 
@@ -149,6 +148,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
       roleType: searchController.text.trim(),
       page: page,
       limit: limit,
+      days: days,
     );
 
     final model = dashboardController.internshipModel;
@@ -192,25 +192,26 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
           initialDuration: duration,
           initialStipend: stipend,
           initialMode: internshipMode,
-          onApply:
-              ({
-                required String companyState,
-                required String companyCity,
-                required String qualification,
-                required String duration,
-                required String stipend,
-                required String internshipMode,
-              }) {
-                setState(() {
-                  this.companyState = companyState;
-                  this.companyCity = companyCity;
-                  this.qualification = qualification;
-                  this.duration = duration;
-                  this.stipend = stipend;
-                  this.internshipMode = internshipMode;
-                });
-                getInternshipData();
-              },
+          onApply: ({
+            required String companyState,
+            required String companyCity,
+            required String qualification,
+            required String duration,
+            required String days,          // ← new
+            required String stipend,
+            required String internshipMode,
+          }) {
+            setState(() {
+              this.companyState = companyState;
+              this.companyCity = companyCity;
+              this.qualification = qualification;
+              this.duration = duration;
+              this.days = days;             // ← new
+              this.stipend = stipend;
+              this.internshipMode = internshipMode;
+            });
+            getInternshipData();
+          },
         ),
       ),
     );
@@ -425,9 +426,8 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
     if (companyCity.isNotEmpty) activeFilters['City'] = companyCity;
     if (qualification.isNotEmpty) activeFilters['Qual'] = qualification;
     if (duration.isNotEmpty) activeFilters['Duration'] = '$duration mo';
-    if (stipend.isNotEmpty) {
-      activeFilters['Stipend'] = stipend == '1' ? 'Paid' : 'Unpaid';
-    }
+    if (days.isNotEmpty) activeFilters['Days'] = '$days day(s)';  // ← new
+    if (stipend.isNotEmpty) activeFilters['Stipend'] = stipend;
     if (internshipMode.isNotEmpty) activeFilters['Mode'] = internshipMode;
 
     return SizedBox(
@@ -436,7 +436,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
         scrollDirection: Axis.horizontal,
         children: [
           ...activeFilters.entries.map(
-            (e) => Container(
+                (e) => Container(
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
@@ -464,6 +464,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
                 companyCity = '';
                 qualification = '';
                 duration = '';
+                days = '';           // ← new
                 stipend = '';
                 internshipMode = '';
               });

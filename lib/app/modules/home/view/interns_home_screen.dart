@@ -8,6 +8,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/category_card_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart'
     show CustomEmptyWidget;
 import 'package:internsharks/app/core/widgets/internship_card.dart';
@@ -90,6 +91,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
       qualification: "",
       roleType: "",
       stipend: "",
+      days: "",
     );
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
@@ -462,7 +464,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   Widget _buildRecommendedInternships() {
     return SizedBox(
-      height: 230,
+      height: 210,
       child:
           dashboardController.recommentedModel.internshipList != null &&
               dashboardController.recommentedModel.internshipList!.isNotEmpty
@@ -543,7 +545,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   Widget _buildSuggestedInternships() {
     return SizedBox(
-      height: 230,
+      height: 210,
       child:
           dashboardController.internshipModel.internship != null &&
               dashboardController.internshipModel.internship!.isNotEmpty
@@ -638,94 +640,42 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
   }
 
   Widget _buildTrendyCategories() {
+    // 8 gradient presets cycling for dynamic categories
+    final List<List<Color>> gradients = [
+      [const Color(0xFF1565C0), const Color(0xFF1E88E5)],
+      [const Color(0xFF1B5E20), const Color(0xFF43A047)],
+      [const Color(0xFF827717), const Color(0xFFAFB42B)],
+      [const Color(0xFF4A148C), const Color(0xFF8E24AA)],
+      [const Color(0xFFBF360C), const Color(0xFFEF6C00)],
+      [const Color(0xFF006064), const Color(0xFF00ACC1)],
+      [const Color(0xFF880E4F), const Color(0xFFE91E63)],
+      [const Color(0xFF212121), const Color(0xFF546E7A)],
+    ];
+
     return SizedBox(
       height: 130,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: dashboardController.categoryListModel.categoryList!.length,
-        itemBuilder: (context, index) => GestureDetector(
-          onTap: () {
-            AppFunctions.navigateScreen(
-              context,
-              AppRoutes.categoryWiseInternshipScreen,
-              arguments: {
-                "categoryData":
-                    dashboardController.categoryListModel.categoryList![index],
-              },
-            );
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 15),
-            width: 140,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              //color: AppColors.transparentColor,
-              color: AppColors.primaryColor.withValues(alpha: .05),
-              borderRadius: BorderRadius.circular(23),
-              border: Border.all(
-                //color: AppColors.primaryColor.withValues(alpha: 0.1),
-                color: AppColors.primaryColor,
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 20,
-              children: [
-                // SizedBox(
-                //   height: 35,
-                //   width: 35,
-                //   child: Text(
-                //     dashboardController
-                //         .categoryListModel
-                //         .categoryList![index]
-                //         .count
-                //         .toString(),
-                //     textAlign: TextAlign.center,
-                //     style: AppStyles.customTextStyle(
-                //       size: 20,
-                //       color: AppColors.whiteColor,
-                //       weight: FontWeight.w700,
-                //       fontFamily: "Roboto",
-                //     ),
-                //   ),
-                // ),
-                // buildAnimatedCount(
-                //   dashboardController
-                //           .categoryListModel
-                //           .categoryList![index]
-                //           .count ??
-                //       0,
-                // ),
-                Image.asset(
-                  AppFunctions.getCategoryImage(service: dashboardController
-                      .categoryListModel
-                      .categoryList![index]
-                      .categoryName ??
-                      ""),
-                  height: 40,
-                  width: 40,
-                  color: AppColors.whiteColor,
-                ),
-                Text(
-                  dashboardController
-                          .categoryListModel
-                          .categoryList![index]
-                          .categoryName ??
-                      "",
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  style: AppStyles.customTextStyle(
-                    size: 12,
-                    lineSpace: 1.4,
-                    color: AppColors.primaryColor,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        itemBuilder: (context, index) {
+          final category =
+              dashboardController.categoryListModel.categoryList![index];
+          // Cycle through 8 gradients if more than 8 categories
+          final colors = gradients[index % gradients.length];
+
+          return CategoryCard(
+            colors: colors,
+            count: category.count ?? 0,
+            categoryName: category.categoryName ?? "",
+            onTap: () {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.categoryWiseInternshipScreen,
+                arguments: {"categoryData": category},
+              );
+            },
+          );
+        },
       ),
     );
   }

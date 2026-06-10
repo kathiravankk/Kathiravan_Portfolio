@@ -262,6 +262,7 @@ class DashboardProvider {
     required int page,
     required int limit,
     required String roleType,
+    required String days,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
@@ -279,6 +280,7 @@ class DashboardProvider {
           roleType,
           page,
           limit,
+          days
         ),
         options: Options(headers: header),
       );

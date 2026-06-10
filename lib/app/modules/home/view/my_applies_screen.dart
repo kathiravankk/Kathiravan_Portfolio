@@ -78,26 +78,37 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
               ? AppAlertUtils.customLoader()
               : appliedList!.isNotEmpty
               ? RefreshIndicator(
-            backgroundColor: AppColors.appBgColor_2,
-            color: AppColors.primaryColor,
-            onRefresh: () => getInternshipData(),
-                child: ListView.separated(
+                  backgroundColor: AppColors.appBgColor_2,
+                  color: AppColors.primaryColor,
+                  onRefresh: () => getInternshipData(),
+                  child: ListView.separated(
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     itemCount: appliedList!.length,
                     shrinkWrap: true,
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 100, top: 20),
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: 100,
+                      top: 20,
+                    ),
                     itemBuilder: (context, index) {
                       final item = appliedList![index];
                       return AppliesInternshipCard(
                         internshipType: item.jobData != null
                             ? item.jobType ?? "NA"
                             : "NA",
-                        viewFunc: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.applicationStatusScreen,
-                            arguments: {"appliedData": item},
-                          );
+                        viewFunc: item.jobData != null
+                            ? () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.applicationStatusScreen,
+                                  arguments: {"appliedData": item},
+                                );
+                              }
+                            : () {
+                                AppAlertUtils.showToast(
+                                  message: "No Job Data Available! (or) Its Existed!",isError: true
+                                );
                         },
                         role: item.jobData != null
                             ? item.jobData!.roleType
@@ -124,7 +135,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
                       );
                     },
                   ),
-              )
+                )
               : CustomEmptyWidget(),
         ),
       ),

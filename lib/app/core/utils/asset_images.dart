@@ -39,6 +39,7 @@ class AssetImages {
   static const String chatScreenBg = "assets/images/chat_screen_bg.jpeg";
   static const String profileStepIcon = "assets/images/profile_step_icon.png";
   static const String kycStepIcon = "assets/images/kyc_step_icon.png";
+  static const String halftoneOverlay = "assets/images/halftone_overlay_img.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

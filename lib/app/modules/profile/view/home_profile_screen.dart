@@ -682,7 +682,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                         }
 
                         return Container(
-                          height: 180,
+                          height: 130,
                           color: AppColors.thirdColor,
                           child: Center(
                             child: CircularProgressIndicator(
@@ -704,8 +704,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
               ),
 
         Positioned(
-          top: 10,
-          right: 10,
+          bottom: 5,
           left: 10,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
