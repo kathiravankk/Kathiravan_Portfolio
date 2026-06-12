@@ -40,6 +40,9 @@ class AssetImages {
   static const String profileStepIcon = "assets/images/profile_step_icon.png";
   static const String kycStepIcon = "assets/images/kyc_step_icon.png";
   static const String halftoneOverlay = "assets/images/halftone_overlay_img.png";
+  static const String choosePathBg = "assets/images/choose_path_bg.png";
+  static const String studentPathIcon = "assets/images/student_path_icon.png";
+  static const String recruiterPathIcon = "assets/images/recruiter_path_icon.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

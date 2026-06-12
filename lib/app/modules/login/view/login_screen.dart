@@ -14,14 +14,14 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 import '../../../data/repositories/local_storage_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class StudentLoginScreen extends StatefulWidget {
+  const StudentLoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<StudentLoginScreen> createState() => _StudentLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _StudentLoginScreenState extends State<StudentLoginScreen> {
   final LoginController loginController = Get.find<LoginController>();
 
   final TextEditingController mobileController = TextEditingController();
@@ -377,7 +377,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         final token = await LocalStorageService.getToken();
         debugPrint(token);
-        Get.offAllNamed(AppRoutes.dashBoardScreen);
+        Get.offAllNamed(AppRoutes.studentDashBoardScreen);
       } else {
         AppFunctions.apiErrorHandling(
           loginController.getResponseCode(),

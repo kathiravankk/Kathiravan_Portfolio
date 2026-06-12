@@ -12,14 +12,14 @@ import 'package:internsharks/app/modules/internship/view/my_internship_screen.da
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+class StudentDashboardScreen extends StatefulWidget {
+  const StudentDashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<StudentDashboardScreen> createState() => _StudentDashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override

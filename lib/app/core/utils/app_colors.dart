@@ -96,4 +96,14 @@ static const Color iconContColor = Color(0xFF192226);
   static const Color appBlue = Color(0xFF01cdcd);
   static const Color appYellow = Color(0xFFffde5f);
 
+  ///Recruiter Flow
+
+  static const Color containerBorderColor = Color.fromRGBO(255, 255, 255, 0.1);
+  static const Color contShadowColor = Color.fromRGBO(1, 205, 205, 0.3);
+  static const Color containerBgColor = Color.fromRGBO(255, 255, 255, 0.03);
+  static const Color containerLightTextColor = Color.fromRGBO(213, 213, 213, 1);
+  static const Color creditBorderColor2 = Color.fromRGBO(255, 255, 255, 0.3);
+  static const Color pathBorderColor = Color.fromRGBO(255, 255, 255, 0.1);
+  static const Color pathLightTextColor = Color.fromRGBO(156, 163, 175, 1);
+
 }

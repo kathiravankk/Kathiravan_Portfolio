@@ -76,7 +76,7 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
                 onConfirm: () {
                   AppFunctions.navigateInitialScreen(
                     context,
-                    AppRoutes.dashBoardScreen,
+                    AppRoutes.studentDashBoardScreen,
                   );
                 },
               );

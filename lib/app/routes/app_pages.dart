@@ -34,6 +34,8 @@ import 'package:internsharks/app/modules/login/view/register_resume_upload_scree
 import 'package:internsharks/app/modules/login/view/resume_template_view_screen.dart';
 import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/choose_path_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/recruiter_login_screen.dart';
 import '../modules/home/view/account_setting_screen.dart';
 import '../modules/home/view/application_status_screen.dart';
 import '../modules/profile/view/email_update_screen.dart';
@@ -64,7 +66,7 @@ class AppPages {
       page: () => SplashScreen(),
       bindings: [LoginBindings()],
     ),
-    appPage(name: AppRoutes.loginScreen, page: () => LoginScreen()),
+    appPage(name: AppRoutes.studentLoginScreen, page: () => StudentLoginScreen()),
 
     appPage(
       name: AppRoutes.registerResumeUploadScreen,
@@ -125,8 +127,8 @@ class AppPages {
       bindings: [ProfileBindings()],
     ),
     appPage(
-      name: AppRoutes.dashBoardScreen,
-      page: () => DashboardScreen(),
+      name: AppRoutes.studentDashBoardScreen,
+      page: () => StudentDashboardScreen(),
       bindings: [DashboardBindings(), RegisterBindings(), ProfileBindings()],
     ),
     appPage(
@@ -229,5 +231,12 @@ class AppPages {
     appPage(name: AppRoutes.buyCreditsScreen, page: () => BuyCreditScreen(), bindings: [DashboardBindings()]),
     appPage(name: AppRoutes.homeProfileScreen, page: () => HomeProfileScreen()),
     appPage(name: AppRoutes.myAppliesScreen, page: () => MyAppliesScreen()),
+
+
+    /// RECRUITER FLOW SCREENS
+
+    appPage(name: AppRoutes.choosePathScreen, page: () => ChoosePathScreen()),
+    appPage(name: AppRoutes.recruiterLoginScreen, page: () => RecruiterLoginScreen()),
+
   ];
 }

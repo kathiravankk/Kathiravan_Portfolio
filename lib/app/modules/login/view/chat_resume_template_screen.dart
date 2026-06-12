@@ -723,7 +723,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
         if (mounted) {
           AppFunctions.navigateInitialScreen(
             context,
-            AppRoutes.dashBoardScreen,
+            AppRoutes.studentDashBoardScreen,
           );
         }
       }
