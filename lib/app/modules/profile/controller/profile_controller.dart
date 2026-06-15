@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
 import 'package:internsharks/app/data/models/home/banner_like_model.dart';
@@ -115,11 +115,11 @@ class ProfileController extends GetxController {
 
   // Model
 
-  final _commonPostModel = CommonPostModel().obs;
+  final _commonPostModel = CommonLoginOtpModel().obs;
 
-  CommonPostModel get commonPostModel => _commonPostModel.value;
+  CommonLoginOtpModel get commonPostModel => _commonPostModel.value;
 
-  set commonPostModel(CommonPostModel value) => _commonPostModel.value = value;
+  set commonPostModel(CommonLoginOtpModel value) => _commonPostModel.value = value;
 
   Future<void> sendUpdateMobileOtp({required String mobileNo}) async {
     try {

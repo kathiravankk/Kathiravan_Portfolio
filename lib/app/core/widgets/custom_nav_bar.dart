@@ -6,10 +6,16 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 typedef TappedCallback = dynamic Function(int value);
 
 class CustomNavBar extends StatefulWidget {
+  final bool isStudentFlow;
   final List<Widget>? screens;
-  final GlobalKey<ScaffoldState>? scaffoldKey;   // <-- add this
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
-  const CustomNavBar({super.key, this.screens, this.scaffoldKey});
+  const CustomNavBar({
+    super.key,
+    this.screens,
+    this.scaffoldKey,
+    this.isStudentFlow = true,
+  });
 
   @override
   State<CustomNavBar> createState() => _CustomNavBarState();
@@ -21,6 +27,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
   Widget getTabWidget(int index) {
     return widget.screens![index];
   }
+
   @override
   @override
   Widget build(BuildContext context) {
@@ -30,9 +37,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
         return Stack(
           children: [
             // Screen content fills full height
-            Positioned.fill(
-              child: getTabWidget(value),
-            ),
+            Positioned.fill(child: getTabWidget(value)),
             // Nav bar floats at the bottom, fully transparent background
             Positioned(
               right: 20,
@@ -40,28 +45,72 @@ class _CustomNavBarState extends State<CustomNavBar> {
               bottom: 20,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-               height: 75,
+                height: 75,
                 decoration: BoxDecoration(
-                 color: AppColors.fieldBgColor,
-                 borderRadius: BorderRadius.circular(40),
-                 boxShadow: [
-                   BoxShadow(
-                     color: Colors.black.withValues(alpha: 0.3),
-                     blurRadius: 15,
-                     offset: const Offset(0, 5),
-                   ),
-                 ],
-               ),
-               child: Row(
-                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                 children: [
-                   _navItem(index: 0, icon: Icons.home_rounded, label: "Home", selectedIndex: value),
-                   _navItem(index: 1, icon: CupertinoIcons.location_fill, label: "Applied", selectedIndex: value),
-                   _navItem(index: 2, icon: Icons.work, label: "Internships", selectedIndex: value),
-                   _navItem(index: 3, icon: Icons.person, label: "Profile", selectedIndex: value),
-                 ],
-               ),
-                              ),
+                  color: AppColors.fieldBgColor,
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: widget.isStudentFlow
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _navItem(
+                            index: 0,
+                            icon: Icons.home_rounded,
+                            label: "Home",
+                            selectedIndex: value,
+                          ),
+                          _navItem(
+                            index: 1,
+                            icon: CupertinoIcons.location_fill,
+                            label: "Applied",
+                            selectedIndex: value,
+                          ),
+                          _navItem(
+                            index: 2,
+                            icon: Icons.work,
+                            label: "Internships",
+                            selectedIndex: value,
+                          ),
+                          _navItem(
+                            index: 3,
+                            icon: Icons.person,
+                            label: "Profile",
+                            selectedIndex: value,
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _navItem(
+                            index: 0,
+                            icon: Icons.home_rounded,
+                            label: "Home",
+                            selectedIndex: value,
+                          ),
+                          _navItem(
+                            index: 1,
+                            icon: CupertinoIcons.location_fill,
+                            label: "My Post",
+                            selectedIndex: value,
+                          ),
+                          _navItem(
+                            index: 3,
+                            icon: Icons.person,
+                            label: "Profile",
+                            selectedIndex: value,
+                          ),
+                        ],
+                      ),
+              ),
             ),
           ],
         );
@@ -87,8 +136,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
         width: isSelected ? 140 : 55,
         height: 55,
         decoration: BoxDecoration(
-          color:
-          isSelected ? AppColors.contColor2 : AppColors.fieldBgColor,
+          color: isSelected ? AppColors.contColor2 : AppColors.fieldBgColor,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Row(
@@ -105,20 +153,17 @@ class _CustomNavBarState extends State<CustomNavBar> {
                     : AppColors.contColor2,
                 boxShadow: isSelected
                     ? [
-                  BoxShadow(
-                    color: AppColors.primaryColor
-                        .withValues(alpha: .45),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  )
-                ]
+                        BoxShadow(
+                          color: AppColors.primaryColor.withValues(alpha: .45),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ]
                     : [],
               ),
               child: Icon(
                 icon,
-                color: isSelected
-                    ? AppColors.blackColor
-                    : AppColors.whiteColor,
+                color: isSelected ? AppColors.blackColor : AppColors.whiteColor,
                 size: 24,
               ),
             ),
@@ -144,38 +189,38 @@ class _CustomNavBarState extends State<CustomNavBar> {
     );
   }
 
-  List<BottomNavigationBarItem> _appNavBarsItems() {
-    return [
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.home_outlined, color: AppColors.whiteColor),
-        label: "Home",
-        activeIcon: Icon(Icons.home, color: AppColors.secondaryColor),
-        tooltip: "Home"
-      ),
-      const BottomNavigationBarItem(
-        icon: Icon(CupertinoIcons.location, color: AppColors.whiteColor),
-        activeIcon: Icon(
-          CupertinoIcons.location_fill,
-          color: AppColors.secondaryColor,
-        ),
-        label: ("Applied"),
-        tooltip: "Applied"
-      ),
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.file_copy_outlined, color: AppColors.whiteColor),
-        activeIcon: Icon(
-          Icons.file_copy_sharp,
-          color: AppColors.secondaryColor,
-        ),
-        label: ("Internships"),
-        tooltip: "Internships"
-      ),
-      const BottomNavigationBarItem(
-        icon: Icon(Icons.person_outline_sharp, color: AppColors.whiteColor),
-        activeIcon: Icon(Icons.person, color: AppColors.secondaryColor),
-        label: ("Profile"),
-        tooltip: "Profile"
-      ),
-    ];
-  }
+  // List<BottomNavigationBarItem> _appNavBarsItems() {
+  //   return [
+  //     const BottomNavigationBarItem(
+  //       icon: Icon(Icons.home_outlined, color: AppColors.whiteColor),
+  //       label: "Home",
+  //       activeIcon: Icon(Icons.home, color: AppColors.secondaryColor),
+  //       tooltip: "Home"
+  //     ),
+  //     const BottomNavigationBarItem(
+  //       icon: Icon(CupertinoIcons.location, color: AppColors.whiteColor),
+  //       activeIcon: Icon(
+  //         CupertinoIcons.location_fill,
+  //         color: AppColors.secondaryColor,
+  //       ),
+  //       label: ("Applied"),
+  //       tooltip: "Applied"
+  //     ),
+  //     const BottomNavigationBarItem(
+  //       icon: Icon(Icons.file_copy_outlined, color: AppColors.whiteColor),
+  //       activeIcon: Icon(
+  //         Icons.file_copy_sharp,
+  //         color: AppColors.secondaryColor,
+  //       ),
+  //       label: ("Internships"),
+  //       tooltip: "Internships"
+  //     ),
+  //     const BottomNavigationBarItem(
+  //       icon: Icon(Icons.person_outline_sharp, color: AppColors.whiteColor),
+  //       activeIcon: Icon(Icons.person, color: AppColors.secondaryColor),
+  //       label: ("Profile"),
+  //       tooltip: "Profile"
+  //     ),
+  //   ];
+  // }
 }

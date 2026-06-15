@@ -183,13 +183,11 @@ class _SplashScreenState extends State<SplashScreen> {
               left: 30,
               right: 30,
               child: SliderButtonWidget(
-                onCompleted: () async {
                   //await _setupAndNavigate();
                   onCompleted: () async {
                     await _getAndStoreFCMToken();
-                    Get.offAllNamed(AppRoutes.splashScreen);
-                  };
-                },
+                    Get.offAllNamed(AppRoutes.choosePathScreen);
+                  }
               ),
             ),
             // Positioned(

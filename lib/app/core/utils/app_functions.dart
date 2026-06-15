@@ -38,7 +38,7 @@ class AppFunctions {
 
   static void logOutFunc(BuildContext context) {
     LocalStorageService.clearUser();
-    AppFunctions.navigateInitialScreen(context, AppRoutes.studentLoginScreen);
+    AppFunctions.navigateInitialScreen(context, AppRoutes.choosePathScreen);
   }
 
   static void apiErrorHandling(int responseCode, String message) {

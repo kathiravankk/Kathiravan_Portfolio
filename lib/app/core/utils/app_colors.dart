@@ -105,5 +105,7 @@ static const Color iconContColor = Color(0xFF192226);
   static const Color creditBorderColor2 = Color.fromRGBO(255, 255, 255, 0.3);
   static const Color pathBorderColor = Color.fromRGBO(255, 255, 255, 0.1);
   static const Color pathLightTextColor = Color.fromRGBO(156, 163, 175, 1);
+  static const Color greyTextColor = Color.fromRGBO(148, 163, 184, 1);
+  static const Color screenDivColor = Color(0xff9BEA93);
 
 }

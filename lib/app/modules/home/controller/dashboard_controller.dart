@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
-import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/applied_internship_model.dart';
 import 'package:internsharks/app/data/models/home/category_list_model.dart';
@@ -651,12 +651,12 @@ class DashboardController extends GetxController {
 
   // Model
 
-  final _commonPostModel = CommonPostModel().obs;
+  final _commonPostModel = CommonLoginOtpModel().obs;
 
-  CommonPostModel get commonPostModel =>
+  CommonLoginOtpModel get commonPostModel =>
       _commonPostModel.value;
 
-  set commonPostModel(CommonPostModel value) =>
+  set commonPostModel(CommonLoginOtpModel value) =>
       _commonPostModel.value = value;
 
   Future<void> deleteStudentAccount() async {

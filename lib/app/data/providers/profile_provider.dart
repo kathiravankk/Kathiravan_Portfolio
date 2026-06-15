@@ -8,7 +8,7 @@ import 'package:internsharks/app/data/models/home/filter_option_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart';
 import 'package:internsharks/app/data/models/home/remove_watermark_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
-import '../models/account/common_post_model.dart';
+import '../models/account/common_login_model.dart';
 
 class ProfileProvider {
   final Dio? client;
@@ -46,7 +46,7 @@ class ProfileProvider {
 
   // SEND MOBILE UPDATE OTP
 
-  Future<CommonPostModel> postUpdateMobileOtp({
+  Future<CommonLoginOtpModel> postUpdateMobileOtp({
     required String mobileNo,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.header();
@@ -60,16 +60,16 @@ class ProfileProvider {
         data: {"mobile": mobileNo},
       );
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return CommonLoginOtpModel.fromJson(response.data);
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
-      return CommonPostModel.fromJson(err.response!.data);
+      return CommonLoginOtpModel.fromJson(err.response!.data);
     }
   }
 
   // VERIFY MOBILE UPDATE OTP
 
-  Future<CommonPostModel> verifyUpdateMobileOtp({
+  Future<CommonLoginOtpModel> verifyUpdateMobileOtp({
     required String mobileNo,
     required String otpNo,
   }) async {
@@ -84,16 +84,16 @@ class ProfileProvider {
         data: {"mobile": mobileNo, "otp": otpNo},
       );
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return CommonLoginOtpModel.fromJson(response.data);
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
-      return CommonPostModel.fromJson(err.response!.data);
+      return CommonLoginOtpModel.fromJson(err.response!.data);
     }
   }
 
   // SEND MOBILE UPDATE OTP
 
-  Future<CommonPostModel> postUpdateEmailOtp({required String email}) async {
+  Future<CommonLoginOtpModel> postUpdateEmailOtp({required String email}) async {
     Map<String, dynamic> header = await AppApiHeader.header();
     try {
       client!.interceptors.add(
@@ -105,16 +105,16 @@ class ProfileProvider {
         data: {"email": email, "userType": "student"},
       );
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return CommonLoginOtpModel.fromJson(response.data);
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
-      return CommonPostModel.fromJson(err.response!.data);
+      return CommonLoginOtpModel.fromJson(err.response!.data);
     }
   }
 
   // VERIFY MOBILE UPDATE OTP
 
-  Future<CommonPostModel> verifyUpdateEmailOtp({
+  Future<CommonLoginOtpModel> verifyUpdateEmailOtp({
     required String email,
     required String otpNo,
   }) async {
@@ -129,10 +129,10 @@ class ProfileProvider {
         data: {"email": email, "userType": "student", "otp": otpNo},
       );
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return CommonLoginOtpModel.fromJson(response.data);
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
-      return CommonPostModel.fromJson(err.response!.data);
+      return CommonLoginOtpModel.fromJson(err.response!.data);
     }
   }
 

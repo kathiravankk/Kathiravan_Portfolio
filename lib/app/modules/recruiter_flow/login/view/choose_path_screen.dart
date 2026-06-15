@@ -63,7 +63,7 @@ class ChoosePathScreen extends StatelessWidget {
                   width: 100,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: const Color(0xff9BEA93),
+                    color: AppColors.screenDivColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -76,6 +76,7 @@ class ChoosePathScreen extends StatelessWidget {
                     weight: FontWeight.w400,
                   ),
                 ),
+
                 /// Student Card
                 modernPathCard(
                   image: AssetImages.studentPathIcon,
@@ -86,6 +87,7 @@ class ChoosePathScreen extends StatelessWidget {
                   buttonText: "Start Internship",
                   buttonColor: AppColors.primaryColor,
                   onTap: () {
+                    navigateStudent(context);
                   },
                 ),
 
@@ -101,6 +103,7 @@ class ChoosePathScreen extends StatelessWidget {
                   buttonText: "Hire Talent",
                   buttonColor: AppColors.secondaryColor,
                   onTap: () {
+                    navigateRecruiter(context);
                   },
                 ),
 
@@ -117,19 +120,25 @@ class ChoosePathScreen extends StatelessWidget {
     final token = await LocalStorageService.getToken();
 
     if (token != null && token.isNotEmpty) {
-      Get.offAllNamed(AppRoutes.studentDashBoardScreen);
+      AppFunctions.navigateInitialScreen(
+        context,
+        AppRoutes.studentDashBoardScreen,
+      );
     } else {
-      Get.toNamed(AppRoutes.studentLoginScreen);
+      AppFunctions.navigateScreen(context, AppRoutes.studentLoginScreen);
     }
   }
 
   Future<void> navigateRecruiter(BuildContext context) async {
-    final token = await LocalStorageService.getToken();
+    final token = await LocalStorageService.getRecruiterToken();
 
     if (token != null && token.isNotEmpty) {
-      //Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+      AppFunctions.navigateInitialScreen(
+        context,
+        AppRoutes.recruiterDashboardScreen,
+      );
     } else {
-      Get.toNamed(AppRoutes.recruiterLoginScreen);
+      AppFunctions.navigateScreen(context, AppRoutes.recruiterLoginScreen);
     }
   }
 
@@ -211,7 +220,7 @@ class ChoosePathScreen extends StatelessWidget {
                         size: 15,
                         color: AppColors.pathLightTextColor,
                         lineSpace: 1.5,
-                        weight: FontWeight.w400
+                        weight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -239,7 +248,7 @@ class ChoosePathScreen extends StatelessWidget {
                       color: AppColors.blackColor,
                     ),
                   ),
-                  Icon(Icons.arrow_forward, color: AppColors.blackColor,),
+                  Icon(Icons.arrow_forward, color: AppColors.blackColor),
                 ],
               ),
             ),

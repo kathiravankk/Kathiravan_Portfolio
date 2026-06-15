@@ -1,11 +1,11 @@
-class CommonPostModel {
+class CommonLoginOtpModel {
   bool? success;
   String? message;
   String? userType;
 
-  CommonPostModel({this.success, this.message, this.userType});
+  CommonLoginOtpModel({this.success, this.message, this.userType});
 
-  CommonPostModel.fromJson(Map<String, dynamic> json) {
+  CommonLoginOtpModel.fromJson(Map<String, dynamic> json) {
     success = json["success"] ?? false;
     message = json["message"] ?? "";
     userType = json["userType"] ?? "";
