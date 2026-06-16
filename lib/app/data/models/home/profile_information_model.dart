@@ -56,6 +56,7 @@ class ProfileDataModel {
   List<Secondary>? secondary;
   CreditData? studentCreditId;
   bool? isVerified;
+  String? referralCode;
   bool? isWaterMarkRemoved;
   String? createdAt;
   String? updatedAt;
@@ -150,6 +151,7 @@ class ProfileDataModel {
     this.secondarySchoolLocation,
     this.syllabusStatus,
     this.applicationStatus,
+    this.referralCode
   });
 
   factory ProfileDataModel.fromJson(Map<String, dynamic> json) {
@@ -163,6 +165,7 @@ class ProfileDataModel {
           : null,
       id: json['_id'],
       message: json['message'],
+      referralCode: json['referralCode']??"",
       studentName: json['studname'],
       profileSummary: json['profile_summary'] ?? "",
       studEmail: json['studemail'],
@@ -252,6 +255,7 @@ class ProfileDataModel {
       'education': education?.toJson(),
       'message': message,
       '_id': id,
+      'referralCode': referralCode,
       'studname': studentName,
       'profile_summary': profileSummary,
       'studemail': studEmail,
