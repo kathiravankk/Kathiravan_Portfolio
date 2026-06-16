@@ -40,6 +40,13 @@ class AssetImages {
   static const String profileStepIcon = "assets/images/profile_step_icon.png";
   static const String kycStepIcon = "assets/images/kyc_step_icon.png";
   static const String halftoneOverlay = "assets/images/halftone_overlay_img.png";
+  static const String referralImage = "assets/images/referral_image.png";
+  static const String faceBookIcon = "assets/images/facebook_icon.png";
+  static const String instagramIcon = "assets/images/instagram_icon.png";
+  static const String whatsappIcon = "assets/images/whatsapp_img.png";
+  static const String telegramIcon = "assets/images/telegram_icon.png";
+  static const String moreOptionsIcon = "assets/images/more_options_icon.png";
+  static const String giftIcon = "assets/images/gift_icon.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

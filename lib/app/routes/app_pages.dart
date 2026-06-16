@@ -3,6 +3,7 @@ import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
 import 'package:internsharks/app/modules/home/view/buy_credit_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/home/view/privacy_policy_screen.dart';
+import 'package:internsharks/app/modules/home/view/referral_code_screen.dart';
 import 'package:internsharks/app/modules/home/view/terms_and_conditions_screen.dart';
 import 'package:internsharks/app/modules/internship/view/internship_syllabus_screen.dart';
 import 'package:internsharks/app/modules/internship/view/mcq_result_review_screen.dart';
@@ -229,5 +230,6 @@ class AppPages {
     appPage(name: AppRoutes.buyCreditsScreen, page: () => BuyCreditScreen(), bindings: [DashboardBindings()]),
     appPage(name: AppRoutes.homeProfileScreen, page: () => HomeProfileScreen()),
     appPage(name: AppRoutes.myAppliesScreen, page: () => MyAppliesScreen()),
+    appPage(name: AppRoutes.referralCodeScreen, page: () => ReferralCodeScreen()),
   ];
 }
