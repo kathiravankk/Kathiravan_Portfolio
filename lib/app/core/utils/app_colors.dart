@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static const List<List<Color>> categoryGradients = [
+    [Color(0xFF1565C0), Color(0xFF1E88E5)],   // Blue
+    [Color(0xFF1B5E20), Color(0xFF43A047)],   // Green
+    [Color(0xFF827717), Color(0xFFAFB42B)],   // Olive/Yellow-green
+    [Color(0xFF4A148C), Color(0xFF8E24AA)],   // Purple
+    [Color(0xFFBF360C), Color(0xFFEF6C00)],   // Orange-red
+    [Color(0xFF006064), Color(0xFF00ACC1)],   // Teal
+    [Color(0xFF880E4F), Color(0xFFE91E63)],   // Pink
+    [Color(0xFF212121), Color(0xFF546E7A)],   // Dark slate
+  ];
   static const Color appColor = Color(0xFF000000);
   static const Color appBgColor = Color.fromRGBO(28, 25, 21, 1);
   static const Color appBgColor_2 = Color.fromRGBO(24, 20, 16, 1);

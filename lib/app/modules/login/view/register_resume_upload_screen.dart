@@ -277,13 +277,15 @@ class _RegisterResumeUploadScreenState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.gradientColor1,
-            AppColors.gradientColor2,
-            AppColors.gradientColor1,
+            // AppColors.gradientColor1,
+            // AppColors.gradientColor2,
+            // AppColors.gradientColor1,
+            Color.fromRGBO(24, 20, 16, 1),
+            Color.fromRGBO(1, 205, 205, 0),
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          stops: [0.09, 0.9, 0.0],
+         // stops: [0.09, 0.9, 0.0],
         ),
         borderRadius: BorderRadius.circular(30),
       ),
@@ -365,13 +367,15 @@ class _RegisterResumeUploadScreenState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.gradientColor4,
-            AppColors.gradientColor5,
-            AppColors.gradientColor4,
+            // AppColors.gradientColor4,
+            // AppColors.gradientColor5,
+            // AppColors.gradientColor4,
+            Color(0xFF181410),
+            Color.fromRGBO(205, 188, 1, 0),
           ],
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          stops: [0.09, 0.9, 0.0],
+           begin: Alignment.topRight,
+           end: Alignment.bottomLeft,
+          // stops: [0.09, 0.9, 0.0],
         ),
         borderRadius: BorderRadius.circular(30),
       ),

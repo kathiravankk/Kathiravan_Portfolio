@@ -56,18 +56,35 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
             crossAxisSpacing: 16,
             childAspectRatio: 1.0,
           ),
-          itemBuilder: (context, index) => buildCategoryCard(
-            categoryName:
-                dashboardController
-                    .categoryListModel
-                    .categoryList![index]
-                    .categoryName ??
-                "",
-            categoryData:
-                dashboardController.categoryListModel.categoryList![index],
-            categoryCount:
-                dashboardController.categoryListModel.categoryList![index].count,
-          ),
+          itemBuilder: (context, index) {
+            final List<List<Color>> gradients = [
+              [const Color(0xFF1565C0), const Color(0xFF1E88E5)],
+              [const Color(0xFF1B5E20), const Color(0xFF43A047)],
+              [const Color(0xFF827717), const Color(0xFFAFB42B)],
+              [const Color(0xFF4A148C), const Color(0xFF8E24AA)],
+              [const Color(0xFFBF360C), const Color(0xFFEF6C00)],
+              [const Color(0xFF006064), const Color(0xFF00ACC1)],
+              [const Color(0xFF880E4F), const Color(0xFFE91E63)],
+              [const Color(0xFF212121), const Color(0xFF546E7A)],
+            ];
+            final colors = gradients[index % gradients.length];
+
+            return buildCategoryCard(
+              colors: colors,
+              categoryName:
+                  dashboardController
+                      .categoryListModel
+                      .categoryList![index]
+                      .categoryName ??
+                  "",
+              categoryData:
+                  dashboardController.categoryListModel.categoryList![index],
+              categoryCount: dashboardController
+                  .categoryListModel
+                  .categoryList![index]
+                  .count,
+            );
+          },
         ),
       ),
     );
@@ -77,6 +94,7 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
     required String categoryName,
     required CategoryListData? categoryData,
     required int? categoryCount,
+    required List<Color> colors,
   }) {
     return GestureDetector(
       onTap: () {
@@ -89,63 +107,103 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
       child: Container(
         //width: 150,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: AppColors.whiteColor,
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(23),
         ),
-        padding: EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 15,
-          children: [
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                color: AppColors.lightWhiteCont,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(5),
-              child: buildAnimatedCount(categoryCount!),
-              // Text(
-              //   textAlign: TextAlign.center,
-              //   categoryCount.toString(),
-              //   style: AppStyles.customTextStyle(
-              //     size: 20,
-              //     color: AppColors.blackColor,
-              //     weight: FontWeight.w700,
-              //   ),
-              // ),
-
-              // Image.asset(
-              //   AppFunctions.getCategoryImage(service: categoryName),
-              //   height: 40,
-              //   width: 40,
-              //   color: AppColors.blackColor,
-              // ),
-            ),
-            Text(
-              categoryName,
-              textAlign: TextAlign.center,
-              style: AppStyles.customTextStyle(
-                lineSpace: 1.3,
-                size: 12,
-                color: AppColors.primaryColor,
-                weight: FontWeight.w700,
-              ),
-            ),
-            Visibility(
-              visible: categoryCount != 0,
-              child: Text(
-                "${categoryCount.toString()} Internship Available",
-                style: AppStyles.customTextStyle(
-                  size: 10,
-                  color: AppColors.blackColor,
-                  weight: FontWeight.w600,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(23),
+          child: Stack(
+            children: [
+              Positioned(
+                top: -30,
+                left: -30,
+                child: Opacity(
+                  opacity: 0.25,
+                  child: Image.asset(
+                    AssetImages.halftoneOverlay, // add to AssetImages
+                    width: 120,
+                    height: 120,
+                  ),
                 ),
               ),
-            ),
-          ],
+              // Bottom-right halftone overlay
+              Positioned(
+                bottom: -30,
+                right: -30,
+                child: Opacity(
+                  opacity: 0.25,
+                  child: Image.asset(
+                    AssetImages.halftoneOverlay,
+                    width: 120,
+                    height: 120,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 15,
+                    children: [
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colors.last.withValues(alpha: 0.45),
+                        ),
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(5),
+                        child: buildAnimatedCount(categoryCount!),
+                        // Text(
+                        //   textAlign: TextAlign.center,
+                        //   categoryCount.toString(),
+                        //   style: AppStyles.customTextStyle(
+                        //     size: 20,
+                        //     color: AppColors.blackColor,
+                        //     weight: FontWeight.w700,
+                        //   ),
+                        // ),
+                        // Image.asset(
+                        //   AppFunctions.getCategoryImage(service: categoryName),
+                        //   height: 40,
+                        //   width: 40,
+                        //   color: AppColors.blackColor,
+                        // ),
+                      ),
+                      Text(
+                        categoryName,
+                        textAlign: TextAlign.center,
+                        style: AppStyles.customTextStyle(
+                          lineSpace: 1.3,
+                          size: 13,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                      Visibility(
+                        visible: categoryCount != 0,
+                        child: Text(
+                          "${categoryCount.toString()} Internship Available",
+                          style: AppStyles.customTextStyle(
+                            size: 10,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -164,7 +222,7 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
               count == 0 ? "0" : value.toInt().toString(),
               style: AppStyles.customTextStyle(
                 size: 20,
-                color: AppColors.blackColor,
+                color: AppColors.whiteColor,
                 weight: FontWeight.w700,
               ),
             ),

@@ -60,7 +60,7 @@ class CardWidgets {
                         color: isDelete
                             ? AppColors.redColor
                             : AppColors.whiteColor,
-                        size: 14,
+                        size: 15,
                         weight: FontWeight.w500,
                       ),
                     ),

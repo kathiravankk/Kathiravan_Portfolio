@@ -82,13 +82,13 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               dashboardController.reviewDataLoading
           ? AppAlertUtils.customLoader()
           : Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(AssetImages.appBackgroundImg),
-                fit: BoxFit.cover,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(AssetImages.appBackgroundImg),
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            child: Scaffold(
+              child: Scaffold(
                 backgroundColor: AppColors.transparentColor,
                 floatingActionButton: Visibility(
                   visible: !isStatusFlow,
@@ -101,7 +101,8 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                       isLoading: dashboardController.internshipApplyLoading,
                       buttonFunction: () async {
                         bool isVerified =
-                            await LocalStorageService.getVerifiedValue() ?? false;
+                            await LocalStorageService.getVerifiedValue() ??
+                            false;
 
                         if (!isVerified) {
                           showKycVerifyAlertDialog();
@@ -112,42 +113,58 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
 
                           if (!hasBanner) {
                             showAiBannerRequirementDialog();
-                          } else {
+                          } else if (internship!.noOfPosition != 0 &&
+                              internship!.noOfPosition != null) {
                             await internshipApplyFunc();
+                          } else {
+                            AppAlertUtils.showToast(
+                              message: "Positions filled. Applications closed!",
+                              isError: true,
+                            );
                           }
                         }
                       },
                       buttonText: internship!.status!.isNotEmpty
                           ? "Applied"
                           : "Apply Now (20 Credits)",
-                      buttonWidget: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Apply Now - ",
-                            style: AppStyles.customTextStyle(
-                              size: 16,
-                              color: AppColors.whiteColor,
-                              weight: FontWeight.w500,
-                              fontFamily: "Roboto",
+                      buttonWidget: internship!.status!.isNotEmpty
+                          ? Text(
+                              "Applied",
+                              style: AppStyles.customTextStyle(
+                                size: 16,
+                                color: AppColors.whiteColor,
+                                weight: FontWeight.w500,
+                                fontFamily: "Roboto",
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Apply Now - ",
+                                  style: AppStyles.customTextStyle(
+                                    size: 16,
+                                    color: AppColors.whiteColor,
+                                    weight: FontWeight.w500,
+                                    fontFamily: "Roboto",
+                                  ),
+                                ),
+                                Text(
+                                  "20",
+                                  style: AppStyles.customTextStyle(
+                                    size: 16,
+                                    color: AppColors.whiteColor,
+                                    weight: FontWeight.w500,
+                                    fontFamily: "Roboto",
+                                  ),
+                                ),
+                                Image.asset(
+                                  AssetImages.creditsIconNew,
+                                  height: 22,
+                                  width: 22,
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "20",
-                            style: AppStyles.customTextStyle(
-                              size: 16,
-                              color: AppColors.whiteColor,
-                              weight: FontWeight.w500,
-                              fontFamily: "Roboto",
-                            ),
-                          ),
-                          Image.asset(
-                            AssetImages.creditsIconNew,
-                            height: 22,
-                            width: 22,
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),
@@ -178,7 +195,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                             size: 20,
                             weight: FontWeight.w700,
                             color: AppColors.whiteColor,
-                            lineSpace: 1.4
+                            lineSpace: 1.4,
                           ),
                         ),
 
@@ -245,7 +262,10 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                         /// TAB BAR
                         Expanded(
                           child: CustomTabBar(
-                            tabController: TabController(length: 3, vsync: this),
+                            tabController: TabController(
+                              length: 3,
+                              vsync: this,
+                            ),
                             activeBoxColor: AppColors.selectedContColor,
                             activeTextColor: AppColors.whiteColor,
                             tabNames: tabNames,
@@ -261,7 +281,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                   ),
                 ),
               ),
-          ),
+            ),
     );
   }
 

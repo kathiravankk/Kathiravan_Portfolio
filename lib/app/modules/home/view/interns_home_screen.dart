@@ -8,10 +8,12 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/category_card_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart'
     show CustomEmptyWidget;
 import 'package:internsharks/app/core/widgets/internship_card.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
+import 'package:internsharks/app/data/models/home/all_internship_model.dart';
 import 'package:internsharks/app/data/models/home/recommand_internship_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
@@ -21,14 +23,15 @@ import 'package:internsharks/app/routes/app_pages.dart';
 import '../../../core/widgets/home_drawer.dart';
 
 class InternsHomeScreen extends StatefulWidget {
-  const InternsHomeScreen({super.key});
+  final GlobalKey<ScaffoldState> scaffoldKey; // ADD THIS
+  const InternsHomeScreen({super.key, required this.scaffoldKey});
 
   @override
   State<InternsHomeScreen> createState() => _InternsHomeScreenState();
 }
 
 class _InternsHomeScreenState extends State<InternsHomeScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int activeIndex = 0;
 
   void callbackFunction(int index, CarouselPageChangedReason reason) {
@@ -78,6 +81,18 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
     await profileController.getProfileData(studentId: studentId ?? "");
     await dashboardController.getCategoryListData();
     await dashboardController.getRecommentedInternship();
+    await dashboardController.getAllInternship(
+      companyCity: "",
+      companyState: "",
+      duration: "",
+      internshipMode: "",
+      limit: 5,
+      page: 1,
+      qualification: "",
+      roleType: "",
+      stipend: "",
+      days: "",
+    );
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
     } else {
@@ -95,16 +110,17 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
           profileController.profileDataLoading ||
               dashboardController.getCategoryLoading ||
               dashboardController.recommentedInternshipLoading ||
-              registerController.creditDataLoading
+              registerController.creditDataLoading ||
+              dashboardController.allInternshipLoading
           ? AppAlertUtils.customLoader()
           : RefreshIndicator(
-            color: AppColors.primaryColor,
-            backgroundColor: AppColors.appBgColor_2,
-            onRefresh: () async {
-              await getHomeScreenData();
-              await getCreditData();
-            },
-            child: Container(
+              color: AppColors.primaryColor,
+              backgroundColor: AppColors.appBgColor_2,
+              onRefresh: () async {
+                await getHomeScreenData();
+                await getCreditData();
+              },
+              child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(AssetImages.appBackgroundImg),
@@ -112,8 +128,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                   ),
                 ),
                 child: Scaffold(
-                  key: _scaffoldKey,
-                  drawer: HomeDrawer(),
+                  // drawer: HomeDrawer(),
                   backgroundColor: AppColors.transparentColor,
                   appBar: AppBar(
                     backgroundColor: AppColors.transparentColor,
@@ -124,7 +139,8 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                         size: 30,
                         color: Colors.white,
                       ),
-                      onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                      onPressed: () =>
+                          widget.scaffoldKey.currentState?.openDrawer(),
                     ),
                     title: Text(
                       "Hi ${profileController.profileDataModel.studentName ?? "User"}!",
@@ -190,16 +206,44 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                           _buildSearchBar(),
                           const SizedBox(height: 10),
                           _buildBannerCarousel(),
-                          _buildSectionHeader(
-                            title: "Recommented Internship",
-                            onTabPage: () {
-                              AppFunctions.navigateScreen(
-                                context,
-                                AppRoutes.recommentedInternshipScreen,
-                              );
-                            },
-                          ),
-                          _buildRecommendedInternships(),
+                          dashboardController.recommentedModel.internshipList !=
+                                      null &&
+                                  dashboardController
+                                      .recommentedModel
+                                      .internshipList!
+                                      .isNotEmpty
+                              ? Column(
+                                  children: [
+                                    _buildSectionHeader(
+                                      title: "Recommended Internship",
+                                      onTabPage: () {
+                                        AppFunctions.navigateScreen(
+                                          context,
+                                          AppRoutes.recommentedInternshipScreen,
+                                        );
+                                      },
+                                    ),
+                                    _buildRecommendedInternships(),
+                                  ],
+                                )
+                              : Column(
+                                  children: [
+                                    _buildSectionHeader(
+                                      title: "Suggested Internships",
+                                      onTabPage: () {
+                                        AppFunctions.navigateScreen(
+                                          context,
+                                          AppRoutes.allInternshipScreen,
+                                          arguments: {
+                                            "screenTitle":
+                                                "Suggested Internships",
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    _buildSuggestedInternships(),
+                                  ],
+                                ),
                           _buildSectionHeader(
                             title: "Trendy Categories",
                             onTabPage: () {
@@ -218,14 +262,14 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                               ? CustomEmptyWidget()
                               : _buildTrendyCategories(),
 
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 80),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
-          ),
+            ),
     );
   }
 
@@ -420,7 +464,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
 
   Widget _buildRecommendedInternships() {
     return SizedBox(
-      height: 230,
+      height: 210,
       child:
           dashboardController.recommentedModel.internshipList != null &&
               dashboardController.recommentedModel.internshipList!.isNotEmpty
@@ -499,85 +543,139 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
     );
   }
 
+  Widget _buildSuggestedInternships() {
+    return SizedBox(
+      height: 210,
+      child:
+          dashboardController.internshipModel.internship != null &&
+              dashboardController.internshipModel.internship!.isNotEmpty
+          ? ListView.separated(
+              separatorBuilder: (context, index) => SizedBox(width: 10),
+              scrollDirection: Axis.horizontal,
+              itemCount: dashboardController.internshipModel.internship!.length,
+              itemBuilder: (context, index) {
+                InternshipModel recommentedList =
+                    dashboardController.internshipModel.internship![index];
+                return InternshipCard(
+                  width: 360,
+                  viewFunc: () {
+                    AppFunctions.navigateScreen(
+                      context,
+                      AppRoutes.internshipDetailScreen,
+                      arguments: {"internshipId": recommentedList.id},
+                    );
+                  },
+                  isSaved: recommentedList.isSaved ?? false,
+                  position: recommentedList.noOfPosition ?? 0,
+                  // saveFunc: () =>
+                  //     dashboardController.searchFilterSaveFunc(index),
+                  // saveFunc: () async {
+                  //   final oldValue = item.isSaved ?? false;
+                  //
+                  //   setState(() {
+                  //     item.isSaved = !oldValue;
+                  //   });
+                  //
+                  //   await dashboardController.searchFilterSaveFunc(index);
+                  //
+                  //   if (dashboardController.getResponseCode() != 200 &&
+                  //       dashboardController.getResponseCode() != 201) {
+                  //     setState(() {
+                  //       item.isSaved = oldValue;
+                  //     });
+                  //   }
+                  // },
+                  saveFunc: () async {
+                    setState(() {});
+                    await dashboardController.searchFilterSaveFunc(
+                      recommentedList,
+                    );
+                    setState(() {});
+                  },
+                  postedDate: recommentedList.createdAt!,
+                  role: recommentedList.roleType ?? '',
+                  companyName: recommentedList.companyName ?? '',
+                  internshipMode: recommentedList.internshipMode ?? 'NA',
+                  imageUrl: recommentedList.companyLogo ?? '',
+                  description: recommentedList.internshipDescription ?? '',
+                  //duration: item.internshipDuration ?? 'NA',
+                  duration:
+                      recommentedList.internshipDuration!.isNotEmpty &&
+                          recommentedList.internshipDuration != null
+                      ? "${recommentedList.internshipDuration!} Months"
+                      : "${recommentedList.days} Days",
+                  stipendRupees: recommentedList.internshipStipend ?? 'NA',
+                  location: recommentedList.companyCity ?? 'NA',
+                  internFees: recommentedList.fee ?? 'NA',
+                  qualification:
+                      recommentedList.studentQualification?.join(', ') ?? 'All',
+                  eligibility: recommentedList.eligibilityCriteria ?? 'All',
+                  skillList: recommentedList.requiredSkills ?? [],
+                );
+              },
+            )
+          : Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 15,
+                children: [
+                  Icon(
+                    Icons.file_copy_outlined,
+                    color: AppColors.secondaryColor,
+                    size: 30,
+                  ),
+                  Text(
+                    "No Data Found..!",
+                    style: AppStyles.customTextStyle(
+                      size: 12,
+                      weight: FontWeight.w400,
+                      color: AppColors.secondaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+    );
+  }
+
   Widget _buildTrendyCategories() {
+    // 8 gradient presets cycling for dynamic categories
+    final List<List<Color>> gradients = [
+      [const Color(0xFF1565C0), const Color(0xFF1E88E5)],
+      [const Color(0xFF1B5E20), const Color(0xFF43A047)],
+      [const Color(0xFF827717), const Color(0xFFAFB42B)],
+      [const Color(0xFF4A148C), const Color(0xFF8E24AA)],
+      [const Color(0xFFBF360C), const Color(0xFFEF6C00)],
+      [const Color(0xFF006064), const Color(0xFF00ACC1)],
+      [const Color(0xFF880E4F), const Color(0xFFE91E63)],
+      [const Color(0xFF212121), const Color(0xFF546E7A)],
+    ];
+
     return SizedBox(
       height: 130,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: dashboardController.categoryListModel.categoryList!.length,
-        itemBuilder: (context, index) => GestureDetector(
-          onTap: () {
-            AppFunctions.navigateScreen(
-              context,
-              AppRoutes.categoryWiseInternshipScreen,
-              arguments: {
-                "categoryData":
-                    dashboardController.categoryListModel.categoryList![index],
-              },
-            );
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 15),
-            width: 140,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              //color: AppColors.transparentColor,
-              color: AppColors.primaryColor.withValues(alpha: .05),
-              borderRadius: BorderRadius.circular(23),
-              border: Border.all(
-                //color: AppColors.primaryColor.withValues(alpha: 0.1),
-                color: AppColors.primaryColor,
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              spacing: 20,
-              children: [
-                // SizedBox(
-                //   height: 35,
-                //   width: 35,
-                //   child: Text(
-                //     dashboardController
-                //         .categoryListModel
-                //         .categoryList![index]
-                //         .count
-                //         .toString(),
-                //     textAlign: TextAlign.center,
-                //     style: AppStyles.customTextStyle(
-                //       size: 20,
-                //       color: AppColors.whiteColor,
-                //       weight: FontWeight.w700,
-                //       fontFamily: "Roboto",
-                //     ),
-                //   ),
-                // ),
-                buildAnimatedCount(
-                  dashboardController
-                          .categoryListModel
-                          .categoryList![index]
-                          .count ??
-                      0,
-                ),
-                Text(
-                  dashboardController
-                          .categoryListModel
-                          .categoryList![index]
-                          .categoryName ??
-                      "",
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  style: AppStyles.customTextStyle(
-                    size: 12,
-                    lineSpace: 1.4,
-                    color: AppColors.primaryColor,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        itemBuilder: (context, index) {
+          final category =
+              dashboardController.categoryListModel.categoryList![index];
+          // Cycle through 8 gradients if more than 8 categories
+          final colors = gradients[index % gradients.length];
+
+          return CategoryCard(
+            colors: colors,
+            count: category.count ?? 0,
+            categoryName: category.categoryName ?? "",
+            onTap: () {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.categoryWiseInternshipScreen,
+                arguments: {"categoryData": category},
+              );
+            },
+          );
+        },
       ),
     );
   }

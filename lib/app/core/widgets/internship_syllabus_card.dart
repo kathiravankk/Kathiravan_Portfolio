@@ -26,7 +26,7 @@ class InternSyllabusCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         color: AppColors.contColor2,
       ),
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.all(20),
       child: Column(
         spacing: 15,
         crossAxisAlignment: CrossAxisAlignment.start,

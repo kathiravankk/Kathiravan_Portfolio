@@ -23,7 +23,8 @@ class AssetImages {
   static const String creditIcon = "assets/images/credit_icon.png";
   //static const String aiLoadingGif = "assets/images/ai_loading.gif";
   static const String aiLoadingGif = "assets/images/new_ai_loading.gif";
-  static const String welcomeScreenBg = "assets/images/welcome_screen_bg.png";
+  //static const String welcomeScreenBg = "assets/images/welcome_screen_bg.png";
+  static const String welcomeScreenBg = "assets/images/new_welcome_screen_bg.png";
   static const String loginBg = "assets/images/login_bg_new.png";
   static const String appLogoNew = "assets/images/app_logo_new.png";
   static const String appBgNew = "assets/images/app_bg_new.png";
@@ -38,6 +39,7 @@ class AssetImages {
   static const String chatScreenBg = "assets/images/chat_screen_bg.jpeg";
   static const String profileStepIcon = "assets/images/profile_step_icon.png";
   static const String kycStepIcon = "assets/images/kyc_step_icon.png";
+  static const String halftoneOverlay = "assets/images/halftone_overlay_img.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

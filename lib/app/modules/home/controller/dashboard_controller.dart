@@ -384,6 +384,7 @@ class DashboardController extends GetxController {
     required String roleType,
     required int page,
     required int limit,
+    required String days,
   }) async {
     try {
       allInternshipLoading = true;
@@ -397,6 +398,7 @@ class DashboardController extends GetxController {
         roleType: roleType,
         page: page,
         limit: limit,
+        days: days
       );
       allInternshipLoading = false;
     } catch (err) {

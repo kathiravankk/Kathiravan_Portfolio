@@ -47,7 +47,10 @@ class AppFunctions {
     } else if (responseCode == 400) {
       AppAlertUtils.showToast(message: message, isError: true);
     } else if (responseCode == 401) {
-      AppAlertUtils.showToast(message: "Session expired, Please login again!", isError: true);
+      AppAlertUtils.showToast(
+        message: "Session expired, Please login again!",
+        isError: true,
+      );
       LocalStorageService.clearUser();
       Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 403) {
@@ -163,25 +166,26 @@ class AppFunctions {
       return "";
     }
   }
-  static getCategoryImage({required String service}) {
+
+  static String getCategoryImage({required String service}) {
     switch (service) {
-      case "Information Technology":
+      case "Information Technology" || "EdTech":
         return AssetImages.softwareImg;
-      case "Logistics":
+      case "Logistics" || "Aluminium Extrusion (Manufacturing)":
         return AssetImages.logisticImg;
       case "Finance":
         return AssetImages.financeImg;
-      case "Healthcare":
+      case "Healthcare" || "Orthopaedic & Spine Clinic":
         return AssetImages.healthCareImg;
       case "Hospitality & Tourism":
         return AssetImages.tourismServiceImg;
       case "Mining":
         return AssetImages.miningImg;
-      case "IT/Software":
+      case "IT/Software" || "HR Cosultancy ":
         return AssetImages.softwareImg;
       case "Customer Service":
         return AssetImages.customerServiceImg;
-      case "Marketing":
+      case "Marketing" :
         return AssetImages.marketingImg;
       case "Designing":
         return AssetImages.designImg;
@@ -189,10 +193,12 @@ class AppFunctions {
         return AssetImages.aiEngineeringImg;
       case "BPO":
         return AssetImages.bpoImg;
-      case "Salesforce":
+      case "Salesforce" ||  "Hypercommerce":
         return AssetImages.salesForceImg;
+      case "":
+        return AssetImages.softwareImg;
       default:
-        AssetImages.softwareImg;
+        return AssetImages.softwareImg;
     }
   }
 
