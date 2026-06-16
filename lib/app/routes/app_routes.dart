@@ -55,6 +55,7 @@ class AppRoutes {
 
   static const choosePathScreen = "/choosePathScreen";
   static const recruiterRegisterScreen = "/recruiterRegisterScreen";
+  static const recruiterVerificationScreen = "/recruiterVerificationScreen";
   static const recruiterLoginScreen = "/recruiterLoginScreen";
   static const recruiterDashboardScreen = "/recruiterDashboardScreen";
 

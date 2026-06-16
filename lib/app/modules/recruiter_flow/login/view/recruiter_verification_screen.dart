@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/controller/recruiter-register_controller.dart';
 import 'package:pinput/pinput.dart';
 
 class RecruiterVerificationScreen extends StatefulWidget {
@@ -57,6 +58,9 @@ class _RecruiterVerificationScreenState
     super.dispose();
   }
 
+  final RecruiterRegisterController registerController =
+      Get.find<RecruiterRegisterController>();
+
   final TextEditingController mobileOtpController = TextEditingController();
 
   final TextEditingController emailOtpController = TextEditingController();
@@ -84,8 +88,30 @@ class _RecruiterVerificationScreenState
       ),
       child: Scaffold(
         backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+          title: Text(
+            "Verification",
+            style: AppStyles.customTextStyle(
+              size: 18,
+              color: AppColors.secondaryColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ),
         body: ListView(
-          padding: const EdgeInsets.all(20),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 15,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 30,
+          ),
           children: [
             const SizedBox(height: 20),
 
@@ -106,33 +132,50 @@ class _RecruiterVerificationScreenState
   Widget buildMobileStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 15,
       children: [
         Text(
           "Mobile Verification",
           style: AppStyles.customTextStyle(
-            size: 28,
+            size: 24,
             color: AppColors.secondaryColor,
             weight: FontWeight.w700,
           ),
         ),
-
-        const SizedBox(height: 10),
-
         Text(
-          "Enter OTP sent to +91 $recruiterMobile",
+          "Enter the One-Time password (OTP) sent to\nyour mobile number +91 $recruiterMobile",
           style: AppStyles.customTextStyle(
             size: 14,
-            color: AppColors.greyTextColor,
+            lineSpace: 1.5,
+            color: AppColors.lightText,
+            weight: FontWeight.w300,
           ),
         ),
-
-        const SizedBox(height: 30),
+        const SizedBox(height: 5),
+        Text(
+          "Enter the OTP",
+          style: AppStyles.customTextStyle(
+            size: 14,
+            color: AppColors.whiteColor,
+            weight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(),
 
         Pinput(
           controller: mobileOtpController,
           focusNode: mobileOtpFocusNode,
           length: 4,
           autofocus: true,
+          keyboardType: TextInputType.number,
+          defaultPinTheme: _defaultPinTheme,
+          focusedPinTheme: _focusedPinTheme,
+          submittedPinTheme: _submittedPinTheme,
+          errorPinTheme: _errorPinTheme,
+          separatorBuilder: (_) => const SizedBox(width: 15),
+          hapticFeedbackType: HapticFeedbackType.lightImpact,
+          onChanged: (_) => setState(() {}),
+          onCompleted: (_) => setState(() {}),
         ),
 
         const SizedBox(height: 20),
@@ -141,44 +184,85 @@ class _RecruiterVerificationScreenState
 
         const SizedBox(height: 40),
 
-        CustomButtonWidget(
-          buttonText: "Verify Mobile",
-          buttonFunction: verifyMobileOtp,
+        Obx(
+          () => _buildContinueButton(
+            buttonText: "Verify Mobile",
+            onTap: verifyMobileOtp,
+            enabled: mobileOtpController.text.length == 4,
+            isLoading: registerController.verifyMobileOtpLoading,
+          ),
         ),
+        const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildContinueButton({
+    required bool enabled,
+    required VoidCallback onTap,
+    required String buttonText,
+    bool? isLoading,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: CustomButtonWidget(
+        height: 50,
+        buttonText: buttonText ?? "Continue",
+        disable: !enabled,
+        isLoading: isLoading ?? false,
+        buttonFunction: enabled ? onTap : () {},
+      ),
     );
   }
 
   Widget buildEmailStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 15,
       children: [
+        //const SizedBox(height: 10),
         Text(
           "Email Verification",
           style: AppStyles.customTextStyle(
-            size: 28,
+            size: 24,
             color: AppColors.secondaryColor,
             weight: FontWeight.w700,
           ),
         ),
-
-        const SizedBox(height: 10),
-
         Text(
-          "Enter OTP sent to\n$recruiterEmail",
+          "Enter the code sent to your email address\n$recruiterEmail to complete verification",
           style: AppStyles.customTextStyle(
             size: 14,
-            color: AppColors.greyTextColor,
+            lineSpace: 1.5,
+            color: AppColors.lightText,
+            weight: FontWeight.w300,
           ),
         ),
-
-        const SizedBox(height: 30),
+        const SizedBox(height: 5),
+        Text(
+          "Enter the OTP",
+          style: AppStyles.customTextStyle(
+            size: 14,
+            color: AppColors.whiteColor,
+            weight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(),
 
         Pinput(
           controller: emailOtpController,
           focusNode: emailOtpFocusNode,
           length: 4,
           autofocus: true,
+          keyboardType: TextInputType.number,
+          defaultPinTheme: _defaultPinTheme,
+          focusedPinTheme: _focusedPinTheme,
+          submittedPinTheme: _submittedPinTheme,
+          errorPinTheme: _errorPinTheme,
+          separatorBuilder: (_) => const SizedBox(width: 12),
+          hapticFeedbackType: HapticFeedbackType.lightImpact,
+          onChanged: (_) => setState(() {}),
+          onCompleted: (_) => setState(() {}),
         ),
 
         const SizedBox(height: 20),
@@ -186,11 +270,15 @@ class _RecruiterVerificationScreenState
         buildEmailResend(),
 
         const SizedBox(height: 40),
-
-        CustomButtonWidget(
-          buttonText: "Complete Registration",
-          buttonFunction: verifyEmailOtp,
+        Obx(
+          () => _buildContinueButton(
+            buttonText: "Verify & Continue",
+            onTap: verifyEmailOtp,
+            enabled: emailOtpController.text.length == 4,
+            isLoading: registerController.verifyEmailOtpLoading,
+          ),
         ),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -204,8 +292,8 @@ class _RecruiterVerificationScreenState
             height: 10,
             decoration: BoxDecoration(
               color: index < currentStep
-                  ? AppColors.primaryColor
-                  : Colors.white24,
+                  ? AppColors.whiteColor
+                  : AppColors.whiteColor.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(20),
             ),
           ),
@@ -215,22 +303,21 @@ class _RecruiterVerificationScreenState
   }
 
   Future<void> sendMobileOtp() async {
-    await recruiterController.sendMobileOtp(mobileNumber: recruiterMobile);
+    await registerController.sendMobileOtp(mobileNumber: recruiterMobile);
 
-    if (recruiterController.getResponseCode() == 200) {
+    if (registerController.getResponseCode() == 200) {
       AppAlertUtils.showToast(message: "OTP sent successfully", isError: false);
-
       startMobileTimer();
     }
   }
 
   Future<void> verifyMobileOtp() async {
-    await recruiterController.verifyMobileOtp(
+    await registerController.verifyMobileOtp(
       mobileNumber: recruiterMobile,
-      otp: mobileOtpController.text,
+      otpNumber: mobileOtpController.text,
     );
 
-    if (recruiterController.getResponseCode() == 200) {
+    if (registerController.getResponseCode() == 200) {
       await sendEmailOtp();
 
       setState(() {
@@ -240,44 +327,47 @@ class _RecruiterVerificationScreenState
   }
 
   Future<void> sendEmailOtp() async {
-    await recruiterController.sendEmailOtp(email: recruiterEmail);
+    await registerController.sendEmailOtp(
+      emailAddress: recruiterEmail,
+      userName: recruiterName ?? "",
+    );
 
-    if (recruiterController.getResponseCode() == 200) {
+    if (registerController.getResponseCode() == 200) {
       startEmailTimer();
     }
   }
 
   Future<void> verifyEmailOtp() async {
-    await recruiterController.verifyEmailOtp(
-      email: recruiterEmail,
-      otp: emailOtpController.text,
+    await registerController.verifyEmailOtp(
+      emailAddress: recruiterEmail,
+      otpNumber: emailOtpController.text,
     );
 
-    if (recruiterController.getResponseCode() == 200) {
-      await registerRecruiter();
+    if (registerController.getResponseCode() == 200) {
+      //await registerRecruiter();
     }
   }
 
-  Future<void> registerRecruiter() async {
-    await recruiterController.registerRecruiter(
-      recruiterName: recruiterName,
-      recruiterEmail: recruiterEmail,
-      recruiterMobile: recruiterMobile,
-      alternateMobile: alternateMobile,
-      designation: designation,
-      gender: gender,
-      employeeCount: employeeCount,
-    );
-
-    if (recruiterController.getResponseCode() == 200) {
-      AppAlertUtils.showToast(
-        message: "Registration Successful",
-        isError: false,
-      );
-
-      Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
-    }
-  }
+  // Future<void> registerRecruiter() async {
+  //   await recruiterController.registerRecruiter(
+  //     recruiterName: recruiterName,
+  //     recruiterEmail: recruiterEmail,
+  //     recruiterMobile: recruiterMobile,
+  //     alternateMobile: alternateMobile,
+  //     designation: designation,
+  //     gender: gender,
+  //     employeeCount: employeeCount,
+  //   );
+  //
+  //   if (recruiterController.getResponseCode() == 200) {
+  //     AppAlertUtils.showToast(
+  //       message: "Registration Successful",
+  //       isError: false,
+  //     );
+  //
+  //     Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+  //   }
+  // }
 
   Widget buildMobileResend() {
     return Row(
@@ -381,4 +471,43 @@ class _RecruiterVerificationScreenState
 
     return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
+
+  PinTheme get _defaultPinTheme => PinTheme(
+    width: 65,
+    height: 70,
+    textStyle: AppStyles.customTextStyle(
+      size: 24,
+      color: AppColors.whiteColor,
+      weight: FontWeight.w600,
+    ),
+    decoration: BoxDecoration(
+      color: AppColors.fieldBgColor,
+      borderRadius: BorderRadius.circular(25),
+      border: Border.all(color: AppColors.fieldBorderColor, width: 1.5),
+    ),
+  );
+
+  PinTheme get _focusedPinTheme => _defaultPinTheme.copyWith(
+    decoration: BoxDecoration(
+      color: AppColors.fieldBgColor,
+      borderRadius: BorderRadius.circular(25),
+      border: Border.all(color: AppColors.primaryColor, width: 1.5),
+    ),
+  );
+
+  PinTheme get _submittedPinTheme => _defaultPinTheme.copyWith(
+    decoration: BoxDecoration(
+      color: AppColors.fieldBgColor,
+      borderRadius: BorderRadius.circular(25),
+      border: Border.all(color: AppColors.primaryColor, width: 1.5),
+    ),
+  );
+
+  PinTheme get _errorPinTheme => _defaultPinTheme.copyWith(
+    decoration: BoxDecoration(
+      color: Colors.red.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(25),
+      border: Border.all(color: Colors.redAccent, width: 1.5),
+    ),
+  );
 }

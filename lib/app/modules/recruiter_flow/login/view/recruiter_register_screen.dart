@@ -310,10 +310,12 @@ class _RecruiterRegistrationScreenState
     }
 
     /// Navigate to OTP Verification Screen
+    ///
+    debugPrint("************************");
 
     AppFunctions.navigateScreen(
       context,
-      AppRoutes.recruiterRegisterScreen,
+      AppRoutes.recruiterVerificationScreen,
       arguments: {
         "name": nameController.text.trim(),
         "email": emailController.text.trim(),

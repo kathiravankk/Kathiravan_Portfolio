@@ -45,6 +45,8 @@ import '../modules/profile/view/mobile_update_screen.dart';
 import '../modules/home/view/manage_resume_screen.dart';
 import '../modules/login/view/register_selfie_preview_screen.dart';
 import '../modules/login/view/splash_screen.dart';
+import '../modules/recruiter_flow/login/binding/recruiter_login_binding.dart';
+import '../modules/recruiter_flow/login/view/recruiter_verification_screen.dart';
 part 'app_routes.dart';
 
 GetPage appPage({
@@ -238,9 +240,10 @@ class AppPages {
     /// RECRUITER FLOW SCREENS
 
     appPage(name: AppRoutes.choosePathScreen, page: () => ChoosePathScreen()),
-    appPage(name: AppRoutes.recruiterLoginScreen, page: () => RecruiterLoginScreen()),
+    appPage(name: AppRoutes.recruiterLoginScreen, page: () => RecruiterLoginScreen(), bindings: [RecruiterRegisterBindings()]),
     appPage(name: AppRoutes.recruiterDashboardScreen, page: () => RecruiterDashboardScreen()),
     appPage(name: AppRoutes.recruiterRegisterScreen, page: () => RecruiterRegistrationScreen()),
+    appPage(name: AppRoutes.recruiterVerificationScreen, page: () => RecruiterVerificationScreen()),
 
   ];
 }
