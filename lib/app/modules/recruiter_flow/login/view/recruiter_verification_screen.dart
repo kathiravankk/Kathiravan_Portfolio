@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/controller/recruiter-register_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:pinput/pinput.dart';
 
 class RecruiterVerificationScreen extends StatefulWidget {
@@ -275,7 +277,9 @@ class _RecruiterVerificationScreenState
             buttonText: "Verify & Continue",
             onTap: verifyEmailOtp,
             enabled: emailOtpController.text.length == 4,
-            isLoading: registerController.verifyEmailOtpLoading,
+            isLoading:
+                registerController.verifyEmailOtpLoading ||
+                registerController.checkExistLoading,
           ),
         ),
         const SizedBox(height: 20),
@@ -303,71 +307,136 @@ class _RecruiterVerificationScreenState
   }
 
   Future<void> sendMobileOtp() async {
-    await registerController.sendMobileOtp(mobileNumber: recruiterMobile);
+    try {
+      await registerController.sendMobileOtp(mobileNumber: recruiterMobile);
 
-    if (registerController.getResponseCode() == 200) {
-      AppAlertUtils.showToast(message: "OTP sent successfully", isError: false);
-      startMobileTimer();
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        AppAlertUtils.showToast(
+          message: "OTP sent successfully",
+          isError: false,
+        );
+        startMobileTimer();
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          registerController.sendMobileOtpModel.message ??
+              "Failed to send OTP!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        registerController.sendMobileOtpModel.message ?? "Failed to send OTP!",
+      );
+      rethrow;
     }
   }
 
   Future<void> verifyMobileOtp() async {
-    await registerController.verifyMobileOtp(
-      mobileNumber: recruiterMobile,
-      otpNumber: mobileOtpController.text,
-    );
+    try {
+      await registerController.verifyMobileOtp(
+        mobileNumber: recruiterMobile,
+        otpNumber: mobileOtpController.text,
+      );
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        await sendEmailOtp();
 
-    if (registerController.getResponseCode() == 200) {
-      await sendEmailOtp();
-
-      setState(() {
-        currentStep = 2;
-      });
+        setState(() {
+          currentStep = 2;
+        });
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          registerController.verifyMobileOtpModel.message ??
+              "Failed to verify OTP!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        registerController.verifyMobileOtpModel.message ??
+            "failed to send OTP!",
+      );
+      rethrow;
     }
   }
 
   Future<void> sendEmailOtp() async {
-    await registerController.sendEmailOtp(
-      emailAddress: recruiterEmail,
-      userName: recruiterName ?? "",
-    );
+    try {
+      await registerController.sendEmailOtp(
+        emailAddress: recruiterEmail,
+        userName: recruiterName ?? "",
+      );
 
-    if (registerController.getResponseCode() == 200) {
-      startEmailTimer();
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        startEmailTimer();
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          registerController.sendEmailOtpModel.message ?? "Failed to send OTP!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        registerController.sendEmailOtpModel.message ?? "Failed to send OTP!",
+      );
+      rethrow;
     }
   }
 
   Future<void> verifyEmailOtp() async {
-    await registerController.verifyEmailOtp(
-      emailAddress: recruiterEmail,
-      otpNumber: emailOtpController.text,
-    );
+    try {
+      await registerController.verifyEmailOtp(
+        emailAddress: recruiterEmail,
+        otpNumber: emailOtpController.text,
+      );
 
-    if (registerController.getResponseCode() == 200) {
-      //await registerRecruiter();
+      if (registerController.getResponseCode() == 200) {
+        await toCheckExistAccount();
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          registerController.verifyEmailOtpModel.message ??
+              "Failed to verify OTP!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        registerController.verifyEmailOtpModel.message ??
+            "Failed to verify OTP!",
+      );
+      rethrow;
     }
   }
 
-  // Future<void> registerRecruiter() async {
-  //   await recruiterController.registerRecruiter(
-  //     recruiterName: recruiterName,
-  //     recruiterEmail: recruiterEmail,
-  //     recruiterMobile: recruiterMobile,
-  //     alternateMobile: alternateMobile,
-  //     designation: designation,
-  //     gender: gender,
-  //     employeeCount: employeeCount,
-  //   );
-  //
-  //   if (recruiterController.getResponseCode() == 200) {
-  //     AppAlertUtils.showToast(
-  //       message: "Registration Successful",
-  //       isError: false,
-  //     );
-  //
-  //     Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
-  //   }
-  // }
+  Future<void> toCheckExistAccount() async {
+    try {
+      await registerController.checkExistAccount(
+        emailAddress: recruiterEmail,
+        mobileNumber: recruiterMobile,
+      );
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        AppFunctions.navigateScreen(context, AppRoutes.companyProfileScreen);
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          registerController.commonPostModel.message ?? "Failed to check!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        registerController.commonPostModel.message ?? "Failed to check!",
+      );
+      rethrow;
+    }
+  }
 
   Widget buildMobileResend() {
     return Row(

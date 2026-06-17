@@ -2,7 +2,7 @@ class OrderCreateCreditModel {
   bool? success;
   String? orderId;
   String? paymentSessionId;
-  int? amount;
+  dynamic amount;
   String? environment;
 
   OrderCreateCreditModel({
@@ -18,7 +18,7 @@ class OrderCreateCreditModel {
       success: json['success'] ?? false,
       orderId: json['orderId'] ?? "",
       paymentSessionId: json['paymentSessionId'] ?? "",
-      amount: json['amount'] ?? 0,
+      amount: json['amount'],
       environment: json['environment'] ?? "",
     );
   }

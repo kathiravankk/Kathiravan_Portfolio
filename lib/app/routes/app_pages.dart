@@ -35,6 +35,7 @@ import 'package:internsharks/app/modules/login/view/resume_template_view_screen.
 import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/choose_path_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_dashboard_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_login_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_register_screen.dart';
@@ -47,6 +48,7 @@ import '../modules/login/view/register_selfie_preview_screen.dart';
 import '../modules/login/view/splash_screen.dart';
 import '../modules/recruiter_flow/login/binding/recruiter_login_binding.dart';
 import '../modules/recruiter_flow/login/view/recruiter_verification_screen.dart';
+
 part 'app_routes.dart';
 
 GetPage appPage({
@@ -70,7 +72,10 @@ class AppPages {
       page: () => SplashScreen(),
       bindings: [AppInitialBindings()],
     ),
-    appPage(name: AppRoutes.studentLoginScreen, page: () => StudentLoginScreen()),
+    appPage(
+      name: AppRoutes.studentLoginScreen,
+      page: () => StudentLoginScreen(),
+    ),
 
     appPage(
       name: AppRoutes.registerResumeUploadScreen,
@@ -232,18 +237,37 @@ class AppPages {
       page: () => TermsAndConditionsScreen(),
     ),
     appPage(name: AppRoutes.profileEditScreen, page: () => ProfileEditScreen()),
-    appPage(name: AppRoutes.buyCreditsScreen, page: () => BuyCreditScreen(), bindings: [DashboardBindings()]),
+    appPage(
+      name: AppRoutes.buyCreditsScreen,
+      page: () => BuyCreditScreen(),
+      bindings: [DashboardBindings()],
+    ),
     appPage(name: AppRoutes.homeProfileScreen, page: () => HomeProfileScreen()),
     appPage(name: AppRoutes.myAppliesScreen, page: () => MyAppliesScreen()),
 
-
     /// RECRUITER FLOW SCREENS
-
     appPage(name: AppRoutes.choosePathScreen, page: () => ChoosePathScreen()),
-    appPage(name: AppRoutes.recruiterLoginScreen, page: () => RecruiterLoginScreen(), bindings: [RecruiterRegisterBindings()]),
-    appPage(name: AppRoutes.recruiterDashboardScreen, page: () => RecruiterDashboardScreen()),
-    appPage(name: AppRoutes.recruiterRegisterScreen, page: () => RecruiterRegistrationScreen()),
-    appPage(name: AppRoutes.recruiterVerificationScreen, page: () => RecruiterVerificationScreen()),
-
+    appPage(
+      name: AppRoutes.recruiterLoginScreen,
+      page: () => RecruiterLoginScreen(),
+      bindings: [RecruiterRegisterBindings()],
+    ),
+    appPage(
+      name: AppRoutes.recruiterDashboardScreen,
+      page: () => RecruiterDashboardScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterRegisterScreen,
+      page: () => RecruiterRegistrationScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterVerificationScreen,
+      page: () => RecruiterVerificationScreen(),
+    ),
+    appPage(
+      name: AppRoutes.companyProfileScreen,
+      page: () => CompanyProfileScreen(),
+      bindings: [DashboardBindings()],
+    ),
   ];
 }

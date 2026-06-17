@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_register_provider.dart';
 
 class RecruiterRegisterController extends GetxController {
@@ -189,6 +190,74 @@ class RecruiterRegisterController extends GetxController {
         emailResendSeconds.value--;
       }
     });
+  }
+
+  // CHECK EXIST ACCOUNT
+
+  final _checkExistLoading = false.obs;
+
+  bool get checkExistLoading => _checkExistLoading.value;
+
+  set checkExistLoading(bool value) => _checkExistLoading.value = value;
+
+  // Model
+
+  final _commonPostModel = CommonLoginOtpModel().obs;
+
+  CommonLoginOtpModel get commonPostModel =>
+      _commonPostModel.value;
+
+  set commonPostModel(CommonLoginOtpModel value) =>
+      _commonPostModel.value = value;
+
+  Future<void> checkExistAccount({
+    required String emailAddress,
+    required String mobileNumber,
+  }) async {
+    try {
+      checkExistLoading = true;
+      commonPostModel = await recruiterRegisterProvider!.checkExistAccount(
+        emailAddress: emailAddress,
+        mobileNumber: mobileNumber,
+      );
+      checkExistLoading = false;
+    } catch (err) {
+      checkExistLoading = false;
+      rethrow;
+    }
+  }
+
+  // RECRUITER REGISTER
+
+  final _registerLoading = false.obs;
+
+  bool get registerLoading => _registerLoading.value;
+
+  set registerLoading(bool value) => _registerLoading.value = value;
+
+  // Model
+
+  final _registerModel = RecruiterRegisterModel().obs;
+
+  RecruiterRegisterModel get registerModel =>
+      _registerModel.value;
+
+  set registerModel(RecruiterRegisterModel value) =>
+      _registerModel.value = value;
+
+  Future<void> newRecruiterRegister({
+    required Map<String, dynamic> registerData,
+  }) async {
+    try {
+      registerLoading = true;
+      registerModel = await recruiterRegisterProvider!.newRecruiterRegister(
+        registerData: registerData
+      );
+      registerLoading = false;
+    } catch (err) {
+      registerLoading = false;
+      rethrow;
+    }
   }
 
 }

@@ -25,7 +25,10 @@ class RecruiterRegisterProvider {
       );
 
       Response response = await client!
-          .post(AppApiUrls.registerMobileSendOtp, data: {"mobile": mobileNumber})
+          .post(
+            AppApiUrls.registerMobileSendOtp,
+            data: {"mobile": mobileNumber},
+          )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
       return SendMobileOtpModel.fromJson(response.data);
@@ -50,9 +53,9 @@ class RecruiterRegisterProvider {
 
       Response response = await client!
           .post(
-        AppApiUrls.registerMobileVerifyOtp,
-        data: {"mobile": mobileNumber, "otp": otpNumber},
-      )
+            AppApiUrls.registerMobileVerifyOtp,
+            data: {"mobile": mobileNumber, "otp": otpNumber},
+          )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
       return VerifyMobileOtpModel.fromJson(response.data);
@@ -68,7 +71,10 @@ class RecruiterRegisterProvider {
 
   //EMAIL OTP
 
-  Future registerEmailSendOtp({required String emailAddress, required String userName}) async {
+  Future registerEmailSendOtp({
+    required String emailAddress,
+    required String userName,
+  }) async {
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
@@ -76,9 +82,13 @@ class RecruiterRegisterProvider {
 
       Response response = await client!
           .post(
-        AppApiUrls.registerEmailSendOtp,
-        data: {"email": emailAddress, "userType": "recruiter", "name": userName},
-      )
+            AppApiUrls.registerEmailSendOtp,
+            data: {
+              "email": emailAddress,
+              "userType": "recruiter",
+              "name": userName,
+            },
+          )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
       return SendEmailOtpModel.fromJson(response.data);
@@ -103,13 +113,13 @@ class RecruiterRegisterProvider {
 
       Response response = await client!
           .post(
-        AppApiUrls.registerVerifyEmailOtp,
-        data: {
-          "email": emailAddress,
-          "otp": otpNumber,
-          "userType": "recruiter",
-        },
-      )
+            AppApiUrls.registerVerifyEmailOtp,
+            data: {
+              "email": emailAddress,
+              "otp": otpNumber,
+              "userType": "recruiter",
+            },
+          )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
       return VerifyEmailOtpModel.fromJson(response.data);
@@ -123,4 +133,67 @@ class RecruiterRegisterProvider {
     }
   }
 
+  Future checkExistAccount({
+    required String emailAddress,
+    required String mobileNumber,
+  }) async {
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(
+            AppApiUrls.checkExistAccount,
+            data: {"email": emailAddress, "mobileNo": mobileNumber},
+          )
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response!.statusCode!;
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return CommonLoginOtpModel.fromJson(error.response!.data);
+      } else {
+        return CommonLoginOtpModel.fromJson(error.response!.data);
+      }
+    }
+  }
+
+  Future newRecruiterRegister({
+    required Map<String, dynamic> registerData,
+  }) async {
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      final formData = FormData();
+
+      registerData.forEach((k, v) {
+        debugPrint('$k : ${v.toString()}');
+      });
+      registerData.forEach((key, value) {
+        if (value is MultipartFile) {
+          formData.files.add(MapEntry(key, value));
+        } else {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
+      });
+      Response response = await client!
+          .post(
+            AppApiUrls.newRecruiterRegister,
+            data: formData,
+            options: Options(contentType: 'multipart/form-data'),
+          )
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response!.statusCode!;
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return CommonLoginOtpModel.fromJson(error.response!.data);
+      } else {
+        return CommonLoginOtpModel.fromJson(error.response!.data);
+      }
+    }
+  }
 }

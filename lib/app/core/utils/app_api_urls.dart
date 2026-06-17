@@ -118,6 +118,7 @@ class AppApiUrls {
   static String registerMobileSendOtp = "${baseUrl}student/sendMobileOTP";
   static String registerMobileVerifyOtp = "${baseUrl}student/verifyMobileOTP";
   static String checkExistAccount = "${baseUrl}student/checkExistence";
+  static String newRecruiterRegister = "${baseUrl}recruiter/recruiterregister";
 
 
 

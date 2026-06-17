@@ -1,4 +1,4 @@
-class CommonLoginOtpModel {
+class  CommonLoginOtpModel {
   bool? success;
   String? message;
   String? userType;

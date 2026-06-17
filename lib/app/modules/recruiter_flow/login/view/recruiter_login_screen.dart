@@ -262,6 +262,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                               AppFunctions.navigateScreen(
                                 context,
                                 AppRoutes.recruiterRegisterScreen,
+                                //AppRoutes.companyProfileScreen,
                               );
                             },
                         ),
