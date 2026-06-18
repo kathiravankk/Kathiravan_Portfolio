@@ -39,6 +39,7 @@ class AppRoutes {
   static const myAppliesScreen = '/myAppliesScreen';
   static const privacyPolicyScreen = '/privacyPolicyScreen';
   static const termsAndConditionsScreen = '/termsAndConditionsScreen';
+  static const referralCodeScreen = '/referralCodeScreen';
 
   // INTERNSHIP FLOW
 

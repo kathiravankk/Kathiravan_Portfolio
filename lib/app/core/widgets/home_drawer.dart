@@ -82,31 +82,36 @@ class _HomeDrawerState extends State<HomeDrawer> {
                           onTap: () {
                             showProfileImageViewer(
                               context,
-                              profileController.profileDataModel.studProfile ?? "",
-                              profileController.profileDataModel.studentName ?? "",
+                              profileController.profileDataModel.studProfile ??
+                                  "",
+                              profileController.profileDataModel.studentName ??
+                                  "",
                             );
                           },
                           child: Container(
                             padding: const EdgeInsets.all(2),
                             decoration: isVerified
                                 ? const BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: [
-                                  Color(0xFF00D9F5),
-                                  Color(0xFF00F5A0),
-                                  Color(0xFF0093B4),
-                                  Color(0xFF00F5A0),
-                                  Color(0xFF00D9F5),
-                                ],
-                              ),
-                            )
+                                    shape: BoxShape.circle,
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(0xFF00D9F5),
+                                        Color(0xFF00F5A0),
+                                        Color(0xFF0093B4),
+                                        Color(0xFF00F5A0),
+                                        Color(0xFF00D9F5),
+                                      ],
+                                    ),
+                                  )
                                 : const BoxDecoration(shape: BoxShape.circle),
                             child: CircleAvatar(
                               radius: 25,
                               backgroundColor: AppColors.whiteColor,
                               backgroundImage: NetworkImage(
-                                profileController.profileDataModel.studProfile ?? "",
+                                profileController
+                                        .profileDataModel
+                                        .studProfile ??
+                                    "",
                               ),
                             ),
                           ),
@@ -290,6 +295,23 @@ class _HomeDrawerState extends State<HomeDrawer> {
                             );
                           },
                         ),
+                        CardWidgets.settingsTile(
+                          icon: Icons.wallet_giftcard,
+                          title: "Refer & Earn",
+                          onTap: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.referralCodeScreen,
+                              arguments: {
+                                "referralCode":
+                                    profileController
+                                        .profileDataModel
+                                        .referralCode ??
+                                    "",
+                              },
+                            );
+                          },
+                        ),
                         CardWidgets.settingsCard(
                           children: [
                             CardWidgets.settingsTile(
@@ -321,10 +343,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   void showProfileImageViewer(
-      BuildContext context,
-      String imageUrl,
-      String userName,
-      ) {
+    BuildContext context,
+    String imageUrl,
+    String userName,
+  ) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -335,7 +357,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
         return SafeArea(
           child: Stack(
             children: [
-
               /// Close Button
               Positioned(
                 top: 15,
@@ -355,7 +376,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-
                     Hero(
                       tag: "profile_image",
                       child: Container(
@@ -396,10 +416,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         return FadeTransition(
           opacity: animation,
           child: ScaleTransition(
-            scale: Tween<double>(
-              begin: .8,
-              end: 1,
-            ).animate(animation),
+            scale: Tween<double>(begin: .8, end: 1).animate(animation),
             child: child,
           ),
         );

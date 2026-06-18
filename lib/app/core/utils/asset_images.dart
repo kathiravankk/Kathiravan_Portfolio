@@ -43,6 +43,13 @@ class AssetImages {
   static const String choosePathBg = "assets/images/choose_path_bg.png";
   static const String studentPathIcon = "assets/images/student_path_icon.png";
   static const String recruiterPathIcon = "assets/images/recruiter_path_icon.png";
+  static const String referralImage = "assets/images/referral_image.png";
+  static const String faceBookIcon = "assets/images/facebook_icon.png";
+  static const String instagramIcon = "assets/images/instagram_icon.png";
+  static const String whatsappIcon = "assets/images/whatsapp_img.png";
+  static const String telegramIcon = "assets/images/telegram_icon.png";
+  static const String moreOptionsIcon = "assets/images/more_options_icon.png";
+  static const String giftIcon = "assets/images/gift_icon.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";
