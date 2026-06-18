@@ -5,12 +5,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
   static const tokenKey = 'stud_token';
+  static const recruiterTokenKey = 'recruiter_token';
   static const _studentKey = 'student_data';
   static const _studentIdKey = 'student_id';
+  static const _recruiterIdKey = 'recruiter_id';
   static const studentNameKey = 'student_name';
   static const fcmTokenKey = 'fcm_token';
   static const _isVerifiedKey = 'student_verified';
   static const studentCreditId = 'student_creditId';
+  static const recruiterCreditId = 'recruiter_creditId';
   static const waterMarkKey = 'isWaterMarkRemoved';
 
   /// Save student data after registration
@@ -96,6 +99,7 @@ class LocalStorageService {
     await prefs.setString(tokenKey, studentToken ?? "");
   }
 
+
   /// Save student name
   static Future<void> saveStudentId({String? studentId}) async {
     final prefs = await SharedPreferences.getInstance();
@@ -138,5 +142,44 @@ class LocalStorageService {
   static Future<void> clearUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+
+  // RECRUITER FLOW
+
+  /// Save recruiter token
+  static Future<void> saveRecruiterToken({String? recruiterToken}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(recruiterTokenKey, recruiterToken ?? "");
+  }
+
+  /// Save recruiter id
+  static Future<void> saveRecruiterId({String? recruiterId}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_recruiterIdKey, recruiterId ?? "");
+  }
+
+  /// Get recruiter token
+  static Future<String?> getRecruiterToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(recruiterTokenKey);
+  }
+
+
+  ///Get recruiter id
+  static Future<String?> getRecruiterId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_recruiterIdKey);
+  }
+
+  /// Save recruiter creditId
+  static Future<void> saveRecruiterCreditId({String? creditId}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(recruiterCreditId, creditId ?? "");
+  }
+
+  ///Get recruiter credit id
+  static Future<String?> getRecruiterCreditId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(recruiterCreditId);
   }
 }

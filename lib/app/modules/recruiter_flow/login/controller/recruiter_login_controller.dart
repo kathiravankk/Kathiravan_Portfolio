@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/account/common_post_model.dart';
-import 'package:internsharks/app/data/models/account/student_register_model.dart';
-import 'package:internsharks/app/data/providers/login_provider.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_login_model.dart';
+import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_login_provider.dart';
 
-class LoginController extends GetxController {
-  final LoginProvider? loginProvider;
+class RecruiterLoginController extends GetxController {
+  final RecruiterLoginProvider? recruiterLoginProvider;
 
-  LoginController(this.loginProvider);
+  RecruiterLoginController(this.recruiterLoginProvider);
 
-  int getResponseCode() => loginProvider!.responseStatus;
+  int getResponseCode() => recruiterLoginProvider!.responseStatus;
 
   // ================= TIMER =================
   final seconds = 30.obs;
@@ -60,17 +60,17 @@ class LoginController extends GetxController {
 
   set loginOtpLoading(bool value) => _loginOtpLoading.value = value;
 
-  final _commonPostModel = CommonPostModel().obs;
+  final _commonPostModel = CommonLoginOtpModel().obs;
 
-  CommonPostModel get commonPostModel => _commonPostModel.value;
+  CommonLoginOtpModel get commonPostModel => _commonPostModel.value;
 
-  set commonPostModel(CommonPostModel value) => _commonPostModel.value = value;
+  set commonPostModel(CommonLoginOtpModel value) => _commonPostModel.value = value;
 
   Future<void> sendLoginOtp({required String mobileNumber}) async {
     try {
       otpSent = false;
       loginOtpLoading = true;
-      commonPostModel = await loginProvider!.postLoginOtp(
+      commonPostModel = await recruiterLoginProvider!.postLoginOtp(
         mobileNumber: mobileNumber,
       );
       if (getResponseCode() == 200 || getResponseCode() == 201) {
@@ -92,12 +92,12 @@ class LoginController extends GetxController {
 
   //Model
 
-  final _studentRegisterModel = StudentRegisterModel().obs;
+  final _recruiterLoginModel = RecruiterLoginModel().obs;
 
-  StudentRegisterModel get studentRegisterModel => _studentRegisterModel.value;
+  RecruiterLoginModel get recruiterLoginModel => _recruiterLoginModel.value;
 
-  set studentRegisterModel(StudentRegisterModel value) =>
-      _studentRegisterModel.value = value;
+  set recruiterLoginModel(RecruiterLoginModel value) =>
+      _recruiterLoginModel.value = value;
 
   Future<void> verifyLoginOtp({
     required String mobileNumber,
@@ -107,11 +107,11 @@ class LoginController extends GetxController {
   }) async {
     try {
       loginVerifyLoading = true;
-      studentRegisterModel = await loginProvider!.loginVerifyOtp(
-        mobileNumber: mobileNumber,
-        otpNumber: otpNumber,
-        userType: userType,
-        fcmToken: fcmToken
+      recruiterLoginModel = await recruiterLoginProvider!.loginVerifyOtp(
+          mobileNumber: mobileNumber,
+          otpNumber: otpNumber,
+          userType: userType,
+          fcmToken: fcmToken
       );
       loginVerifyLoading = false;
     } catch (err) {
@@ -119,4 +119,5 @@ class LoginController extends GetxController {
       rethrow;
     }
   }
+
 }

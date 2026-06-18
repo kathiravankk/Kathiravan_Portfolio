@@ -159,7 +159,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                   buttonFunction: () {
                     AppFunctions.navigateInitialScreen(
                       context,
-                      AppRoutes.dashBoardScreen,
+                      AppRoutes.studentDashBoardScreen,
                     );
                   },
                   buttonText: "Go to Intern's Page",

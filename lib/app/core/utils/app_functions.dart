@@ -38,7 +38,7 @@ class AppFunctions {
 
   static void logOutFunc(BuildContext context) {
     LocalStorageService.clearUser();
-    AppFunctions.navigateInitialScreen(context, AppRoutes.loginScreen);
+    AppFunctions.navigateInitialScreen(context, AppRoutes.choosePathScreen);
   }
 
   static void apiErrorHandling(int responseCode, String message) {
@@ -52,7 +52,7 @@ class AppFunctions {
         isError: true,
       );
       LocalStorageService.clearUser();
-      Get.offAllNamed(AppRoutes.loginScreen);
+      Get.offAllNamed(AppRoutes.studentLoginScreen);
     } else if (responseCode == 403) {
       AppAlertUtils.showToast(
         message: "Insufficient Balance!, Please Buy Credits!",

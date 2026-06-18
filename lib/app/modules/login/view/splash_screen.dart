@@ -141,9 +141,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final isVerified = prefs.getBool('student_verified') ?? false;
 
     if (token != null && token.isNotEmpty) {
-      Get.offAllNamed(AppRoutes.dashBoardScreen);
+      Get.offAllNamed(AppRoutes.studentDashBoardScreen);
     } else {
-      Get.offAllNamed(AppRoutes.loginScreen);
+      Get.offAllNamed(AppRoutes.choosePathScreen);
     }
   }
 
@@ -183,9 +183,11 @@ class _SplashScreenState extends State<SplashScreen> {
               left: 30,
               right: 30,
               child: SliderButtonWidget(
-                onCompleted: () async {
-                  await _setupAndNavigate();
-                },
+                  //await _setupAndNavigate();
+                  onCompleted: () async {
+                    await _getAndStoreFCMToken();
+                    Get.offAllNamed(AppRoutes.choosePathScreen);
+                  }
               ),
             ),
             // Positioned(

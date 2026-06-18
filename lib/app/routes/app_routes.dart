@@ -3,7 +3,7 @@ part of 'app_pages.dart';
 class AppRoutes {
   // LOGIN FLOW
   static const splashScreen = '/SplashScreen';
-  static const loginScreen = '/loginScreen';
+  static const studentLoginScreen = '/studentLoginScreen';
   static const registerResumeUploadScreen = '/registerResumeUploadScreen';
   static const studentRegisterScreen = '/studentRegisterScreen';
   static const registerResumeReportScreen = '/registerResumeReportScreen';
@@ -15,7 +15,7 @@ class AppRoutes {
   static const chatResumeTemplateScreen = '/chatResumeTemplateScreen';
 
   // HOME FLOW
-  static const dashBoardScreen = '/dashBoardScreen';
+  static const studentDashBoardScreen = '/dashBoardScreen';
   static const resumeTemplateSelectionScreen = '/resumeTemplateSelectionScreen';
   static const resumeTemplateViewScreen = '/resumeTemplateViewScreen';
   static const trendyCategoryScreen = '/trendyCategoryScreen';
@@ -48,5 +48,17 @@ class AppRoutes {
   static const mcqTestScreen = '/mcqTestScreen';
   static const mcqResultReviewScreen = '/mcqResultReviewScreen';
   static const myCertificatesScreen = '/myCertificatesScreen';
+
+
+
+  /// RECRUITER FLOW SCREENS
+
+
+  static const choosePathScreen = "/choosePathScreen";
+  static const recruiterRegisterScreen = "/recruiterRegisterScreen";
+  static const recruiterVerificationScreen = "/recruiterVerificationScreen";
+  static const recruiterLoginScreen = "/recruiterLoginScreen";
+  static const recruiterDashboardScreen = "/recruiterDashboardScreen";
+  static const companyProfileScreen = "/companyProfileScreen";
 
 }

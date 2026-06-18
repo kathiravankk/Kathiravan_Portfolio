@@ -635,6 +635,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 150,)
                             ],
                           ),
                         ),

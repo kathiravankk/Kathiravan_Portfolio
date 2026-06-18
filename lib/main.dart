@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
         top: false,
         bottom: true,
         child: GetMaterialApp(
-          initialBinding: LoginBindings(),
+          initialBinding: AppInitialBindings(),
           initialRoute: AppRoutes.splashScreen,
           getPages: AppPages.routes,
           debugShowCheckedModeBanner: false,

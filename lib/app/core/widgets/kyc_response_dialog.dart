@@ -60,7 +60,7 @@ class _KycResultDialog extends StatelessWidget {
     } else {
       AppFunctions.navigateInitialScreen(
         ctx,
-        AppRoutes.dashBoardScreen,
+        AppRoutes.studentDashBoardScreen,
       );
     }
   }

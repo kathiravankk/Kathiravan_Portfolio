@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
-import 'package:internsharks/app/data/models/account/common_post_model.dart';
-import 'package:internsharks/app/data/models/account/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_login_model.dart';
 
-class LoginProvider {
+class RecruiterLoginProvider {
   final Dio? client;
 
-  LoginProvider({@required this.client});
+  RecruiterLoginProvider({@required this.client});
 
   // Response Code
 
@@ -27,13 +27,13 @@ class LoginProvider {
           .post(AppApiUrls.sendLoginOtp, data: {"mobile": mobileNumber})
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return CommonPostModel.fromJson(response.data);
+      return CommonLoginOtpModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonPostModel.fromJson(error.response!.data);
+        return CommonLoginOtpModel.fromJson(error.response!.data);
       } else {
-        return CommonPostModel.fromJson(error.response!.data);
+        return CommonLoginOtpModel.fromJson(error.response!.data);
       }
     }
   }
@@ -51,24 +51,26 @@ class LoginProvider {
 
       Response response = await client!
           .post(
-            AppApiUrls.verifyLoginOtp,
-            data: {
-              "mobile": mobileNumber,
-              "otp": otpNumber,
-              "userType": userType,
-              "fcmToken": fcmToken,
-            },
-          )
+        AppApiUrls.verifyLoginOtp,
+        data: {
+          "mobile": mobileNumber,
+          "otp": otpNumber,
+          "userType": userType,
+          "fcmToken": fcmToken,
+        },
+      )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return StudentRegisterModel.fromJson(response.data);
+      return RecruiterLoginModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return StudentRegisterModel.fromJson(error.response!.data);
+        return RecruiterLoginModel.fromJson(error.response!.data);
       } else {
-        return StudentRegisterModel.fromJson(error.response!.data);
+        return RecruiterLoginModel.fromJson(error.response!.data);
       }
     }
   }
+
+
 }

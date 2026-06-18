@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/credit_data_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
@@ -41,11 +41,11 @@ class RegisterController extends GetxController {
   set resumeExtractModel(ResumeExtractedDataModel value) =>
       _resumeExtractModel.value = value;
 
-  final _commonPostModel = CommonPostModel().obs;
+  final _commonPostModel = CommonLoginOtpModel().obs;
 
-  CommonPostModel get commonPostModel => _commonPostModel.value;
+  CommonLoginOtpModel get commonPostModel => _commonPostModel.value;
 
-  set commonPostModel(CommonPostModel value) => _commonPostModel.value = value;
+  set commonPostModel(CommonLoginOtpModel value) => _commonPostModel.value = value;
 
   //UPLOAD RESUME
 

@@ -128,7 +128,7 @@ class _RegisterResumeReportScreenState
 
           confirmText: "OK, Go Back",
           onConfirm: () {
-            Get.offAllNamed(AppRoutes.dashBoardScreen);
+            Get.offAllNamed(AppRoutes.studentDashBoardScreen);
           },
         );
       },
@@ -168,7 +168,7 @@ class _RegisterResumeReportScreenState
 
                   confirmText: "OK, Go Back",
                   onConfirm: () {
-                    Get.offAllNamed(AppRoutes.dashBoardScreen);
+                    Get.offAllNamed(AppRoutes.studentDashBoardScreen);
                   },
                 );
               },

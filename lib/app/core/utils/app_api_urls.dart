@@ -111,4 +111,16 @@ class AppApiUrls {
   static String createPayment = "${baseUrl}createinternshipfee";
   static String verifyPayment = "${baseUrl}verifyinternshipfee";
 
+  // RECRUITER FLOW API'S:
+
+  static String registerEmailSendOtp = "${baseUrl}email/request-otp";
+  static String registerEmailVerifyOtp = "${baseUrl}email/verify-otp";
+  static String registerMobileSendOtp = "${baseUrl}student/sendMobileOTP";
+  static String registerMobileVerifyOtp = "${baseUrl}student/verifyMobileOTP";
+  static String checkExistAccount = "${baseUrl}student/checkExistence";
+  static String newRecruiterRegister = "${baseUrl}recruiter/recruiterregister";
+
+
+
+
 }

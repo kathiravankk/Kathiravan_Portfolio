@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
-import 'package:internsharks/app/data/models/account/common_post_model.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/credit_data_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';

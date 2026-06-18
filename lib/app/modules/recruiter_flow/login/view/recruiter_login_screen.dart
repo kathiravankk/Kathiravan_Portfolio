@@ -3,26 +3,28 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
-import 'package:internsharks/app/modules/login/controllers/login_controller.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:internsharks/app/modules/login/controllers/student_login_controller.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/controller/recruiter_login_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-import '../../../core/utils/app_functions.dart' show AppFunctions;
-import '../../../data/repositories/local_storage_service.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RecruiterLoginScreen extends StatefulWidget {
+  const RecruiterLoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RecruiterLoginScreen> createState() => _RecruiterLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final LoginController loginController = Get.find<LoginController>();
+class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
+  final RecruiterLoginController loginController =
+      Get.find<RecruiterLoginController>();
 
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
@@ -32,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(AssetImages.loginBg),
+          image: AssetImage(AssetImages.appScreenBg),
           fit: BoxFit.cover,
         ),
       ),
@@ -46,31 +48,39 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      AssetImages.appLogoNew,
-                      height: 120,
-                      width: 280,
-                    ),
-                  ],
-                ),
+                Image.asset(AssetImages.appLogoNew, height: 40, width: 160),
+                const SizedBox(height: 5),
                 Text(
-                  "Welcome!",
+                  "Welcome to",
                   style: AppStyles.customTextStyle(
-                    color: AppColors.secondaryColor,
-                    size: 30,
+                    color: AppColors.whiteColor,
+                    size: 33,
                     weight: FontWeight.w700,
                   ),
                 ),
                 Text(
-                  "Secure access portal.Please enter your credentials.",
+                  "Hire Talent",
+                  style: AppStyles.customTextStyle(
+                    color: AppColors.secondaryColor,
+                    size: 48,
+                    weight: FontWeight.w700,
+                  ),
+                ),
+                Container(
+                  width: 100,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: AppColors.screenDivColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                Text(
+                  "Find Top Talent and build your dream team. Please login to continue",
                   style: AppStyles.customTextStyle(
                     lineSpace: 1.4,
-                    color: AppColors.lightText,
+                    color: AppColors.whiteColor,
                     size: 16,
-                    weight: FontWeight.w300,
+                    weight: FontWeight.w400,
                   ),
                 ),
 
@@ -207,12 +217,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 }),
 
                 const SizedBox(height: 20),
+                Row(
+                  children: <Widget>[
+                    Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        "OR",
+                        style: AppStyles.customTextStyle(
+                          color: Colors.grey,
+                          weight: FontWeight.w700,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+                  ],
+                ),
+                const SizedBox(height: 20),
 
                 /// ---------------- REGISTER LINK ----------------
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      text: "If you’re new to Internsharks, ",
+                      text: "Don’t have an account? ",
                       style: AppStyles.customTextStyle(
                         size: 14,
                         lineSpace: 1.4,
@@ -233,7 +261,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ..onTap = () {
                               AppFunctions.navigateScreen(
                                 context,
-                                AppRoutes.registerResumeUploadScreen,
+                                AppRoutes.recruiterRegisterScreen,
+                                //AppRoutes.companyProfileScreen,
                               );
                             },
                         ),
@@ -300,7 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
-        if (loginController.commonPostModel.userType == "student") {
+        if (loginController.commonPostModel.userType == "recruiter") {
           AppAlertUtils.showToast(
             message:
                 loginController.commonPostModel.message ??
@@ -311,7 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
           AppAlertUtils.showAppAlert(
             context: context,
             content:
-                "Mobile Number already registered as Recruiter. Please use another Number.",
+                "Mobile Number already registered as Student. Please use another Number.",
             confirmText: "OKAY",
             onConfirm: () {
               mobileController.text = "";
@@ -342,53 +371,45 @@ class _LoginScreenState extends State<LoginScreen> {
       await loginController.verifyLoginOtp(
         mobileNumber: mobileController.text,
         otpNumber: otpController.text,
-        userType: loginController.commonPostModel.userType ?? "student",
+        userType: loginController.commonPostModel.userType ?? "recruiter",
         fcmToken: fcmToken ?? "",
       );
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
-        await prefs.setString(
-          LocalStorageService.studentNameKey,
-          loginController.studentRegisterModel.registerData!.studentName ?? "",
+        await LocalStorageService.saveRecruiterToken(
+          recruiterToken: loginController.recruiterLoginModel.recToken ?? "",
         );
-        LocalStorageService.saveStudent(
-          token: loginController.studentRegisterModel.studentToken!,
-          student: loginController.studentRegisterModel.registerData!,
+        await LocalStorageService.saveRecruiterId(
+          recruiterId: loginController.recruiterLoginModel.recruiter!.id ?? "",
         );
-        LocalStorageService.saveStudentId(
-          studentId:
-              loginController.studentRegisterModel.registerData!.id ?? "",
-        );
-        LocalStorageService.saveCreditId(
+        await LocalStorageService.saveRecruiterCreditId(
           creditId:
               loginController
-                  .studentRegisterModel
-                  .registerData!
-                  .studentCreditId ??
+                  .recruiterLoginModel
+                  .recruiter!
+                  .recruiterCreditId ??
               "",
         );
         AppAlertUtils.showToast(
           message:
-              loginController.studentRegisterModel.message ??
-              "OTP verified successfully!",
+              loginController.recruiterLoginModel.message ??
+              "OTP verified & Logged in successfully!",
           isError: false,
         );
-        final token = await LocalStorageService.getToken();
+        final token = await LocalStorageService.getRecruiterToken();
         debugPrint(token);
-        Get.offAllNamed(AppRoutes.dashBoardScreen);
+        Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
       } else {
         AppFunctions.apiErrorHandling(
           loginController.getResponseCode(),
-          loginController.studentRegisterModel.message ??
+          loginController.recruiterLoginModel.message ??
               "Something went wrong!",
         );
       }
     } catch (error) {
       AppFunctions.apiErrorHandling(
         loginController.getResponseCode(),
-        loginController.studentRegisterModel.message ?? "Something went wrong!",
+        loginController.recruiterLoginModel.message ?? "Something went wrong!",
       );
     }
   }
