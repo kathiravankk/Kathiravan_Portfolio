@@ -682,6 +682,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
     final extractedData = registerController.resumeExtractModel.extractedData!;
 
     Map<String, dynamic> registerData = {
+
       "studmobileno": mobileController.text,
       "fcmToken": fcmToken ?? "",
       "studemail": emailController.text,

@@ -29,6 +29,7 @@ class _RecruiterVerificationScreenState
   late String designation;
   late String gender;
   late int employeeCount;
+  late String refCode;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _RecruiterVerificationScreenState
     designation = args["designation"];
     gender = args["gender"];
     employeeCount = args["employeeCount"];
+    refCode = args["refcode"];
     sendMobileOtp();
   }
 
@@ -422,7 +424,30 @@ class _RecruiterVerificationScreenState
       );
       if (registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201) {
-        AppFunctions.navigateScreen(context, AppRoutes.companyProfileScreen);
+        if (registerController.commonPostModel.message ==
+            "Email and mobile are available for registration") {
+          if (mounted) {
+            AppFunctions.navigateScreen(
+              context,
+              AppRoutes.companyProfileScreen,
+              arguments: {
+                "name": recruiterName,
+                "email": recruiterEmail,
+                "mobile": recruiterMobile,
+                "alternateMobile": alternateMobile,
+                "designation": designation,
+                "gender": gender,
+                "employeeCount": employeeCount,
+                "refCode": refCode,
+              },
+            );
+          }
+        } else {
+          AppAlertUtils.showToast(
+            message: "Email and mobile are already registered",
+            isError: true,
+          );
+        }
       } else {
         AppFunctions.apiErrorHandling(
           registerController.getResponseCode(),

@@ -232,6 +232,7 @@ class _RecruiterRegistrationScreenState
                     ),
                   ],
                 ),
+                _buildReferralExpansionTile(),
                 const SizedBox(height: 5),
 
                 /// BUTTON
@@ -246,6 +247,132 @@ class _RecruiterRegistrationScreenState
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  final TextEditingController referralCodeController = TextEditingController();
+
+  bool isReferralExpanded = false;
+  bool isReferralSubmitted = false;
+
+  Widget _buildReferralExpansionTile() {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        dividerColor: Colors.transparent,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.fieldBgColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.fieldBorderColor),
+        ),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          initiallyExpanded: isReferralExpanded,
+          onExpansionChanged: (value) {
+            setState(() {
+              isReferralExpanded = value;
+            });
+          },
+          collapsedIconColor: AppColors.primaryColor,
+          iconColor: AppColors.primaryColor,
+          title: Text(
+            "Have a Referral Code?",
+            style: AppStyles.customTextStyle(
+              size: 15,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w700,
+            ),
+          ),
+          subtitle: Text(
+            "Tap here if someone referred you",
+            style: AppStyles.customTextStyle(
+              size: 12,
+              color: AppColors.lightText,
+              weight: FontWeight.w300,
+            ),
+          ),
+          children: [
+            const SizedBox(height: 10),
+
+            // Align(
+            //   alignment: Alignment.centerLeft,
+            //   child: Text(
+            //     "Have a friend's link or code?\nPaste it here to get started.",
+            //     style: AppStyles.customTextStyle(
+            //       size: 13,
+            //       color: AppColors.lightText,
+            //       weight: FontWeight.w300,
+            //       lineSpace: 1.4,
+            //     ),
+            //   ),
+            // ),
+            //
+            // const SizedBox(height: 15),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    controller: referralCodeController,
+                    labelText: "Referral Code",
+                    isEnabled: !isReferralSubmitted,
+                    isNumberKeyboard: false,
+                    hintText: "Enter Referral Code",
+                    prefixWidget: const Icon(
+                      Icons.card_giftcard_rounded,
+                      color: AppColors.primaryColor,
+                      size: 20,
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ),
+
+                const SizedBox(width: 10),
+
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isReferralSubmitted) {
+                        isReferralSubmitted = false;
+                      } else {
+                        if (referralCodeController.text.trim().isEmpty) {
+                          AppAlertUtils.showToast(
+                            message: "Please enter Referral Code",
+                            isError: true,
+                          );
+                          return;
+                        }
+
+                        isReferralSubmitted = true;
+                      }
+                    });
+                  },
+                  child: Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      isReferralSubmitted
+                          ? CupertinoIcons.square_pencil_fill
+                          : Icons.check_sharp,
+                      color: AppColors.whiteColor,
+                      size: 30,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -324,6 +451,7 @@ class _RecruiterRegistrationScreenState
         "designation": designationController.text.trim(),
         "gender": selectedGender,
         "employeeCount": employeeCount,
+        "refcode": referralCodeController.text,
       },
     );
   }

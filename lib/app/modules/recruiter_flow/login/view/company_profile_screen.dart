@@ -1,8 +1,10 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:http/http.dart' hide MultipartFile;
+import 'package:get/get.dart' hide MultipartFile;
+import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -11,9 +13,11 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/modules/login/view/kyc_verification_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/controller/recruiter-register_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 class CompanyProfileScreen extends StatefulWidget {
   const CompanyProfileScreen({super.key});
@@ -38,13 +42,15 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
 
   // ---- State ----
   File? _companyLogo;
+  MultipartFile? companyLogoMultipartFile;
+
+  static const int maxLogoSizeBytes = 2 * 1024 * 1024; // 2 MB
   String? selectedIndustry;
 
   File? _certificateFile;
   String? _certificateFileName;
   double? _certificateSizeInMB;
 
-  static const int maxLogoSizeBytes = 2 * 1024 * 1024; // 2 MB
   static const int maxCertificateSizeBytes = 10 * 1024 * 1024; // 10 MB
 
   final DashboardController dashboardController =
@@ -52,10 +58,28 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   final RecruiterRegisterController registerController =
       Get.find<RecruiterRegisterController>();
 
+  late String recruiterName;
+  late String recruiterEmail;
+  late String recruiterMobile;
+  late String alternateMobile;
+  late String designation;
+  late String gender;
+  late int employeeCount;
+  late String refCode;
+
   @override
   void initState() {
     getIndustryListData();
     super.initState();
+    final args = Get.arguments;
+    recruiterName = args["name"];
+    recruiterEmail = args["email"];
+    recruiterMobile = args["mobile"];
+    alternateMobile = args["alternateMobile"];
+    designation = args["designation"];
+    gender = args["gender"];
+    employeeCount = args["employeeCount"];
+    refCode = args["refCode"];
   }
 
   List<String> industryList = [];
@@ -161,6 +185,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
         imageQuality: 85,
         maxWidth: 800,
       );
+
       if (picked == null) return;
 
       final file = File(picked.path);
@@ -174,7 +199,15 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
         return;
       }
 
-      setState(() => _companyLogo = file);
+      companyLogoMultipartFile = await MultipartFile.fromFile(
+        file.path,
+        filename: 'company_logo_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      );
+
+      setState(() {
+        _companyLogo = file;
+      });
     } catch (e) {
       AppAlertUtils.showToast(
         message: 'Could not open camera/gallery: $e',
@@ -238,7 +271,10 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   // ============================================================
   // INDUSTRY SELECTOR
   // ============================================================
-  void _showIndustryPicker() {
+
+  String industryId = "";
+
+  void showIndustryPicker() {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.whiteColor,
@@ -247,7 +283,9 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
       ),
       builder: (_) => SafeArea(
         child: Wrap(
-          children: industryList.map((industry) {
+          children: List.generate(industryList.length, (index) {
+            final industry = industryList[index];
+
             return ListTile(
               title: Text(
                 industry,
@@ -262,11 +300,21 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                   ? const Icon(Icons.check, color: AppColors.primaryColor)
                   : null,
               onTap: () {
-                setState(() => selectedIndustry = industry);
+                setState(() {
+                  selectedIndustry = industry;
+
+                  industryId =
+                      dashboardController
+                          .categoryListModel
+                          .categoryList?[index]
+                          .categoryId ??
+                      "";
+                });
+
                 Get.back();
               },
             );
-          }).toList(),
+          }),
         ),
       ),
     );
@@ -427,7 +475,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                         CustomTextField(
                           controller: companyWebsiteController,
                           labelText: "Company Website",
-                          hintText: "https://www.internshark.com",
+                          hintText: "https://www.internsharks.com",
                           isNumberKeyboard: false,
                           prefixWidget: const Icon(
                             CupertinoIcons.globe,
@@ -443,12 +491,12 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
 
                         /// BUTTON
                         CustomButtonWidget(
+                          isLoading: registerController.registerLoading,
                           buttonText: "Continue to Register",
                           buttonFunction: () async {
                             await validateAndContinue();
                           },
                         ),
-
                         const SizedBox(height: 20),
                       ],
                     ),
@@ -503,12 +551,12 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                           child: Container(
                             padding: const EdgeInsets.all(6),
                             decoration: const BoxDecoration(
-                              color: AppColors.secondaryColor,
+                              color: AppColors.primaryColor,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.edit,
-                              color: AppColors.blackColor,
+                              color: AppColors.whiteColor,
                               size: 16,
                             ),
                           ),
@@ -570,7 +618,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
           ),
         ),
         InkWell(
-          onTap: _showIndustryPicker,
+          onTap: showIndustryPicker,
           borderRadius: BorderRadius.circular(20),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -727,6 +775,13 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   // VALIDATION
   // ============================================================
   Future<void> validateAndContinue() async {
+    if (_companyLogo == null) {
+      AppAlertUtils.showToast(
+        message: "Please upload your company logo!",
+        isError: true,
+      );
+      return;
+    }
     final nameError = AppFunctions.validateName(companyNameController.text);
     if (nameError != null) {
       AppAlertUtils.showToast(message: nameError, isError: true);
@@ -799,46 +854,62 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
       );
       return;
     }
-
     await recruiterRegisterFunction();
-
-    // AppFunctions.navigateScreen(
-    //   context,
-    //   AppRoutes.recruiterRegisterScreen, // TODO: point this at your actual next route
-    //   arguments: {
-    //     "companyLogo": _companyLogo,
-    //     "companyName": companyNameController.text.trim(),
-    //     "industry": selectedIndustry,
-    //     "description": companyDescriptionController.text.trim(),
-    //     "address": companyAddressController.text.trim(),
-    //     "pincode": pincode,
-    //     "designation": designationController.text.trim(),
-    //     "contactNumber": contactNumberController.text.trim(),
-    //     "email": companyEmailController.text.trim(),
-    //     "website": companyWebsiteController.text.trim(),
-    //     "certificateFile": _certificateFile,
-    //   },
-    // );
   }
 
+  String? fcmToken = "";
+
   Future<void> recruiterRegisterFunction() async {
+    fcmToken = await LocalStorageService.getFcmToken() ?? "";
     Map<String, dynamic> registerData = {
-      "companyLogo": _companyLogo,
-      "companyName": companyNameController.text.trim(),
-      "industry": selectedIndustry,
-      "description": companyDescriptionController.text.trim(),
-      "address": companyAddressController.text.trim(),
-      "pincode": pinCodeController.text.trim(),
-      "designation": designationController.text.trim(),
-      "contactNumber": contactNumberController.text.trim(),
-      "email": companyEmailController.text.trim(),
-      "website": companyWebsiteController.text.trim(),
-      "certificateFile": _certificateFile,
+      "refcode": refCode,
+      "fcmToken": fcmToken,
+      "recname": recruiterName,
+      "recemail": recruiterEmail,
+      "recmobileno": recruiterMobile,
+      "recgender": gender,
+      "recsecondarymobileno": alternateMobile,
+      "recdesignation": designationController.text.trim(),
+      "reccompanysize": employeeCount,
+      if (companyLogoMultipartFile != null)
+        "reccompanylogo": companyLogoMultipartFile,
+      "reccompanyname": companyNameController.text.trim(),
+      "reccompanyindustrytype": industryId,
+      "reccompanydescription": companyDescriptionController.text.trim(),
+      "reccompanyaddress": companyAddressController.text.trim(),
+      "reccompanypincode": pinCodeController.text.trim(),
+      //"designation": designationController.text.trim(),
+      "reccompanycontactno": contactNumberController.text.trim(),
+      "reccompanyemail": companyEmailController.text.trim(),
+      "reccompanywebsite": companyWebsiteController.text.trim(),
+      "reccompanydocumenttype": _certificateFile,
     };
     try {
       await registerController.newRecruiterRegister(registerData: registerData);
       if (registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201) {
+        debugPrint("*************************");
+        await LocalStorageService.saveRecruiterToken(
+          recruiterToken: registerController.registerModel.recToken ?? "",
+        );
+        await LocalStorageService.saveRecruiterId(
+          recruiterId: registerController.registerModel.recruiter!.id ?? "",
+        );
+        await LocalStorageService.saveRecruiterCreditId(
+          creditId:
+              registerController.registerModel.recruiter!.recruiterCreditId ??
+              "",
+        );
+        final token = await LocalStorageService.getRecruiterToken();
+        debugPrint(token);
+        AppAlertUtils.showToast(
+          message:
+          registerController.registerModel.message ??
+              "Registration Successful & Logged in Successfully!",
+          isError: false,
+        );
+        debugPrint("+++++++++++++++++++++++++");
+        Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
       } else {
         AppFunctions.apiErrorHandling(
           registerController.getResponseCode(),

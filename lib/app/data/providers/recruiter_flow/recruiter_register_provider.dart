@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
 
 class RecruiterRegisterProvider {
   final Dio? client;
@@ -186,13 +187,13 @@ class RecruiterRegisterProvider {
           )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
-      return CommonLoginOtpModel.fromJson(response.data);
+      return RecruiterRegisterModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
       if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonLoginOtpModel.fromJson(error.response!.data);
+        return RecruiterRegisterModel.fromJson(error.response!.data);
       } else {
-        return CommonLoginOtpModel.fromJson(error.response!.data);
+        return RecruiterRegisterModel.fromJson(error.response!.data);
       }
     }
   }

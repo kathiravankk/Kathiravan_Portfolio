@@ -376,8 +376,6 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
       );
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('isLoggedIn', true);
         await LocalStorageService.saveRecruiterToken(
           recruiterToken: loginController.recruiterLoginModel.recToken ?? "",
         );

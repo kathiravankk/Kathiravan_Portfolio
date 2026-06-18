@@ -36,85 +36,96 @@ class _CustomNavBarState extends State<CustomNavBar> {
       builder: (context, int value, child) {
         return Stack(
           children: [
-            // Screen content fills full height
-            Positioned.fill(child: getTabWidget(value)),
-            // Nav bar floats at the bottom, fully transparent background
-            Positioned(
-              right: 20,
-              left: 20,
-              bottom: 20,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                height: 75,
-                decoration: BoxDecoration(
-                  color: AppColors.fieldBgColor,
-                  borderRadius: BorderRadius.circular(40),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: widget.isStudentFlow
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _navItem(
-                            index: 0,
-                            icon: Icons.home_rounded,
-                            label: "Home",
-                            selectedIndex: value,
-                          ),
-                          _navItem(
-                            index: 1,
-                            icon: CupertinoIcons.location_fill,
-                            label: "Applied",
-                            selectedIndex: value,
-                          ),
-                          _navItem(
-                            index: 2,
-                            icon: Icons.work,
-                            label: "Internships",
-                            selectedIndex: value,
-                          ),
-                          _navItem(
-                            index: 3,
-                            icon: Icons.person,
-                            label: "Profile",
-                            selectedIndex: value,
-                          ),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _navItem(
-                            index: 0,
-                            icon: Icons.home_rounded,
-                            label: "Home",
-                            selectedIndex: value,
-                          ),
-                          _navItem(
-                            index: 1,
-                            icon: CupertinoIcons.location_fill,
-                            label: "My Post",
-                            selectedIndex: value,
-                          ),
-                          _navItem(
-                            index: 3,
-                            icon: Icons.person,
-                            label: "Profile",
-                            selectedIndex: value,
-                          ),
-                        ],
-                      ),
+            Positioned.fill(
+              child: IndexedStack(
+                index: value,
+                children: widget.screens!.cast<Widget>(),
               ),
             ),
+
+            if (widget.isStudentFlow)
+              _buildStudentNavBar(value)
+            else
+              _buildRecruiterBottomNav(value),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildStudentNavBar(int value) {
+    return Positioned(
+      right: 20,
+      left: 20,
+      bottom: 20,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        height: 75,
+        decoration: BoxDecoration(
+          color: AppColors.fieldBgColor,
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: widget.isStudentFlow
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _navItem(
+                    index: 0,
+                    icon: Icons.home_rounded,
+                    label: "Home",
+                    selectedIndex: value,
+                  ),
+                  _navItem(
+                    index: 1,
+                    icon: CupertinoIcons.location_fill,
+                    label: "Applied",
+                    selectedIndex: value,
+                  ),
+                  _navItem(
+                    index: 2,
+                    icon: Icons.work,
+                    label: "Internships",
+                    selectedIndex: value,
+                  ),
+                  _navItem(
+                    index: 3,
+                    icon: Icons.person,
+                    label: "Profile",
+                    selectedIndex: value,
+                  ),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _navItem(
+                    index: 0,
+                    icon: Icons.home_rounded,
+                    label: "Home",
+                    selectedIndex: value,
+                  ),
+                  _navItem(
+                    index: 1,
+                    icon: CupertinoIcons.location_fill,
+                    label: "My Post",
+                    selectedIndex: value,
+                  ),
+                  _navItem(
+                    index: 3,
+                    icon: Icons.person,
+                    label: "Profile",
+                    selectedIndex: value,
+                  ),
+                ],
+              ),
+      ),
     );
   }
 
@@ -185,6 +196,141 @@ class _CustomNavBarState extends State<CustomNavBar> {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRecruiterBottomNav(int selectedIndex) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: SizedBox(
+        height: 70,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.topCenter,
+          children: [
+            Container(
+              height: 70,
+              decoration: const BoxDecoration(
+                color: Color(0xff031D1A),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _recruiterNavItem(
+                      index: 0,
+                      selectedIndex: selectedIndex,
+                      icon: Icons.home_rounded,
+                      label: "Home",
+                    ),
+                  ),
+
+                  Expanded(
+                    child: _recruiterNavItem(
+                      index: 1,
+                      selectedIndex: selectedIndex,
+                      icon: Icons.work,
+                      label: "My Post",
+                    ),
+                  ),
+
+                  const SizedBox(width: 70),
+
+                  Expanded(
+                    child: _recruiterNavItem(
+                      index: 3,
+                      selectedIndex: selectedIndex,
+                      icon: Icons.groups,
+                      label: "My Interns",
+                    ),
+                  ),
+
+                  Expanded(
+                    child: _recruiterNavItem(
+                      index: 4,
+                      selectedIndex: selectedIndex,
+                      icon: Icons.people_alt_outlined,
+                      label: "Referral",
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Positioned(
+              top: -25,
+              child: GestureDetector(
+                onTap: () {
+                  currentIndex.value = 2;
+                },
+                child: Container(
+                  width: 58,
+                  height: 58,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.blackColor,
+                    border: Border.all(
+                      color: AppColors.secondaryColor,
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.secondaryColor.withValues(alpha: 0.45),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.add, color: Colors.white, size: 30),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _recruiterNavItem({
+    required int index,
+    required int selectedIndex,
+    required IconData icon,
+    required String label,
+  }) {
+    final bool isSelected = index == selectedIndex;
+
+    return InkWell(
+      onTap: () {
+        currentIndex.value = index;
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 22,
+            color: isSelected ? AppColors.secondaryColor : AppColors.whiteColor,
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            label,
+            style: AppStyles.customTextStyle(
+              size: 10,
+              weight: FontWeight.w500,
+              color: isSelected
+                  ? AppColors.secondaryColor
+                  : AppColors.whiteColor,
+            ),
+          ),
+        ],
       ),
     );
   }

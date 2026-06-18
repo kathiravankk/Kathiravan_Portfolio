@@ -51,6 +51,7 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
               RecruiterHomeScreen(),
               RecruiterHomeScreen(),
               RecruiterHomeScreen(),
+              RecruiterHomeScreen(),
             ],
           ),
         ),
