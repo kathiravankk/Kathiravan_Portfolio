@@ -122,7 +122,16 @@ class CreditPlanCard extends StatelessWidget {
                       color: AppColors.blackColor,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
+                  Text(
+                    "+18% GST Extra",
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      weight: FontWeight.w400,
+                      color: AppColors.blackLight,
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
