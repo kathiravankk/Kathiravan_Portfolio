@@ -5,7 +5,8 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
 import 'package:internsharks/app/modules/home/view/privacy_policy_screen.dart';
-import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_home_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_drawer_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_home_screen.dart';
 
 class RecruiterDashboardScreen extends StatefulWidget {
   const RecruiterDashboardScreen({super.key});
@@ -43,11 +44,16 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
         child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: AppColors.transparentColor,
+          drawer: const RecruiterDrawerScreen(),
           bottomNavigationBar: null,
           body: CustomNavBar(
             isStudentFlow: false,
             screens: [
-              RecruiterHomeScreen(),
+              RecruiterHomeScreen(
+                onProfileTap: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              ),
               RecruiterHomeScreen(),
               RecruiterHomeScreen(),
               RecruiterHomeScreen(),

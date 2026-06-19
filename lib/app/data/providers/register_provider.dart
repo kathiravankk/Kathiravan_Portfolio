@@ -236,7 +236,7 @@ class RegisterProvider {
   // STUDENT PROFILE DATA
 
   Future fetchStudentData({required String studentId}) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -261,7 +261,7 @@ class RegisterProvider {
   Future<ResumeAnalysisModel> analyzeResumeScore({
     required String resumeUrl,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
 
     try {
       client!.interceptors.add(
@@ -294,7 +294,7 @@ class RegisterProvider {
   Future postUpdateResume({
     required ExtractedResumeDataModel updateData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -433,7 +433,7 @@ class RegisterProvider {
   // TEMPLATE REFRESH CREDIT
 
   Future<TemplateRefreshModel> templateRefreshCredit() async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
@@ -453,7 +453,7 @@ class RegisterProvider {
   // CHAT RESUME CREDITS CONSUMPTION
 
   Future<TemplateRefreshModel> chatResumeCreditUpdate() async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
@@ -473,7 +473,7 @@ class RegisterProvider {
   // GET CREDIT DATA
 
   Future<CreditDataModel> fetchCreditData({required String creditId}) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),

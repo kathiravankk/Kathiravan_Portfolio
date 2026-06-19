@@ -23,6 +23,7 @@ class AppColors {
   static const Color contBorderColor2 = Color.fromRGBO(50, 50, 50, 1);
   static const Color contBorderColor3 = Color.fromRGBO(255, 255, 255, 0.09);
   static const Color contColor3 = Color.fromRGBO(18, 18, 18, 1);
+  static const Color contButtonColor = Color.fromRGBO(31, 31, 31, 1);
   static const Color contColor2 = Color.fromRGBO(24, 24, 27, 1);
   static const Color blackGradient1 = Color.fromRGBO(31, 38, 38, 1);
   static const Color lightHintText = Color.fromRGBO(73, 69, 79, 1);
@@ -84,6 +85,9 @@ class AppColors {
   static const Color disableButColor = Color.fromRGBO(104, 104, 104, 1);
   static const Color buttonGradient1 = Color.fromRGBO(37, 197, 197, 1);
   static const Color buttonGradient2 = Color.fromRGBO(1, 205, 205, 1);
+  static const Color cardColor2 = Color.fromRGBO(39, 39, 39, 1);
+  static const Color cardBorder2 = Color.fromRGBO(55, 55, 55, 1);
+  static const Color drawerColor = Color.fromRGBO(18, 18, 18, 1);
   static const Color gradientColor3 = Color(0xff161e16);
 static const Color iconBgColor = Color(0xFF123B34);
 static const Color iconContColor = Color(0xFF192226);

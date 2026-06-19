@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -34,6 +35,53 @@ class ProfileWidgets {
     } catch (_) {
       return [];
     }
+  }
+
+  static Widget buildSearchBar({required VoidCallback buttonFunc}) {
+    return GestureDetector(
+      onTap: buttonFunc,
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          color: AppColors.lightWhiteCont,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Row(
+          spacing: 15,
+          children: [
+            SizedBox(),
+            Icon(
+              CupertinoIcons.search,
+              color: AppColors.lightHintText,
+              size: 25,
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Tap to search..!",
+                    style: AppStyles.customTextStyle(
+                      size: 13,
+                      color: AppColors.lightHintText,
+                      weight: FontWeight.w500,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.tune,
+                      color: AppColors.lightHintText,
+                      size: 25,
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
 // Shared UI ──────────────────────────────────────────────────────────────────

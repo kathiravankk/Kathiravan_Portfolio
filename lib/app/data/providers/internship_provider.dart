@@ -32,7 +32,7 @@ class InternshipProvider {
   Future<InternshipSyllabusModel> fetchInternshipSyllabus({
     required String studentId,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -54,7 +54,7 @@ class InternshipProvider {
   Future<InternSyllabusResponseModel> fetchSyllabusData({
     required String jobId,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -77,7 +77,7 @@ class InternshipProvider {
     required String jobId,
     required String studentId,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -100,7 +100,7 @@ class InternshipProvider {
   Future<WeeklyUpdateModel> updateWeeklyInternStatus({
     required Map<String, dynamic> weelyData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -123,7 +123,7 @@ class InternshipProvider {
   Future<McqQuestionModel> fetchMcqQuestions({
     required List<dynamic>? weekData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -146,7 +146,7 @@ class InternshipProvider {
   Future<TestResultModel> validateMcqAnswer({
     required Map<String, dynamic>? answerData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -169,7 +169,7 @@ class InternshipProvider {
   Future<AddReviewDataModel> giveFeedBackReview({
     required Map<String, dynamic>? feedBackData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -192,7 +192,7 @@ class InternshipProvider {
   Future<SaveTestResultModel> saveTestResult({
     required Map<String, dynamic>? testData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -215,7 +215,7 @@ class InternshipProvider {
   Future<PaymentStatusModel> checkPaymentStatus({
     required Map<String, dynamic>? jobData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -238,7 +238,7 @@ class InternshipProvider {
   Future<PaymentCreateModel> createPaymentOrder({
     required Map<String, dynamic>? jobData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -261,7 +261,7 @@ class InternshipProvider {
   Future<PaymentCreateModel> verifyPaymentOrder({
     required Map<String, dynamic>? jobData,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -282,7 +282,7 @@ class InternshipProvider {
   // GET ALL CERTIFICATES
 
   Future<AllCertificationsModel> fetchAllCertificates() async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
