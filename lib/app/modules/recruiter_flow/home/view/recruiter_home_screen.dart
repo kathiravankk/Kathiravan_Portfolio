@@ -160,6 +160,18 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                             ),
                         itemBuilder: (context, index) {
                           return StudentDetailCard(
+                            isShortList: studentsList![index].isFavorite ?? false,
+                            isLoading:
+                                homeController.addShortlistLoading ||
+                                homeController.removeShortlistLoading,
+                            shortlistFunc: () async {
+                              setState(() {});
+                              await homeController.shortlistToggleFunc(
+                                studentsList![index],
+                              );
+                              setState(() {});
+                            },
+                            requestFunc: () {},
                             studentName: studentsList![index].studName ?? "",
                             studentProfile:
                                 studentsList![index].studProfile ?? "",
@@ -169,7 +181,7 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                                 studentsList![index].studentcollegename ?? "",
                             studentDepartment:
                                 studentsList![index].studentfieldofstudy ?? "",
-                                isVerified:
+                            isVerified:
                                 studentsList![index].isVerified ?? false,
                           );
                         },

@@ -46,6 +46,7 @@ class StudentDetails {
   String? updatedAt;
   int? v;
   bool? isVerified;
+  bool? isFavorite;
   bool? isActive;
   String? studentCreditId;
   String? studcollegeendyear;
@@ -103,6 +104,7 @@ class StudentDetails {
     this.v,
     this.education,
     this.isVerified,
+    this.isFavorite,
     this.isActive,
     this.studentCreditId,
     this.studcollegeendyear,
@@ -129,9 +131,9 @@ class StudentDetails {
   });
 
   StudentDetails.fromJson(Map<String, dynamic> json) {
-    json.forEach((key, value) {
-      debugPrint("$key --> ${value.runtimeType}");
-    });
+    // json.forEach((key, value) {
+    //   debugPrint("$key --> ${value.runtimeType}");
+    // });
     id = json['_id'];
     studProfile = json['studprofile'];
     studName = json['studname'];
@@ -177,6 +179,7 @@ class StudentDetails {
     v = json['__v'];
 
     isVerified = json['isVerified'];
+    isFavorite = json['isFavorite'] ?? false;
     isActive = json['isActive'];
 
     studentCreditId = json['studentCreditId'];
@@ -256,6 +259,7 @@ class StudentDetails {
       'updatedAt': updatedAt,
       '__v': v,
       'isVerified': isVerified,
+      'isFavorite': isFavorite,
       'isActive': isActive,
       'studentCreditId': studentCreditId,
       'studcollegeendyear':

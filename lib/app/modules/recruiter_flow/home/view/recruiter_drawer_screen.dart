@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/card_widgets.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 class RecruiterDrawerScreen extends StatefulWidget {
   const RecruiterDrawerScreen({super.key});
@@ -113,7 +114,12 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     CardWidgets.settingsTile(
                       icon: Icons.school_outlined,
                       title: "Shortlisted Students",
-                      onTap: () {},
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.shortlistedStudentsListScreen,
+                        );
+                      },
                     ),
                     CardWidgets.settingsTile(
                       icon: Icons.account_balance_wallet_outlined,

@@ -121,6 +121,10 @@ class AppApiUrls {
   static String newRecruiterRegister = "${baseUrl}recruiter/recruiterregister";
   static String getRecruiterProfile = "${baseUrl}recruiter/getrecruiterbyid";
   static String getAllStudentsList = "${baseUrl}student/getallstudentdetail";
+  static String getShortlistedStudents = "${baseUrl}favorite/getfavorites";
+  static String addToShortlistedStudents = "${baseUrl}favorite/add";
+  static String removeShortlistedStudents = "${baseUrl}favorite/deletefavorite";
+
 
 
 

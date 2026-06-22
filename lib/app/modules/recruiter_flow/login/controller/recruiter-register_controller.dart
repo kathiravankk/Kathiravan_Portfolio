@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_register_provider.dart';
 
@@ -259,5 +260,7 @@ class RecruiterRegisterController extends GetxController {
       rethrow;
     }
   }
+
+
 
 }

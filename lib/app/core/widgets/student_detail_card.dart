@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -10,6 +11,10 @@ class StudentDetailCard extends StatelessWidget {
   final String? studentDegree;
   final String? studentDepartment;
   final bool? isVerified;
+  final bool? isShortList;
+  final bool? isLoading;
+  final VoidCallback? requestFunc;
+  final VoidCallback? shortlistFunc;
 
   const StudentDetailCard({
     super.key,
@@ -19,6 +24,10 @@ class StudentDetailCard extends StatelessWidget {
     this.studentDegree = "",
     this.studentDepartment = "",
     this.isVerified = false,
+    this.isShortList = false,
+    this.isLoading = false,
+    this.shortlistFunc,
+    this.requestFunc
   });
 
   @override
@@ -74,9 +83,14 @@ class StudentDetailCard extends StatelessWidget {
                 ),
               ),
 
-               Visibility(
-                 visible: isVerified!,
-                   child: Icon(Icons.verified, color: AppColors.primaryColor, size: 18)),
+              Visibility(
+                visible: isVerified!,
+                child: Icon(
+                  Icons.verified,
+                  color: AppColors.primaryColor,
+                  size: 18,
+                ),
+              ),
             ],
           ),
 
@@ -135,7 +149,7 @@ class StudentDetailCard extends StatelessWidget {
               Expanded(
                 child: CustomButtonWidget(
                   height: 35,
-                  buttonFunction: () {},
+                  buttonFunction: requestFunc!,
                   buttonWidget: Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -162,28 +176,37 @@ class StudentDetailCard extends StatelessWidget {
               Expanded(
                 child: CustomButtonWidget(
                   height: 35,
-                  buttonFunction: () {},
+                  buttonFunction: shortlistFunc!,
                   bgColor: AppColors.contButtonColor,
                   buttonWidget: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 5,
-                      children: [
-                        Icon(
-                          Icons.bookmark_border_sharp,
-                          color: AppColors.whiteColor,
-                        ),
-                        Text(
-                          "Shortlist",
-                          style: AppStyles.customTextStyle(
-                            size: 9,
-                            weight: FontWeight.w700,
-                            color: AppColors.whiteColor,
+                    child: isLoading!
+                        ? CupertinoActivityIndicator(
+                            color: AppColors.secondaryColor,
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            spacing: 5,
+                            children: [
+                              isShortList!
+                                  ? Icon(
+                                      Icons.bookmark,
+                                      color: AppColors.secondaryColor,
+                                    )
+                                  : Icon(
+                                      Icons.bookmark_border_sharp,
+                                      color: AppColors.whiteColor,
+                                    ),
+                              Text(
+                                isShortList! ? "Shortlisted" : "Shortlist",
+                                style: AppStyles.customTextStyle(
+                                  size: 9,
+                                  weight: FontWeight.w700,
+                                  color: AppColors.whiteColor,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),

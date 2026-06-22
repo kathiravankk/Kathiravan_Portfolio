@@ -36,6 +36,7 @@ import 'package:internsharks/app/modules/login/view/resume_template_view_screen.
 import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_home_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/choose_path_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_dashboard_screen.dart';
@@ -246,6 +247,10 @@ class AppPages {
     ),
     appPage(name: AppRoutes.homeProfileScreen, page: () => HomeProfileScreen()),
     appPage(name: AppRoutes.myAppliesScreen, page: () => MyAppliesScreen()),
+    appPage(
+      name: AppRoutes.referralCodeScreen,
+      page: () => ReferralCodeScreen(),
+    ),
 
     /// RECRUITER FLOW SCREENS
     appPage(name: AppRoutes.choosePathScreen, page: () => ChoosePathScreen()),
@@ -257,7 +262,7 @@ class AppPages {
     appPage(
       name: AppRoutes.recruiterDashboardScreen,
       page: () => RecruiterDashboardScreen(),
-      bindings: [RecruiterHomeBinding()]
+      bindings: [RecruiterHomeBinding()],
     ),
     appPage(
       name: AppRoutes.recruiterRegisterScreen,
@@ -268,10 +273,13 @@ class AppPages {
       page: () => RecruiterVerificationScreen(),
     ),
     appPage(
+      name: AppRoutes.shortlistedStudentsListScreen,
+      page: ()=>ShortlistedStudentsListScreen(),
+    ),
+    appPage(
       name: AppRoutes.companyProfileScreen,
       page: () => CompanyProfileScreen(),
       bindings: [DashboardBindings()],
     ),
-    appPage(name: AppRoutes.referralCodeScreen, page: () => ReferralCodeScreen()),
   ];
 }

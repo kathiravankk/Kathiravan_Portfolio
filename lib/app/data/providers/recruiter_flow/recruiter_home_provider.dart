@@ -2,7 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
 
 class RecruiterHomeProvider {
@@ -56,6 +59,78 @@ class RecruiterHomeProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return StudentListModel.fromJson(err.response!.data);
+    }
+  }
+
+  // ADD TO SHORTLISTED STUDENTS
+  Future addToShortlistStudent({required String studentId}) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(
+        AppApiUrls.addToShortlistedStudents,
+        data: {"studentId": studentId},
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return AddShortlistStudentModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response!.statusCode!;
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return AddShortlistStudentModel.fromJson(error.response!.data);
+      } else {
+        return AddShortlistStudentModel.fromJson(error.response!.data);
+      }
+    }
+  }
+
+  // REMOVE SHORTLISTED STUDENTS
+  Future deleteShortlistStudent({required String studentId}) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(
+        AppApiUrls.removeShortlistedStudents,
+        data: {"studentId": studentId},
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response!.statusCode!;
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return CommonLoginOtpModel.fromJson(error.response!.data);
+      } else {
+        return CommonLoginOtpModel.fromJson(error.response!.data);
+      }
+    }
+  }
+
+  // GET SHORTLIST STUDENT LIST DATA
+
+  Future<ShortlistedStudentDataModel> fetchShortlistStudentsList() async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getShortlistedStudents,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return ShortlistedStudentDataModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return ShortlistedStudentDataModel.fromJson(err.response!.data);
     }
   }
   
