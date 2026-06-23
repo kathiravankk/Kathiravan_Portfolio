@@ -88,45 +88,58 @@ class _ShortlistedStudentsListScreenState
         body: Obx(
           () => homeController.shortlistStudentLoading
               ? AppAlertUtils.customLoader()
-              : GridView.builder(
-            padding: EdgeInsets.all(20),
-                  itemCount: studentsList!.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 15,
-                    mainAxisSpacing: 15,
-                    childAspectRatio: 0.68,
-                  ),
-                  itemBuilder: (context, index) {
-                    return StudentDetailCard(
-                      isLoading:
-                          homeController.addShortlistLoading ||
-                          homeController.removeShortlistLoading,
-                      shortlistFunc: () async {
-                        setState(() {});
-                        // await homeController.shortlistToggleFunc(
-                        //   studentsList![index],
-                        // );
-                        setState(() {});
-                      },
-                      requestFunc: () {},
-                      studentName: studentsList![index].student!.studName ?? "",
-                      studentProfile:
-                          studentsList![index].student!.studProfile ?? "",
-                      studentDegree:
-                          studentsList![index].student!.studentdegree ?? "",
-                      studentCollegeName:
-                          studentsList![index].student!.studentcollegename ??
-                          "",
-                      studentDepartment:
-                          studentsList![index].student!.studentfieldofstudy ??
-                          "",
-                      isVerified:
-                          studentsList![index].student!.isVerified ?? false,
-                      isShortList:
-                          studentsList![index].student!.isFavorite ?? false,
-                    );
+              : RefreshIndicator(
+                  color: AppColors.primaryColor,
+                  backgroundColor: AppColors.appBgColor_2,
+                  onRefresh: () async {
+                    await getStudentsListData();
                   },
+
+                  child: GridView.builder(
+                    padding: EdgeInsets.all(20),
+                    itemCount: studentsList!.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: 0.68,
+                        ),
+                    itemBuilder: (context, index) {
+                      return StudentDetailCard(
+                        // isLoading:
+                        //     homeController.addShortlistLoading ||
+                        //     homeController.removeShortlistLoading,
+                        shortlistFunc: () async {
+                          setState(() {});
+                          await homeController.shortlistStudentToggleFunc(
+                            index,
+                            studentsList![index],
+                          );
+                          setState(() {});
+                        },
+                        requestFunc: () {},
+                        studentName:
+                            studentsList![index].student!.studName ?? "",
+                        studentProfile:
+                            studentsList![index].student!.studProfile ?? "",
+                        studentDegree:
+                            studentsList![index].student!.studentdegree ?? "",
+                        studentCollegeName:
+                            studentsList![index].student!.studentcollegename ??
+                            "",
+                        studentDepartment:
+                            studentsList![index].student!.studentfieldofstudy ??
+                            "",
+                        isVerified:
+                            studentsList![index].student!.isVerified ?? false,
+                        isShortList:
+                            studentsList![index].status == "Shortlisted"
+                            ? true
+                            : false,
+                      );
+                    },
+                  ),
                 ),
         ),
       ),

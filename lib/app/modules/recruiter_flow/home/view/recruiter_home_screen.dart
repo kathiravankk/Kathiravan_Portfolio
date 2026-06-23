@@ -88,106 +88,117 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
     return Obx(
       () => homeController.profileLoading || homeController.studentListLoading
           ? AppAlertUtils.customLoader()
-          : Scaffold(
-              drawer: RecruiterDrawerScreen(),
-              backgroundColor: AppColors.transparentColor,
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
+          : RefreshIndicator(
+              color: AppColors.primaryColor,
+              backgroundColor: AppColors.appBgColor_2,
+              onRefresh: () async {
+                await getProfileData();
+                await getStudentsListData();
+              },
+              child: Scaffold(
+                drawer: RecruiterDrawerScreen(),
                 backgroundColor: AppColors.transparentColor,
-                title: Builder(
-                  builder: (context) {
-                    return Row(
-                      spacing: 15,
-                      children: [
-                        GestureDetector(
-                          onTap: widget.onProfileTap,
-                          child: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: AppColors.whiteColor,
-                            backgroundImage: NetworkImage(
-                              homeController.profileModel.recCompanyLogo ?? "",
+                appBar: AppBar(
+                  automaticallyImplyLeading: false,
+                  backgroundColor: AppColors.transparentColor,
+                  title: Builder(
+                    builder: (context) {
+                      return Row(
+                        spacing: 15,
+                        children: [
+                          GestureDetector(
+                            onTap: widget.onProfileTap,
+                            child: CircleAvatar(
+                              radius: 25,
+                              backgroundColor: AppColors.whiteColor,
+                              backgroundImage: NetworkImage(
+                                homeController.profileModel.recCompanyLogo ??
+                                    "",
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          homeController.profileModel.recName ?? "",
-                          style: AppStyles.customTextStyle(
-                            size: 21,
-                            weight: FontWeight.w700,
-                            color: AppColors.secondaryColor,
+                          Text(
+                            homeController.profileModel.recName ?? "",
+                            style: AppStyles.customTextStyle(
+                              size: 21,
+                              weight: FontWeight.w700,
+                              color: AppColors.secondaryColor,
+                            ),
                           ),
-                        ),
-                        const Spacer(),
-                        ProfileWidgets.creditContainer(),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.notifications_active_outlined,
-                            color: AppColors.secondaryColor,
-                            size: 30,
+                          const Spacer(),
+                          ProfileWidgets.creditContainer(),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.notifications_active_outlined,
+                              color: AppColors.secondaryColor,
+                              size: 30,
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-              body: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  spacing: 15,
-                  children: [
-                    ProfileWidgets.buildSearchBar(
-                      buttonFunc: () {
-                        //AppFunctions.navigateScreen(context, AppRoutes.allInternshipScreen);
-                      },
-                    ),
-                    titleRow(
-                      title: "Recommented Candidates",
-                      subTitle: "${studentsList!.length.toString()} Results",
-                      buttonFun: () {},
-                    ),
-                    Expanded(
-                      child: GridView.builder(
-                        padding: EdgeInsets.only(bottom: 200),
-                        itemCount: studentsList!.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 15,
-                              mainAxisSpacing: 15,
-                              childAspectRatio: 0.68,
-                            ),
-                        itemBuilder: (context, index) {
-                          return StudentDetailCard(
-                            isShortList: studentsList![index].isFavorite ?? false,
-                            isLoading:
-                                homeController.addShortlistLoading ||
-                                homeController.removeShortlistLoading,
-                            shortlistFunc: () async {
-                              setState(() {});
-                              await homeController.shortlistToggleFunc(
-                                studentsList![index],
-                              );
-                              setState(() {});
-                            },
-                            requestFunc: () {},
-                            studentName: studentsList![index].studName ?? "",
-                            studentProfile:
-                                studentsList![index].studProfile ?? "",
-                            studentDegree:
-                                studentsList![index].studentdegree ?? "",
-                            studentCollegeName:
-                                studentsList![index].studentcollegename ?? "",
-                            studentDepartment:
-                                studentsList![index].studentfieldofstudy ?? "",
-                            isVerified:
-                                studentsList![index].isVerified ?? false,
-                          );
+                body: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    spacing: 15,
+                    children: [
+                      ProfileWidgets.buildSearchBar(
+                        buttonFunc: () {
+                          //AppFunctions.navigateScreen(context, AppRoutes.allInternshipScreen);
                         },
                       ),
-                    ),
-                  ],
+                      titleRow(
+                        title: "Recommented Candidates",
+                        subTitle: "${studentsList!.length.toString()} Results",
+                        buttonFun: () {},
+                      ),
+                      Expanded(
+                        child: GridView.builder(
+                          padding: EdgeInsets.only(bottom: 200),
+                          itemCount: studentsList!.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 15,
+                                mainAxisSpacing: 15,
+                                childAspectRatio: 0.68,
+                              ),
+                          itemBuilder: (context, index) {
+                            return StudentDetailCard(
+                              isShortList:
+                                  studentsList![index].isFavorite ?? false,
+                              // isLoading:
+                              //     homeController.addShortlistLoading ||
+                              //     homeController.removeShortlistLoading,
+                              shortlistFunc: () async {
+                                setState(() {});
+                                await homeController.shortlistToggleFunc(
+                                  studentsList![index],
+                                );
+                                setState(() {});
+                              },
+                              requestFunc: () {},
+                              studentName: studentsList![index].studName ?? "",
+                              studentProfile:
+                                  studentsList![index].studProfile ?? "",
+                              studentDegree:
+                                  studentsList![index].studentdegree ?? "",
+                              studentCollegeName:
+                                  studentsList![index].studentcollegename ?? "",
+                              studentDepartment:
+                                  studentsList![index].studentfieldofstudy ??
+                                  "",
+                              isVerified:
+                                  studentsList![index].isVerified ?? false,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -36,6 +36,7 @@ import 'package:internsharks/app/modules/login/view/resume_template_view_screen.
 import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_home_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/choose_path_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profile_screen.dart';
@@ -49,6 +50,7 @@ import '../modules/profile/view/mobile_update_screen.dart';
 import '../modules/home/view/manage_resume_screen.dart';
 import '../modules/login/view/register_selfie_preview_screen.dart';
 import '../modules/login/view/splash_screen.dart';
+import '../modules/recruiter_flow/home/view/recruiter_profile_edit_screen.dart';
 import '../modules/recruiter_flow/login/binding/recruiter_login_binding.dart';
 import '../modules/recruiter_flow/login/view/recruiter_verification_screen.dart';
 
@@ -275,6 +277,14 @@ class AppPages {
     appPage(
       name: AppRoutes.shortlistedStudentsListScreen,
       page: ()=>ShortlistedStudentsListScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterProfileScreen,
+      page: ()=>RecruiterProfileScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterProfileEditScreen,
+      page: ()=>RecruiterProfileEditScreen(),
     ),
     appPage(
       name: AppRoutes.companyProfileScreen,

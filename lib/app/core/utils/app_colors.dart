@@ -35,6 +35,7 @@ class AppColors {
   static const Color chatGradient3 = Color.fromRGBO(26, 41, 60, 1);
   static const Color fieldBgColor = Color.fromRGBO(28, 33, 33, 1);
   static const Color redColor = Color.fromRGBO(255, 0, 4, 1);
+  static const Color orangeColor2 = Color.fromRGBO(255, 89, 0, 1.0);
   static const Color contGradient1 = Color.fromRGBO(24, 20, 16, 1);
   static const Color blackLight = Color.fromRGBO(64, 64, 64, 1);
   static const Color contGradient2 = Color.fromRGBO(1, 205, 205, 0);
@@ -88,6 +89,8 @@ class AppColors {
   static const Color cardColor2 = Color.fromRGBO(39, 39, 39, 1);
   static const Color cardBorder2 = Color.fromRGBO(55, 55, 55, 1);
   static const Color drawerColor = Color.fromRGBO(18, 18, 18, 1);
+  static const Color recBorderColor = Color.fromRGBO(42, 47, 58, 1);
+  static const Color recContainerColor = Color.fromRGBO(22, 25, 32, 1);
   static const Color gradientColor3 = Color(0xff161e16);
 static const Color iconBgColor = Color(0xFF123B34);
 static const Color iconContColor = Color(0xFF192226);

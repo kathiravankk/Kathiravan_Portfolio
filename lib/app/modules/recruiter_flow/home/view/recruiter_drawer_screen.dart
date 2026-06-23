@@ -109,7 +109,12 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     CardWidgets.settingsTile(
                       icon: Icons.person_outline,
                       title: "My Profile",
-                      onTap: () {},
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.recruiterProfileScreen,
+                        );
+                      },
                     ),
                     CardWidgets.settingsTile(
                       icon: Icons.school_outlined,

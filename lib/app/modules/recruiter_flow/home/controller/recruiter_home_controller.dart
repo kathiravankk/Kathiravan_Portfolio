@@ -163,7 +163,8 @@ class RecruiterHomeController extends GetxController {
 
   bool get shortlistStudentLoading => _shortlistStudentLoading.value;
 
-  set shortlistStudentLoading(bool value) => _shortlistStudentLoading.value = value;
+  set shortlistStudentLoading(bool value) =>
+      _shortlistStudentLoading.value = value;
 
   // Model
 
@@ -177,11 +178,31 @@ class RecruiterHomeController extends GetxController {
   Future<void> getShortlistStudentsList() async {
     try {
       shortlistStudentLoading = true;
-      shortlistModel = await recruiterHomeProvider!.fetchShortlistStudentsList();
+      shortlistModel = await recruiterHomeProvider!
+          .fetchShortlistStudentsList();
     } catch (err) {
       rethrow;
     } finally {
       shortlistStudentLoading = false;
+    }
+  }
+
+  Future<void> shortlistStudentToggleFunc(
+    int index,
+    ShortlistedData shortlistedStudent,
+  ) async {
+    final removedItem = shortlistedStudent;
+
+    shortlistModel.shortlistedData?.removeAt(index);
+    update();
+
+    final success = await removeShortlistStudent(
+      studentId: removedItem.student?.id ?? "",
+    );
+
+    if (!success) {
+      shortlistModel.shortlistedData?.insert(index, removedItem);
+      update();
     }
   }
 }

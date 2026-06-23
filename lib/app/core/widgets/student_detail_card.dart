@@ -145,10 +145,11 @@ class StudentDetailCard extends StatelessWidget {
           const Spacer(),
 
           Row(
+            spacing: 5,
             children: [
               Expanded(
                 child: CustomButtonWidget(
-                  height: 35,
+                  height: 40,
                   buttonFunction: requestFunc!,
                   buttonWidget: Center(
                     child: Row(
@@ -170,12 +171,9 @@ class StudentDetailCard extends StatelessWidget {
                   ),
                 ),
               ),
-
-              const SizedBox(width: 8),
-
               Expanded(
                 child: CustomButtonWidget(
-                  height: 35,
+                  height: 40,
                   buttonFunction: shortlistFunc!,
                   bgColor: AppColors.contButtonColor,
                   buttonWidget: Center(

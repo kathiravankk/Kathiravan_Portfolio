@@ -96,7 +96,7 @@ class RecruiterHomeProvider {
         LogInterceptor(responseBody: true, requestBody: true),
       );
       Response response = await client!
-          .post(
+          .delete(
         AppApiUrls.removeShortlistedStudents,
         data: {"studentId": studentId},
         options: Options(headers: header),
