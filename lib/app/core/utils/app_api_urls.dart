@@ -124,6 +124,8 @@ class AppApiUrls {
   static String getShortlistedStudents = "${baseUrl}favorite/getfavorites";
   static String addToShortlistedStudents = "${baseUrl}favorite/add";
   static String removeShortlistedStudents = "${baseUrl}favorite/deletefavorite";
+  static String recruiterUpdateProfile = "${baseUrl}recruiter/recruiterregisterupdate";
+  static String getPostedInternships(String recruiterId) => "${baseUrl}jobpost/jobs/$recruiterId";
 
 
 

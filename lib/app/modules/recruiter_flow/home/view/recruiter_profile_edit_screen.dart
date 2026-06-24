@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide MultipartFile;
+import 'package:http/http.dart' hide MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -15,36 +15,33 @@ import 'package:internsharks/app/core/widgets/counter_text_field.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:internsharks/app/modules/login/view/kyc_verification_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 
-class RecruiterEditProfileScreen extends StatefulWidget {
-  const RecruiterEditProfileScreen({super.key});
+class RecruiterProfileEditScreen extends StatefulWidget {
+  const RecruiterProfileEditScreen({super.key});
 
   @override
-  State<RecruiterEditProfileScreen> createState() =>
-      _RecruiterEditProfileScreenState();
+  State<RecruiterProfileEditScreen> createState() =>
+      _RecruiterProfileEditScreenState();
 }
 
-class _RecruiterEditProfileScreenState
-    extends State<RecruiterEditProfileScreen> {
+class _RecruiterProfileEditScreenState
+    extends State<RecruiterProfileEditScreen> {
   final RecruiterHomeController profileController =
-  Get.find<RecruiterHomeController>();
+      Get.find<RecruiterHomeController>();
 
   // ── Controllers ───────────────────────────────────────────────
-  final TextEditingController recruiterNameController =
-  TextEditingController();
-  final TextEditingController primaryNumberController =
-  TextEditingController();
+  final TextEditingController recruiterNameController = TextEditingController();
+  final TextEditingController primaryNumberController = TextEditingController();
   final TextEditingController secondaryNumberController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController recruiterEmailController =
-  TextEditingController();
-  final TextEditingController designationController =
-  TextEditingController();
-  final TextEditingController companyNameController =
-  TextEditingController();
+      TextEditingController();
+  final TextEditingController designationController = TextEditingController();
+  final TextEditingController companyNameController = TextEditingController();
   final TextEditingController companyAddressController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController pincodeController = TextEditingController();
 
   // ── State ─────────────────────────────────────────────────────
@@ -86,8 +83,7 @@ class _RecruiterEditProfileScreenState
 
   // ── Pre-fill ──────────────────────────────────────────────────
   void _prefillFromProfile() {
-    final profile = profileController.recruiterProfile.value;
-    if (profile == null) return;
+    final profile = profileController.profileModel;
 
     recruiterNameController.text = profile.recName ?? "";
     primaryNumberController.text = profile.recMobileNo ?? "";
@@ -99,8 +95,7 @@ class _RecruiterEditProfileScreenState
     pincodeController.text = profile.recCompanyPinCode ?? "";
     employeeCount = int.tryParse(profile.recCompanySize ?? "0") ?? 0;
     _existingLogoUrl = profile.recCompanyLogo ?? "";
-    _existingCertificateUrl =
-        profile.recCompanyDocument?.toString() ?? "";
+    _existingCertificateUrl = profile.recCompanyDocument?.toString() ?? "";
   }
 
   // ── Logo Picker ───────────────────────────────────────────────
@@ -115,8 +110,11 @@ class _RecruiterEditProfileScreenState
         child: Wrap(
           children: [
             ListTile(
-              leading: const Icon(Icons.photo_library,
-                  color: AppColors.greyIcon, size: 20),
+              leading: const Icon(
+                Icons.photo_library,
+                color: AppColors.greyIcon,
+                size: 20,
+              ),
               title: Text(
                 'Choose from Gallery',
                 style: AppStyles.customTextStyle(
@@ -132,8 +130,11 @@ class _RecruiterEditProfileScreenState
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_camera,
-                  color: AppColors.greyIcon, size: 20),
+              leading: const Icon(
+                Icons.photo_camera,
+                color: AppColors.greyIcon,
+                size: 20,
+              ),
               title: Text(
                 'Take a Photo',
                 style: AppStyles.customTextStyle(
@@ -174,8 +175,7 @@ class _RecruiterEditProfileScreenState
 
       _logoMultipartFile = await MultipartFile.fromFile(
         file.path,
-        filename:
-        'company_logo_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        filename: 'company_logo_${DateTime.now().millisecondsSinceEpoch}.jpg',
         contentType: MediaType('image', 'jpeg'),
       );
 
@@ -242,218 +242,218 @@ class _RecruiterEditProfileScreenState
           fit: BoxFit.cover,
         ),
       ),
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        appBar: _buildAppBar(),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              spacing: 20,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Section header
-                Text(
-                  "Edit Profile",
-                  style: AppStyles.customTextStyle(
-                    size: 28,
-                    color: AppColors.secondaryColor,
-                    weight: FontWeight.w700,
+      child: Obx(
+        () => Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: _buildAppBar(),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                spacing: 20,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Section header
+                  Text(
+                    "Edit Profile",
+                    style: AppStyles.customTextStyle(
+                      size: 28,
+                      color: AppColors.secondaryColor,
+                      weight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                Text(
-                  "Update your professional details below.",
-                  style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: AppColors.greyTextColor,
-                    weight: FontWeight.w400,
-                    lineSpace: 1.4,
+                  Text(
+                    "Update your professional details below.",
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.greyTextColor,
+                      weight: FontWeight.w400,
+                      lineSpace: 1.4,
+                    ),
                   ),
-                ),
 
-                // ── Row 1: Company Name | Recruiter Name
-                _buildRowPair(
-                  left: _fieldBlock(
-                    label: "Company Name",
-                    icon: CupertinoIcons.building_2_fill,
-                    child: CustomTextField(
-                      controller: companyNameController,
-                      labelText: "Company Name",
-                      hintText: "e.g. Internsharks Pvt Ltd",
-                      isNumberKeyboard: false,
+                  // ── Row 1: Company Name | Recruiter Name
+                  _buildRowPair(
+                    left: _fieldBlock(
+                      label: "Company Name",
+                      icon: CupertinoIcons.building_2_fill,
+                      child: CustomTextField(
+                        controller: companyNameController,
+                        labelText: "Company Name",
+                        hintText: "e.g. Internsharks Pvt Ltd",
+                        isNumberKeyboard: false,
+                        prefixWidget: const Icon(
+                          CupertinoIcons.building_2_fill,
+                          color: AppColors.primaryColor,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                    right: _fieldBlock(
+                      label: "Recruiter Name",
+                      icon: CupertinoIcons.person,
+                      child: CustomTextField(
+                        controller: recruiterNameController,
+                        labelText: "Recruiter Name",
+                        hintText: "e.g. Sumesh",
+                        isNumberKeyboard: false,
+                        prefixWidget: const Icon(
+                          CupertinoIcons.person,
+                          color: AppColors.primaryColor,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // ── Row 2: Primary Number | Secondary Number
+                  _buildRowPair(
+                    left: CustomTextField(
+                      controller: primaryNumberController,
+                      labelText: "Primary Number",
+                      hintText: "+91 9876543210",
+                      isNumberKeyboard: true,
                       prefixWidget: const Icon(
-                        CupertinoIcons.building_2_fill,
+                        CupertinoIcons.phone,
+                        color: AppColors.primaryColor,
+                        size: 18,
+                      ),
+                    ),
+                    right: CustomTextField(
+                      controller: secondaryNumberController,
+                      labelText: "Secondary Number",
+                      hintText: "Optional",
+                      isNumberKeyboard: true,
+                      prefixWidget: const Icon(
+                        CupertinoIcons.phone,
                         color: AppColors.primaryColor,
                         size: 18,
                       ),
                     ),
                   ),
-                  right: _fieldBlock(
-                    label: "Recruiter Name",
-                    icon: CupertinoIcons.person,
-                    child: CustomTextField(
-                      controller: recruiterNameController,
-                      labelText: "Recruiter Name",
-                      hintText: "e.g. Sumesh",
+
+                  // ── Row 3: Email | Designation
+                  _buildRowPair(
+                    left: CustomTextField(
+                      controller: recruiterEmailController,
+                      labelText: "Recruiter Email",
+                      hintText: "hr@company.com",
                       isNumberKeyboard: false,
                       prefixWidget: const Icon(
-                        CupertinoIcons.person,
+                        CupertinoIcons.mail,
+                        color: AppColors.primaryColor,
+                        size: 18,
+                      ),
+                    ),
+                    right: CustomTextField(
+                      controller: designationController,
+                      labelText: "Designation",
+                      hintText: "HR Manager",
+                      isNumberKeyboard: false,
+                      prefixWidget: const Icon(
+                        CupertinoIcons.briefcase,
                         color: AppColors.primaryColor,
                         size: 18,
                       ),
                     ),
                   ),
-                ),
 
-                // ── Row 2: Primary Number | Secondary Number
-                _buildRowPair(
-                  left: CustomTextField(
-                    controller: primaryNumberController,
-                    labelText: "Primary Number",
-                    hintText: "+91 9876543210",
-                    isNumberKeyboard: true,
-                    prefixWidget: const Icon(
-                      CupertinoIcons.phone,
-                      color: AppColors.primaryColor,
-                      size: 18,
+                  // ── Row 4: Company Address | Pincode
+                  _buildRowPair(
+                    left: CustomTextField(
+                      controller: companyAddressController,
+                      labelText: "Company Address",
+                      hintText: "Enter your address",
+                      isNumberKeyboard: false,
+                      prefixWidget: const Icon(
+                        CupertinoIcons.location,
+                        color: AppColors.primaryColor,
+                        size: 18,
+                      ),
+                    ),
+                    right: CustomTextField(
+                      controller: pincodeController,
+                      labelText: "Pincode",
+                      hintText: "600001",
+                      isNumberKeyboard: true,
+                      prefixWidget: const Icon(
+                        CupertinoIcons.location_solid,
+                        color: AppColors.primaryColor,
+                        size: 18,
+                      ),
                     ),
                   ),
-                  right: CustomTextField(
-                    controller: secondaryNumberController,
-                    labelText: "Secondary Number",
-                    hintText: "Optional",
-                    isNumberKeyboard: true,
-                    prefixWidget: const Icon(
-                      CupertinoIcons.phone,
-                      color: AppColors.primaryColor,
-                      size: 18,
-                    ),
+
+                  // ── Employees Count (full width)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 12,
+                    children: [
+                      _sectionLabel(
+                        icon: Icons.people_alt_rounded,
+                        label: "Employees Count",
+                      ),
+                      CounterTextField(
+                        value: employeeCount,
+                        onChanged: (v) => setState(() => employeeCount = v),
+                        min: 1,
+                        max: 100000,
+                        hintText: "Enter company size",
+                      ),
+                    ],
                   ),
-                ),
 
-                // ── Row 3: Email | Designation
-                _buildRowPair(
-                  left: CustomTextField(
-                    controller: recruiterEmailController,
-                    labelText: "Recruiter Email",
-                    hintText: "hr@company.com",
-                    isNumberKeyboard: false,
-                    prefixWidget: const Icon(
-                      CupertinoIcons.mail,
-                      color: AppColors.primaryColor,
-                      size: 18,
-                    ),
-                  ),
-                  right: CustomTextField(
-                    controller: designationController,
-                    labelText: "Designation",
-                    hintText: "HR Manager",
-                    isNumberKeyboard: false,
-                    prefixWidget: const Icon(
-                      CupertinoIcons.briefcase,
-                      color: AppColors.primaryColor,
-                      size: 18,
-                    ),
-                  ),
-                ),
+                  // ── Company Logo
+                  _buildLogoSection(),
 
-                // ── Row 4: Company Address | Pincode
-                _buildRowPair(
-                  left: CustomTextField(
-                    controller: companyAddressController,
-                    labelText: "Company Address",
-                    hintText: "Enter your address",
-                    isNumberKeyboard: false,
-                    prefixWidget: const Icon(
-                      CupertinoIcons.location,
-                      color: AppColors.primaryColor,
-                      size: 18,
-                    ),
-                  ),
-                  right: CustomTextField(
-                    controller: pincodeController,
-                    labelText: "Pincode",
-                    hintText: "600001",
-                    isNumberKeyboard: true,
-                    prefixWidget: const Icon(
-                      CupertinoIcons.location_solid,
-                      color: AppColors.primaryColor,
-                      size: 18,
-                    ),
-                  ),
-                ),
+                  // ── Incorporation Certificate / CIN
+                  _buildCertificateSection(),
 
-                // ── Employees Count (full width)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12,
-                  children: [
-                    _sectionLabel(
-                      icon: Icons.people_alt_rounded,
-                      label: "Employees Count",
-                    ),
-                    CounterTextField(
-                      value: employeeCount,
-                      onChanged: (v) => setState(() => employeeCount = v),
-                      min: 1,
-                      max: 100000,
-                      hintText: "Enter company size",
-                    ),
-                  ],
-                ),
+                  const SizedBox(height: 5),
 
-                // ── Company Logo
-                _buildLogoSection(),
-
-                // ── Incorporation Certificate / CIN
-                _buildCertificateSection(),
-
-                const SizedBox(height: 5),
-
-                // ── Buttons
-                Row(
-                  spacing: 12,
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Get.back(),
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                              color: AppColors.greyTextColor, width: 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                  // ── Buttons
+                  Row(
+                    spacing: 12,
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Get.back(),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: AppColors.greyTextColor,
+                              width: 1,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          padding:
-                          const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: Text(
-                          "Cancel",
-                          style: AppStyles.customTextStyle(
-                            size: 15,
-                            color: AppColors.whiteColor,
-                            weight: FontWeight.w600,
+                          child: Text(
+                            "Cancel",
+                            style: AppStyles.customTextStyle(
+                              size: 15,
+                              color: AppColors.whiteColor,
+                              weight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Obx(
-                            () => CustomButtonWidget(
+                      Expanded(
+                        flex: 2,
+                        child: CustomButtonWidget(
                           buttonText: "Save Changes",
-                          isLoading:
-                          profileController.updateProfileLoading,
+                          isLoading: profileController.updateProfileLoading,
                           buttonFunction: () async {
                             await _validateAndSave();
                           },
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
 
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
@@ -468,8 +468,7 @@ class _RecruiterEditProfileScreenState
       backgroundColor: AppColors.transparentColor,
       leading: InkWell(
         onTap: () => Get.back(),
-        child:
-        const Icon(CupertinoIcons.back, color: AppColors.whiteColor),
+        child: const Icon(CupertinoIcons.back, color: AppColors.whiteColor),
       ),
       title: Text(
         "Edit Profile",
@@ -515,8 +514,11 @@ class _RecruiterEditProfileScreenState
                     ),
                     OutlinedButton.icon(
                       onPressed: _showLogoSourceSheet,
-                      icon: const Icon(Icons.upload_rounded,
-                          size: 16, color: AppColors.primaryColor),
+                      icon: const Icon(
+                        Icons.upload_rounded,
+                        size: 16,
+                        color: AppColors.primaryColor,
+                      ),
                       label: Text(
                         "Change Logo",
                         style: AppStyles.customTextStyle(
@@ -527,12 +529,16 @@ class _RecruiterEditProfileScreenState
                       ),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(
-                            color: AppColors.primaryColor, width: 1),
+                          color: AppColors.primaryColor,
+                          width: 1,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 8),
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
                       ),
                     ),
                   ],
@@ -602,10 +608,14 @@ class _RecruiterEditProfileScreenState
         borderRadius: BorderRadius.circular(12),
         color: AppColors.primaryColor.withValues(alpha: 0.1),
         border: Border.all(
-            color: AppColors.primaryColor.withValues(alpha: 0.3)),
+          color: AppColors.primaryColor.withValues(alpha: 0.3),
+        ),
       ),
-      child: const Icon(Icons.business_rounded,
-          color: AppColors.primaryColor, size: 36),
+      child: const Icon(
+        Icons.business_rounded,
+        color: AppColors.primaryColor,
+        size: 36,
+      ),
     );
   }
 
@@ -619,20 +629,19 @@ class _RecruiterEditProfileScreenState
         Row(
           spacing: 6,
           children: [
-            _sectionLabel(
-              icon: CupertinoIcons.doc_text_fill,
-              label: "Incorporation Certificate / CIN Number",
+            Expanded(
+              child: _sectionLabel(
+                icon: CupertinoIcons.doc_text_fill,
+                label: "Incorporation Certificate / CIN Number",
+              ),
             ),
-            const Icon(Icons.verified,
-                color: AppColors.primaryColor, size: 16),
+            const Icon(Icons.verified, color: AppColors.primaryColor, size: 16),
           ],
         ),
 
         // Upload box
         InkWell(
-          onTap: _newCertificateFile == null
-              ? _pickCertificateFile
-              : null,
+          onTap: _newCertificateFile == null ? _pickCertificateFile : null,
           borderRadius: BorderRadius.circular(16),
           child: CustomPaint(
             painter: DashPainter(
@@ -643,55 +652,26 @@ class _RecruiterEditProfileScreenState
             ),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                  vertical: 24, horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
               child: _newCertificateFile == null
                   ? Column(
-                spacing: 8,
-                children: [
-                  const Icon(CupertinoIcons.doc_text,
-                      color: AppColors.greyTextColor, size: 32),
-                  Text(
-                    "Click to upload",
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    "PDF, DOC up to 10MB",
-                    style: AppStyles.customTextStyle(
-                      size: 12,
-                      color: AppColors.greyTextColor,
-                      weight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              )
-                  : Row(
-                spacing: 10,
-                children: [
-                  const Icon(CupertinoIcons.doc_fill,
-                      color: AppColors.primaryColor, size: 26),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                      spacing: 2,
+                      spacing: 8,
                       children: [
+                        const Icon(
+                          CupertinoIcons.doc_text,
+                          color: AppColors.greyTextColor,
+                          size: 32,
+                        ),
                         Text(
-                          _certificateFileName ?? "",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          "Click to upload",
                           style: AppStyles.customTextStyle(
-                            size: 13,
+                            size: 14,
                             color: AppColors.whiteColor,
                             weight: FontWeight.w500,
                           ),
                         ),
                         Text(
-                          "${_certificateSizeMB?.toStringAsFixed(2)} MB",
+                          "PDF, DOC up to 10MB",
                           style: AppStyles.customTextStyle(
                             size: 12,
                             color: AppColors.greyTextColor,
@@ -699,30 +679,65 @@ class _RecruiterEditProfileScreenState
                           ),
                         ),
                       ],
+                    )
+                  : Row(
+                      spacing: 10,
+                      children: [
+                        const Icon(
+                          CupertinoIcons.doc_fill,
+                          color: AppColors.primaryColor,
+                          size: 26,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            spacing: 2,
+                            children: [
+                              Text(
+                                _certificateFileName ?? "",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppStyles.customTextStyle(
+                                  size: 13,
+                                  color: AppColors.whiteColor,
+                                  weight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                "${_certificateSizeMB?.toStringAsFixed(2)} MB",
+                                style: AppStyles.customTextStyle(
+                                  size: 12,
+                                  color: AppColors.greyTextColor,
+                                  weight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: _removeCertificateFile,
+                          child: const Icon(
+                            CupertinoIcons.clear_circled_solid,
+                            color: AppColors.greyTextColor,
+                            size: 22,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  InkWell(
-                    onTap: _removeCertificateFile,
-                    child: const Icon(
-                      CupertinoIcons.clear_circled_solid,
-                      color: AppColors.greyTextColor,
-                      size: 22,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ),
 
         // Show existing document name if no new file chosen
-        if (_newCertificateFile == null &&
-            _existingCertificateUrl.isNotEmpty)
+        if (_newCertificateFile == null && _existingCertificateUrl.isNotEmpty)
           Row(
             spacing: 6,
             children: [
-              const Icon(CupertinoIcons.doc_fill,
-                  color: AppColors.primaryColor, size: 14),
+              const Icon(
+                CupertinoIcons.doc_fill,
+                color: AppColors.primaryColor,
+                size: 14,
+              ),
               Expanded(
                 child: Text(
                   "Current: ${_extractFileName(_existingCertificateUrl)}",
@@ -759,11 +774,11 @@ class _RecruiterEditProfileScreenState
     required String label,
     required IconData icon,
     required Widget child,
-  }) =>
-      child; // CustomTextField already includes its own label; pass-through
+  }) => child; // CustomTextField already includes its own label; pass-through
 
   Widget _sectionLabel({required IconData icon, required String label}) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       spacing: 6,
       children: [
         Icon(icon, color: AppColors.secondaryColor, size: 16),
@@ -793,8 +808,7 @@ class _RecruiterEditProfileScreenState
   // ── Validation + Save ─────────────────────────────────────────
   Future<void> _validateAndSave() async {
     // Recruiter name
-    final nameError =
-    AppFunctions.validateName(recruiterNameController.text);
+    final nameError = AppFunctions.validateName(recruiterNameController.text);
     if (nameError != null) {
       AppAlertUtils.showToast(message: nameError, isError: true);
       return;
@@ -803,13 +817,16 @@ class _RecruiterEditProfileScreenState
     // Company name
     if (companyNameController.text.trim().isEmpty) {
       AppAlertUtils.showToast(
-          message: "Company name is required", isError: true);
+        message: "Company name is required",
+        isError: true,
+      );
       return;
     }
 
     // Primary mobile
     final mobileError = AppFunctions.validateIndianMobile(
-        primaryNumberController.text);
+      primaryNumberController.text,
+    );
     if (mobileError != null) {
       AppAlertUtils.showToast(message: mobileError, isError: true);
       return;
@@ -818,10 +835,10 @@ class _RecruiterEditProfileScreenState
     // Secondary mobile (optional)
     if (secondaryNumberController.text.trim().isNotEmpty) {
       final altError = AppFunctions.validateIndianMobile(
-          secondaryNumberController.text);
+        secondaryNumberController.text,
+      );
       if (altError != null) {
-        AppAlertUtils.showToast(
-            message: "Secondary: $altError", isError: true);
+        AppAlertUtils.showToast(message: "Secondary: $altError", isError: true);
         return;
       }
     }
@@ -839,14 +856,18 @@ class _RecruiterEditProfileScreenState
     // Designation
     if (designationController.text.trim().isEmpty) {
       AppAlertUtils.showToast(
-          message: "Designation is required", isError: true);
+        message: "Designation is required",
+        isError: true,
+      );
       return;
     }
 
     // Address
     if (companyAddressController.text.trim().isEmpty) {
       AppAlertUtils.showToast(
-          message: "Company address is required", isError: true);
+        message: "Company address is required",
+        isError: true,
+      );
       return;
     }
 
@@ -856,22 +877,28 @@ class _RecruiterEditProfileScreenState
         pincode.length != 6 ||
         int.tryParse(pincode) == null) {
       AppAlertUtils.showToast(
-          message: "Enter a valid 6-digit pincode", isError: true);
+        message: "Enter a valid 6-digit pincode",
+        isError: true,
+      );
       return;
     }
 
     // Employee count
     if (employeeCount <= 0) {
       AppAlertUtils.showToast(
-          message: "Please enter employee count", isError: true);
+        message: "Please enter employee count",
+        isError: true,
+      );
       return;
     }
 
     await _updateProfile();
   }
 
+  String? recruiterId = "";
+
   Future<void> _updateProfile() async {
-    _recruiterId = await LocalStorageService.getRecruiterId();
+    recruiterId = await LocalStorageService.getRecruiterId();
 
     // Build multipart payload — only include logo/cert if newly selected
     final Map<String, dynamic> payload = {
@@ -884,21 +911,18 @@ class _RecruiterEditProfileScreenState
       "reccompanyaddress": companyAddressController.text.trim(),
       "reccompanypincode": pincode,
       "reccompanysize": employeeCount.toString(),
-      if (_logoMultipartFile != null)
-        "reccompanylogo": _logoMultipartFile,
+      if (_logoMultipartFile != null) "reccompanylogo": _logoMultipartFile,
       if (_newCertificateFile != null)
-        "reccompanydocumenttype": await MultipartFile.fromFile(
+        "reccompanydocument": await MultipartFile.fromFile(
           _newCertificateFile!.path,
-          filename: _certificateFileName ??
+          filename:
+              _certificateFileName ??
               'cert_${DateTime.now().millisecondsSinceEpoch}.pdf',
         ),
     };
 
     try {
-      await profileController.updateRecruiterProfile(
-        recruiterId: _recruiterId ?? "",
-        payload: payload,
-      );
+      await profileController.updateRecruiterProfile(updateData: payload);
       if (profileController.getResponseCode() == 200 ||
           profileController.getResponseCode() == 201) {
         AppAlertUtils.showToast(
@@ -906,6 +930,7 @@ class _RecruiterEditProfileScreenState
           isError: false,
         );
         Get.back();
+        await profileController.getRecruiterProfileData(recruiterId: recruiterId!);
       } else {
         AppFunctions.apiErrorHandling(
           profileController.getResponseCode(),

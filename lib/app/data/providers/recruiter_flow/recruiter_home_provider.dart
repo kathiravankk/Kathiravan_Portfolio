@@ -133,6 +133,37 @@ class RecruiterHomeProvider {
       return ShortlistedStudentDataModel.fromJson(err.response!.data);
     }
   }
+
+  Future<CommonLoginOtpModel> updateRecruiterProfile({
+    required Map<String, dynamic> updateData,
+  }) async {
+    try {
+      Map<String, dynamic> header = await AppApiHeader.recFormDataHeader();
+
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      // Convert Map to FormData
+      final formData = FormData.fromMap(updateData);
+      for (var f in formData.fields) {
+        debugPrint('${f.key} => ${f.value}');
+      }
+
+      Response response = await client!
+          .put(
+        AppApiUrls.recruiterUpdateProfile,
+        data: formData,
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return CommonLoginOtpModel.fromJson(error.response?.data);
+    }
+  }
   
   
 }

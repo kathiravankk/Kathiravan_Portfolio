@@ -38,6 +38,8 @@ import 'package:internsharks/app/modules/login/view/student_register_screen.dart
 import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_home_binding.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/binding/internship_post_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/choose_path_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_dashboard_screen.dart';
@@ -264,7 +266,7 @@ class AppPages {
     appPage(
       name: AppRoutes.recruiterDashboardScreen,
       page: () => RecruiterDashboardScreen(),
-      bindings: [RecruiterHomeBinding()],
+      bindings: [RecruiterHomeBinding(), InternshipPostBinding()],
     ),
     appPage(
       name: AppRoutes.recruiterRegisterScreen,
@@ -285,6 +287,10 @@ class AppPages {
     appPage(
       name: AppRoutes.recruiterProfileEditScreen,
       page: ()=>RecruiterProfileEditScreen(),
+    ),
+    appPage(
+      name: AppRoutes.postedInternshipScreen,
+      page: ()=>PostedInternshipScreen(),
     ),
     appPage(
       name: AppRoutes.companyProfileScreen,

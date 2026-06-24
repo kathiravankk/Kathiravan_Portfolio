@@ -205,4 +205,26 @@ class RecruiterHomeController extends GetxController {
       update();
     }
   }
+
+  // GET ALL SHORTLISTED STUDENTS LIST
+
+  final _updateProfileLoading = false.obs;
+
+  bool get updateProfileLoading => _updateProfileLoading.value;
+
+  set updateProfileLoading(bool value) =>
+      _updateProfileLoading.value = value;
+
+
+  Future<void> updateRecruiterProfile({required Map<String, dynamic>updateData}) async {
+    try {
+      updateProfileLoading = true;
+      commonPostModel = await recruiterHomeProvider!
+          .updateRecruiterProfile(updateData: updateData);
+    } catch (err) {
+      rethrow;
+    } finally {
+      updateProfileLoading = false;
+    }
+  }
 }
