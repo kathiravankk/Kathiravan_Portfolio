@@ -10,6 +10,8 @@ import 'package:internsharks/app/data/models/recruiter_flow/internship_post_mode
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
 
+import 'view_applicants_screen.dart';
+
 class PostedInternshipScreen extends StatefulWidget {
   const PostedInternshipScreen({super.key});
 
@@ -71,12 +73,12 @@ class _PostedInternshipScreenState extends State<PostedInternshipScreen> {
 
             final jobs = postController.internPostModel.jobs;
 
-            if (jobs!.isEmpty) {
+            if (jobs?.isEmpty ?? true) {
               return _buildEmptyState();
             }
 
             // Count active jobs (noOfPosition > 0)
-            final activeCount = jobs
+            final activeCount = jobs!
                 .where((j) => (j.noOfPosition ?? 0) > 0)
                 .length;
 
@@ -250,7 +252,7 @@ class _JobCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Company logo
-                _CompanyLogo(logoUrl: job.companyLogo),
+                CompanyLogo(logoUrl: job.companyLogo),
                 const SizedBox(width: 12),
 
                 // Company name + role
@@ -441,7 +443,17 @@ class _JobCard extends StatelessWidget {
                   child: _ApplicantsButton(
                     count: job.filledPositions ?? 0,
                     onTap: () {
-                      // Navigate to applicants list
+                      if ((job.filledPositions ?? 0) > 0) {
+                        final controller = Get.find<InternshipPostController>();
+                        controller.getApplicants(jobId: job.id ?? "");
+                        Get.to(
+                          () => ViewApplicantsScreen(
+                            companyLogoUrl: job.companyLogo ?? "",
+                            companyName: job.companyName ?? "",
+                            roleType: job.roleType ?? "",
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),
@@ -584,8 +596,8 @@ class _JobCard extends StatelessWidget {
 // Sub-widgets
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _CompanyLogo extends StatelessWidget {
-  const _CompanyLogo({required this.logoUrl});
+class CompanyLogo extends StatelessWidget {
+  const CompanyLogo({required this.logoUrl, super.key});
 
   final String? logoUrl;
 
@@ -766,30 +778,32 @@ class _ApplicantsButton extends StatelessWidget {
           children: [
             const Icon(Icons.people_alt_rounded, size: 15, color: Colors.white),
             Text(
-              "Applicants",
+              count == 0 ? 'No Applicants' : 'Applicants',
               style: AppStyles.customTextStyle(
                 size: 13,
                 color: AppColors.whiteColor,
                 weight: FontWeight.w600,
               ),
             ),
-            Container(
-              width: 22,
-              height: 22,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryColor,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                count.toString().padLeft(2, '0'),
-                style: AppStyles.customTextStyle(
-                  size: 11,
-                  color: Colors.black,
-                  weight: FontWeight.w700,
-                ),
-              ),
-            ),
+            count == 0
+                ? SizedBox.shrink()
+                : Container(
+                    width: 22,
+                    height: 22,
+                    decoration: const BoxDecoration(
+                      color: AppColors.primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      count.toString().padLeft(2, '0'),
+                      style: AppStyles.customTextStyle(
+                        size: 11,
+                        color: Colors.black,
+                        weight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

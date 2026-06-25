@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const List<List<Color>> categoryGradients = [
-    [Color(0xFF1565C0), Color(0xFF1E88E5)],   // Blue
-    [Color(0xFF1B5E20), Color(0xFF43A047)],   // Green
-    [Color(0xFF827717), Color(0xFFAFB42B)],   // Olive/Yellow-green
-    [Color(0xFF4A148C), Color(0xFF8E24AA)],   // Purple
-    [Color(0xFFBF360C), Color(0xFFEF6C00)],   // Orange-red
-    [Color(0xFF006064), Color(0xFF00ACC1)],   // Teal
-    [Color(0xFF880E4F), Color(0xFFE91E63)],   // Pink
-    [Color(0xFF212121), Color(0xFF546E7A)],   // Dark slate
+    [Color(0xFF1565C0), Color(0xFF1E88E5)], // Blue
+    [Color(0xFF1B5E20), Color(0xFF43A047)], // Green
+    [Color(0xFF827717), Color(0xFFAFB42B)], // Olive/Yellow-green
+    [Color(0xFF4A148C), Color(0xFF8E24AA)], // Purple
+    [Color(0xFFBF360C), Color(0xFFEF6C00)], // Orange-red
+    [Color(0xFF006064), Color(0xFF00ACC1)], // Teal
+    [Color(0xFF880E4F), Color(0xFFE91E63)], // Pink
+    [Color(0xFF212121), Color(0xFF546E7A)], // Dark slate
   ];
   static const Color appColor = Color(0xFF000000);
   static const Color appBgColor = Color.fromRGBO(28, 25, 21, 1);
@@ -67,13 +67,13 @@ class AppColors {
   static const Color purpleColor = Colors.deepPurple;
   static const Color codeColor = Colors.greenAccent;
   static const Color transparentColor = Colors.transparent;
-  static const Color failBgColor = Color.fromRGBO(254, 226, 226,1);
+  static const Color failBgColor = Color.fromRGBO(254, 226, 226, 1);
   static const Color creditContColor = Color.fromRGBO(25, 25, 25, 1);
   static const Color creditBorderColor = Color.fromRGBO(255, 255, 255, 0.2);
-  static const Color failTextColor = Color.fromRGBO(220, 38, 38,1);
-  static const Color sucTextColor = Color.fromRGBO(22, 163, 74,1);
+  static const Color failTextColor = Color.fromRGBO(220, 38, 38, 1);
+  static const Color sucTextColor = Color.fromRGBO(22, 163, 74, 1);
   static const Color completedColor = Color.fromRGBO(9, 99, 4, 1);
-  static const Color sucBgColor = Color.fromRGBO(220, 252, 231,1);
+  static const Color sucBgColor = Color.fromRGBO(220, 252, 231, 1);
   static const Color gradientColor1 = Color.fromRGBO(24, 20, 16, 1);
   static const Color gradientColor2 = Color.fromRGBO(1, 205, 205, 0);
   static const Color gradientColor4 = Color.fromRGBO(24, 20, 16, 1);
@@ -92,9 +92,9 @@ class AppColors {
   static const Color recBorderColor = Color.fromRGBO(42, 47, 58, 1);
   static const Color recContainerColor = Color.fromRGBO(22, 25, 32, 1);
   static const Color gradientColor3 = Color(0xff161e16);
-static const Color iconBgColor = Color(0xFF123B34);
-static const Color iconContColor = Color(0xFF192226);
-//static final Color disableFieldColor = Colors.green.withValues(alpha: 0.2);
+  static const Color iconBgColor = Color(0xFF123B34);
+  static const Color iconContColor = Color(0xFF192226);
+  //static final Color disableFieldColor = Colors.green.withValues(alpha: 0.2);
   //static const Color disableFieldColor = Color(0xFF2E4026);
   static const Color disableFieldColor = Color(0xFF0F2323);
   static const Color disableBorderColor = Color.fromRGBO(1, 203, 203, 0.2);
@@ -114,5 +114,8 @@ static const Color iconContColor = Color(0xFF192226);
   static const Color pathLightTextColor = Color.fromRGBO(156, 163, 175, 1);
   static const Color greyTextColor = Color.fromRGBO(148, 163, 184, 1);
   static const Color screenDivColor = Color(0xff9BEA93);
+  static const Color emeraldColor = Color.fromRGBO(16, 185, 129, 1);
+  static const Color emeraldBg = Color.fromRGBO(16, 185, 129, 0.15);
 
+  static const Color darkGrayColor = Color.fromRGBO(47, 47, 47, 1); // #2F2F2F
 }

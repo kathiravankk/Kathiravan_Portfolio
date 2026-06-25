@@ -151,7 +151,7 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                         },
                       ),
                       titleRow(
-                        title: "Recommented Candidates",
+                        title: "Recommended Candidates",
                         subTitle: "${studentsList!.length.toString()} Results",
                         buttonFun: () {},
                       ),
