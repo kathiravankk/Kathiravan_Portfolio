@@ -73,4 +73,9 @@ class AssetImages {
   static const String resumeThumbnail2 = "assets/images/templates_thumbnail/resume_thumbnail_2.png";
   static const String resumeThumbnail3 = "assets/images/templates_thumbnail/resume_thumbnail_3.png";
   static const String resumeThumbnail4 = "assets/images/templates_thumbnail/resume_thumbnail_4.png";
+
+  // Referral Icons
+  static const String freeCreditsUser = "assets/images/free_credits_user.png";
+  static const String referRecruiters = "assets/images/svgs/refer_recruiters.svg";
+
 }

@@ -3,11 +3,7 @@ class InternshipStatusModel {
   StatusData? application;
   bool? isTestTaken;
 
-  InternshipStatusModel({
-    this.success,
-    this.application,
-    this.isTestTaken,
-  });
+  InternshipStatusModel({this.success, this.application, this.isTestTaken});
 
   InternshipStatusModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -110,12 +106,14 @@ class DailyProgress {
   String? status;
   String? completedAt;
   String? id;
+  String? driveLink;
 
   DailyProgress({
     this.dayNumber,
     this.status,
     this.completedAt,
     this.id,
+    this.driveLink,
   });
 
   DailyProgress.fromJson(Map<String, dynamic> json) {
@@ -123,6 +121,7 @@ class DailyProgress {
     status = json['status'];
     completedAt = json['completedAt'];
     id = json['_id'];
+    driveLink = json['driveLink'];
   }
 
   Map<String, dynamic> toJson() {
@@ -131,6 +130,7 @@ class DailyProgress {
     data['status'] = status;
     data['completedAt'] = completedAt;
     data['_id'] = id;
+    data['driveLink'] = driveLink;
     return data;
   }
 }

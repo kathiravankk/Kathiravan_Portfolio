@@ -134,7 +134,12 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     CardWidgets.settingsTile(
                       icon: Icons.groups_outlined,
                       title: "Referrals",
-                      onTap: () {},
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.recruiterReferralScreen,
+                        );
+                      },
                     ),
                     CardWidgets.settingsTile(
                       icon: Icons.workspace_premium_outlined,

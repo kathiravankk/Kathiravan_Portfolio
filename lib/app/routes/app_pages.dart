@@ -55,6 +55,7 @@ import '../modules/login/view/splash_screen.dart';
 import '../modules/recruiter_flow/home/view/recruiter_profile_edit_screen.dart';
 import '../modules/recruiter_flow/login/binding/recruiter_login_binding.dart';
 import '../modules/recruiter_flow/login/view/recruiter_verification_screen.dart';
+import '../modules/recruiter_flow/home/view/recruiter_referral_screen.dart';
 
 part 'app_routes.dart';
 
@@ -296,6 +297,10 @@ class AppPages {
       name: AppRoutes.companyProfileScreen,
       page: () => CompanyProfileScreen(),
       bindings: [DashboardBindings()],
+    ),
+    appPage(
+      name: AppRoutes.recruiterReferralScreen,
+      page: () => RecruiterReferralScreen(),
     ),
   ];
 }

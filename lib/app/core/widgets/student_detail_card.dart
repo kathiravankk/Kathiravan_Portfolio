@@ -27,7 +27,7 @@ class StudentDetailCard extends StatelessWidget {
     this.isShortList = false,
     this.isLoading = false,
     this.shortlistFunc,
-    this.requestFunc
+    this.requestFunc,
   });
 
   @override
@@ -42,8 +42,15 @@ class StudentDetailCard extends StatelessWidget {
       child: Column(
         children: [
           Align(
-            alignment: Alignment.topRight,
-            child: Icon(Icons.more_vert, color: Colors.grey.shade400),
+            alignment: .centerRight,
+            child: isLoading!
+                ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
+                : isShortList!
+                ? Icon(Icons.bookmark, color: AppColors.buttonGrad2)
+                : Icon(
+                    Icons.bookmark_border_sharp,
+                    color: AppColors.whiteColor,
+                  ),
           ),
 
           Container(
@@ -157,54 +164,21 @@ class StudentDetailCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       spacing: 5,
                       children: [
-                        Icon(Icons.telegram_sharp, color: AppColors.blackColor),
+                        Icon(
+                          Icons.telegram_sharp,
+                          color: AppColors.blackColor,
+                          size: 22,
+                        ),
                         Text(
                           "Request",
                           style: AppStyles.customTextStyle(
-                            size: 9,
+                            size: 11,
                             weight: FontWeight.w700,
                             color: AppColors.blackColor,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: CustomButtonWidget(
-                  height: 40,
-                  buttonFunction: shortlistFunc!,
-                  bgColor: AppColors.contButtonColor,
-                  buttonWidget: Center(
-                    child: isLoading!
-                        ? CupertinoActivityIndicator(
-                            color: AppColors.secondaryColor,
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            spacing: 5,
-                            children: [
-                              isShortList!
-                                  ? Icon(
-                                      Icons.bookmark,
-                                      color: AppColors.secondaryColor,
-                                    )
-                                  : Icon(
-                                      Icons.bookmark_border_sharp,
-                                      color: AppColors.whiteColor,
-                                    ),
-                              Text(
-                                isShortList! ? "Shortlisted" : "Shortlist",
-                                style: AppStyles.customTextStyle(
-                                  size: 9,
-                                  weight: FontWeight.w700,
-                                  color: AppColors.whiteColor,
-                                ),
-                              ),
-                            ],
-                          ),
                   ),
                 ),
               ),

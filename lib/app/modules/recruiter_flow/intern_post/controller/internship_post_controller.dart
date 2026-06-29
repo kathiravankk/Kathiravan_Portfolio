@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/applicants_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
+
 import '../../../../data/providers/recruiter_flow/internship_post_provider.dart';
 
 class InternshipPostController extends GetxController {
@@ -23,7 +25,32 @@ class InternshipPostController extends GetxController {
 
   InternshipPostModel get internPostModel => _internPostModel.value;
 
-  set internPostModel(InternshipPostModel value) => _internPostModel.value = value;
+  set internPostModel(InternshipPostModel value) =>
+      _internPostModel.value = value;
+
+  // GET APPLICANTS
+  final _applicantsLoading = false.obs;
+  bool get applicantsLoading => _applicantsLoading.value;
+  set applicantsLoading(bool value) => _applicantsLoading.value = value;
+
+  final _applicantsList = <ApplicantsModel>[].obs;
+  List<ApplicantsModel> get applicantsList => _applicantsList;
+  set applicantsList(List<ApplicantsModel> value) =>
+      _applicantsList.assignAll(value);
+
+  Future<void> getApplicants({required String jobId}) async {
+    try {
+      applicantsLoading = true;
+      final result = await internshipPostProvider!.fetchApplicants(
+        jobId: jobId,
+      );
+      applicantsList = result;
+      applicantsLoading = false;
+    } catch (err) {
+      applicantsLoading = false;
+      rethrow;
+    }
+  }
 
   Future<void> getPostedInternships({required String recruiterId}) async {
     try {

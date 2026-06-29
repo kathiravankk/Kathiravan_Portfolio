@@ -64,5 +64,6 @@ class AppRoutes {
   static const recruiterProfileScreen = "/recruiterProfileScreen";
   static const recruiterProfileEditScreen = "/recruiterProfileEditScreen";
   static const postedInternshipScreen = "/postedInternshipScreen";
+  static const recruiterReferralScreen = "/recruiterReferralScreen";
 
 }
