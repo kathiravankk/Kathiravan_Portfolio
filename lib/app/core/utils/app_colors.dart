@@ -107,7 +107,7 @@ class AppColors {
 
   static const Color containerBorderColor = Color.fromRGBO(255, 255, 255, 0.1);
   static const Color contShadowColor = Color.fromRGBO(1, 205, 205, 0.3);
-  static const Color containerBgColor = Color.fromRGBO(255, 255, 255, 0.03);
+  static const Color containerBgColor = Color.fromRGBO(255, 255, 255, 0.072);
   static const Color containerLightTextColor = Color.fromRGBO(213, 213, 213, 1);
   static const Color creditBorderColor2 = Color.fromRGBO(255, 255, 255, 0.3);
   static const Color pathBorderColor = Color.fromRGBO(255, 255, 255, 0.1);

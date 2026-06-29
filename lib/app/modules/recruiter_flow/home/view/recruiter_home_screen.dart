@@ -152,7 +152,9 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                       ),
                       titleRow(
                         title: "Recommended Candidates",
-                        subTitle: "${studentsList!.length.toString()} Results",
+                        subTitle: studentsList!.isEmpty
+                            ? ""
+                            : "${studentsList!.length.toString()} Results",
                         buttonFun: () {},
                       ),
                       Expanded(
@@ -216,7 +218,7 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
         Text(
           title,
           style: AppStyles.customTextStyle(
-            size: 21,
+            size: 16,
             weight: FontWeight.w700,
             color: AppColors.whiteColor,
           ),

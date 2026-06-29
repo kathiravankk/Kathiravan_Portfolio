@@ -14,7 +14,7 @@ class AppBackgroundWidget extends StatelessWidget {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(AssetImages.appBackgroundImg),
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
         ),
         child: SafeArea(child: child),
