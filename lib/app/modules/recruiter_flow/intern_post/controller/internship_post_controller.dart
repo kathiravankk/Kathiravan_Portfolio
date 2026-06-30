@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/applicants_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 
 import '../../../../data/providers/recruiter_flow/internship_post_provider.dart';
@@ -28,29 +29,6 @@ class InternshipPostController extends GetxController {
   set internPostModel(InternshipPostModel value) =>
       _internPostModel.value = value;
 
-  // GET APPLICANTS
-  final _applicantsLoading = false.obs;
-  bool get applicantsLoading => _applicantsLoading.value;
-  set applicantsLoading(bool value) => _applicantsLoading.value = value;
-
-  final _applicantsList = <ApplicantsModel>[].obs;
-  List<ApplicantsModel> get applicantsList => _applicantsList;
-  set applicantsList(List<ApplicantsModel> value) =>
-      _applicantsList.assignAll(value);
-
-  Future<void> getApplicants({required String jobId}) async {
-    try {
-      applicantsLoading = true;
-      final result = await internshipPostProvider!.fetchApplicants(
-        jobId: jobId,
-      );
-      applicantsList = result;
-      applicantsLoading = false;
-    } catch (err) {
-      applicantsLoading = false;
-      rethrow;
-    }
-  }
 
   Future<void> getPostedInternships({required String recruiterId}) async {
     try {
@@ -61,6 +39,63 @@ class InternshipPostController extends GetxController {
       internPostLoading = false;
     } catch (err) {
       internPostLoading = false;
+      rethrow;
+    }
+  }
+
+  // GET APPLICANTS
+
+  final _applicantsLoading = false.obs;
+  bool get applicantsLoading => _applicantsLoading.value;
+  set applicantsLoading(bool value) => _applicantsLoading.value = value;
+
+  // Model
+
+  final _applicantsModel = ApplicantsListModel().obs;
+
+  ApplicantsListModel get applicantsModel => _applicantsModel.value;
+
+  set applicantsModel(ApplicantsListModel value) =>
+      _applicantsModel.value = value;
+
+  Future<void> getApplicants({required String jobId}) async {
+    try {
+      applicantsLoading = true;
+      applicantsModel = await internshipPostProvider!.fetchApplicants(
+        jobId: jobId,
+      );
+      applicantsLoading = false;
+    } catch (err) {
+      applicantsLoading = false;
+      rethrow;
+    }
+  }
+
+  // GET INTERNS PROFILE DATA
+
+  final _studentProfileLoading = false.obs;
+  bool get studentProfileLoading => _studentProfileLoading.value;
+  set studentProfileLoading(bool value) => _studentProfileLoading.value = value;
+
+  // Model
+
+  final _internStudentProfileModel = InternStudentProfileModel().obs;
+
+  InternStudentProfileModel get internStudentProfileModel => _internStudentProfileModel.value;
+
+  set internStudentProfileModel(InternStudentProfileModel value) =>
+      _internStudentProfileModel.value = value;
+
+  Future<void> getInternStudentProfile({required String jobId, required String studentId}) async {
+    try {
+      studentProfileLoading = true;
+      internStudentProfileModel = await internshipPostProvider!.fetchInternStudentProfile(
+        jobId: jobId,
+        studentId: studentId
+      );
+      studentProfileLoading = false;
+    } catch (err) {
+      studentProfileLoading = false;
       rethrow;
     }
   }

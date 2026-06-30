@@ -127,5 +127,6 @@ class AppApiUrls {
   static String recruiterUpdateProfile = "${baseUrl}recruiter/recruiterregisterupdate";
   static String getPostedInternships(String recruiterId) => "${baseUrl}jobpost/jobs/$recruiterId";
   static String getJobApplicants(String jobId) => "${baseUrl}getjob/jobs/$jobId";
+  static String getInternStudentProfile(String jobId) => "${baseUrl}student/getstudentdetail?jobId=$jobId";
 
 }

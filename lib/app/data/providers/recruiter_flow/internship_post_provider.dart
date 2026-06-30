@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/applicants_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 
 class InternshipPostProvider {
@@ -20,8 +21,9 @@ class InternshipPostProvider {
 
   // GET PROFILE DATA
 
-  Future<InternshipPostModel> fetchPostedInternships(
-      {required String recruiterId}) async {
+  Future<InternshipPostModel> fetchPostedInternships({
+    required String recruiterId,
+  }) async {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
       client!.interceptors.add(
@@ -40,7 +42,7 @@ class InternshipPostProvider {
   }
 
   // GET APPLICANTS
-  Future<List<ApplicantsModel>> fetchApplicants({required String jobId}) async {
+  Future<ApplicantsListModel> fetchApplicants({required String jobId}) async {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
       client!.interceptors.add(
@@ -51,16 +53,35 @@ class InternshipPostProvider {
         options: Options(headers: header),
       );
       responseStatus = response.statusCode!;
-      
-      if (response.data != null && response.data['applications'] != null) {
-        return (response.data['applications'] as List)
-            .map((e) => ApplicantsModel.fromJson(e))
-            .toList();
-      }
-      return [];
+
+      return ApplicantsListModel.fromJson(response.data);
     } on DioException catch (err) {
-      responseStatus = err.response?.statusCode ?? 500;
-      rethrow;
+      responseStatus = err.response!.statusCode!;
+      return ApplicantsListModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET STUDENT PROFILE DATA
+
+  Future<InternStudentProfileModel> fetchInternStudentProfile({
+    required String jobId,
+    required String studentId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.getInternStudentProfile(jobId),
+        options: Options(headers: header),
+        data: {"studentId": studentId},
+      );
+      responseStatus = response.statusCode!;
+      return InternStudentProfileModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return InternStudentProfileModel.fromJson(err.response!.data);
     }
   }
 }

@@ -9,8 +9,8 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
-import 'view_applicants_screen.dart';
 
 class PostedInternshipScreen extends StatefulWidget {
   const PostedInternshipScreen({super.key});
@@ -126,14 +126,15 @@ class _PostedInternshipScreenState extends State<PostedInternshipScreen> {
     return AppBar(
       elevation: 0,
       backgroundColor: AppColors.transparentColor,
-      leading: InkWell(
-        onTap: () => Get.back(),
-        child: const Icon(CupertinoIcons.back, color: AppColors.whiteColor),
-      ),
+      automaticallyImplyLeading: false,
+      // leading: InkWell(
+      //   onTap: () => Get.back(),
+      //   child: const Icon(CupertinoIcons.back, color: AppColors.whiteColor),
+      // ),
       title: Text(
         "Posted Internship",
         style: AppStyles.customTextStyle(
-          size: 22,
+          size: 20,
           color: AppColors.secondaryColor,
           weight: FontWeight.w700,
         ),
@@ -259,7 +260,7 @@ class _JobCard extends StatelessWidget {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 3,
+                    spacing: 10,
                     children: [
                       Text(
                         job.companyName ?? "—",
@@ -317,7 +318,7 @@ class _JobCard extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 12),
             padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
             decoration: BoxDecoration(
-              color: const Color(0xFF1B3A8A),
+              color: AppColors.selectedContColor,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -441,20 +442,20 @@ class _JobCard extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: _ApplicantsButton(
-                    count: job.filledPositions ?? 0,
-                    onTap: () {
-                      if ((job.filledPositions ?? 0) > 0) {
-                        final controller = Get.find<InternshipPostController>();
-                        controller.getApplicants(jobId: job.id ?? "");
-                        Get.to(
-                          () => ViewApplicantsScreen(
-                            companyLogoUrl: job.companyLogo ?? "",
-                            companyName: job.companyName ?? "",
-                            roleType: job.roleType ?? "",
-                          ),
-                        );
-                      }
-                    },
+                    count: job.totalApplicants ?? 0,
+                    onTap: job.totalApplicants != 0
+                      ?() {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.applicantsListScreen,
+                        arguments: {
+                          "jobId": job.id,
+                          "companyLogoUrl": job.companyLogo,
+                          "companyName": job.companyName,
+                          "roleType": job.roleType,
+                        },
+                      );
+                    }: (){},
                   ),
                 ),
               ],
@@ -608,8 +609,8 @@ class CompanyLogo extends StatelessWidget {
       child: logoUrl != null && logoUrl!.isNotEmpty
           ? Image.network(
               logoUrl!,
-              width: 52,
-              height: 52,
+              width: 45,
+              height: 45,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => _placeholder(),
             )

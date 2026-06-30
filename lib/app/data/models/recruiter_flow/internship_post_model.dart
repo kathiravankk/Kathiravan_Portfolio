@@ -50,6 +50,7 @@ class PostData {
   final String? recruiter;
   final JobIndustry? industry;
   final int? noOfPosition;
+  final int? totalApplicants;
   final int? internPositions;
   final int? filledPositions;
   final dynamic syllabusData;
@@ -82,7 +83,7 @@ class PostData {
     this.noOfPosition,
     this.internPositions,
     this.filledPositions,
-    this.syllabusData,
+    this.syllabusData,this.totalApplicants,
     this.createdAt,
     this.updatedAt,
     this.v,
@@ -124,6 +125,7 @@ class PostData {
       noOfPosition: json['noofposition']??0,
       internPositions: json['internpositions']??0,
       filledPositions: json['filledpositions']??0,
+      totalApplicants: json['totalApplications']??0,
       syllabusData: json['syllabusdata'],
       createdAt: json['createdAt']??"",
       updatedAt: json['updatedAt']??"",
@@ -138,6 +140,7 @@ class PostData {
     'companywebsite': companyWebsite,
     'companylogo': companyLogo,
     'roletype': roleType,
+    'totalApplications': totalApplicants,
     'aboutinternship': aboutInternship,
     'studentqualification': studentQualification,
     'requiredskills': requiredSkills,

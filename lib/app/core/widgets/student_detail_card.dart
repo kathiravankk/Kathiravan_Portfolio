@@ -46,10 +46,10 @@ class StudentDetailCard extends StatelessWidget {
             child: isLoading!
                 ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
                 : isShortList!
-                ? Icon(Icons.bookmark, color: AppColors.buttonGrad2)
+                ? Icon(Icons.bookmark, color: AppColors.secondaryColor)
                 : Icon(
                     Icons.bookmark_border_sharp,
-                    color: AppColors.whiteColor,
+                    color: AppColors.secondaryColor,
                   ),
           ),
 

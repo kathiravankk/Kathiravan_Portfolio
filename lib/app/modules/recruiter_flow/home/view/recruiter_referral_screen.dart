@@ -10,8 +10,9 @@ class RecruiterReferralScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBackgroundWidget(
-      child: Column(
+    return AppScaffoldWidget(
+      appBarWidget: AppBar(),
+      bodyWidget: Column(
         children: [
           SvgPicture.asset(AssetImages.referRecruiters),
           Image.asset(AssetImages.freeCreditsUser),
