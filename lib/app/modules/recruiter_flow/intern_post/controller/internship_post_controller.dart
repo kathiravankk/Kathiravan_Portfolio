@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
 
 import '../../../../data/providers/recruiter_flow/internship_post_provider.dart';
 
@@ -97,6 +98,37 @@ class InternshipPostController extends GetxController {
     } catch (err) {
       studentProfileLoading = false;
       rethrow;
+    }
+  }
+
+  //  CREATE NEW INTERNSHIP
+
+  final _createInternshipLoading = false.obs;
+
+  bool get createInternshipLoading => _createInternshipLoading.value;
+
+  set createInternshipLoading(bool value) =>
+      _createInternshipLoading.value = value;
+
+  // Model
+
+  final _createInternshipModel = NewInternshipDataModel().obs;
+
+  NewInternshipDataModel get createInternshipModel => _createInternshipModel.value;
+
+  set createInternshipModel(NewInternshipDataModel value) =>
+      _createInternshipModel.value = value;
+
+
+  Future<void> createNewInternship({required Map<String, dynamic>internshipData}) async {
+    try {
+      createInternshipLoading = true;
+      createInternshipModel = await internshipPostProvider!
+          .createNewInternship(internshipData: internshipData);
+    } catch (err) {
+      rethrow;
+    } finally {
+      createInternshipLoading = false;
     }
   }
 }

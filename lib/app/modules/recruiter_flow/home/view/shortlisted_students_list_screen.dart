@@ -103,7 +103,7 @@ class _ShortlistedStudentsListScreenState
                           crossAxisCount: 2,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 15,
-                          childAspectRatio: 0.68,
+                          childAspectRatio: 0.65,
                         ),
                     itemBuilder: (context, index) {
                       return StudentDetailCard(

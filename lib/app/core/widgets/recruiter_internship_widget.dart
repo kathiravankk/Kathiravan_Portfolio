@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -560,7 +561,7 @@ class CertificationsCard extends StatelessWidget {
 class CertItem extends StatelessWidget {
   const CertItem({super.key, required this.cert});
 
-  final StudentCertificate cert;
+  final Certification cert;
 
   @override
   Widget build(BuildContext context) {

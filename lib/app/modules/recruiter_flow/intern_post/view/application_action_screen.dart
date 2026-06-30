@@ -9,9 +9,11 @@ import 'package:internsharks/app/core/widgets/app_background_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/recruiter_internship_widget.dart';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
+import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart' hide ProjectModelData;
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
@@ -214,58 +216,57 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                     ),
                   ),
 
-                  BottomBar(student: studentData!, viewFunc: () {
-      AppFunctions.navigateScreen(
-      context,
-      AppRoutes.resumeTemplatePreviewScreen,
-      arguments: {
-      "templateId": int.parse(
-        studentData!.templateNumber?.isNotEmpty == true
-      ? studentData!.templateNumber!
-          : "1",
-      ),
-      "resumeData": ExtractedResumeDataModel(
-      personalInfo: PersonalInfoModel(
-      name: studentData!.studName ?? "",
-      email: studentData!.studEmail ?? "",
-      phone: studentData!.studMobileNo ?? "",
-      github: studentData!.github,
-      linkedIn: studentData!.linkedIn,
-      location: studentData!.location!,
-      ),
-      profileSummary: studentData!.profileSummary ?? "",
-      skills: studentData!.studProgrammingLang,
-      certifications: studentData!.studentCertificate! as List<Certification>,
-      educationData: studentData!.education,
-      colleges: student.collegeData,
-      internships: student.internships,
-      experience: student.experience,
-      projects: student.projects,
-      hobbies: student.hobbies,
-      achievements: student.achievements,
-      publications: student.publications,
-      volunteerExperience:
-      student.volunteerExperience,
-      workShops: student.workshops,
-      paperPresentations:
-      student.paperPresentations,
-      industrialVisits:
-      student.industrialVisits,
-      languages:
-      student.languagesKnown,
-      areasOfInterest:
-      student.areasOfInterest,
-      leaderships:
-      student.leadership,
-      studentId: student.id,
-      higherSecondary:
-      student.education?.school?.higherSecondary,
-      secondary:
-      student.education?.school?.secondary,
-      ),
-      },
-      );
-      }),
+                  BottomBar(
+                    student: studentData!,
+                    viewFunc: () {
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.resumeTemplatePreviewScreen,
+                        arguments: {
+                          "templateId": int.parse(
+                            studentData!.templateNumber?.isNotEmpty == true
+                                ? studentData!.templateNumber!
+                                : "1",
+                          ),
+                          "resumeData": ExtractedResumeDataModel(
+                            personalInfo: PersonalInfoModel(
+                              name: studentData!.studName ?? "",
+                              email: studentData!.studEmail ?? "",
+                              phone: studentData!.studMobileNo ?? "",
+                              github: studentData!.github,
+                              linkedIn: studentData!.linkedIn,
+                              location: studentData!.location!,
+                              gender: "",
+                            ),
+                            profileSummary: studentData!.profileSummary ?? "",
+                            skills: studentData!.studProgrammingLang,
+                            certifications:
+                                studentData!.studentCertificate,
+                            educationData: studentData!.education,
+                            colleges: studentData!.college,
+                            internships: studentData!.internships,
+                            experience: studentData!.experience,
+                            projects: studentData!.projects,
+                            hobbies: studentData!.hobbies,
+                            achievements: studentData!.achievements,
+                            publications: studentData!.publications,
+                            volunteerExperience: studentData!.volunteerExperience,
+                            workShops: studentData!.workshops,
+                            paperPresentations: studentData!.paperPresentations,
+                            industrialVisits: studentData!.industrialVisits,
+                            languages: studentData!.languagesKnown,
+                            areasOfInterest: studentData!.areasOfInterest,
+                            leaderships: studentData!.leadership,
+                            studentId: studentData!.id,
+                            higherSecondary:
+                            studentData!.education?.school?.higherSecondary,
+                            secondary: studentData!.education?.school?.secondary,
+                          ),
+                        },
+                      );
+                    },
+                    downloadFunc: () {},
+                  ),
                 ],
               ),
       ),
@@ -313,5 +314,3 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     );
   }
 }
-
-

@@ -43,14 +43,18 @@ class StudentDetailCard extends StatelessWidget {
         children: [
           Align(
             alignment: .centerRight,
-            child: isLoading!
-                ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
-                : isShortList!
-                ? Icon(Icons.bookmark, color: AppColors.secondaryColor)
-                : Icon(
-                    Icons.bookmark_border_sharp,
-                    color: AppColors.secondaryColor,
-                  ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: shortlistFunc!,
+              icon: isLoading!
+                  ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
+                  : isShortList!
+                  ? Icon(Icons.bookmark, color: AppColors.secondaryColor)
+                  : Icon(
+                      Icons.bookmark_border_sharp,
+                      color: AppColors.secondaryColor,
+                    ),
+            ),
           ),
 
           Container(

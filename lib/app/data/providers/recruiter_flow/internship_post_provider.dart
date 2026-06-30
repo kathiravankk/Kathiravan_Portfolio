@@ -5,6 +5,7 @@ import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
 
 class InternshipPostProvider {
   final Dio? client;
@@ -82,6 +83,39 @@ class InternshipPostProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return InternStudentProfileModel.fromJson(err.response!.data);
+    }
+  }
+
+  // POST NEW INTERNSHIP
+
+  Future<NewInternshipDataModel> createNewInternship({
+    required Map<String, dynamic> internshipData,
+  }) async {
+    try {
+      Map<String, dynamic> header = await AppApiHeader.recFormDataHeader();
+
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      // Convert Map to FormData
+      final formData = FormData.fromMap(internshipData);
+      for (var f in formData.fields) {
+        debugPrint('${f.key} => ${f.value}');
+      }
+
+      Response response = await client!
+          .post(
+        AppApiUrls.newInternPost,
+        data: formData,
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return NewInternshipDataModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return NewInternshipDataModel.fromJson(error.response?.data);
     }
   }
 }

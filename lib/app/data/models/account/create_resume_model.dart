@@ -28,7 +28,7 @@ class ReplyData {
   List<String>? skills;
   List<Project>? projects;
   List<Experience>? experience;
-  List<Internship>? internships;
+  List<InternShipModel>? internships;
   List<dynamic>? industrialVisits;
   EducationModel? education;
   List<Certification>? certifications;
@@ -112,7 +112,7 @@ class ReplyData {
     }
 
     internships = (json['internships'] ?? [])
-        .map<Internship>((e) => Internship.fromJson(e))
+        .map<InternShipModel>((e) => InternShipModel.fromJson(e))
         .toList();
     industrialVisits = json['industrial_visits'] ?? [];
     toolsAndTechnologies: json['tools_and_technologies'] ?? [];

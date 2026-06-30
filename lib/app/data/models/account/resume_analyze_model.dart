@@ -128,7 +128,7 @@ class ExtractedResumeDataModel {
   List<String>? skills;
   List<Project>? projects;
   List<ExperienceData>? experience;
-  List<Internship>? internships;
+  List<InternShipModel>? internships;
   List<Training>? trainings;
   List<dynamic>? industrialVisits;
   List<Certification>? certifications;
@@ -204,7 +204,7 @@ class ExtractedResumeDataModel {
         .map<ExperienceData>((e) => ExperienceData.fromJson(e))
         .toList();
     internships = (json['internships'] ?? [])
-        .map<Internship>((e) => Internship.fromJson(e))
+        .map<InternShipModel>((e) => InternShipModel.fromJson(e))
         .toList();
     trainings = (json['trainings'] ?? [])
         .map<Training>((e) => Training.fromJson(e))

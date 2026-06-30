@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
 import 'package:internsharks/app/modules/home/view/privacy_policy_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_drawer_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_home_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/post_new_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
 
 class RecruiterDashboardScreen extends StatefulWidget {
@@ -56,7 +57,7 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
                 },
               ),
               PostedInternshipScreen(),
-              PostedInternshipScreen(),
+              PostNewInternshipScreen(),
               RecruiterHomeScreen(),
               RecruiterHomeScreen(),
             ],

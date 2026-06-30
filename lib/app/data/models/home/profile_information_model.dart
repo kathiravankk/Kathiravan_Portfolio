@@ -45,7 +45,7 @@ class ProfileDataModel {
   String? github;
   List<Project>? projects;
   List<ExperienceData>? experience;
-  List<Internship>? internships;
+  List<InternShipModel>? internships;
   //List<dynamic>? industrialVisits;
   List<PaperPresentation>? paperPresentations;
   List<IndustrialVisit>? industrialVisits;
@@ -197,7 +197,7 @@ class ProfileDataModel {
           .map<ExperienceData>((e) => ExperienceData.fromJson(e))
           .toList(),
       internships: (json['internships'] ?? [])
-          .map<Internship>((e) => Internship.fromJson(e))
+          .map<InternShipModel>((e) => InternShipModel.fromJson(e))
           .toList(),
       //industrialVisits: json['industrial_visits'] ?? [],
       paperPresentations: (json['paper_presentations'] ?? [])

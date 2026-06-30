@@ -1,3 +1,8 @@
+import 'package:internsharks/app/data/models/account/certification_model.dart';
+import 'package:internsharks/app/data/models/account/education_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+
 class InternStudentProfileModel {
   String? message;
   String? id;
@@ -10,7 +15,7 @@ class InternStudentProfileModel {
 
   List<String>? studProgrammingLang;
 
-  List<StudentCertificate>? studentCertificate;
+  List<Certification>? studentCertificate;
 
   String? studentResume;
 
@@ -28,17 +33,17 @@ class InternStudentProfileModel {
   List<dynamic>? paperPresentations;
   List<dynamic>? toolsAndTechnologies;
   List<Project>? projects;
-  List<dynamic>? experience;
-  List<Internship>? internships;
+  List<ExperienceData>? experience;
+  List<InternShipModel>? internships;
   List<dynamic>? industrialVisits;
   List<dynamic>? trainings;
   List<dynamic>? parents;
 
-  List<College>? college;
+  List<CollegeData>? college;
   List<HigherSecondary>? higherSecondary;
   List<SecondaryEducation>? secondary;
 
-  Education? education;
+  EducationModel? education;
 
   bool? freeBannerUsed;
   List<String>? fcmTokens;
@@ -164,7 +169,7 @@ class InternStudentProfileModel {
 
     studentCertificate =
         (json['studentcertificate'] as List?)
-            ?.map((e) => StudentCertificate.fromJson(e))
+            ?.map((e) => Certification.fromJson(e))
             .toList() ??
         [];
 
@@ -188,11 +193,15 @@ class InternStudentProfileModel {
         (json['projects'] as List?)?.map((e) => Project.fromJson(e)).toList() ??
         [];
 
-    experience = json['experience'] ?? [];
+    experience =
+        (json['experience'] as List?)
+            ?.map((e) => ExperienceData.fromJson(e))
+            .toList() ??
+            [];
 
     internships =
         (json['internships'] as List?)
-            ?.map((e) => Internship.fromJson(e))
+            ?.map((e) => InternShipModel.fromJson(e))
             .toList() ??
         [];
 
@@ -201,7 +210,7 @@ class InternStudentProfileModel {
     parents = json['parents'] ?? [];
 
     college =
-        (json['college'] as List?)?.map((e) => College.fromJson(e)).toList() ??
+        (json['college'] as List?)?.map((e) => CollegeData.fromJson(e)).toList() ??
         [];
 
     higherSecondary =
@@ -217,7 +226,7 @@ class InternStudentProfileModel {
         [];
 
     education = json['education'] != null
-        ? Education.fromJson(json['education'])
+        ? EducationModel.fromJson(json['education'])
         : null;
 
     freeBannerUsed = json['freeBannerUsed'];
@@ -425,14 +434,14 @@ class StudentCredit {
   }
 }
 
-class Project {
+class ProjectModelData {
   String? title;
   List<String>? description;
   String? id;
 
-  Project({this.title, this.description, this.id});
+  ProjectModelData({this.title, this.description, this.id});
 
-  Project.fromJson(Map<String, dynamic> json) {
+  ProjectModelData.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     description = (json['description'] as List?)
         ?.map((e) => e.toString())
