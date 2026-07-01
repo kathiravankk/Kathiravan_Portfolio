@@ -118,4 +118,37 @@ class InternshipPostProvider {
       return NewInternshipDataModel.fromJson(error.response?.data);
     }
   }
+
+  // UPDATE NEW INTERNSHIP
+
+  Future<NewInternshipDataModel> updateNewInternship({
+    required String jobId,
+    required Map<String, dynamic> internshipData,
+  }) async {
+    try {
+      Map<String, dynamic> header = await AppApiHeader.recFormDataHeader();
+
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      // Convert Map to FormData
+      final formData = FormData.fromMap(internshipData);
+      for (var f in formData.fields) {
+        debugPrint('${f.key} => ${f.value}');
+      }
+      Response response = await client!
+          .put(
+        AppApiUrls.updateNewInternPost(jobId),
+        data: formData,
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return NewInternshipDataModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 0;
+      return NewInternshipDataModel.fromJson(error.response?.data);
+    }
+  }
 }

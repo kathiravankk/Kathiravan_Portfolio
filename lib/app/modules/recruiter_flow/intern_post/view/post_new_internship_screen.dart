@@ -6,11 +6,14 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/widgets/counter_text_field.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
 
 class PostNewInternshipScreen extends StatefulWidget {
   const PostNewInternshipScreen({super.key});
@@ -25,6 +28,8 @@ enum StipendType { free, paid, fees }
 class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   final RecruiterHomeController homeController =
       Get.find<RecruiterHomeController>();
+  final InternshipPostController postController =
+      Get.find<InternshipPostController>();
 
   // ============================================================
   // STEP CONTROL
@@ -76,29 +81,11 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   String? selectedDuration; // dropdown value (months/days count)
   int numberOfPositions = 1;
 
-  final List<String> stateList = const [
-    "Tamil Nadu",
-    "Andhra Pradesh",
-    "Karnataka",
-    "Kerala",
-    "Telangana",
-    "Maharashtra",
-  ];
+  late List<String> stateList = districtMap.keys.toList()..sort();
 
-  final Map<String, List<String>> districtMap = const {
-    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Trichy"],
-    "Andhra Pradesh": ["Prakasam", "Guntur", "Vijayawada"],
-    "Karnataka": ["Bengaluru", "Mysuru"],
-    "Kerala": ["Kochi", "Trivandrum"],
-    "Telangana": ["Hyderabad", "Warangal"],
-    "Maharashtra": ["Mumbai", "Pune"],
-  };
+  Map<String, List<String>> districtMap = CommonUtils.indiaStatesAndDistricts;
 
-  final List<String> internshipModeList = const [
-    "Work From Home",
-    "Work From Office",
-    "Hybrid",
-  ];
+  final List<String> internshipModeList = const ["Onsite", "Remote", "Hybrid"];
 
   List<String> get durationOptions => durationType == "Months"
       ? List.generate(12, (i) => "${i + 1}")
@@ -133,34 +120,23 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   StipendType stipendType = StipendType.free;
   final TextEditingController stipendAmountController = TextEditingController();
 
-  bool postLoading = false;
-
-  @override
-  void dispose() {
-    companyNameController.dispose();
-    companyWebsiteController.dispose();
-    aboutCompanyController.dispose();
-    titleController.dispose();
-    roleTypeController.dispose();
-    qualificationController.dispose();
-    descriptionController.dispose();
-    for (final c in projectControllers) {
-      c.dispose();
-    }
-    locationLinkController.dispose();
-    fieldOfStudyController.dispose();
-    eligibilityCriteriaController.dispose();
-    skillInputController.dispose();
-    stipendAmountController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
+  PostData? internPostData;
+  bool? isEditScreen = false;
 
   @override
   void initState() {
     super.initState();
+
+    final args = Get.arguments as Map<String, dynamic>?;
+
+    internPostData = args?["internPostData"] as PostData?;
+    isEditScreen = args?["isEditScreen"] ?? false;
+
     getProfileData();
-    _prefillCompanyInfo();
+
+    if (isEditScreen == true && internPostData != null) {
+      _prefillEditData();
+    }
   }
 
   String? recruiterId = "";
@@ -171,7 +147,15 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       await homeController.getRecruiterProfileData(recruiterId: recruiterId!);
       if (homeController.getResponseCode() == 200 ||
           homeController.getResponseCode() == 201) {
-        _prefillCompanyInfo();
+        if (isEditScreen == true) {
+          setState(() {
+            _prefillEditData();
+          });
+        } else {
+          setState(() {
+            _prefillCompanyInfo();
+          });
+        }
       } else {
         AppFunctions.apiErrorHandling(
           homeController.getResponseCode(),
@@ -197,6 +181,130 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     _existingLogoUrl = homeController.profileModel.recCompanyLogo ?? "";
   }
 
+  void _prefillEditData() {
+    final data = internPostData;
+    if (data == null) return;
+
+    // =============================
+    // Company Information
+    // =============================
+    companyNameController.text = data.companyName ?? "";
+    companyWebsiteController.text = data.companyWebsite ?? "";
+    aboutCompanyController.text = data.aboutCompany ?? "";
+    _existingLogoUrl = data.companyLogo ?? "";
+
+    // =============================
+    // Internship Details
+    // =============================
+    roleTypeController.text = data.roleType ?? "";
+
+    // If you have a separate title in API
+    titleController.text = "";
+
+    qualificationController.text = "";
+
+    descriptionController.text = data.aboutInternship ?? "";
+
+    // =============================
+    // Projects
+    // =============================
+
+    projectControllers.clear();
+
+    if (data.projectDescription != null &&
+        data.projectDescription!.isNotEmpty) {
+      for (final project in data.projectDescription!) {
+        projectControllers.add(TextEditingController(text: project));
+      }
+    } else {
+      projectControllers.add(TextEditingController());
+    }
+
+    // =============================
+    // Location
+    // =============================
+
+    selectedState = data.companyState;
+    selectedDistrict = data.companyCity;
+    selectedInternshipMode = data.internshipMode;
+
+    locationLinkController.text = data.locationLink ?? "";
+
+    // =============================
+    // Duration
+    // =============================
+
+    final duration = int.tryParse(data.internshipDuration ?? "1") ?? 1;
+    internshipDuration = duration;
+
+    durationType = (data.days != null && data.days!.isNotEmpty)
+        ? "Days"
+        : "Months";
+
+    // =============================
+    // Positions
+    // =============================
+
+    numberOfPositions = data.noOfPosition ?? 1;
+
+    // =============================
+    // Qualification
+    // =============================
+
+    selectedQualifications.clear();
+
+    if (data.studentQualification != null) {
+      selectedQualifications.addAll(data.studentQualification!);
+    }
+
+    // =============================
+    // Skills
+    // =============================
+
+    requiredSkills.clear();
+
+    if (data.requiredSkills != null) {
+      requiredSkills.addAll(data.requiredSkills!);
+    }
+
+    // =============================
+    // Stipend
+    // =============================
+
+    final stipend = data.internshipStipend ?? "";
+
+    if (stipend == "Free") {
+      stipendType = StipendType.free;
+      stipendAmountController.clear();
+    } else {
+      stipendType = StipendType.paid;
+      stipendAmountController.text = stipend;
+    }
+
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    companyNameController.dispose();
+    companyWebsiteController.dispose();
+    aboutCompanyController.dispose();
+    titleController.dispose();
+    roleTypeController.dispose();
+    qualificationController.dispose();
+    descriptionController.dispose();
+    for (final c in projectControllers) {
+      c.dispose();
+    }
+    locationLinkController.dispose();
+    fieldOfStudyController.dispose();
+    eligibilityCriteriaController.dispose();
+    skillInputController.dispose();
+    stipendAmountController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   // ============================================================
   // BUILD
   // ============================================================
@@ -215,18 +323,22 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           elevation: 0,
           backgroundColor: AppColors.transparentColor,
           automaticallyImplyLeading: false,
-          // leading: IconButton(
-          //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          //   onPressed: () {
-          //     if (currentStep == 0) {
-          //       Get.back();
-          //     } else {
-          //       _goToStep(currentStep - 1);
-          //     }
-          //   },
-          // ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              size: 25,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              if (currentStep == 0) {
+                Get.back();
+              } else {
+                _goToStep(currentStep - 1);
+              }
+            },
+          ),
           title: Text(
-            "Post an Internship",
+            isEditScreen! ? "Edit Posted Internship" : "Post an Internship",
             style: AppStyles.customTextStyle(
               size: 18,
               color: AppColors.whiteColor,
@@ -258,6 +370,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                             size: 16,
                             color: AppColors.lightText,
                             weight: FontWeight.w400,
+                            lineSpace: 1.5,
                           ),
                         ),
                         _buildStepIndicator(),
@@ -275,15 +388,19 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 CustomButtonWidget(
-                                  isLoading: postLoading,
+                                  isLoading:
+                                      postController.createInternshipLoading ||
+                                      postController.updateInternshipLoading,
                                   buttonText: currentStep == totalSteps - 1
-                                      ? "Post Internship"
+                                      ? isEditScreen!
+                                            ? "Update Internship"
+                                            : "Post Internship"
                                       : "Next",
                                   buttonFunction: () async {
                                     await _handleNext();
                                   },
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 150),
                               ],
                             ),
                           ),
@@ -326,7 +443,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   Widget _sectionHeading() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 4,
+      spacing: 10,
       children: [
         Text(
           "Step ${currentStep + 1} of $totalSteps",
@@ -686,7 +803,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           style: AppStyles.customTextStyle(
             color: AppColors.whiteColor,
             size: 14,
-            weight: FontWeight.w500,
+            weight: FontWeight.w700,
           ),
         ),
         ...List.generate(projectControllers.length, (index) {
@@ -694,6 +811,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
             padding: const EdgeInsets.only(bottom: 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               spacing: 10,
               children: [
                 Expanded(
@@ -722,7 +840,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                       child: const Icon(
                         CupertinoIcons.trash,
                         color: Colors.redAccent,
-                        size: 18,
+                        size: 20,
                       ),
                     ),
                   ),
@@ -756,6 +874,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       ],
     );
   }
+
+  int internshipDuration = 1;
 
   // ============================================================
   // STEP 3 — LOCATION & DURATION
@@ -793,12 +913,17 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           enabled: selectedState != null,
           onTap: selectedState == null
               ? null
-              : () => _showOptionPicker(
-                  title: "Select District",
-                  options: districtMap[selectedState] ?? [],
-                  selected: selectedDistrict,
-                  onSelected: (val) => setState(() => selectedDistrict = val),
-                ),
+              : () {
+                  final districts = List<String>.from(
+                    districtMap[selectedState] ?? [],
+                  )..sort();
+                  _showOptionPicker(
+                    title: "Select District",
+                    options: districts,
+                    selected: selectedDistrict,
+                    onSelected: (val) => setState(() => selectedDistrict = val),
+                  );
+                },
         ),
         _buildDropdownPicker(
           label: "Internship Mode",
@@ -824,19 +949,32 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           ),
         ),
         _buildDurationTypeSelector(),
-        _buildDropdownPicker(
-          label:
-              "Internship Duration (${durationType == "Months" ? "Months" : "Days"})",
-          icon: CupertinoIcons.calendar,
-          value: selectedDuration,
-          placeholder: "Select Duration",
-          onTap: () => _showOptionPicker(
-            title: "Select Duration",
-            options: durationOptions,
-            selected: selectedDuration,
-            onSelected: (val) => setState(() => selectedDuration = val),
-          ),
+        CounterTextField(
+          labelText: "Internship Duration ($durationType)",
+          value: internshipDuration,
+          onChanged: (value) {
+            setState(() {
+              internshipDuration = value;
+              selectedDuration = value.toString();
+            });
+          },
+          min: 1,
+          max: durationType == "Months" ? 24 : 365,
+          hintText: durationType == "Months" ? "e.g. 6 Months" : "e.g. 30 Days",
         ),
+        // _buildDropdownPicker(
+        //   label:
+        //       "Internship Duration (${durationType == "Months" ? "Months" : "Days"})",
+        //   icon: CupertinoIcons.calendar,
+        //   value: selectedDuration,
+        //   placeholder: "Select Duration",
+        //   onTap: () => _showOptionPicker(
+        //     title: "Select Duration",
+        //     options: durationOptions,
+        //     selected: selectedDuration,
+        //     onSelected: (val) => setState(() => selectedDuration = val),
+        //   ),
+        // ),
         _buildPositionsCounter(),
       ],
     );
@@ -852,7 +990,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           style: AppStyles.customTextStyle(
             color: AppColors.whiteColor,
             size: 14,
-            weight: FontWeight.w500,
+            weight: FontWeight.w700,
           ),
         ),
         Row(
@@ -863,7 +1001,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
               selected: durationType == "Months",
               onTap: () => setState(() {
                 durationType = "Months";
-                selectedDuration = null;
+                //selectedDuration = null;
               }),
             ),
             _buildRadioOption(
@@ -871,7 +1009,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
               selected: durationType == "Days",
               onTap: () => setState(() {
                 durationType = "Days";
-                selectedDuration = null;
+                //selectedDuration = null;
               }),
             ),
           ],
@@ -918,8 +1056,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           "Number of Positions",
           style: AppStyles.customTextStyle(
             color: AppColors.whiteColor,
-            size: 14,
-            weight: FontWeight.w500,
+            size: 15,
+            weight: FontWeight.w700,
           ),
         ),
         CounterTextField(
@@ -1089,14 +1227,6 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 10,
       children: [
-        Text(
-          "Required Skills",
-          style: AppStyles.customTextStyle(
-            color: AppColors.whiteColor,
-            size: 14,
-            weight: FontWeight.w500,
-          ),
-        ),
         CustomTextField(
           controller: skillInputController,
           labelText: "Required skills",
@@ -1269,7 +1399,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
               borderRadius: BorderRadius.circular(20),
               color: enabled
                   ? AppColors.fieldBgColor
-                  : AppColors.fieldBgColor.withValues(alpha: 0.5),
+                  : AppColors.disableFieldColor,
               border: Border.all(color: AppColors.fieldBorderColor),
             ),
             child: Row(
@@ -1309,20 +1439,21 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   }) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.fieldBgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => SafeArea(
-        child: Wrap(
-          children: List.generate(options.length, (index) {
+        child: ListView.builder(
+          itemCount: options.length,
+          itemBuilder: (context, index) {
             final option = options[index];
             return ListTile(
               title: Text(
                 option,
                 style: AppStyles.customTextStyle(
                   fontFamily: 'Roboto',
-                  color: AppColors.blackColor,
+                  color: AppColors.whiteColor,
                   size: 14,
                   weight: FontWeight.w500,
                 ),
@@ -1335,7 +1466,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                 Get.back();
               },
             );
-          }),
+          },
         ),
       ),
     );
@@ -1344,14 +1475,14 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   // ============================================================
   // SUBMIT
   // ============================================================
-  Future<void> _postInternship() async {
-    setState(() => postLoading = true);
 
+  Future<void> _postInternship() async {
     final String stipendValue = stipendType == StipendType.free
         ? "Free"
         : stipendAmountController.text.trim();
 
     final Map<String, dynamic> payload = {
+      "recruiterId": recruiterId,
       "companyname": companyNameController.text.trim(),
       "aboutcompany": aboutCompanyController.text.trim(),
       "companywebsite": companyWebsiteController.text.trim(),
@@ -1359,57 +1490,55 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       "title": titleController.text.trim(),
       "qualification": qualificationController.text.trim(),
       "intershipdescription": descriptionController.text.trim(),
-      // dio FormData supports repeated keys for array fields when you pass
-      // a List<MapEntry<String, dynamic>> — adjust to match your FormData
-      // helper / API client conventions.
-      "studentqualification[]": selectedQualifications,
+      "aboutinternship": descriptionController.text.trim(),
+      "studentqualification": selectedQualifications,
       "fieldofstudy": fieldOfStudyController.text.trim(),
-      "requiredskills[]": requiredSkills,
+      "requiredskills": requiredSkills,
       "eligibilitycriteria": eligibilityCriteriaController.text.trim(),
       "companystate": selectedState ?? "",
       "companycity": selectedDistrict ?? "",
       "locationlink": locationLinkController.text.trim(),
       "internshipmode": selectedInternshipMode ?? "",
       "durationtype": durationType,
-      "internshipduration": selectedDuration ?? "",
+      "internshipduration": durationType != "Days"
+          ? (selectedDuration ?? "")
+          : "",
       "days": durationType == "Days" ? (selectedDuration ?? "") : "",
-      "numberofpositions": numberOfPositions.toString(),
+      "noofposition": numberOfPositions.toString(),
+      "internpositions": numberOfPositions.toString(),
       "internshipstipend": stipendValue,
-      "projects": projectControllers
+      "project_description": projectControllers
           .map((c) => c.text.trim())
           .where((t) => t.isNotEmpty)
           .toList(),
     };
 
     try {
-      // TODO: replace with your real controller call once it's wired up, e.g.
-      // await postInternshipController.postInternship(postData: payload);
-      // if (postInternshipController.getResponseCode() == 200 ||
-      //     postInternshipController.getResponseCode() == 201) {
-      //   AppAlertUtils.showToast(
-      //     message: "Internship posted successfully!",
-      //     isError: false,
-      //   );
-      //   Get.back();
-      // } else {
-      //   AppFunctions.apiErrorHandling(
-      //     postInternshipController.getResponseCode(),
-      //     "Failed to post internship.",
-      //   );
-      // }
       debugPrint("Internship payload: $payload");
-      AppAlertUtils.showToast(
-        message: "Internship posted successfully!",
-        isError: false,
-      );
-      Get.back();
+      isEditScreen == true
+          ? await postController.updateNewInternship(
+              internshipData: payload,
+              jobId: internPostData!.id ?? "",
+            )
+          : await postController.createNewInternship(internshipData: payload);
+      if (postController.getResponseCode() == 200 ||
+          postController.getResponseCode() == 201) {
+        AppAlertUtils.showToast(
+          message: postController.createInternshipModel.message ??"Internship ${isEditScreen == true ? "updated" : "posted"} successfully!",
+          isError: false,
+        );
+        Get.back();
+      } else {
+        AppFunctions.apiErrorHandling(
+          postController.getResponseCode(),
+          postController.createInternshipModel.message ?? "Failed to ${isEditScreen == true ? "update" : "post"} internship.",
+        );
+      }
     } catch (e) {
       AppAlertUtils.showToast(
         message: "Something went wrong. Please try again.",
         isError: true,
       );
-    } finally {
-      if (mounted) setState(() => postLoading = false);
     }
   }
 }

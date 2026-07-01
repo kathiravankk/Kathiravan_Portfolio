@@ -244,7 +244,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
                   Expanded(
                     child: _recruiterNavItem(
-                      index: 3,
+                      index: 2,
                       selectedIndex: selectedIndex,
                       icon: Icons.groups,
                       label: "My Interns",
@@ -253,7 +253,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
                   Expanded(
                     child: _recruiterNavItem(
-                      index: 4,
+                      index: 3,
                       selectedIndex: selectedIndex,
                       icon: Icons.people_alt_outlined,
                       label: "Referral",
@@ -263,34 +263,34 @@ class _CustomNavBarState extends State<CustomNavBar> {
               ),
             ),
 
-            Positioned(
-              top: -25,
-              child: GestureDetector(
-                onTap: () {
-                  currentIndex.value = 2;
-                },
-                child: Container(
-                  width: 58,
-                  height: 58,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.blackColor,
-                    border: Border.all(
-                      color: AppColors.secondaryColor,
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.secondaryColor.withValues(alpha: 0.45),
-                        blurRadius: 15,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: const Icon(Icons.add, color: Colors.white, size: 30),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   top: -25,
+            //   child: GestureDetector(
+            //     onTap: () {
+            //       currentIndex.value = 2;
+            //     },
+            //     child: Container(
+            //       width: 58,
+            //       height: 58,
+            //       decoration: BoxDecoration(
+            //         shape: BoxShape.circle,
+            //         color: AppColors.blackColor,
+            //         border: Border.all(
+            //           color: AppColors.secondaryColor,
+            //           width: 2,
+            //         ),
+            //         boxShadow: [
+            //           BoxShadow(
+            //             color: AppColors.secondaryColor.withValues(alpha: 0.45),
+            //             blurRadius: 15,
+            //             spreadRadius: 2,
+            //           ),
+            //         ],
+            //       ),
+            //       child: const Icon(Icons.add, color: Colors.white, size: 30),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -8,11 +8,8 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/app_background_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/recruiter_internship_widget.dart';
-import 'package:internsharks/app/data/models/account/certification_model.dart';
-import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart' hide ProjectModelData;
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
@@ -233,9 +230,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                               name: studentData!.studName ?? "",
                               email: studentData!.studEmail ?? "",
                               phone: studentData!.studMobileNo ?? "",
-                              github: studentData!.github,
-                              linkedIn: studentData!.linkedIn,
-                              location: studentData!.location!,
+                              github: studentData!.github ??"",
+                              linkedIn: studentData!.linkedIn ?? "",
+                              location: studentData!.location ?? "",
                               gender: "",
                             ),
                             profileSummary: studentData!.profileSummary ?? "",

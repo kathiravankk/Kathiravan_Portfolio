@@ -131,4 +131,25 @@ class InternshipPostController extends GetxController {
       createInternshipLoading = false;
     }
   }
+
+  //  UPDATE NEW INTERNSHIP
+
+  final _updateInternshipLoading = false.obs;
+
+  bool get updateInternshipLoading => _updateInternshipLoading.value;
+
+  set updateInternshipLoading(bool value) =>
+      _updateInternshipLoading.value = value;
+
+  Future<void> updateNewInternship({required Map<String, dynamic>internshipData, required String jobId}) async {
+    try {
+      updateInternshipLoading = true;
+      createInternshipModel = await internshipPostProvider!
+          .updateNewInternship(internshipData: internshipData, jobId: jobId);
+    } catch (err) {
+      rethrow;
+    } finally {
+      updateInternshipLoading = false;
+    }
+  }
 }

@@ -11,7 +11,6 @@ import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
-
 class PostedInternshipScreen extends StatefulWidget {
   const PostedInternshipScreen({super.key});
 
@@ -82,38 +81,46 @@ class _PostedInternshipScreenState extends State<PostedInternshipScreen> {
                 .where((j) => (j.noOfPosition ?? 0) > 0)
                 .length;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Header area ──────────────────────────────────────
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "My Posting",
-                        style: AppStyles.customTextStyle(
-                          size: 18,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w700,
+            return RefreshIndicator(
+              backgroundColor: AppColors.appBgColor_2,
+              color: AppColors.primaryColor,
+              onRefresh: () async {
+                await getInternshipData();
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Header area ──────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "My Posting",
+                          style: AppStyles.customTextStyle(
+                            size: 18,
+                            color: AppColors.whiteColor,
+                            weight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      _activeChip(activeCount),
-                    ],
+                        _activeChip(activeCount),
+                      ],
+                    ),
                   ),
-                ),
 
-                // ── Job list ─────────────────────────────────────────
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
-                    itemCount: jobs.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 16),
-                    itemBuilder: (context, index) => _JobCard(job: jobs[index]),
+                  // ── Job list ─────────────────────────────────────────
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+                      itemCount: jobs.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 16),
+                      itemBuilder: (context, index) =>
+                          _JobCard(job: jobs[index]),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           }),
         ),
@@ -432,8 +439,14 @@ class _JobCard extends StatelessWidget {
                     background: Colors.white.withValues(alpha: 0.12),
                     textColor: AppColors.whiteColor,
                     onTap: () {
-                      // Navigate to edit screen
-                      // AppFunctions.navigateScreen(EditInternshipScreen(job: job));
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.postNewInternshipScreen,
+                        arguments: {
+                          "internPostData": job,
+                          "isEditScreen": true,
+                        },
+                      );
                     },
                   ),
                 ),
@@ -444,18 +457,19 @@ class _JobCard extends StatelessWidget {
                   child: _ApplicantsButton(
                     count: job.totalApplicants ?? 0,
                     onTap: job.totalApplicants != 0
-                      ?() {
-                      AppFunctions.navigateScreen(
-                        context,
-                        AppRoutes.applicantsListScreen,
-                        arguments: {
-                          "jobId": job.id,
-                          "companyLogoUrl": job.companyLogo,
-                          "companyName": job.companyName,
-                          "roleType": job.roleType,
-                        },
-                      );
-                    }: (){},
+                        ? () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.applicantsListScreen,
+                              arguments: {
+                                "jobId": job.id,
+                                "companyLogoUrl": job.companyLogo,
+                                "companyName": job.companyName,
+                                "roleType": job.roleType,
+                              },
+                            );
+                          }
+                        : () {},
                   ),
                 ),
               ],
