@@ -6,6 +6,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
@@ -223,16 +224,24 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
               right: 2,
               child: GestureDetector(
                 onTap: () {
-                  // TODO: trigger logo picker
+                  CommonUtils.showProfileImageViewer(
+                    context,
+                    profile.recCompanyLogo ??
+                        "",
+                    profile.recCompanyName ??
+                        "",
+                  );
                 },
                 child: Container(
+                  height: 25,
+                  width: 25,
                   padding: const EdgeInsets.all(5),
                   decoration: const BoxDecoration(
                     color: AppColors.blackColor,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.camera_alt,
+                  child:  Icon(
+                    Icons.remove_red_eye_outlined,
                     color: AppColors.whiteColor,
                     size: 14,
                   ),

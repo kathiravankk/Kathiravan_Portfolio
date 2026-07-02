@@ -130,4 +130,6 @@ class AppApiUrls {
   static String getInternStudentProfile(String jobId) => "${baseUrl}student/getstudentdetail?jobId=$jobId";
   static String newInternPost = "${baseUrl}jobpost/recruiter-jobpost";
   static String updateNewInternPost(String jobId) => "${baseUrl}jobpost/job/$jobId";
+  static String sendInternshipRequest = "${baseUrl}favorite/sendapplicationrequest";
+  static String updateApplicationStatus(String applicationId) => "${baseUrl}getjob/updatejobstatus/$applicationId";
 }

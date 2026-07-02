@@ -249,6 +249,7 @@ class _ApplicantsCard extends StatelessWidget {
                       arguments: {
                         'jobId': applicant.job,
                         'studentId': applicant.studentDetails!.id,
+                        'applicationId': applicant.id,
                       },
                     );
                   },

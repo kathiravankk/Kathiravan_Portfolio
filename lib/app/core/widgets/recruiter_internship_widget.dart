@@ -52,9 +52,11 @@ class StatusChip extends StatelessWidget {
 // Accept / Reject strip
 // ─────────────────────────────────────────────────────────────────────────────
 class ActionStrip extends StatelessWidget {
-  const ActionStrip({super.key, required this.applicant});
+  const ActionStrip({super.key, required this.applicant, required this.onAccept, required this.onReject});
 
   final InternStudentProfileModel applicant;
+  final VoidCallback onAccept;
+  final VoidCallback onReject;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,7 @@ class ActionStrip extends StatelessWidget {
     final isRejected = applicant.applicationStatus!.toLowerCase() == 'rejected';
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16,0, 16, 16),
       child: Row(
         spacing: 12,
         children: [
@@ -73,11 +75,9 @@ class ActionStrip extends StatelessWidget {
               icon: Icons.check_rounded,
               background: isAccepted
                   ? Colors.green
-                  : Colors.green.withValues(alpha: 0.25),
+                  : Colors.green.withValues(alpha: 0.5),
               textColor: Colors.white,
-              onTap: () {
-                // controller.updateStatus(applicant.id, 'accepted');
-              },
+              onTap: onAccept,
             ),
           ),
 
@@ -88,11 +88,9 @@ class ActionStrip extends StatelessWidget {
               icon: Icons.close_rounded,
               background: isRejected
                   ? Colors.red
-                  : Colors.red.withValues(alpha: 0.25),
+                  : Colors.red.withValues(alpha: 0.5),
               textColor: Colors.white,
-              onTap: () {
-                // controller.updateStatus(applicant.id, 'rejected');
-              },
+              onTap: onReject,
             ),
           ),
         ],
@@ -628,15 +626,15 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E).withValues(alpha: 0.9),
+        color: AppColors.fieldBgColor,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: AppColors.fieldBorderColor),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           BottomBarItem(
             icon: CupertinoIcons.heart,
@@ -687,7 +685,7 @@ class BottomBarItem extends StatelessWidget {
             Text(
               label,
               style: AppStyles.customTextStyle(
-                size: 11,
+                size: 10,
                 color: AppColors.greyTextColor,
                 weight: FontWeight.w400,
               ),

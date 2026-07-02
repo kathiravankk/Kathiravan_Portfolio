@@ -91,6 +91,10 @@ class AppColors {
   static const Color drawerColor = Color.fromRGBO(18, 18, 18, 1);
   static const Color recBorderColor = Color.fromRGBO(42, 47, 58, 1);
   static const Color recContainerColor = Color.fromRGBO(22, 25, 32, 1);
+  static const Color alertGradColor = Color.fromRGBO(49, 49, 49, 1);
+  static const Color alertGradColor2 = Color.fromRGBO(8, 50, 50, 1);
+  static const Color statusBorder = Color.fromRGBO(0, 209, 209, 0.2);
+  static const Color statusBorder2 = Color.fromRGBO(123, 66, 255, 0.2);
   static const Color gradientColor3 = Color(0xff161e16);
   static const Color iconBgColor = Color(0xFF123B34);
   static const Color iconContColor = Color(0xFF192226);

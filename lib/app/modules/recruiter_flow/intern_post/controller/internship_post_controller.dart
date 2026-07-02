@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/application_status_update_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
 
 import '../../../../data/providers/recruiter_flow/internship_post_provider.dart';
 
@@ -30,7 +32,6 @@ class InternshipPostController extends GetxController {
   set internPostModel(InternshipPostModel value) =>
       _internPostModel.value = value;
 
-
   Future<void> getPostedInternships({required String recruiterId}) async {
     try {
       internPostLoading = true;
@@ -47,7 +48,9 @@ class InternshipPostController extends GetxController {
   // GET APPLICANTS
 
   final _applicantsLoading = false.obs;
+
   bool get applicantsLoading => _applicantsLoading.value;
+
   set applicantsLoading(bool value) => _applicantsLoading.value = value;
 
   // Model
@@ -75,25 +78,29 @@ class InternshipPostController extends GetxController {
   // GET INTERNS PROFILE DATA
 
   final _studentProfileLoading = false.obs;
+
   bool get studentProfileLoading => _studentProfileLoading.value;
+
   set studentProfileLoading(bool value) => _studentProfileLoading.value = value;
 
   // Model
 
   final _internStudentProfileModel = InternStudentProfileModel().obs;
 
-  InternStudentProfileModel get internStudentProfileModel => _internStudentProfileModel.value;
+  InternStudentProfileModel get internStudentProfileModel =>
+      _internStudentProfileModel.value;
 
   set internStudentProfileModel(InternStudentProfileModel value) =>
       _internStudentProfileModel.value = value;
 
-  Future<void> getInternStudentProfile({required String jobId, required String studentId}) async {
+  Future<void> getInternStudentProfile({
+    required String jobId,
+    required String studentId,
+  }) async {
     try {
       studentProfileLoading = true;
-      internStudentProfileModel = await internshipPostProvider!.fetchInternStudentProfile(
-        jobId: jobId,
-        studentId: studentId
-      );
+      internStudentProfileModel = await internshipPostProvider!
+          .fetchInternStudentProfile(jobId: jobId, studentId: studentId);
       studentProfileLoading = false;
     } catch (err) {
       studentProfileLoading = false;
@@ -114,17 +121,20 @@ class InternshipPostController extends GetxController {
 
   final _createInternshipModel = NewInternshipDataModel().obs;
 
-  NewInternshipDataModel get createInternshipModel => _createInternshipModel.value;
+  NewInternshipDataModel get createInternshipModel =>
+      _createInternshipModel.value;
 
   set createInternshipModel(NewInternshipDataModel value) =>
       _createInternshipModel.value = value;
 
-
-  Future<void> createNewInternship({required Map<String, dynamic>internshipData}) async {
+  Future<void> createNewInternship({
+    required Map<String, dynamic> internshipData,
+  }) async {
     try {
       createInternshipLoading = true;
-      createInternshipModel = await internshipPostProvider!
-          .createNewInternship(internshipData: internshipData);
+      createInternshipModel = await internshipPostProvider!.createNewInternship(
+        internshipData: internshipData,
+      );
     } catch (err) {
       rethrow;
     } finally {
@@ -141,15 +151,89 @@ class InternshipPostController extends GetxController {
   set updateInternshipLoading(bool value) =>
       _updateInternshipLoading.value = value;
 
-  Future<void> updateNewInternship({required Map<String, dynamic>internshipData, required String jobId}) async {
+  Future<void> updateNewInternship({
+    required Map<String, dynamic> internshipData,
+    required String jobId,
+  }) async {
     try {
       updateInternshipLoading = true;
-      createInternshipModel = await internshipPostProvider!
-          .updateNewInternship(internshipData: internshipData, jobId: jobId);
+      createInternshipModel = await internshipPostProvider!.updateNewInternship(
+        internshipData: internshipData,
+        jobId: jobId,
+      );
     } catch (err) {
       rethrow;
     } finally {
       updateInternshipLoading = false;
+    }
+  }
+
+  //  SEND INTERNSHIP REQUEST
+
+  final _sendRequestLoading = false.obs;
+
+  bool get sendRequestLoading => _sendRequestLoading.value;
+
+  set sendRequestLoading(bool value) => _sendRequestLoading.value = value;
+
+  // Model
+
+  final _sendRequestModel = SendRequestModel().obs;
+
+  SendRequestModel get sendRequestModel => _sendRequestModel.value;
+
+  set sendRequestModel(SendRequestModel value) =>
+      _sendRequestModel.value = value;
+
+  Future<void> sendInternshipRequest({
+    required Map<String, dynamic> internshipData,
+  }) async {
+    try {
+      sendRequestLoading = true;
+      sendRequestModel = await internshipPostProvider!.sendInternshipRequest(
+        internshipData: internshipData,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      sendRequestLoading = false;
+    }
+  }
+
+  //  UPDATE APPLICATION STATUS
+
+  final _applicationStatusLoading = false.obs;
+
+  bool get applicationStatusLoading => _applicationStatusLoading.value;
+
+  set applicationStatusLoading(bool value) =>
+      _applicationStatusLoading.value = value;
+
+  // Model
+
+  final _applicationStatusModel = ApplicationStatusUpdateModel().obs;
+
+  ApplicationStatusUpdateModel get applicationStatusModel =>
+      _applicationStatusModel.value;
+
+  set applicationStatusModel(ApplicationStatusUpdateModel value) =>
+      _applicationStatusModel.value = value;
+
+  Future<void> updateApplicationStatus({
+    required String applicationId,
+    required String status,
+  }) async {
+    try {
+      applicationStatusLoading = true;
+      applicationStatusModel = await internshipPostProvider!
+          .updateApplicationStatus(
+            applicationId: applicationId,
+            status: status,
+          );
+    } catch (err) {
+      rethrow;
+    } finally {
+      applicationStatusLoading = false;
     }
   }
 }

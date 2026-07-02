@@ -11,6 +11,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.d
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_drawer_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/select_internship_dialog.dart';
 
 class RecruiterHomeScreen extends StatefulWidget {
   final VoidCallback? onProfileTap;
@@ -182,7 +183,12 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                                 );
                                 setState(() {});
                               },
-                              requestFunc: () {},
+                              requestFunc: () {
+                                Get.dialog(
+                                  SelectInternshipDialog(studentId: studentsList![index].id ?? ""),
+                                  barrierDismissible: true,
+                                );
+                              },
                               studentName: studentsList![index].studName ?? "",
                               studentProfile:
                                   studentsList![index].studProfile ?? "",
