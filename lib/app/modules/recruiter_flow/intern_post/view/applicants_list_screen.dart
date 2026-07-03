@@ -168,7 +168,7 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
 }
 
 class _ApplicantsCard extends StatelessWidget {
-  const _ApplicantsCard({super.key, required this.applicant});
+  const _ApplicantsCard({required this.applicant});
 
   final ApplicantsData applicant;
 
