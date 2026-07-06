@@ -425,8 +425,10 @@ class _JobCard extends StatelessWidget {
                     background: AppColors.primaryColor,
                     textColor: Colors.black,
                     onTap: () {
-                      // Navigate to job detail
-                      // AppFunctions.navigateScreen(JobDetailScreen(job: job));
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.postedInternshipViewScreen,
+                      );
                     },
                   ),
                 ),

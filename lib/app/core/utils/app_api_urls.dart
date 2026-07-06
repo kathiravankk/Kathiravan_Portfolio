@@ -126,7 +126,7 @@ class AppApiUrls {
   static String removeShortlistedStudents = "${baseUrl}favorite/deletefavorite";
   static String recruiterUpdateProfile = "${baseUrl}recruiter/recruiterregisterupdate";
   static String getPostedInternships(String recruiterId) => "${baseUrl}jobpost/jobs/$recruiterId";
-  static String getJobApplicants(String jobId) => "${baseUrl}getjob/jobs/$jobId";
+  static String getJobApplicants(String jobId, String status) => "${baseUrl}getjob/jobs/$jobId?status=$status";
   static String getInternStudentProfile(String jobId) => "${baseUrl}student/getstudentdetail?jobId=$jobId";
   static String newInternPost = "${baseUrl}jobpost/recruiter-jobpost";
   static String updateNewInternPost(String jobId) => "${baseUrl}jobpost/job/$jobId";

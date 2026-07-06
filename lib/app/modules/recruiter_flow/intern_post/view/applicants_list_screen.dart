@@ -40,7 +40,7 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
 
   Future<void> getInitialData() async {
     try {
-      await applicationController.getApplicants(jobId: jobId);
+      await applicationController.getApplicants(jobId: jobId, status: "Selected");
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
       } else {

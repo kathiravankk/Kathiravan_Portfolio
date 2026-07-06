@@ -12,6 +12,7 @@ import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_refe
 import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/post_new_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/recruiter_interns_screen.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class RecruiterDashboardScreen extends StatefulWidget {
@@ -90,7 +91,7 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
                 },
               ),
               PostedInternshipScreen(),
-              ShortlistedStudentsListScreen(),
+              RecruiterInternsScreen(),
               RecruiterReferralScreen(),
             ],
           ),

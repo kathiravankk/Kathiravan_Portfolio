@@ -62,11 +62,12 @@ class InternshipPostController extends GetxController {
   set applicantsModel(ApplicantsListModel value) =>
       _applicantsModel.value = value;
 
-  Future<void> getApplicants({required String jobId}) async {
+  Future<void> getApplicants({required String jobId, required String status}) async {
     try {
       applicantsLoading = true;
       applicantsModel = await internshipPostProvider!.fetchApplicants(
         jobId: jobId,
+        status: status
       );
       applicantsLoading = false;
     } catch (err) {

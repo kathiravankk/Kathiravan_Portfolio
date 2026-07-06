@@ -45,14 +45,14 @@ class InternshipPostProvider {
   }
 
   // GET APPLICANTS
-  Future<ApplicantsListModel> fetchApplicants({required String jobId}) async {
+  Future<ApplicantsListModel> fetchApplicants({required String jobId, required String status}) async {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.get(
-        AppApiUrls.getJobApplicants(jobId),
+        AppApiUrls.getJobApplicants(jobId, status),
         options: Options(headers: header),
       );
       responseStatus = response.statusCode!;

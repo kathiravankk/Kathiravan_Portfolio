@@ -43,6 +43,8 @@ import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/applica
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/application_action_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/post_new_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_view_screen.dart' show PostedInternshipViewScreen;
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/recruiter_interns_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/choose_path_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_dashboard_screen.dart';
@@ -316,6 +318,14 @@ class AppPages {
     appPage(
       name: AppRoutes.postNewInternshipScreen,
       page: () => PostNewInternshipScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterInternsScreen,
+      page: () => RecruiterInternsScreen(),
+    ),
+    appPage(
+      name: AppRoutes.postedInternshipViewScreen,
+      page: () => PostedInternshipViewScreen(),
     ),
   ];
 }

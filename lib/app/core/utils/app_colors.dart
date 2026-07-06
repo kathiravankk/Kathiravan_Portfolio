@@ -68,6 +68,8 @@ class AppColors {
   static const Color codeColor = Colors.greenAccent;
   static const Color transparentColor = Colors.transparent;
   static const Color failBgColor = Color.fromRGBO(254, 226, 226, 1);
+  static const Color recContColor = Color.fromRGBO(22, 27, 33, 1);
+  static const Color selContColor = Color.fromRGBO(28, 54, 45, 1);
   static const Color creditContColor = Color.fromRGBO(25, 25, 25, 1);
   static const Color creditBorderColor = Color.fromRGBO(255, 255, 255, 0.2);
   static const Color failTextColor = Color.fromRGBO(220, 38, 38, 1);
