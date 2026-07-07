@@ -63,6 +63,7 @@ class AppColors {
   static const Color whiteColor = Colors.white;
   static const Color blackColor = Colors.black;
   static const Color greyColor = Colors.grey;
+  static const Color pinkColor = Colors.pink;
   static const Color orangeColor = Colors.orange;
   static const Color purpleColor = Colors.deepPurple;
   static const Color codeColor = Colors.greenAccent;

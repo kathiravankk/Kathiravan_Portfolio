@@ -428,6 +428,9 @@ class _JobCard extends StatelessWidget {
                       AppFunctions.navigateScreen(
                         context,
                         AppRoutes.postedInternshipViewScreen,
+                        arguments: {
+                          "internshipData": job,
+                        }
                       );
                     },
                   ),

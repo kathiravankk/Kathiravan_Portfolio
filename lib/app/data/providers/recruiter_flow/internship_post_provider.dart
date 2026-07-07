@@ -7,6 +7,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/application_status_u
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
 
 class InternshipPostProvider {
@@ -198,6 +199,28 @@ class InternshipPostProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return ApplicationStatusUpdateModel.fromJson(err.response!.data);
+    }
+  }
+
+  // UPDATE APPLICATION STATUS
+
+  Future<RecruiterReviewModel> fetchRecruiterReview({
+    required String jobId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getRecruiterReview(jobId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterReviewModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return RecruiterReviewModel.fromJson(err.response!.data);
     }
   }
 }

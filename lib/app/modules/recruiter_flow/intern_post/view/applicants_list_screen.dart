@@ -30,13 +30,16 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
 
   @override
   void initState() {
+    super.initState();
     jobId = Get.arguments["jobId"] ?? "";
     companyLogoUrl = Get.arguments["companyLogoUrl"] ?? "";
     companyName = Get.arguments["companyName"] ?? "";
     roleType = Get.arguments["roleType"] ?? "";
-    getInitialData();
-    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getInitialData();
+    });
   }
+
 
   Future<void> getInitialData() async {
     try {

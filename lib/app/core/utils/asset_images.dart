@@ -24,7 +24,8 @@ class AssetImages {
   //static const String aiLoadingGif = "assets/images/ai_loading.gif";
   static const String aiLoadingGif = "assets/images/new_ai_loading.gif";
   //static const String welcomeScreenBg = "assets/images/welcome_screen_bg.png";
-  static const String welcomeScreenBg = "assets/images/new_welcome_screen_bg.png";
+  //static const String welcomeScreenBg = "assets/images/new_welcome_screen_bg.png";
+  static const String welcomeScreenBg = "assets/images/new_splash_screen_bg.png";
   static const String loginBg = "assets/images/login_bg_new.png";
   static const String appLogoNew = "assets/images/app_logo_new.png";
   static const String appBgNew = "assets/images/app_bg_new.png";

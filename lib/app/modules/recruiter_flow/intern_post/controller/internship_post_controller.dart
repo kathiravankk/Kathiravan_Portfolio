@@ -4,6 +4,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/application_status_u
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
 
 import '../../../../data/providers/recruiter_flow/internship_post_provider.dart';
@@ -235,6 +236,41 @@ class InternshipPostController extends GetxController {
       rethrow;
     } finally {
       applicationStatusLoading = false;
+    }
+  }
+
+  //  GET RECRUITER REVIEW
+
+  final _recruiterReviewLoading = false.obs;
+
+  bool get recruiterReviewLoading => _recruiterReviewLoading.value;
+
+  set recruiterReviewLoading(bool value) =>
+      _recruiterReviewLoading.value = value;
+
+  // Model
+
+  final _recruiterReviewModel = RecruiterReviewModel().obs;
+
+  RecruiterReviewModel get recruiterReviewModel =>
+      _recruiterReviewModel.value;
+
+  set recruiterReviewModel(RecruiterReviewModel value) =>
+      _recruiterReviewModel.value = value;
+
+  Future<void> getRecruiterReview({
+    required String jobId,
+  }) async {
+    try {
+      recruiterReviewLoading = true;
+      recruiterReviewModel = await internshipPostProvider!
+          .fetchRecruiterReview(
+        jobId: jobId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      recruiterReviewLoading = false;
     }
   }
 }

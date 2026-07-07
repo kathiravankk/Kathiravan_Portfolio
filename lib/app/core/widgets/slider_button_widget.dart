@@ -26,10 +26,7 @@ class _SliderButtonWidgetState extends State<SliderButtonWidget> {
           height: 64,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(40),
-            gradient: const LinearGradient(
-              colors: [Color(0xFF8FFFFD),
-                Color(0xFF3FE6E1),],
-            ),
+            color: AppColors.blackColor,
             boxShadow: [
               BoxShadow(
                 color: Color(0xFF69FFF8).withValues(alpha: 0.6),
@@ -42,13 +39,27 @@ class _SliderButtonWidgetState extends State<SliderButtonWidget> {
             alignment: Alignment.center,
             children: [
               Center(
-                child: Text(
-                  "Get Started",
-                  style: AppStyles.customTextStyle(
-                    size: 26,
-                    weight: FontWeight.w700,
-                    color: AppColors.blackColor,
-                  ),
+                child: Row(
+                  spacing: 5,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Let's",
+                      style: AppStyles.customTextStyle(
+                        size: 18,
+                        weight: FontWeight.w700,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                    Text(
+                      "Get Started",
+                      style: AppStyles.customTextStyle(
+                        size: 18,
+                        weight: FontWeight.w700,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
@@ -78,7 +89,9 @@ class _SliderButtonWidgetState extends State<SliderButtonWidget> {
                     width: knobSize,
                     height: knobSize,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF102D34),
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF03CCCC), Color(0xFF7BFFCF)],
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.arrow_forward, color: Colors.white),
