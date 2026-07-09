@@ -133,4 +133,9 @@ class AppApiUrls {
   static String sendInternshipRequest = "${baseUrl}favorite/sendapplicationrequest";
   static String updateApplicationStatus(String applicationId) => "${baseUrl}getjob/updatejobstatus/$applicationId";
   static String getRecruiterReview(String jobId) => "${baseUrl}job/reviews?jobId=$jobId";
+  static String generateSyllabus= "${baseUrl}generate-syllabus";
+  static String saveSyllabus= "${baseUrl}savesyllabus";
+  static String getSyllabus(String studentId, String jobId)=> "${baseUrl}syllabus/recruiter/$studentId/$jobId";
+  static String getStudentResult(String studentId, String jobId)=> "${baseUrl}getresult?jobId=$jobId&studentId=$studentId";
+  static String getIssuedCertificate(String studentId, String jobId)=> "${baseUrl}viewstudentcertificate?jobId=$jobId&studentId=$studentId";
 }

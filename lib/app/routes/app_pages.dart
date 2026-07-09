@@ -37,10 +37,13 @@ import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_home_binding.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_view_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/intern_test_result_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/binding/internship_post_binding.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/applicants_list_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/application_action_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/certificate_view_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/post_new_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_view_screen.dart' show PostedInternshipViewScreen;
@@ -326,6 +329,18 @@ class AppPages {
     appPage(
       name: AppRoutes.postedInternshipViewScreen,
       page: () => PostedInternshipViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterSyllabusViewScreen,
+      page: () => RecruiterSyllabusViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.internTestResultScreen,
+      page: () => InternTestResultScreen(),
+    ),
+    appPage(
+      name: AppRoutes.certificateViewScreen,
+      page: () => CertificateViewScreen(),
     ),
   ];
 }

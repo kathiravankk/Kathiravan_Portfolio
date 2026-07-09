@@ -62,6 +62,7 @@ class AppColors {
   static final Color contLightText2 = Color.fromRGBO(203, 213, 225, 1);
   static const Color whiteColor = Colors.white;
   static const Color blackColor = Colors.black;
+  static const Color blueColor = Colors.blue;
   static const Color greyColor = Colors.grey;
   static const Color pinkColor = Colors.pink;
   static const Color orangeColor = Colors.orange;
@@ -94,6 +95,9 @@ class AppColors {
   static const Color drawerColor = Color.fromRGBO(18, 18, 18, 1);
   static const Color recBorderColor = Color.fromRGBO(42, 47, 58, 1);
   static const Color recContainerColor = Color.fromRGBO(22, 25, 32, 1);
+  static const Color recContainerColor2 = Color.fromRGBO(17, 24, 39, 1);
+  static const Color syllabusContColor = Color.fromRGBO(27, 40, 40, 0.4);
+  static const Color syllabusContBorder = Color.fromRGBO(1, 203, 203, 0.2);
   static const Color alertGradColor = Color.fromRGBO(49, 49, 49, 1);
   static const Color alertGradColor2 = Color.fromRGBO(8, 50, 50, 1);
   static const Color statusBorder = Color.fromRGBO(0, 209, 209, 0.2);
@@ -120,6 +124,11 @@ class AppColors {
   static const Color pathBorderColor = Color.fromRGBO(255, 255, 255, 0.1);
   static const Color pathLightTextColor = Color.fromRGBO(156, 163, 175, 1);
   static const Color greyTextColor = Color.fromRGBO(148, 163, 184, 1);
+  static const Color lightBorderColor = Color.fromRGBO(164, 164, 164, 0.2);
+  static const Color lightContColor = Color.fromRGBO(17, 43, 43, 1);
+  static const Color lightContColor2 = Color.fromRGBO(17, 28, 42, 1);
+  static const Color blueTextColor = Color.fromRGBO(52, 139, 244, 1);
+  static const Color greenTextColor = Color.fromRGBO(34, 197, 94, 1);
   static const Color screenDivColor = Color(0xff9BEA93);
   static const Color emeraldColor = Color.fromRGBO(16, 185, 129, 1);
   static const Color emeraldBg = Color.fromRGBO(16, 185, 129, 0.15);

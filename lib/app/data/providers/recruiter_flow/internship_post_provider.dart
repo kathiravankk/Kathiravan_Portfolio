@@ -6,6 +6,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_mode
 import 'package:internsharks/app/data/models/recruiter_flow/application_status_update_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
@@ -221,6 +222,29 @@ class InternshipPostProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return RecruiterReviewModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET ISSUED CERTIFICATE
+
+  Future<IssuedCertificateModel> fetchIssuedCertificate({
+    required String jobId,
+    required String studentId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getIssuedCertificate(studentId, jobId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return IssuedCertificateModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return IssuedCertificateModel.fromJson(err.response!.data);
     }
   }
 }

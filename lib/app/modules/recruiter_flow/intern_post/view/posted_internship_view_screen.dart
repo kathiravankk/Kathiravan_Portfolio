@@ -183,6 +183,8 @@ class _PostedInternshipViewScreenState
                   "companyLogoUrl": internshipData!.companyLogo,
                   "companyName": internshipData!.companyName,
                   "roleType": internshipData!.roleType,
+                  "internshipData": internshipData,
+                  "projectList": internshipData!.projectDescription,
                 },
               );
             },

@@ -7,6 +7,10 @@ import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-studen
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_generate_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_save_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_test_result_model.dart';
 
 class RecruiterHomeProvider {
   final Dio? client;
@@ -162,6 +166,104 @@ class RecruiterHomeProvider {
     } on DioException catch (error) {
       responseStatus = error.response?.statusCode ?? 0;
       return CommonLoginOtpModel.fromJson(error.response?.data);
+    }
+  }
+
+  // GENERATE SYLLABUS
+  Future generateSyllabus({required Map<String, dynamic>requireData}) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(
+        AppApiUrls.generateSyllabus,
+        data: requireData,
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return SyllabusGenerateModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response!.statusCode!;
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return SyllabusGenerateModel.fromJson(error.response!.data);
+      } else {
+        return SyllabusGenerateModel.fromJson(error.response!.data);
+      }
+    }
+  }
+
+  // SAVE SYLLABUS
+  Future saveSyllabus({required SyllabusGenerateModel syllabusData}) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .post(
+        AppApiUrls.saveSyllabus,
+        data: syllabusData,
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return SyllabusSaveModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response!.statusCode!;
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return SyllabusSaveModel.fromJson(error.response!.data);
+      } else {
+        return SyllabusSaveModel.fromJson(error.response!.data);
+      }
+    }
+  }
+
+  // GET SYLLABUS
+  Future fetchSyllabus({required String studentId, required String jobId}) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+      Response response = await client!
+          .get(
+        AppApiUrls.getSyllabus(studentId, jobId),
+        options: Options(headers: header),
+      )
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return SyllabusViewDataModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response!.statusCode!;
+      if (error.type == DioExceptionType.connectionTimeout) {
+        return SyllabusViewDataModel.fromJson(error.response!.data);
+      } else {
+        return SyllabusViewDataModel.fromJson(error.response!.data);
+      }
+    }
+  }
+
+  Future<InternTestResultModel> fetchStudentResult({
+    required String jobId,
+    required String studentId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getStudentResult(studentId, jobId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return InternTestResultModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return InternTestResultModel.fromJson(err.response!.data);
     }
   }
   

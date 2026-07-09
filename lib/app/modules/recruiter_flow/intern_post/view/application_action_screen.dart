@@ -10,11 +10,15 @@ import 'package:internsharks/app/core/widgets/app_background_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/recruiter_internship_widget.dart';
+import 'package:internsharks/app/core/widgets/syllabus_generation_dialog.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart'
     hide ProjectModelData;
+import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/syllabus_generation_loading_screen.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class ApplicantActionsScreen extends StatefulWidget {
@@ -27,17 +31,23 @@ class ApplicantActionsScreen extends StatefulWidget {
 class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
   final InternshipPostController applicationController =
       Get.find<InternshipPostController>();
+  final RecruiterHomeController homeController =
+      Get.find<RecruiterHomeController>();
 
   String studentId = "";
   String jobId = "";
   String applicationId = "";
   String status = "";
+  List<String> projectList = [];
+  PostData? internshipData;
 
   @override
   void initState() {
     studentId = Get.arguments["studentId"] ?? "";
     jobId = Get.arguments["jobId"] ?? "";
     applicationId = Get.arguments["applicationId"] ?? "";
+    projectList = Get.arguments["projectList"] ?? [];
+    internshipData = Get.arguments["internshipData"] ?? PostData();
     super.initState();
     getStudentProfileData();
   }
@@ -85,15 +95,21 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                     visible:
                         studentData!.applicationStatus == "applied" ||
                         studentData!.applicationStatus == "Applied",
-                    child: ActionStrip(
-                      applicant: studentData!,
-                      onAccept: () async {
-                        await updateApplicationStatus(status: "Selected");
-                      },
-                      onReject: () async {
-                        await updateApplicationStatus(status: "Rejected");
-                      },
-                    ),
+                    child: applicationController.updateInternshipLoading
+                        ? Center(
+                            child: CupertinoActivityIndicator(
+                              color: AppColors.secondaryColor,
+                            ),
+                          )
+                        : ActionStrip(
+                            applicant: studentData!,
+                            onAccept: () async {
+                              await updateApplicationStatus(status: "Selected");
+                            },
+                            onReject: () async {
+                              await updateApplicationStatus(status: "Rejected");
+                            },
+                          ),
                   ),
                   Visibility(
                     visible: studentData!.syllabusStatus!,
@@ -105,7 +121,16 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                             borderColor: AppColors.statusBorder,
                             labelText: "View Syllabus",
                             icon: CupertinoIcons.book,
-                            onTap: () {},
+                            onTap: () {
+                              AppFunctions.navigateScreen(
+                                context,
+                                AppRoutes.recruiterSyllabusViewScreen,
+                                arguments: {
+                                  "studentId": studentId,
+                                  "jobId": jobId,
+                                },
+                              );
+                            },
                           ),
                         ),
                         Expanded(
@@ -113,7 +138,16 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                             borderColor: AppColors.statusBorder2,
                             labelText: "Student Results",
                             icon: CupertinoIcons.chart_bar,
-                            onTap: () {},
+                            onTap: () {
+                              AppFunctions.navigateScreen(
+                                context,
+                                AppRoutes.internTestResultScreen,
+                                arguments: {
+                                  "studentId": studentId,
+                                  "jobId": jobId,
+                                },
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -252,7 +286,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                       ),
                     ),
                   ),
-                  studentData!.syllabusStatus!
+                  studentData!.syllabusStatus! ||
+                          studentData!.applicationStatus == "Applied" ||
+                          studentData!.applicationStatus == "Rejected"
                       ? BottomBar(
                           student: studentData!,
                           viewFunc: () {
@@ -313,7 +349,34 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                           downloadFunc: () {},
                         )
                       : CustomButtonWidget(
-                          buttonFunction: () {},
+                          buttonFunction: () {
+                            SyllabusGenerationDialog.show(
+                              context,
+                              initialProjectDescription: projectList,
+                              creditCost: 100,
+                              onGenerate: (description, level) async {
+                                final success = await Navigator.of(context)
+                                    .push<bool>(
+                                      MaterialPageRoute(
+                                        fullscreenDialog: true,
+                                        builder: (_) =>
+                                            SyllabusGeneratingScreen(
+                                              onProcess: () =>
+                                                  _generateAndSaveSyllabus(
+                                                    projectDescription:
+                                                        description,
+                                                    level: level,
+                                                  ),
+                                            ),
+                                      ),
+                                    );
+
+                                if (success == true) {
+                                  await getStudentProfileData();
+                                }
+                              },
+                            );
+                          },
                           buttonWidget: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -349,6 +412,107 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     );
   }
 
+  Future<bool> _generateAndSaveSyllabus({
+    required String projectDescription,
+    required String level,
+  }) async {
+    try {
+      /// STEP 1 : Generate syllabus
+      await homeController.generateSyllabus(
+        requireData: {
+          "student_resume": {
+            "name": studentData!.studName ?? "",
+            "email": studentData!.studEmail ?? "",
+            "phone": studentData!.studMobileNo ?? "",
+            "location": studentData!.location ?? "",
+            "linkedIn": studentData!.linkedIn ?? "",
+            "github": studentData!.github ?? "",
+            "role": "student",
+            "profile_summary": studentData!.profileSummary ?? "",
+            "skills": studentData!.studProgrammingLang ?? [],
+            "languages": studentData!.languagesKnown ?? [],
+            "projects": studentData!.projects ?? [],
+            "experience": studentData!.experience ?? [],
+            "internships": studentData!.internships ?? [],
+            "industrial_visits": studentData!.industrialVisits ?? [],
+            "workshops": studentData!.workshops ?? [],
+            "certifications": studentData!.studentCertificate ?? [],
+            "paper_presentations": studentData!.paperPresentations ?? [],
+            "publications": studentData!.publications ?? [],
+            "achievements": studentData!.achievements ?? [],
+            "leadership": studentData!.leadership ?? [],
+            "volunteer_experience": studentData!.volunteerExperience ?? [],
+            "areas_of_interest": studentData!.areasOfInterest ?? [],
+            "hobbies": studentData!.hobbies ?? [],
+            "education": studentData!.education,
+          },
+
+          "recruiter_skills": internshipData!.requiredSkills ?? [],
+
+          "project_description": [projectDescription],
+
+          "job": jobId,
+          "student": studentId,
+          "level": level,
+          "days": internshipData!.days ?? "",
+          "month": internshipData!.internshipDuration ?? "",
+        },
+      );
+
+      /// Generate Failed
+      if (homeController.getResponseCode() != 200 &&
+          homeController.getResponseCode() != 201) {
+        AppAlertUtils.showToast(
+          message: "Failed to generate syllabus",
+          isError: true,
+        );
+
+        return false;
+      }
+
+      /// STEP 2 : Save syllabus
+      final saveSuccess = await saveSyllabusData();
+
+      return saveSuccess;
+    } catch (e) {
+      AppAlertUtils.showToast(
+        message: "Failed to generate syllabus",
+        isError: true,
+      );
+
+      return false;
+    }
+  }
+
+  Future<bool> saveSyllabusData() async {
+    try {
+      await homeController.saveSyllabus(
+        syllabusData: homeController.syllabusGenerateModel,
+      );
+
+      if (homeController.getResponseCode() == 200 ||
+          homeController.getResponseCode() == 201) {
+        AppAlertUtils.showToast(message: "Syllabus generated successfully!");
+
+        return true;
+      }
+
+      AppFunctions.apiErrorHandling(
+        homeController.getResponseCode(),
+        homeController.syllabusSaveModel.message ?? "Failed to save syllabus",
+      );
+
+      return false;
+    } catch (e) {
+      AppFunctions.apiErrorHandling(
+        homeController.getResponseCode(),
+        "Something went wrong",
+      );
+
+      return false;
+    }
+  }
+
   Future<void> updateApplicationStatus({required String status}) async {
     try {
       await applicationController.updateApplicationStatus(
@@ -376,6 +540,34 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       );
     }
   }
+
+  // Future<void> generateSyllabusData({required String status}) async {
+  //   try {
+  //     await applicationController.(
+  //       applicationId: applicationId,
+  //       status: status,
+  //     );
+  //     if (applicationController.getResponseCode() == 200 ||
+  //         applicationController.getResponseCode() == 201) {
+  //       AppAlertUtils.showToast(
+  //         message:
+  //         applicationController.applicationStatusModel.message ??
+  //             "Something went wrong!, Try again later",
+  //       );
+  //       await getStudentProfileData();
+  //     } else {
+  //       AppFunctions.apiErrorHandling(
+  //         applicationController.getResponseCode(),
+  //         "Something went wrong!, Try again later",
+  //       );
+  //     }
+  //   } catch (error) {
+  //     AppFunctions.apiErrorHandling(
+  //       applicationController.getResponseCode(),
+  //       "Something went wrong!, Try again later",
+  //     );
+  //   }
+  // }
 
   Widget statusContainer({
     required Color borderColor,

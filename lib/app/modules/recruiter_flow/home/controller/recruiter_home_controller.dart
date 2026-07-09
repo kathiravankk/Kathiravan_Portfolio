@@ -1,9 +1,14 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_generate_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_save_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_test_result_model.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_home_provider.dart';
 
 class RecruiterHomeController extends GetxController {
@@ -225,6 +230,126 @@ class RecruiterHomeController extends GetxController {
       rethrow;
     } finally {
       updateProfileLoading = false;
+    }
+  }
+
+  // GENERATE SYLLABUS
+
+  final _syllabusGenerateLoading = false.obs;
+
+  bool get syllabusGenerateLoading => _syllabusGenerateLoading.value;
+
+  set syllabusGenerateLoading(bool value) =>
+      _syllabusGenerateLoading.value = value;
+
+  // Model
+
+  final _syllabusGenerateModel = SyllabusGenerateModel().obs;
+
+  SyllabusGenerateModel get syllabusGenerateModel => _syllabusGenerateModel.value;
+
+  set syllabusGenerateModel(SyllabusGenerateModel value) =>
+      _syllabusGenerateModel.value = value;
+
+  Future<void> generateSyllabus({required Map<String, dynamic> requireData}) async {
+    try {
+      syllabusGenerateLoading = true;
+      syllabusGenerateModel = await recruiterHomeProvider!
+          .generateSyllabus(requireData: requireData);
+    } catch (err) {
+      rethrow;
+    } finally {
+      syllabusGenerateLoading = false;
+    }
+  }
+
+  // SAVE SYLLABUS
+
+  final _syllabusSaveLoading = false.obs;
+
+  bool get syllabusSaveLoading => _syllabusSaveLoading.value;
+
+  set syllabusSaveLoading(bool value) =>
+      _syllabusSaveLoading.value = value;
+
+  // Model
+
+  final _syllabusSaveModel = SyllabusSaveModel().obs;
+
+  SyllabusSaveModel get syllabusSaveModel => _syllabusSaveModel.value;
+
+  set syllabusSaveModel(SyllabusSaveModel value) =>
+      _syllabusSaveModel.value = value;
+
+  Future<void> saveSyllabus({required SyllabusGenerateModel syllabusData}) async {
+    try {
+      syllabusSaveLoading = true;
+      syllabusSaveModel = await recruiterHomeProvider!
+          .saveSyllabus(syllabusData: syllabusData);
+    } catch (err) {
+      rethrow;
+    } finally {
+      syllabusSaveLoading = false;
+    }
+  }
+
+  // GET SYLLABUS
+
+  final _syllabusLoading = false.obs;
+
+  bool get syllabusLoading => _syllabusLoading.value;
+
+  set syllabusLoading(bool value) =>
+      _syllabusLoading.value = value;
+
+  // Model
+
+  final _syllabusModel = SyllabusViewDataModel().obs;
+
+  SyllabusViewDataModel get syllabusModel => _syllabusModel.value;
+
+  set syllabusModel(SyllabusViewDataModel value) =>
+      _syllabusModel.value = value;
+
+  Future<void> getSyllabus({required String studentId, required String jobId}) async {
+    try {
+      syllabusLoading = true;
+      syllabusModel = await recruiterHomeProvider!
+          .fetchSyllabus(studentId: studentId, jobId: jobId);
+    } catch (err) {
+      rethrow;
+    } finally {
+      syllabusLoading = false;
+    }
+  }
+
+  // GET STUDENT RESULT
+
+  final _studentResultLoading = false.obs;
+
+  bool get studentResultLoading => _studentResultLoading.value;
+
+  set studentResultLoading(bool value) =>
+      _studentResultLoading.value = value;
+
+  // Model
+
+  final _testResultModel = InternTestResultModel().obs;
+
+  InternTestResultModel get testResultModel => _testResultModel.value;
+
+  set testResultModel(InternTestResultModel value) =>
+      _testResultModel.value = value;
+
+  Future<void> getStudentResult({required String studentId, required String jobId}) async {
+    try {
+      studentResultLoading = true;
+      testResultModel = await recruiterHomeProvider!
+          .fetchStudentResult(studentId: studentId, jobId: jobId);
+    } catch (err) {
+      rethrow;
+    } finally {
+      studentResultLoading = false;
     }
   }
 }

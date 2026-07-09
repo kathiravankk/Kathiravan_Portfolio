@@ -3,6 +3,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_mode
 import 'package:internsharks/app/data/models/recruiter_flow/application_status_update_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
@@ -271,6 +272,43 @@ class InternshipPostController extends GetxController {
       rethrow;
     } finally {
       recruiterReviewLoading = false;
+    }
+  }
+
+  //  GET ISSUED CERTIFICATE
+
+  final _issuedCertificateLoading = false.obs;
+
+  bool get issuedCertificateLoading => _issuedCertificateLoading.value;
+
+  set issuedCertificateLoading(bool value) =>
+      _issuedCertificateLoading.value = value;
+
+  // Model
+
+  final _certificateModel = IssuedCertificateModel().obs;
+
+  IssuedCertificateModel get certificateModel =>
+      _certificateModel.value;
+
+  set certificateModel(IssuedCertificateModel value) =>
+      _certificateModel.value = value;
+
+  Future<void> getIssuedCertificate({
+    required String jobId,
+    required String studentId,
+  }) async {
+    try {
+      issuedCertificateLoading = true;
+      certificateModel = await internshipPostProvider!
+          .fetchIssuedCertificate(
+        jobId: jobId,
+        studentId: studentId
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      issuedCertificateLoading = false;
     }
   }
 }

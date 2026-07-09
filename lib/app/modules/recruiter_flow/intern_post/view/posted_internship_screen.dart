@@ -471,6 +471,8 @@ class _JobCard extends StatelessWidget {
                                 "companyLogoUrl": job.companyLogo,
                                 "companyName": job.companyName,
                                 "roleType": job.roleType,
+                                "projectList": job.projectDescription,
+                                "internshipData": job,
                               },
                             );
                           }

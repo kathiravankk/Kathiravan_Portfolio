@@ -31,6 +31,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
 
   String jobId = "";
   String companyName = "";
+  PostData? internshipData;
 
   // Index of the currently selected internship-post card in the
   // horizontal list.
@@ -64,6 +65,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
         if (internshipList != null && internshipList!.isNotEmpty) {
           jobId = internshipList![0].id ?? "";
           selectedIndex.value = 0;
+          internshipData = internshipList![0];
           await getApplicantsData();
         }
         setState(() {});
@@ -117,10 +119,11 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   }
 
   // Called when the user taps a different internship-post card.
-  Future<void> onJobSelected(int index, String selectedJobId) async {
+  Future<void> onJobSelected(int index, String selectedJobId, PostData postData) async {
     if (selectedIndex.value == index) return;
     selectedIndex.value = index;
     jobId = selectedJobId;
+    internshipData = postData;
     await getApplicantsData();
   }
 
@@ -219,7 +222,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
           final job = internshipList![index];
           final bool isSelected = selectedIndex.value == index;
           return GestureDetector(
-            onTap: () => onJobSelected(index, job.id ?? ""),
+            onTap: () => onJobSelected(index, job.id ?? "", internshipList![index]),
             child: Container(
               width: 150,
               padding: const EdgeInsets.all(15),
@@ -392,6 +395,8 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
             'jobId': applicant.job,
             'studentId': applicant.studentDetails!.id,
             'applicationId': applicant.id,
+            'projectList': internshipData!.projectDescription,
+            "internshipData": internshipData,
           },
         );
       },
@@ -427,46 +432,17 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
                     spacing: 5,
                     children: [
                       Row(
-                        spacing: 5,
+                        spacing: 10,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          _buildSelectedPill(),
-                          PopupMenuButton<String>(
-                            icon: Icon(
-                              Icons.more_vert,
-                              color: AppColors.whiteColor.withValues(
-                                alpha: 0.7,
-                              ),
-                            ),
-                            color: AppColors.primaryColor,
-                            onSelected: (value) {
-                              // TODO: handle menu actions (view profile, reject, etc.)
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: "view",
-                                child: Text(
-                                  "View Profile",
-                                  style: AppStyles.customTextStyle(
-                                    size: 14,
-                                    color: AppColors.whiteColor,
-                                    weight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: "reject",
-                                child: Text(
-                                  "Reject",
-                                  style: AppStyles.customTextStyle(
-                                    size: 14,
-                                    color: AppColors.whiteColor,
-                                    weight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          _buildTypeContainer(
+                            type: internshipData!.internshipStipend != "N/A"
+                                ? "STIPEND"
+                                : internshipData!.fee != "0"
+                                ? "FEES"
+                                : "FREE",
                           ),
+                          _buildSelectedPill(),
                         ],
                       ),
                       Text(
@@ -503,33 +479,58 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
       ),
     );
   }
-
-  Widget _buildSelectedPill() {
+  Widget _buildTypeContainer({required String type}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: AppColors.sucBgColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.lightBorderColor),
+        color: type == "STIPEND"
+            ? AppColors.lightContColor2
+            : type == "FEES"
+            ? AppColors.lightContColor
+            : AppColors.transparentColor,
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        spacing: 5,
+        mainAxisAlignment: .center,
         children: [
-          const Icon(
-            Icons.check_circle,
-            color: AppColors.sucTextColor,
-            size: 15,
+          Icon(
+            type == "STIPEND"
+                ? Icons.work_history_outlined
+                : type == "FEES"
+                ? Icons.school_outlined
+                : Icons.currency_rupee_rounded,
+            color: type == "STIPEND" ? AppColors.blueTextColor : type == "FEES" ? AppColors.primaryColor :AppColors.whiteColor,
+            size: 16,
           ),
-          const SizedBox(width: 6),
           Text(
-            "Selected",
+            type,
             style: AppStyles.customTextStyle(
-              size: 10,
-              color: AppColors.sucTextColor,
+              size: 12,
+              color: type == "STIPEND" ? AppColors.blueTextColor : type == "FEES" ? AppColors.primaryColor :AppColors.whiteColor,
               weight: FontWeight.w600,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSelectedPill() {
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: AppColors.sucBgColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child:
+          const Icon(
+            Icons.check_circle,
+            color: AppColors.sucTextColor,
+            size: 15,
+          ),
+
     );
   }
 

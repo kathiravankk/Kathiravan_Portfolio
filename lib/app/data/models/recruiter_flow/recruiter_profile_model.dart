@@ -24,6 +24,7 @@ class RecruiterProfileModel {
   dynamic deletedAt;
   String? createdAt;
   String? updatedAt;
+  String? referCode;
   int? vId;
 
   RecruiterProfileModel({
@@ -53,11 +54,13 @@ class RecruiterProfileModel {
     this.createdAt,
     this.updatedAt,
     this.vId,
+    this.referCode,
   });
 
   RecruiterProfileModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'] ?? "";
     recName = json['recname'] ?? "";
+    referCode = json['referralCode'] ?? "";
     recGender = json['recgender'] ?? "";
     recEmail = json['recemail'] ?? "";
     recMobileNo = json['recmobileno'] ?? "";
@@ -99,6 +102,7 @@ class RecruiterProfileModel {
     return {
       '_id': id,
       'recname': recName,
+      'referralCode': referCode,
       'recgender': recGender,
       'recemail': recEmail,
       'recmobileno': recMobileNo,

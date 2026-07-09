@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import '../../../../core/utils/app_colors.dart';
 import '../../../../core/utils/app_styles.dart';
@@ -27,6 +29,8 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
   String companyLogoUrl = "";
   String companyName = "";
   String roleType = "";
+  List<String> projectList = [];
+  PostData? internshipData;
 
   @override
   void initState() {
@@ -35,15 +39,20 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
     companyLogoUrl = Get.arguments["companyLogoUrl"] ?? "";
     companyName = Get.arguments["companyName"] ?? "";
     roleType = Get.arguments["roleType"] ?? "";
+    roleType = Get.arguments["roleType"] ?? "";
+    projectList = Get.arguments["projectList"] ?? [];
+    internshipData = Get.arguments["internshipData"] ?? PostData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getInitialData();
     });
   }
 
-
   Future<void> getInitialData() async {
     try {
-      await applicationController.getApplicants(jobId: jobId, status: "Selected");
+      await applicationController.getApplicants(
+        jobId: jobId,
+        status: "",
+      );
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
       } else {
@@ -159,7 +168,11 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
                     final applicant = applicationController
                         .applicantsModel
                         .applicantsList![index];
-                    return _ApplicantsCard(applicant: applicant);
+                    return _ApplicantsCard(
+                      applicant: applicant,
+                      projectList: projectList,
+                      internshipData: internshipData!,
+                    );
                   },
                 ),
               ),
@@ -171,9 +184,15 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
 }
 
 class _ApplicantsCard extends StatelessWidget {
-  const _ApplicantsCard({required this.applicant});
+  const _ApplicantsCard({
+    required this.applicant,
+    required this.projectList,
+    required this.internshipData,
+  });
 
   final ApplicantsData applicant;
+  final List<String> projectList;
+  final PostData internshipData;
 
   @override
   Widget build(BuildContext context) {
@@ -244,8 +263,10 @@ class _ApplicantsCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 10,
               children: [
-                GestureDetector(
-                  onTap: () {
+                CustomButtonWidget(
+                  width: 100,
+                  height: 30,
+                  buttonFunction: () {
                     AppFunctions.navigateScreen(
                       context,
                       AppRoutes.applicationActionScreen,
@@ -253,38 +274,29 @@ class _ApplicantsCard extends StatelessWidget {
                         'jobId': applicant.job,
                         'studentId': applicant.studentDetails!.id,
                         'applicationId': applicant.id,
+                        'projectList': projectList,
+                        "internshipData": internshipData,
                       },
                     );
                   },
-                  child: Container(
-                    width: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.darkGrayColor,
-                      border: Border.all(color: AppColors.transparentColor),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 5,
-                    ),
-                    child: Row(
-                      spacing: 5,
-                      mainAxisAlignment: .center,
-                      children: [
-                        Icon(
-                          CupertinoIcons.eye,
-                          color: AppColors.whiteColor,
-                          size: 16,
+                  buttonWidget: Row(
+                    spacing: 5,
+                    mainAxisAlignment: .center,
+                    crossAxisAlignment: .center,
+                    children: [
+                      Icon(
+                        CupertinoIcons.eye,
+                        color: AppColors.blackColor,
+                        size: 13,
+                      ),
+                      Text(
+                        'View',
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          color: AppColors.blackColor,
                         ),
-                        Text(
-                          'View',
-                          style: AppStyles.customTextStyle(
-                            size: 12,
-                            color: AppColors.whiteColor,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -315,10 +327,55 @@ class _ApplicantsCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                _buildTypeContainer(
+                  type: internshipData.internshipStipend != "N/A"
+                      ? "STIPEND"
+                      : internshipData.fee != "0"
+                      ? "FEES"
+                      : "FREE",
+                ),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTypeContainer({required String type}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.lightBorderColor),
+        color: type == "STIPEND"
+            ? AppColors.lightContColor2
+            : type == "FEES"
+            ? AppColors.lightContColor
+            : AppColors.transparentColor,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      child: Row(
+        spacing: 5,
+        mainAxisAlignment: .center,
+        children: [
+          Icon(
+            type == "STIPEND"
+                ? Icons.work_history_outlined
+                : type == "FEES"
+                ? Icons.school_outlined
+                : Icons.currency_rupee_rounded,
+            color: type == "STIPEND" ? AppColors.blueTextColor : type == "FEES" ? AppColors.primaryColor :AppColors.whiteColor,
+            size: 16,
+          ),
+          Text(
+            type,
+            style: AppStyles.customTextStyle(
+              size: 12,
+              color: type == "STIPEND" ? AppColors.blueTextColor : type == "FEES" ? AppColors.primaryColor :AppColors.whiteColor,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
