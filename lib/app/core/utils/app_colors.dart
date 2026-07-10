@@ -132,6 +132,7 @@ class AppColors {
   static const Color screenDivColor = Color(0xff9BEA93);
   static const Color emeraldColor = Color.fromRGBO(16, 185, 129, 1);
   static const Color emeraldBg = Color.fromRGBO(16, 185, 129, 0.15);
+  static const Color creditContColor2 = Color.fromRGBO(18, 24, 38, 1);
 
   static const Color darkGrayColor = Color.fromRGBO(47, 47, 47, 1); // #2F2F2F
 }

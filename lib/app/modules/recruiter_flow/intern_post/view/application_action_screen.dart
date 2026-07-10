@@ -417,64 +417,80 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     required String level,
   }) async {
     try {
-      /// STEP 1 : Generate syllabus
-      await homeController.generateSyllabus(
-        requireData: {
-          "student_resume": {
-            "name": studentData!.studName ?? "",
-            "email": studentData!.studEmail ?? "",
-            "phone": studentData!.studMobileNo ?? "",
-            "location": studentData!.location ?? "",
-            "linkedIn": studentData!.linkedIn ?? "",
-            "github": studentData!.github ?? "",
-            "role": "student",
-            "profile_summary": studentData!.profileSummary ?? "",
-            "skills": studentData!.studProgrammingLang ?? [],
-            "languages": studentData!.languagesKnown ?? [],
-            "projects": studentData!.projects ?? [],
-            "experience": studentData!.experience ?? [],
-            "internships": studentData!.internships ?? [],
-            "industrial_visits": studentData!.industrialVisits ?? [],
-            "workshops": studentData!.workshops ?? [],
-            "certifications": studentData!.studentCertificate ?? [],
-            "paper_presentations": studentData!.paperPresentations ?? [],
-            "publications": studentData!.publications ?? [],
-            "achievements": studentData!.achievements ?? [],
-            "leadership": studentData!.leadership ?? [],
-            "volunteer_experience": studentData!.volunteerExperience ?? [],
-            "areas_of_interest": studentData!.areasOfInterest ?? [],
-            "hobbies": studentData!.hobbies ?? [],
-            "education": studentData!.education,
-          },
-
-          "recruiter_skills": internshipData!.requiredSkills ?? [],
-
-          "project_description": [projectDescription],
-
-          "job": jobId,
-          "student": studentId,
-          "level": level,
-          "days": internshipData!.days ?? "",
-          "month": internshipData!.internshipDuration ?? "",
+      /// Build payload
+      final Map<String, dynamic> payload = {
+        "student_resume": {
+          "name": studentData?.studName ?? "",
+          "email": studentData?.studEmail ?? "",
+          "phone": studentData?.studMobileNo ?? "",
+          "location": studentData?.location ?? "",
+          "linkedIn": studentData?.linkedIn ?? "",
+          "github": studentData?.github ?? "",
+          "role": "student",
+          "profile_summary": studentData?.profileSummary ?? "",
+          "skills": studentData?.studProgrammingLang ?? [],
+          "languages": studentData?.languagesKnown ?? [],
+          "projects": studentData?.projects ?? [],
+          "experience": studentData?.experience ?? [],
+          "internships": studentData?.internships ?? [],
+          "industrial_visits": studentData?.industrialVisits ?? [],
+          "workshops": studentData?.workshops ?? [],
+          "certifications": studentData?.studentCertificate ?? [],
+          "paper_presentations": studentData?.paperPresentations ?? [],
+          "publications": studentData?.publications ?? [],
+          "achievements": studentData?.achievements ?? [],
+          "leadership": studentData?.leadership ?? [],
+          "volunteer_experience": studentData?.volunteerExperience ?? [],
+          "areas_of_interest": studentData?.areasOfInterest ?? [],
+          "hobbies": studentData?.hobbies ?? [],
+          "education": studentData?.education,
         },
-      );
 
-      /// Generate Failed
+        "recruiter_skills": (internshipData?.requiredSkills ?? []).join(", "),
+
+        "project_description": [projectDescription],
+
+        "job": jobId,
+        "student": studentId,
+        "level": level,
+      };
+
+      /// Send ONLY one field: days OR month
+      final String days = (internshipData?.days ?? "").toString().trim();
+
+      final String months = (internshipData?.internshipDuration ?? "")
+          .toString()
+          .trim();
+
+      if (days.isNotEmpty) {
+        payload["days"] = days;
+      } else if (months.isNotEmpty) {
+        payload["months"] = months;
+      }
+
+      debugPrint("Generate Payload:");
+      debugPrint(payload.toString());
+
+      /// STEP 1 : Generate syllabus
+      await homeController.generateSyllabus(requireData: payload);
+
+      debugPrint("Generate API Response Code: ${homeController.getResponseCode()}");
+      // debugPrint("Generate Model: ${homeController.syllabusGenerateModel}");
+
       if (homeController.getResponseCode() != 200 &&
           homeController.getResponseCode() != 201) {
-        AppAlertUtils.showToast(
-          message: "Failed to generate syllabus",
-          isError: true,
-        );
-
+        debugPrint("Generate failed");
         return false;
       }
 
-      /// STEP 2 : Save syllabus
+      debugPrint("Calling Save API...");
       final saveSuccess = await saveSyllabusData();
+      debugPrint("Save API returned: $saveSuccess");
 
       return saveSuccess;
     } catch (e) {
+      debugPrint("Generate syllabus error: $e");
+
       AppAlertUtils.showToast(
         message: "Failed to generate syllabus",
         isError: true,
@@ -486,6 +502,8 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
 
   Future<bool> saveSyllabusData() async {
     try {
+      homeController.syllabusGenerateModel.studentId = studentId;
+      homeController.syllabusGenerateModel.jobId = jobId;
       await homeController.saveSyllabus(
         syllabusData: homeController.syllabusGenerateModel,
       );
@@ -493,7 +511,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       if (homeController.getResponseCode() == 200 ||
           homeController.getResponseCode() == 201) {
         AppAlertUtils.showToast(message: "Syllabus generated successfully!");
-
+        await getStudentProfileData();
         return true;
       }
 
@@ -541,33 +559,6 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     }
   }
 
-  // Future<void> generateSyllabusData({required String status}) async {
-  //   try {
-  //     await applicationController.(
-  //       applicationId: applicationId,
-  //       status: status,
-  //     );
-  //     if (applicationController.getResponseCode() == 200 ||
-  //         applicationController.getResponseCode() == 201) {
-  //       AppAlertUtils.showToast(
-  //         message:
-  //         applicationController.applicationStatusModel.message ??
-  //             "Something went wrong!, Try again later",
-  //       );
-  //       await getStudentProfileData();
-  //     } else {
-  //       AppFunctions.apiErrorHandling(
-  //         applicationController.getResponseCode(),
-  //         "Something went wrong!, Try again later",
-  //       );
-  //     }
-  //   } catch (error) {
-  //     AppFunctions.apiErrorHandling(
-  //       applicationController.getResponseCode(),
-  //       "Something went wrong!, Try again later",
-  //     );
-  //   }
-  // }
 
   Widget statusContainer({
     required Color borderColor,

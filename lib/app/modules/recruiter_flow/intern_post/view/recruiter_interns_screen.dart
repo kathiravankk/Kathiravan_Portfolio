@@ -91,7 +91,8 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
     try {
       await applicationController.getApplicants(
         jobId: jobId,
-        status: "Selected",
+        //status: "Selected",
+        status: "",
       );
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {

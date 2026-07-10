@@ -36,6 +36,7 @@ import 'package:internsharks/app/modules/login/view/resume_template_view_screen.
 import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_home_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_credits_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_view_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
@@ -341,6 +342,10 @@ class AppPages {
     appPage(
       name: AppRoutes.certificateViewScreen,
       page: () => CertificateViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterCreditPlanScreen,
+      page: () => RecruiterCreditsPlanScreen(),
     ),
   ];
 }

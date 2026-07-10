@@ -8,6 +8,8 @@ class SyllabusGenerateModel {
      this.month,
      this.days,
      this.tokenUsage,
+    this.studentId,
+    this.jobId
   });
 
   final String? status;
@@ -15,23 +17,116 @@ class SyllabusGenerateModel {
   final int? totalMonth;
   final int? totalDays;
   final Meta? meta;
-  final List<dynamic>? month;
+  final List<Month>? month;
   final List<Day>? days;
   final int? tokenUsage;
+   String? studentId;
+   String? jobId;
 
-  factory SyllabusGenerateModel.fromJson(Map<String, dynamic> json){
+  factory SyllabusGenerateModel.fromJson(Map<String, dynamic> json) {
     return SyllabusGenerateModel(
       status: json["status"],
       subject: json["subject"],
       totalMonth: json["total_month"],
       totalDays: json["total_days"],
-      meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
-      month: json["month"] == null ? [] : List<dynamic>.from(json["month"]!.map((x) => x)),
-      days: json["days"] == null ? [] : List<Day>.from(json["days"]!.map((x) => Day.fromJson(x))),
+      meta: json["meta"] == null
+          ? null
+          : Meta.fromJson(json["meta"]),
+
+      month: (json["month"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => Month.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+          [],
+
+      days: (json["days"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => Day.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+          [],
+
       tokenUsage: json["token_usage"],
+      studentId: json["student"]??"",
+      jobId: json["job"]??"",
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      "status": status,
+      "subject": subject,
+      "student": studentId,
+      "job": jobId,
+      "total_month": totalMonth,
+      "total_days": totalDays,
+      "meta": meta?.toJson(),
+      "month": month?.map((e) => e.toJson()).toList() ?? [],
+      "days": days?.map((e) => e.toJson()).toList() ?? [],
+      "token_usage": tokenUsage,
+    };
+  }
+}
+class Month {
+  Month({
+    this.title,
+    this.data = const [],
+  });
 
+  final String? title;
+  final List<MonthData> data;
+
+  factory Month.fromJson(Map<String, dynamic> json) {
+    return Month(
+      title: json["title"],
+      data: (json["data"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => MonthData.fromJson(e))
+          .toList() ??
+          [],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "data": data.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+class MonthData {
+  MonthData({
+    this.month,
+    this.topics = const [],
+    this.projectSchedule = const [],
+  });
+
+  final int? month;
+  final List<Topic> topics;
+  final List<ProjectSchedule> projectSchedule;
+
+  factory MonthData.fromJson(Map<String, dynamic> json) {
+    return MonthData(
+      month: json["month"],
+
+      topics: (json["topics"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => Topic.fromJson(e))
+          .toList() ??
+          [],
+
+      projectSchedule: (json["project_schedule"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => ProjectSchedule.fromJson(e))
+          .toList() ??
+          [],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "month": month,
+      "topics": topics.map((e) => e.toJson()).toList(),
+      "project_schedule":
+      projectSchedule.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 class Day {
@@ -43,11 +138,21 @@ class Day {
   final String? title;
   final List<Datum> data;
 
-  factory Day.fromJson(Map<String, dynamic> json){
+  factory Day.fromJson(Map<String, dynamic> json) {
     return Day(
       title: json["title"],
-      data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+      data: (json["data"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => Datum.fromJson(e))
+          .toList() ??
+          [],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "data": data.map((e) => e.toJson()).toList(),
+    };
   }
 
 }
@@ -63,12 +168,30 @@ class Datum {
   final List<Topic> topics;
   final List<ProjectSchedule> projectSchedule;
 
-  factory Datum.fromJson(Map<String, dynamic> json){
+  factory Datum.fromJson(Map<String, dynamic> json) {
     return Datum(
       day: json["day"],
-      topics: json["topics"] == null ? [] : List<Topic>.from(json["topics"]!.map((x) => Topic.fromJson(x))),
-      projectSchedule: json["project_schedule"] == null ? [] : List<ProjectSchedule>.from(json["project_schedule"]!.map((x) => ProjectSchedule.fromJson(x))),
+
+      topics: (json["topics"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => Topic.fromJson(e))
+          .toList() ??
+          [],
+
+      projectSchedule: (json["project_schedule"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => ProjectSchedule.fromJson(e))
+          .toList() ??
+          [],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "day": day,
+      "topics": topics.map((e) => e.toJson()).toList(),
+      "project_schedule":
+      projectSchedule.map((e) => e.toJson()).toList(),
+    };
   }
 
 }
@@ -90,6 +213,13 @@ class ProjectSchedule {
       task: json["task"],
       project: json["project"],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "day": day,
+      "task": task,
+      "project": project,
+    };
   }
 
 }
@@ -121,6 +251,16 @@ class Topic {
       youtubeUrl: json["youtube_url"],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "explanation": explanation,
+      "code_examples": codeExamples,
+      "visual_explanation": visualExplanation,
+      "homework": homework,
+      "youtube_url": youtubeUrl,
+    };
+  }
 
 }
 
@@ -138,6 +278,12 @@ class Meta {
       totalTopics: json["total_topics"],
       projectDays: json["project_days"],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "total_topics": totalTopics,
+      "project_days": projectDays,
+    };
   }
 
 }

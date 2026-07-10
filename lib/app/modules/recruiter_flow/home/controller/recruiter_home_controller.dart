@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
@@ -350,6 +351,36 @@ class RecruiterHomeController extends GetxController {
       rethrow;
     } finally {
       studentResultLoading = false;
+    }
+  }
+
+  // GET RECRUITER CREDITS PLANS
+
+  final _recruiterCreditsLoading = false.obs;
+
+  bool get recruiterCreditsLoading => _recruiterCreditsLoading.value;
+
+  set recruiterCreditsLoading(bool value) =>
+      _recruiterCreditsLoading.value = value;
+
+  // Model
+
+  final _creditsPlanModel = RecruiterCreditsPlansModel().obs;
+
+  RecruiterCreditsPlansModel get creditsPlanModel => _creditsPlanModel.value;
+
+  set creditsPlanModel(RecruiterCreditsPlansModel value) =>
+      _creditsPlanModel.value = value;
+
+  Future<void> getRecruiterCreditPlans() async {
+    try {
+      recruiterCreditsLoading = true;
+      creditsPlanModel = await recruiterHomeProvider!
+          .fetchRecruiterCreditPlans();
+    } catch (err) {
+      rethrow;
+    } finally {
+      recruiterCreditsLoading = false;
     }
   }
 }

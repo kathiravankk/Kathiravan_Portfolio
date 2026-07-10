@@ -4,6 +4,7 @@ import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
@@ -174,16 +175,16 @@ class RecruiterHomeProvider {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
       client!.interceptors.add(
-        LogInterceptor(responseBody: true, requestBody: true),
+        LogInterceptor(responseBody: true, requestBody: true,),
       );
       Response response = await client!
           .post(
         AppApiUrls.generateSyllabus,
         data: requireData,
         options: Options(headers: header),
-      )
-          .timeout(const Duration(seconds: 60));
+      );
       responseStatus = response.statusCode!;
+      debugPrint(response.data.toString(), wrapWidth: 1024);
       return SyllabusGenerateModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;
@@ -205,7 +206,7 @@ class RecruiterHomeProvider {
       Response response = await client!
           .post(
         AppApiUrls.saveSyllabus,
-        data: syllabusData,
+        data: syllabusData.toJson(),
         options: Options(headers: header),
       )
           .timeout(const Duration(seconds: 60));
@@ -246,6 +247,7 @@ class RecruiterHomeProvider {
     }
   }
 
+ //GET STUDENTS RESULT
   Future<InternTestResultModel> fetchStudentResult({
     required String jobId,
     required String studentId,
@@ -264,6 +266,25 @@ class RecruiterHomeProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return InternTestResultModel.fromJson(err.response!.data);
+    }
+  }
+  // GET RECRUITER CREDITS PLANS
+
+  Future<RecruiterCreditsPlansModel> fetchRecruiterCreditPlans() async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getRecruiterCreditPlans,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterCreditsPlansModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return RecruiterCreditsPlansModel.fromJson(err.response!.data);
     }
   }
   

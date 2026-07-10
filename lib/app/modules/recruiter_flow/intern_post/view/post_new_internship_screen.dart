@@ -58,10 +58,12 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   // ============================================================
   // SECTION 2 — INTERNSHIP DETAILS
   // ============================================================
-  final TextEditingController titleController = TextEditingController();
+  //final TextEditingController titleController = TextEditingController();
   final TextEditingController roleTypeController = TextEditingController();
-  final TextEditingController qualificationController =
-      TextEditingController(); // e.g. "3+ years of experience"
+  final TextEditingController coordinatorController = TextEditingController();
+
+  // final TextEditingController qualificationController =
+  //     TextEditingController(); // e.g. "3+ years of experience"
   final TextEditingController descriptionController = TextEditingController();
 
   // Dynamic "Add Project" list
@@ -197,11 +199,12 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     // Internship Details
     // =============================
     roleTypeController.text = data.roleType ?? "";
+    coordinatorController.text = data.internshipCoordinator ?? "";
 
     // If you have a separate title in API
-    titleController.text = "";
-
-    qualificationController.text = "";
+    // titleController.text = "";
+    //
+    // qualificationController.text = "";
 
     descriptionController.text = data.aboutInternship ?? "";
 
@@ -289,9 +292,10 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     companyNameController.dispose();
     companyWebsiteController.dispose();
     aboutCompanyController.dispose();
-    titleController.dispose();
+    //titleController.dispose();
     roleTypeController.dispose();
-    qualificationController.dispose();
+    coordinatorController.dispose();
+    //qualificationController.dispose();
     descriptionController.dispose();
     for (final c in projectControllers) {
       c.dispose();
@@ -537,16 +541,37 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           );
           return false;
         }
-        if (titleController.text.trim().isEmpty) {
+        // if (titleController.text.trim().isEmpty) {
+        //   AppAlertUtils.showToast(
+        //     message: "Internship title is required",
+        //     isError: true,
+        //   );
+        //   return false;
+        // }
+        if (descriptionController.text.trim().isEmpty) {
           AppAlertUtils.showToast(
-            message: "Internship title is required",
+            message: "Internship responsibilities are required",
             isError: true,
           );
           return false;
         }
-        if (descriptionController.text.trim().isEmpty) {
+        final projectDescriptions = projectControllers
+            .map((e) => e.text.trim())
+            .toList();
+
+        for (int i = 0; i < projectDescriptions.length; i++) {
+          if (projectDescriptions[i].isEmpty) {
+            AppAlertUtils.showToast(
+              message: "Please enter Project ${i + 1} description",
+              isError: true,
+            );
+            return false;
+          }
+        }
+
+        if (projectDescriptions.toSet().length != projectDescriptions.length) {
           AppAlertUtils.showToast(
-            message: "Internship responsibilities are required",
+            message: "Duplicate project descriptions are not allowed",
             isError: true,
           );
           return false;
@@ -759,34 +784,45 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
             size: 20,
           ),
         ),
-        CustomTextField(
-          controller: titleController,
-          labelText: "Internship Title",
-          hintText: "e.g. Flutter Developer Intern",
-          isNumberKeyboard: false,
-          prefixWidget: const Icon(
-            CupertinoIcons.tag,
-            color: AppColors.primaryColor,
-            size: 20,
-          ),
-        ),
-        CustomTextField(
-          controller: qualificationController,
-          labelText: "Experience / Qualification Required",
-          hintText: "e.g. 3+ years of experience",
-          isNumberKeyboard: false,
-          prefixWidget: const Icon(
-            CupertinoIcons.star,
-            color: AppColors.primaryColor,
-            size: 20,
-          ),
-        ),
+        // CustomTextField(
+        //   controller: titleController,
+        //   labelText: "Internship Title",
+        //   hintText: "e.g. Flutter Developer Intern",
+        //   isNumberKeyboard: false,
+        //   prefixWidget: const Icon(
+        //     CupertinoIcons.tag,
+        //     color: AppColors.primaryColor,
+        //     size: 20,
+        //   ),
+        // ),
+        // CustomTextField(
+        //   controller: qualificationController,
+        //   labelText: "Experience / Qualification Required",
+        //   hintText: "e.g. 3+ years of experience",
+        //   isNumberKeyboard: false,
+        //   prefixWidget: const Icon(
+        //     CupertinoIcons.star,
+        //     color: AppColors.primaryColor,
+        //     size: 20,
+        //   ),
+        // ),
         CustomTextField(
           controller: descriptionController,
           labelText: "Internship Responsibilities",
           hintText: "Enter internship responsibilities (one per line)",
           isNumberKeyboard: false,
           maxLines: 5,
+        ),
+        CustomTextField(
+          controller: coordinatorController,
+          labelText: "Internship Coordinator",
+          hintText: "Ex: Kathir",
+          isNumberKeyboard: false,
+          prefixWidget: const Icon(
+            CupertinoIcons.person_badge_plus,
+            color: AppColors.primaryColor,
+            size: 20,
+          ),
         ),
         _buildProjectsSection(),
       ],
@@ -849,8 +885,18 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           );
         }),
         InkWell(
-          onTap: () =>
-              setState(() => projectControllers.add(TextEditingController())),
+          onTap: () {
+            if (projectControllers.last.text.trim().isEmpty) {
+              AppAlertUtils.showToast(
+                message: "Please fill the current project description first",
+                isError: true,
+              );
+              return;
+            }
+            setState(() {
+              projectControllers.add(TextEditingController());
+            });
+          },
           child: Row(
             mainAxisSize: MainAxisSize.min,
             spacing: 6,
@@ -1487,8 +1533,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       "aboutcompany": aboutCompanyController.text.trim(),
       "companywebsite": companyWebsiteController.text.trim(),
       "roletype": roleTypeController.text.trim(),
-      "title": titleController.text.trim(),
-      "qualification": qualificationController.text.trim(),
+      "internship_coordinator": coordinatorController.text.trim(),
+      // "title": titleController.text.trim(),
+      // "qualification": qualificationController.text.trim(),
       "intershipdescription": descriptionController.text.trim(),
       "aboutinternship": descriptionController.text.trim(),
       "studentqualification": selectedQualifications,
@@ -1524,14 +1571,17 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       if (postController.getResponseCode() == 200 ||
           postController.getResponseCode() == 201) {
         AppAlertUtils.showToast(
-          message: postController.createInternshipModel.message ??"Internship ${isEditScreen == true ? "updated" : "posted"} successfully!",
+          message:
+              postController.createInternshipModel.message ??
+              "Internship ${isEditScreen == true ? "updated" : "posted"} successfully!",
           isError: false,
         );
         Get.back();
       } else {
         AppFunctions.apiErrorHandling(
           postController.getResponseCode(),
-          postController.createInternshipModel.message ?? "Failed to ${isEditScreen == true ? "update" : "post"} internship.",
+          postController.createInternshipModel.message ??
+              "Failed to ${isEditScreen == true ? "update" : "post"} internship.",
         );
       }
     } catch (e) {

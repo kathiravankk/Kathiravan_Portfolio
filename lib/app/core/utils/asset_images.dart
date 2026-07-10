@@ -67,6 +67,7 @@ class AssetImages {
   static const String miningImg = "assets/images/mining_img.png";
   static const String logisticImg = "assets/images/logistic_img.png";
   static const String syllabusAlertIcon = "assets/images/syllabus_alert_icon.png";
+  static const String creditWalletImage = "assets/images/credit_wallet_img.png";
 
 
 

@@ -12,6 +12,7 @@ import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_drawer_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/select_internship_dialog.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 class RecruiterHomeScreen extends StatefulWidget {
   final VoidCallback? onProfileTap;
@@ -127,7 +128,14 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                             ),
                           ),
                           const Spacer(),
-                          ProfileWidgets.creditContainer(),
+                          ProfileWidgets.creditContainer(
+                            creditCount: homeController.profileModel.recruiterCreditId!.balance ?? 0,
+                            viewFunc: (){
+                              AppFunctions.navigateScreen(context, AppRoutes.recruiterCreditPlanScreen, arguments: {
+                                "creditBalance": homeController.profileModel.recruiterCreditId!.balance,
+                              });
+                            }
+                          ),
                           IconButton(
                             onPressed: () {},
                             icon: Icon(
