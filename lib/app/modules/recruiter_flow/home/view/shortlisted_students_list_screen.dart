@@ -5,6 +5,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/student_detail_card.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
@@ -95,7 +96,8 @@ class _ShortlistedStudentsListScreenState
                     await getStudentsListData();
                   },
 
-                  child: GridView.builder(
+                  child:studentsList!.isNotEmpty
+              ?GridView.builder(
                     padding: EdgeInsets.all(20),
                     itemCount: studentsList!.length,
                     gridDelegate:
@@ -139,7 +141,7 @@ class _ShortlistedStudentsListScreenState
                             : false,
                       );
                     },
-                  ),
+                  ) : CustomEmptyWidget(),
                 ),
         ),
       ),

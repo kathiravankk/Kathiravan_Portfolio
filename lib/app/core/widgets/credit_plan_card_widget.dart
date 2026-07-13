@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/data/models/home/credit_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
@@ -81,7 +82,7 @@ class CreditPlanCardWidget extends StatelessWidget {
       opacity: isDisabled ? 0.45 : 1,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0D1614),
+          color: AppColors.recContainerColor2,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: theme.accent.withValues(alpha: theme.badgeText != null ? 0.9 : 0.45),

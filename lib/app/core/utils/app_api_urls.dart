@@ -139,5 +139,8 @@ class AppApiUrls {
   static String getStudentResult(String studentId, String jobId)=> "${baseUrl}getresult?jobId=$jobId&studentId=$studentId";
   static String getIssuedCertificate(String studentId, String jobId)=> "${baseUrl}viewstudentcertificate?jobId=$jobId&studentId=$studentId";
   static String getRecruiterCreditPlans= "${baseUrl}recruiterplan/getallrecruiterplan";
+  static String createRecruiterCreditOrder= "${baseUrl}recruiter/create-order";
+  static String verifyRecruiterCreditOrder= "${baseUrl}recruiter/verify";
+  static String updateSyllabusData= "${baseUrl}updatesyllabus";
 
 }

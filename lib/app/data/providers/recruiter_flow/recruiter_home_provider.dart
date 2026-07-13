@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart';
+import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
@@ -285,6 +287,53 @@ class RecruiterHomeProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return RecruiterCreditsPlansModel.fromJson(err.response!.data);
+    }
+  }
+
+  // CREATE CREDIT ORDER
+
+  Future<OrderCreateCreditModel> newCreditPlanOrder({
+    required String creditId,
+    required String planId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.createRecruiterCreditOrder,
+        options: Options(headers: header),
+        data: {"creditId": creditId, "planId": planId},
+      );
+      responseStatus = response.statusCode!;
+      return OrderCreateCreditModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return OrderCreateCreditModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VERIFY CREDIT ORDER
+
+  Future<CreditOrderVerifyModel> verifyCreditPlanOrder({
+    required String orderId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.verifyRecruiterCreditOrder,
+        options: Options(headers: header),
+        data: {"orderId": orderId},
+      );
+      responseStatus = response.statusCode!;
+      return CreditOrderVerifyModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CreditOrderVerifyModel.fromJson(err.response!.data);
     }
   }
   

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/ai_chat_response_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/application_status_update_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
@@ -10,6 +11,9 @@ import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_m
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_chat_response_model.dart';
+
+import '../../models/recruiter_flow/syllabus_data_model.dart' show SyllabusViewData;
 
 class InternshipPostProvider {
   final Dio? client;
@@ -247,4 +251,55 @@ class InternshipPostProvider {
       return IssuedCertificateModel.fromJson(err.response!.data);
     }
   }
+
+  // GET SYLLABUS CHAT DATA
+
+  Future<SyllabusChatResponseModel> fetchSyllabusChatData({
+    required SyllabusViewData syllabusData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.updateSyllabusData,
+        options: Options(headers: header),
+        data: syllabusData.toJson(),
+      );
+      responseStatus = response.statusCode!;
+      return SyllabusChatResponseModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return SyllabusChatResponseModel.fromJson(err.response!.data);
+    }
+  }
+
+  // SYLLABUS CHAT MESSAGE
+
+  Future<AiChatResponseModel> syllabusChatMessage({
+    required String message,
+    required String chatId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.updateSyllabusData,
+        options: Options(headers: header),
+        data: {
+          "user_id": chatId,
+          "message": message
+        },
+      );
+      responseStatus = response.statusCode!;
+      return AiChatResponseModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return AiChatResponseModel.fromJson(err.response!.data);
+    }
+  }
+
 }

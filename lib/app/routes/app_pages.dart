@@ -45,6 +45,7 @@ import 'package:internsharks/app/modules/recruiter_flow/intern_post/binding/inte
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/applicants_list_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/application_action_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/certificate_view_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/chat_syllabus_update_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/post_new_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_view_screen.dart' show PostedInternshipViewScreen;
@@ -346,6 +347,10 @@ class AppPages {
     appPage(
       name: AppRoutes.recruiterCreditPlanScreen,
       page: () => RecruiterCreditsPlanScreen(),
+    ),
+    appPage(
+      name: AppRoutes.chatSyllabusUpdateScreen,
+      page: () => ChatSyllabusUpdateScreen(),
     ),
   ];
 }

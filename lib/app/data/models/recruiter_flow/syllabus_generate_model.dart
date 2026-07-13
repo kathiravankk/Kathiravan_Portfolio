@@ -66,30 +66,48 @@ class SyllabusGenerateModel {
   }
 }
 class Month {
-  Month({
-    this.title,
-    this.data = const [],
-  });
-
+  Month({this.title, this.data = const []});
   final String? title;
-  final List<MonthData> data;
+  final List<Week> data;
 
   factory Month.fromJson(Map<String, dynamic> json) {
     return Month(
       title: json["title"],
       data: (json["data"] as List?)
           ?.where((e) => e != null)
-          .map((e) => MonthData.fromJson(e))
+          .map((e) => Week.fromJson(e))
           .toList() ??
           [],
     );
   }
-  Map<String, dynamic> toJson() {
-    return {
-      "title": title,
-      "data": data.map((e) => e.toJson()).toList(),
-    };
+
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "data": data.map((e) => e.toJson()).toList(),
+  };
+}
+class Week {
+  Week({this.title, this.data = const []});
+
+  final String? title;
+  final List<Day> data; // reuse your existing Day class
+
+  factory Week.fromJson(Map<String, dynamic> json) {
+    return Week(
+      title: json["title"],
+      data: (json["data"] as List?)
+          ?.where((e) => e != null)
+          .map((e) => Day.fromJson(e))
+          .toList() ??
+          [],
+    );
   }
+
+  Map<String, dynamic> toJson() =>
+      {
+        "title": title,
+        "data": data.map((e) => e.toJson()).toList(),
+      };
 }
 class MonthData {
   MonthData({

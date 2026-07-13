@@ -12,22 +12,12 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/credit_plan_card_widget.dart';
-import 'package:internsharks/app/data/models/home/credit_plan_model.dart';
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
-import 'package:internsharks/app/data/repositories/local_storage_service.dart';
-import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
-import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 
-// New palette specific to this screen's dark redesign.
 class _BuyCreditColors {
-  static const bgTop = Color(0xFF0A1210);
-  static const bgBottom = Color(0xFF000000);
-  static const cardBg = Color(0xFF0D1614);
   static const gold = Color(0xFFFFC93C);
-  static const balanceBannerBg = Color(0xFF11201D);
-  static const balanceIconBg = Color(0xFF17332C);
   static const footerText = Color(0xFF7A8B87);
 }
 
@@ -44,9 +34,7 @@ class _RecruiterCreditsPlanScreenState
   final RecruiterHomeController homeController =
       Get.find<RecruiterHomeController>();
 
-  //final RegisterController registerController = Get.find<RegisterController>();
 
-  // Cashfree payment gateway service instance
   final CFPaymentGatewayService cfPaymentGatewayService =
       CFPaymentGatewayService();
 
@@ -60,6 +48,7 @@ class _RecruiterCreditsPlanScreenState
   @override
   void initState() {
     creditBalance = Get.arguments["creditBalance"] ?? 0;
+    creditId = Get.arguments["creditId"] ?? "";
     super.initState();
     _initCashFreeCallbacks();
     //getCreditData();
@@ -106,7 +95,7 @@ class _RecruiterCreditsPlanScreenState
         homeController.getResponseCode() == 201) {
       if (mounted) {
         setState(() {
-          creditPlan = homeController.creditsPlanModel!.data ?? [];
+          creditPlan = homeController.creditsPlanModel.data ?? [];
         });
       }
     } else {
@@ -120,52 +109,52 @@ class _RecruiterCreditsPlanScreenState
   // ── CASHFREE PAYMENT FLOW ──────────────────────────────────────────────────
 
   /// Step 1 – Create an order on your backend, then open the Cashfree checkout.
-  Future<void> onBuyTapped(PlanData plan) async {
-    // if (_processingPlanId != null) return; // prevent double-tap
-    //
-    // setState(() => _processingPlanId = plan.id);
-    //
-    // try {
-    //   // Create order via your existing controller method
-    //   await homeController.createCreditPlanOrder(
-    //     creditId: creditId!,
-    //     planId: plan.id ?? "",
-    //   );
-    //
-    //   if (homeController.getResponseCode() != 200 &&
-    //       homeController.getResponseCode() != 201) {
-    //     AppFunctions.apiErrorHandling(
-    //       homeController.getResponseCode(),
-    //       "Failed to create order. Please try again.",
-    //     );
-    //     return;
-    //   }
-    //
-    //   // Retrieve the order data returned by the controller
-    //   final OrderCreateCreditModel orderData =
-    //       homeController.createCreditOrderModel;
-    //
-    //   if (orderData.orderId == null ||
-    //       orderData.orderId!.isEmpty ||
-    //       orderData.paymentSessionId == null ||
-    //       orderData.paymentSessionId!.isEmpty) {
-    //     AppAlertUtils.showToast(
-    //       message: "Invalid order details received. Please try again.",
-    //       isError: true,
-    //     );
-    //     return;
-    //   }
-    //
-    //   // Step 2 – Open Cashfree checkout
-    //   openCashFreeCheckout(orderData);
-    // } catch (e) {
-    //   AppAlertUtils.showToast(
-    //     message: "Something went wrong: $e",
-    //     isError: true,
-    //   );
-    // } finally {
-    //   if (mounted) setState(() => _processingPlanId = null);
-    // }
+  Future<void> onBuyTapped(RecruiterPlanData plan) async {
+    if (_processingPlanId != null) return; // prevent double-tap
+
+    setState(() => _processingPlanId = plan.id);
+
+    try {
+      // Create order via your existing controller method
+      await homeController.createCreditPlanOrder(
+        creditId: creditId!,
+        planId: plan.id ?? "",
+      );
+
+      if (homeController.getResponseCode() != 200 &&
+          homeController.getResponseCode() != 201) {
+        AppFunctions.apiErrorHandling(
+          homeController.getResponseCode(),
+          "Failed to create order. Please try again.",
+        );
+        return;
+      }
+
+      // Retrieve the order data returned by the controller
+      final OrderCreateCreditModel orderData =
+          homeController.createCreditOrderModel;
+
+      if (orderData.orderId == null ||
+          orderData.orderId!.isEmpty ||
+          orderData.paymentSessionId == null ||
+          orderData.paymentSessionId!.isEmpty) {
+        AppAlertUtils.showToast(
+          message: "Invalid order details received. Please try again.",
+          isError: true,
+        );
+        return;
+      }
+
+      // Step 2 – Open Cashfree checkout
+      openCashFreeCheckout(orderData);
+    } catch (e) {
+      AppAlertUtils.showToast(
+        message: "Something went wrong: $e",
+        isError: true,
+      );
+    } finally {
+      if (mounted) setState(() => _processingPlanId = null);
+    }
   }
 
   /// Step 2 – Launch the Cashfree Web Checkout sheet.
@@ -203,36 +192,36 @@ class _RecruiterCreditsPlanScreenState
 
   /// Step 3a – Verify with backend after Cashfree reports success.
   Future<void> handlePaymentSuccess(String orderId) async {
-    // // Show a temporary "verifying" snackbar
-    // _showInfo("Verifying your payment…");
-    //
-    // await homeController.verifyCreditPlanOrder(orderId: orderId);
-    //
-    // final int code = homeController.getResponseCode();
-    // if (code == 200 || code == 201) {
-    //   final verifyData = homeController.verifyCreditOrderModel;
-    //
-    //   if (verifyData.orderStatus?.toUpperCase() == "PAID") {
-    //     // Refresh credit balance
-    //     await getCreditData();
-    //     AppAlertUtils.showToast(
-    //       message: verifyData.message ?? "Credits added successfully! 🎉",
-    //     );
-    //   } else {
-    //     AppAlertUtils.showToast(
-    //       message:
-    //       verifyData.message ??
-    //           "Payment verification pending. Credits will be added shortly.",
-    //       isError: true,
-    //     );
-    //   }
-    // } else {
-    //   AppAlertUtils.showToast(
-    //     message:
-    //     "Verification failed. Please contact support with order ID: $orderId",
-    //     isError: true,
-    //   );
-    // }
+    // Show a temporary "verifying" snackbar
+    _showInfo("Verifying your payment…");
+
+    await homeController.verifyCreditPlanOrder(orderId: orderId);
+
+    final int code = homeController.getResponseCode();
+    if (code == 200 || code == 201) {
+      final verifyData = homeController.verifyCreditOrderModel;
+
+      if (verifyData.orderStatus?.toUpperCase() == "PAID") {
+        // Refresh credit balance
+        //await getCreditData();
+        AppAlertUtils.showToast(
+          message: verifyData.message ?? "Credits added successfully! 🎉",
+        );
+      } else {
+        AppAlertUtils.showToast(
+          message:
+          verifyData.message ??
+              "Payment verification pending. Credits will be added shortly.",
+          isError: true,
+        );
+      }
+    } else {
+      AppAlertUtils.showToast(
+        message:
+        "Verification failed. Please contact support with order ID: $orderId",
+        isError: true,
+      );
+    }
   }
 
   /// Step 3b – Handle failure reported by Cashfree SDK.
@@ -443,11 +432,9 @@ class _RecruiterCreditsPlanScreenState
                           return CreditPlanCardWidget(
                             plan: plan,
                             index: index,
-                            //onPressedFunc: () => onBuyTapped(plan),
-                            onPressedFunc: () {},
-                            // Show loader only on the tapped card
+                            onPressedFunc: () => onBuyTapped(plan),
+                            //onPressedFunc: () {},
                             isLoading: isThisPlanLoading,
-                            // Disable all cards while any order is processing
                             isDisabled:
                                 _processingPlanId != null && !isThisPlanLoading,
                           );
@@ -458,7 +445,7 @@ class _RecruiterCreditsPlanScreenState
                       // ── Feature tags ──────────────────────────────────
                       Container(
                         decoration: BoxDecoration(
-                          color: _BuyCreditColors.cardBg,
+                          color: AppColors.recContainerColor2,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         padding: const EdgeInsets.symmetric(

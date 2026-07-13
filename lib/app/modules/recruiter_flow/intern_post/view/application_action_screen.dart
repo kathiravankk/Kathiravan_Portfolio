@@ -63,6 +63,12 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
         setState(() {
           studentData = applicationController.internStudentProfileModel;
         });
+        if (applicationController.internStudentProfileModel.applicationStatus ==
+                "Applied" ||
+            applicationController.internStudentProfileModel.applicationStatus ==
+                "applied") {
+          await updateApplicationStatus(status: "View");
+        }
       } else {
         AppFunctions.apiErrorHandling(
           applicationController.getResponseCode(),
@@ -94,8 +100,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                   Visibility(
                     visible:
                         studentData!.applicationStatus == "applied" ||
-                        studentData!.applicationStatus == "Applied",
-                    child: applicationController.updateInternshipLoading
+                        studentData!.applicationStatus == "Applied" ||
+                        studentData!.applicationStatus == "View",
+                    child: applicationController.applicationStatusLoading
                         ? Center(
                             child: CupertinoActivityIndicator(
                               color: AppColors.secondaryColor,
@@ -288,7 +295,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                   ),
                   studentData!.syllabusStatus! ||
                           studentData!.applicationStatus == "Applied" ||
-                          studentData!.applicationStatus == "Rejected"
+                          studentData!.applicationStatus == "Rejected" || studentData!.applicationStatus == "View"
                       ? BottomBar(
                           student: studentData!,
                           viewFunc: () {
@@ -474,7 +481,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       /// STEP 1 : Generate syllabus
       await homeController.generateSyllabus(requireData: payload);
 
-      debugPrint("Generate API Response Code: ${homeController.getResponseCode()}");
+      debugPrint(
+        "Generate API Response Code: ${homeController.getResponseCode()}",
+      );
       // debugPrint("Generate Model: ${homeController.syllabusGenerateModel}");
 
       if (homeController.getResponseCode() != 200 &&
@@ -558,7 +567,6 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       );
     }
   }
-
 
   Widget statusContainer({
     required Color borderColor,

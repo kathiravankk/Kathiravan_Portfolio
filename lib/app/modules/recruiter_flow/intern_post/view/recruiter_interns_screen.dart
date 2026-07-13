@@ -378,6 +378,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
 
     return ListView.separated(
       itemCount: applicantsList!.length,
+      padding: EdgeInsets.only(bottom: 100),
       separatorBuilder: (_, __) => const SizedBox(height: 14),
       itemBuilder: (context, index) {
         final applicant = applicantsList![index];

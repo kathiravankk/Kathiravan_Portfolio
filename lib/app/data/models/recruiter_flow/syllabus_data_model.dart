@@ -3,20 +3,27 @@ class SyllabusViewDataModel {
 
   final String? message;
   final dynamic success;
-  final Syllabus? syllabus;
+  final SyllabusViewData? syllabus;
 
   factory SyllabusViewDataModel.fromJson(Map<String, dynamic> json) {
     return SyllabusViewDataModel(
       message: json["message"],
       success: json["success"],
       syllabus:
-      json["syllabus"] == null ? null : Syllabus.fromJson(json["syllabus"]),
+      json["syllabus"] == null ? null : SyllabusViewData.fromJson(json["syllabus"]),
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "message": message,
+      "success": success,
+      "syllabus": syllabus?.toJson(),
+    };
   }
 }
 
-class Syllabus {
-  Syllabus({
+class SyllabusViewData {
+  SyllabusViewData({
     this.meta,
     this.id,
     this.student,
@@ -51,8 +58,8 @@ class Syllabus {
   final DateTime? updatedAt;
   final int? v;
 
-  factory Syllabus.fromJson(Map<String, dynamic> json) {
-    return Syllabus(
+  factory SyllabusViewData.fromJson(Map<String, dynamic> json) {
+    return SyllabusViewData(
       meta: json["meta"] == null ? null : Meta.fromJson(json["meta"]),
       id: json["_id"],
       student: json["student"],
@@ -67,6 +74,23 @@ class Syllabus {
       updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
       v: json["__v"],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "meta": meta?.toJson(),
+      "_id": id,
+      "student": student,
+      "job": job,
+      "status": status,
+      "subject": subject,
+      "total_month": totalMonth,
+      "total_days": totalDays,
+      "days": days.map((e) => e.toJson()).toList(),
+      "month": month.map((e) => e.toJson()).toList(),
+      "createdAt": createdAt?.toIso8601String(),
+      "updatedAt": updatedAt?.toIso8601String(),
+      "__v": v,
+    };
   }
 }
 
@@ -130,6 +154,7 @@ class ScheduleGroup {
           children.add(ScheduleGroup.fromJson(item));
         }
       }
+
     }
 
     return ScheduleGroup(
@@ -138,6 +163,15 @@ class ScheduleGroup {
       children: children,
       data: leafData,
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "_id": id,
+      "data": hasChildren
+          ? children.map((e) => e.toJson()).toList()
+          : data.map((e) => e.toJson()).toList(),
+    };
   }
 }
 
@@ -179,6 +213,16 @@ class ScheduleData {
       id: json["_id"],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      "day": day,
+      "month": month,
+      "topics": topics.map((e) => e.toJson()).toList(),
+      "project_schedule":
+      projectSchedule.map((e) => e.toJson()).toList(),
+      "_id": id,
+    };
+  }
 }
 
 class ProjectSchedule {
@@ -202,6 +246,15 @@ class ProjectSchedule {
       project: json["project"],
       id: json["_id"],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "day": day,
+      "month": month,
+      "task": task,
+      "project": project,
+      "_id": id,
+    };
   }
 }
 
@@ -245,6 +298,17 @@ class Topic {
       id: json["_id"],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "explanation": explanation,
+      "visual_explanation": visualExplanation,
+      "youtube_url": youtubeUrl,
+      "code_examples": codeExamples,
+      "homework": homework,
+      "_id": id,
+    };
+  }
 }
 
 class Meta {
@@ -258,5 +322,11 @@ class Meta {
       totalTopics: json["total_topics"],
       projectDays: json["project_days"],
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "total_topics": totalTopics,
+      "project_days": projectDays,
+    };
   }
 }

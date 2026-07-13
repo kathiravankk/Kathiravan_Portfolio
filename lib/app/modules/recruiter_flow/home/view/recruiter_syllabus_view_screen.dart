@@ -5,13 +5,14 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/code_example_widget.dart';
 import '../../../../data/models/recruiter_flow/syllabus_data_model.dart'
-    show ProjectSchedule, Topic, ScheduleGroup, Syllabus;
+    show ProjectSchedule, Topic, ScheduleGroup, SyllabusViewData;
 
 class RecruiterSyllabusViewScreen extends StatefulWidget {
   const RecruiterSyllabusViewScreen({super.key});
@@ -23,7 +24,7 @@ class RecruiterSyllabusViewScreen extends StatefulWidget {
 
 class _RecruiterSyllabusViewScreenState
     extends State<RecruiterSyllabusViewScreen> {
-  Syllabus? _syllabus;
+  SyllabusViewData? _syllabus;
   bool _isMonthBased = false;
   List<ScheduleGroup> _groups = [];
 
@@ -166,6 +167,9 @@ class _RecruiterSyllabusViewScreenState
           visible: _syllabus!.status != "completed",
           child: GestureDetector(
             onTap: (){
+              AppFunctions.navigateScreen(context, AppRoutes.chatSyllabusUpdateScreen, arguments: {
+                "syllabusData": _syllabus,
+              });
 
             },
             child: Container(
@@ -177,14 +181,6 @@ class _RecruiterSyllabusViewScreenState
                 border: Border.all(color: AppColors.primaryColor),
               ),
               child:
-                  // Text(
-                  //   totalLabel,
-                  //   style: AppStyles.customTextStyle(
-                  //     size: 12,
-                  //     color: AppColors.whiteColor,
-                  //     weight: FontWeight.w400,
-                  //   ),
-                  // ),
                   Row(
                     spacing: 5,
                     mainAxisAlignment: MainAxisAlignment.center,

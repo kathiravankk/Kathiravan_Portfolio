@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/ai_chat_response_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/application_status_update_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
@@ -7,7 +8,9 @@ import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_m
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_chat_response_model.dart';
 
+import '../../../../data/models/recruiter_flow/syllabus_data_model.dart';
 import '../../../../data/providers/recruiter_flow/internship_post_provider.dart';
 
 class InternshipPostController extends GetxController {
@@ -309,6 +312,78 @@ class InternshipPostController extends GetxController {
       rethrow;
     } finally {
       issuedCertificateLoading = false;
+    }
+  }
+
+//  GET SYLLABUS CHAT DATA
+
+  final _syllabusChatLoading = false.obs;
+
+  bool get syllabusChatLoading => _syllabusChatLoading.value;
+
+  set syllabusChatLoading(bool value) =>
+      _syllabusChatLoading.value = value;
+
+  // Model
+
+  final _syllabusChatModel = SyllabusChatResponseModel().obs;
+
+  SyllabusChatResponseModel get syllabusChatModel =>
+      _syllabusChatModel.value;
+
+  set syllabusChatModel(SyllabusChatResponseModel value) =>
+      _syllabusChatModel.value = value;
+
+  Future<void> getSyllabusChatData({
+    required SyllabusViewData syllabusData,
+  }) async {
+    try {
+      syllabusChatLoading = true;
+      syllabusChatModel = await internshipPostProvider!
+          .fetchSyllabusChatData(
+          syllabusData:syllabusData
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      syllabusChatLoading = false;
+    }
+  }
+
+  //  GET SYLLABUS CHAT DATA
+
+  final _chatMessageLoading = false.obs;
+
+  bool get chatMessageLoading => _chatMessageLoading.value;
+
+  set chatMessageLoading(bool value) =>
+      _chatMessageLoading.value = value;
+
+  // Model
+
+  final _aiChatResponseModel = AiChatResponseModel().obs;
+
+  AiChatResponseModel get aiChatResponseModel =>
+      _aiChatResponseModel.value;
+
+  set aiChatResponseModel(AiChatResponseModel value) =>
+      _aiChatResponseModel.value = value;
+
+  Future<void> syllabusChatMessage({
+    required String message,
+    required String chatId,
+  }) async {
+    try {
+      chatMessageLoading = true;
+      aiChatResponseModel = await internshipPostProvider!
+          .syllabusChatMessage(
+        message: message,
+        chatId: chatId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      chatMessageLoading = false;
     }
   }
 }

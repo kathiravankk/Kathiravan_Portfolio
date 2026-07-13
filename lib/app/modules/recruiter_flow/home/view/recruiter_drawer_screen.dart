@@ -129,7 +129,16 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     CardWidgets.settingsTile(
                       icon: Icons.account_balance_wallet_outlined,
                       title: "Buy Credits",
-                      onTap: () {},
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.recruiterCreditPlanScreen,
+                            arguments: {
+                              "creditBalance": homeController.profileModel.recruiterCreditId!.balance,
+                              "creditId": homeController.profileModel.recruiterCreditId!.id,
+                            }
+                        );
+                      },
                     ),
                     CardWidgets.settingsTile(
                       icon: Icons.groups_outlined,

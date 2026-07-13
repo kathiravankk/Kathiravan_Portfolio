@@ -131,8 +131,10 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                           ProfileWidgets.creditContainer(
                             creditCount: homeController.profileModel.recruiterCreditId!.balance ?? 0,
                             viewFunc: (){
-                              AppFunctions.navigateScreen(context, AppRoutes.recruiterCreditPlanScreen, arguments: {
+                              AppFunctions.navigateScreen(context, AppRoutes.recruiterCreditPlanScreen,
+                                  arguments: {
                                 "creditBalance": homeController.profileModel.recruiterCreditId!.balance,
+                                "creditId": homeController.profileModel.recruiterCreditId!.id,
                               });
                             }
                           ),
