@@ -67,7 +67,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                 "Applied" ||
             applicationController.internStudentProfileModel.applicationStatus ==
                 "applied") {
-          await updateApplicationStatus(status: "View");
+          await updateApplicationStatus(status: "View", syllabusId: "");
         }
       } else {
         AppFunctions.apiErrorHandling(
@@ -111,10 +111,16 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                         : ActionStrip(
                             applicant: studentData!,
                             onAccept: () async {
-                              await updateApplicationStatus(status: "Selected");
+                              await updateApplicationStatus(
+                                status: "Selected",
+                                syllabusId: "",
+                              );
                             },
                             onReject: () async {
-                              await updateApplicationStatus(status: "Rejected");
+                              await updateApplicationStatus(
+                                status: "Rejected",
+                                syllabusId: "",
+                              );
                             },
                           ),
                   ),
@@ -295,7 +301,8 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                   ),
                   studentData!.syllabusStatus! ||
                           studentData!.applicationStatus == "Applied" ||
-                          studentData!.applicationStatus == "Rejected" || studentData!.applicationStatus == "View"
+                          studentData!.applicationStatus == "Rejected" ||
+                          studentData!.applicationStatus == "View"
                       ? BottomBar(
                           student: studentData!,
                           viewFunc: () {
@@ -475,7 +482,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
         payload["months"] = months;
       }
 
-      debugPrint("Generate Payload:");
+      debugPrint("Generate Payload:", wrapWidth: 1024);
       debugPrint(payload.toString());
 
       /// STEP 1 : Generate syllabus
@@ -520,6 +527,10 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       if (homeController.getResponseCode() == 200 ||
           homeController.getResponseCode() == 201) {
         AppAlertUtils.showToast(message: "Syllabus generated successfully!");
+        await updateApplicationStatus(
+          status: "Selected",
+          syllabusId: homeController.syllabusSaveModel.id ?? "",
+        );
         await getStudentProfileData();
         return true;
       }
@@ -540,11 +551,15 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     }
   }
 
-  Future<void> updateApplicationStatus({required String status}) async {
+  Future<void> updateApplicationStatus({
+    required String status,
+    required String syllabusId,
+  }) async {
     try {
       await applicationController.updateApplicationStatus(
         applicationId: applicationId,
         status: status,
+        syllabusId: syllabusId,
       );
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {

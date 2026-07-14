@@ -142,5 +142,12 @@ class AppApiUrls {
   static String createRecruiterCreditOrder= "${baseUrl}recruiter/create-order";
   static String verifyRecruiterCreditOrder= "${baseUrl}recruiter/verify";
   static String updateSyllabusData= "${baseUrl}updatesyllabus";
+  static String syllabusUpdateChat= "${baseUrl}jsonchatsyllabusupdate";
+  static String generateAiCertificate= "${baseUrl}generate";
+  static String createStipendOrder= "${baseUrl}createstippedpay";
+  static String verifyStipendOrder= "${baseUrl}verifystippedpay";
+  static String getTransactionHistory(String recruiterId)=> "${baseUrl}recruiter/getallcredittransaction/$recruiterId";
+  static String syllabusDataUpdate(String studentId, String jobId)=> "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
+  static String checkStipendStatus(String studentId, String jobId)=> "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";
 
 }

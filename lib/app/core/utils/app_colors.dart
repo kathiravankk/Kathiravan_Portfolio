@@ -113,6 +113,10 @@ class AppColors {
   static const Color thirdColor = Color(0xFF1c2121);
   static const Color appBlue = Color(0xFF01cdcd);
   static const Color appYellow = Color(0xFFffde5f);
+  static const Color transContCred1 = Color(0xFF010D16);
+  static const Color transContCred2 = Color(0xFF000E17);
+  static const Color transContCred3 = Color(0xFF001423);
+  static const Color transContCred4 = Color(0xFF00192D);
 
   ///Recruiter Flow
 

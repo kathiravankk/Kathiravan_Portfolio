@@ -155,6 +155,16 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                       title: "Certificates",
                       onTap: () {},
                     ),
+                    CardWidgets.settingsTile(
+                      icon: Icons.history,
+                      title: "Transaction History",
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.recruiterTransactionHistoryScreen,
+                        );
+                      },
+                    ),
 
                     const Spacer(),
 

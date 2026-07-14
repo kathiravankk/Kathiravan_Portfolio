@@ -11,7 +11,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/code_example_widget.dart';
-import '../../../../data/models/recruiter_flow/syllabus_data_model.dart'
+import '../../../../data/models/recruiter_flow/syllabus_view_data_model.dart'
     show ProjectSchedule, Topic, ScheduleGroup, SyllabusViewData;
 
 class RecruiterSyllabusViewScreen extends StatefulWidget {
@@ -167,8 +167,11 @@ class _RecruiterSyllabusViewScreenState
           visible: _syllabus!.status != "completed",
           child: GestureDetector(
             onTap: (){
-              AppFunctions.navigateScreen(context, AppRoutes.chatSyllabusUpdateScreen, arguments: {
+              AppFunctions.navigateScreen(
+                  context, AppRoutes.chatSyllabusUpdateScreen, arguments: {
                 "syllabusData": _syllabus,
+                "studentId": studentId,
+                "jobId": jobId,
               });
 
             },

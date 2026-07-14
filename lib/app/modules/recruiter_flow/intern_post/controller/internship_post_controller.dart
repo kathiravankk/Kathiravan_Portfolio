@@ -1,16 +1,20 @@
 import 'package:get/get.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/ai_chat_response_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/application_status_update_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/create_stipend_order_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/syllabus_chat_response_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_generate_model.dart';
 
-import '../../../../data/models/recruiter_flow/syllabus_data_model.dart';
+import '../../../../data/models/recruiter_flow/syllabus_view_data_model.dart';
 import '../../../../data/providers/recruiter_flow/internship_post_provider.dart';
 
 class InternshipPostController extends GetxController {
@@ -67,12 +71,15 @@ class InternshipPostController extends GetxController {
   set applicantsModel(ApplicantsListModel value) =>
       _applicantsModel.value = value;
 
-  Future<void> getApplicants({required String jobId, required String status}) async {
+  Future<void> getApplicants({
+    required String jobId,
+    required String status,
+  }) async {
     try {
       applicantsLoading = true;
       applicantsModel = await internshipPostProvider!.fetchApplicants(
         jobId: jobId,
-        status: status
+        status: status,
       );
       applicantsLoading = false;
     } catch (err) {
@@ -228,6 +235,7 @@ class InternshipPostController extends GetxController {
   Future<void> updateApplicationStatus({
     required String applicationId,
     required String status,
+    required String syllabusId,
   }) async {
     try {
       applicationStatusLoading = true;
@@ -235,6 +243,7 @@ class InternshipPostController extends GetxController {
           .updateApplicationStatus(
             applicationId: applicationId,
             status: status,
+            syllabusId: syllabusId,
           );
     } catch (err) {
       rethrow;
@@ -256,19 +265,15 @@ class InternshipPostController extends GetxController {
 
   final _recruiterReviewModel = RecruiterReviewModel().obs;
 
-  RecruiterReviewModel get recruiterReviewModel =>
-      _recruiterReviewModel.value;
+  RecruiterReviewModel get recruiterReviewModel => _recruiterReviewModel.value;
 
   set recruiterReviewModel(RecruiterReviewModel value) =>
       _recruiterReviewModel.value = value;
 
-  Future<void> getRecruiterReview({
-    required String jobId,
-  }) async {
+  Future<void> getRecruiterReview({required String jobId}) async {
     try {
       recruiterReviewLoading = true;
-      recruiterReviewModel = await internshipPostProvider!
-          .fetchRecruiterReview(
+      recruiterReviewModel = await internshipPostProvider!.fetchRecruiterReview(
         jobId: jobId,
       );
     } catch (err) {
@@ -291,8 +296,7 @@ class InternshipPostController extends GetxController {
 
   final _certificateModel = IssuedCertificateModel().obs;
 
-  IssuedCertificateModel get certificateModel =>
-      _certificateModel.value;
+  IssuedCertificateModel get certificateModel => _certificateModel.value;
 
   set certificateModel(IssuedCertificateModel value) =>
       _certificateModel.value = value;
@@ -303,10 +307,9 @@ class InternshipPostController extends GetxController {
   }) async {
     try {
       issuedCertificateLoading = true;
-      certificateModel = await internshipPostProvider!
-          .fetchIssuedCertificate(
+      certificateModel = await internshipPostProvider!.fetchIssuedCertificate(
         jobId: jobId,
-        studentId: studentId
+        studentId: studentId,
       );
     } catch (err) {
       rethrow;
@@ -315,21 +318,19 @@ class InternshipPostController extends GetxController {
     }
   }
 
-//  GET SYLLABUS CHAT DATA
+  //  GET SYLLABUS CHAT DATA
 
   final _syllabusChatLoading = false.obs;
 
   bool get syllabusChatLoading => _syllabusChatLoading.value;
 
-  set syllabusChatLoading(bool value) =>
-      _syllabusChatLoading.value = value;
+  set syllabusChatLoading(bool value) => _syllabusChatLoading.value = value;
 
   // Model
 
   final _syllabusChatModel = SyllabusChatResponseModel().obs;
 
-  SyllabusChatResponseModel get syllabusChatModel =>
-      _syllabusChatModel.value;
+  SyllabusChatResponseModel get syllabusChatModel => _syllabusChatModel.value;
 
   set syllabusChatModel(SyllabusChatResponseModel value) =>
       _syllabusChatModel.value = value;
@@ -339,9 +340,8 @@ class InternshipPostController extends GetxController {
   }) async {
     try {
       syllabusChatLoading = true;
-      syllabusChatModel = await internshipPostProvider!
-          .fetchSyllabusChatData(
-          syllabusData:syllabusData
+      syllabusChatModel = await internshipPostProvider!.fetchSyllabusChatData(
+        syllabusData: syllabusData,
       );
     } catch (err) {
       rethrow;
@@ -356,15 +356,13 @@ class InternshipPostController extends GetxController {
 
   bool get chatMessageLoading => _chatMessageLoading.value;
 
-  set chatMessageLoading(bool value) =>
-      _chatMessageLoading.value = value;
+  set chatMessageLoading(bool value) => _chatMessageLoading.value = value;
 
   // Model
 
   final _aiChatResponseModel = AiChatResponseModel().obs;
 
-  AiChatResponseModel get aiChatResponseModel =>
-      _aiChatResponseModel.value;
+  AiChatResponseModel get aiChatResponseModel => _aiChatResponseModel.value;
 
   set aiChatResponseModel(AiChatResponseModel value) =>
       _aiChatResponseModel.value = value;
@@ -375,8 +373,7 @@ class InternshipPostController extends GetxController {
   }) async {
     try {
       chatMessageLoading = true;
-      aiChatResponseModel = await internshipPostProvider!
-          .syllabusChatMessage(
+      aiChatResponseModel = await internshipPostProvider!.syllabusChatMessage(
         message: message,
         chatId: chatId,
       );
@@ -386,4 +383,143 @@ class InternshipPostController extends GetxController {
       chatMessageLoading = false;
     }
   }
+
+  //  UPDATE SYLLABUS CHAT DATA
+
+  final _updateChatLoading = false.obs;
+
+  bool get updateChatLoading => _updateChatLoading.value;
+
+  set updateChatLoading(bool value) => _updateChatLoading.value = value;
+
+  // Model
+
+  final _updateSyllabusModel = SyllabusViewDataModel().obs;
+
+  SyllabusViewDataModel get updateSyllabusModel => _updateSyllabusModel.value;
+
+  set updateSyllabusModel(SyllabusViewDataModel value) =>
+      _updateSyllabusModel.value = value;
+
+  Future<void> updateSyllabusChatMessage({
+    required SyllabusGenerateModel syllabusData,
+    required String studentId,
+    required String jobId,
+  }) async {
+    try {
+      updateChatLoading = true;
+      updateSyllabusModel = await internshipPostProvider!.updateSyllabusChatMessage(
+        syllabusData: syllabusData,
+        studentId: studentId,
+        jobId: jobId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      updateChatLoading = false;
+    }
+  }
+
+  //  CHECK STIPEND STATUS
+
+  final _checkStatusLoading = false.obs;
+
+  bool get checkStatusLoading => _checkStatusLoading.value;
+
+  set checkStatusLoading(bool value) => _checkStatusLoading.value = value;
+
+  // Model
+
+  final _statusCheckModel = CommonLoginOtpModel().obs;
+
+  CommonLoginOtpModel get statusCheckModel => _statusCheckModel.value;
+
+  set statusCheckModel(CommonLoginOtpModel value) =>
+      _statusCheckModel.value = value;
+
+  Future<void> checkStipendStatus({
+    required String studentId,
+    required String jobId,
+  }) async {
+    try {
+      checkStatusLoading = true;
+      statusCheckModel = await internshipPostProvider!.checkStipendStatus(
+        studentId: studentId,
+        jobId: jobId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      checkStatusLoading = false;
+    }
+  }
+
+  //  CREATE STIPEND PAYMENT ORDER
+
+  final _createStipendLoading = false.obs;
+
+  bool get createStipendLoading => _createStipendLoading.value;
+
+  set createStipendLoading(bool value) => _createStipendLoading.value = value;
+
+  // Model
+
+  final _createStipendOrderModel = CreateStipendOrderModel().obs;
+
+  CreateStipendOrderModel get createStipendOrderModel => _createStipendOrderModel.value;
+
+  set createStipendOrderModel(CreateStipendOrderModel value) =>
+      _createStipendOrderModel.value = value;
+
+  Future<void> createStipendPaymentOrder({
+    required String studentId,
+    required String jobId,
+  }) async {
+    try {
+      createStipendLoading = true;
+      createStipendOrderModel = await internshipPostProvider!.createStipendPaymentOrder(
+        studentId: studentId,
+        jobId: jobId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      createStipendLoading = false;
+    }
+  }
+
+
+  //  VERIFY STIPEND PAYMENT ORDER
+
+  final _verifyStipendLoading = false.obs;
+
+  bool get verifyStipendLoading => _verifyStipendLoading.value;
+
+  set verifyStipendLoading(bool value) => _verifyStipendLoading.value = value;
+
+  // Model
+  //
+  // final _createStipendOrderModel = CreateStipendOrderModel().obs;
+  //
+  // CreateStipendOrderModel get createStipendOrderModel => _createStipendOrderModel.value;
+  //
+  // set createStipendOrderModel(CreateStipendOrderModel value) =>
+  //     _createStipendOrderModel.value = value;
+
+  Future<void> verifyStipendPaymentOrder({
+    required String orderId,
+  }) async {
+    try {
+      verifyStipendLoading = true;
+      statusCheckModel = await internshipPostProvider!.verifyStipendPaymentOrder(
+        orderId: orderId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      verifyStipendLoading = false;
+    }
+  }
+
+
 }

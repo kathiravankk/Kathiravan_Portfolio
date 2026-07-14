@@ -7,7 +7,7 @@
 // import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 // import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 // import 'package:internsharks/app/data/models/internship/internship_syllabus_model.dart';
-// import 'package:internsharks/app/data/models/internship/syllabus_data_model.dart';
+// import 'package:internsharks/app/data/models/internship/syllabus_view_data_model.dart';
 // import 'package:internsharks/app/modules/home/controller/internship_controller.dart';
 // import 'package:internsharks/app/routes/app_pages.dart';
 //

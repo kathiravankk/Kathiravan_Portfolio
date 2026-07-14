@@ -39,6 +39,7 @@ import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_h
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_credits_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_view_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_transaction_history_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/intern_test_result_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/binding/internship_post_binding.dart';
@@ -351,6 +352,10 @@ class AppPages {
     appPage(
       name: AppRoutes.chatSyllabusUpdateScreen,
       page: () => ChatSyllabusUpdateScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterTransactionHistoryScreen,
+      page: () => RecruiterTransactionHistoryScreen(),
     ),
   ];
 }

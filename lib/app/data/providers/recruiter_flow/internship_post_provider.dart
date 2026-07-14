@@ -2,9 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/ai_chat_response_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/application_status_update_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/create_stipend_order_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_model.dart';
@@ -12,8 +14,10 @@ import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/syllabus_chat_response_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_generate_model.dart';
 
-import '../../models/recruiter_flow/syllabus_data_model.dart' show SyllabusViewData;
+import '../../models/recruiter_flow/syllabus_view_data_model.dart'
+    show SyllabusViewData, SyllabusViewDataModel;
 
 class InternshipPostProvider {
   final Dio? client;
@@ -51,7 +55,10 @@ class InternshipPostProvider {
   }
 
   // GET APPLICANTS
-  Future<ApplicantsListModel> fetchApplicants({required String jobId, required String status}) async {
+  Future<ApplicantsListModel> fetchApplicants({
+    required String jobId,
+    required String status,
+  }) async {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
       client!.interceptors.add(
@@ -188,6 +195,7 @@ class InternshipPostProvider {
   Future<ApplicationStatusUpdateModel> updateApplicationStatus({
     required String status,
     required String applicationId,
+    required String syllabusId,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
@@ -197,7 +205,7 @@ class InternshipPostProvider {
       Response response = await client!.put(
         AppApiUrls.updateApplicationStatus(applicationId),
         options: Options(headers: header),
-        data: {"status": status},
+        data: {"status": status, "syllabusId": syllabusId},
       );
       responseStatus = response.statusCode!;
       return ApplicationStatusUpdateModel.fromJson(response.data);
@@ -287,12 +295,9 @@ class InternshipPostProvider {
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.post(
-        AppApiUrls.updateSyllabusData,
+        AppApiUrls.syllabusUpdateChat,
         options: Options(headers: header),
-        data: {
-          "user_id": chatId,
-          "message": message
-        },
+        data: {"user_id": chatId, "message": message},
       );
       responseStatus = response.statusCode!;
       return AiChatResponseModel.fromJson(response.data);
@@ -302,4 +307,100 @@ class InternshipPostProvider {
     }
   }
 
+  // UPDATE SYLLABUS CHAT MESSAGE
+
+  Future<SyllabusViewDataModel> updateSyllabusChatMessage({
+    required SyllabusGenerateModel syllabusData,
+    required String studentId,
+    required String jobId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.put(
+        AppApiUrls.syllabusDataUpdate(studentId, jobId),
+        options: Options(headers: header),
+        data: syllabusData.toJson(),
+      );
+      responseStatus = response.statusCode!;
+      return SyllabusViewDataModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return SyllabusViewDataModel.fromJson(err.response!.data);
+    }
+  }
+
+  // CHECK STIPEND STATUS
+
+  Future<CommonLoginOtpModel> checkStipendStatus({
+    required String studentId,
+    required String jobId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.checkStipendStatus(studentId, jobId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CommonLoginOtpModel.fromJson(err.response!.data);
+    }
+  }
+
+  // CREATE STIPEND PAYMENT ORDER
+
+  Future<CreateStipendOrderModel> createStipendPaymentOrder({
+    required String studentId,
+    required String jobId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.createStipendOrder,
+        options: Options(headers: header),
+        data: {"jobId": jobId, "studentId": studentId},
+      );
+      responseStatus = response.statusCode!;
+      return CreateStipendOrderModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CreateStipendOrderModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VERIFY STIPEND PAYMENT ORDER
+
+  Future<CommonLoginOtpModel> verifyStipendPaymentOrder({
+    required String orderId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.verifyStipendOrder,
+        options: Options(headers: header),
+        data: {
+          "orderId": orderId
+        }
+      );
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CommonLoginOtpModel.fromJson(err.response!.data);
+    }
+  }
 }

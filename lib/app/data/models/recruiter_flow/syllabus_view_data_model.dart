@@ -5,12 +5,27 @@ class SyllabusViewDataModel {
   final dynamic success;
   final SyllabusViewData? syllabus;
 
+  // factory SyllabusViewDataModel.fromJson(Map<String, dynamic> json) {
+  //   return SyllabusViewDataModel(
+  //     message: json["message"],
+  //     success: json["success"],
+  //     syllabus:
+  //     json["syllabus"] == null ? null : SyllabusViewData.fromJson(json["syllabus"]),
+  //   );
+  // }
   factory SyllabusViewDataModel.fromJson(Map<String, dynamic> json) {
+    final successValue = json["success"];
+
     return SyllabusViewDataModel(
       message: json["message"],
-      success: json["success"],
-      syllabus:
-      json["syllabus"] == null ? null : SyllabusViewData.fromJson(json["syllabus"]),
+      success: successValue is bool
+          ? successValue
+          : successValue.toString().toLowerCase() == "true",
+      syllabus: json["data"] != null
+          ? SyllabusViewData.fromJson(json["data"])
+          : json["syllabus"] != null
+          ? SyllabusViewData.fromJson(json["syllabus"])
+          : null,
     );
   }
   Map<String, dynamic> toJson() {

@@ -4,11 +4,13 @@ import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/syllabus_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_view_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/syllabus_generate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/syllabus_save_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_test_result_model.dart';
@@ -455,6 +457,74 @@ class RecruiterHomeController extends GetxController {
     } catch (err) {
       verifyCreditLoading = false;
       rethrow;
+    }
+  }
+
+  // VERIFY CREDIT ORDER
+
+  // Loading
+
+  final _generateCertificateLoading = false.obs;
+
+  bool get generateCertificateLoading => _generateCertificateLoading.value;
+
+  set generateCertificateLoading(bool value) => _generateCertificateLoading.value = value;
+
+  // Model
+
+  final _certificateGenerateModel = CertificateGenerateModel().obs;
+
+  CertificateGenerateModel get certificateGenerateModel =>
+      _certificateGenerateModel.value;
+
+  set certificateGenerateModel(CertificateGenerateModel value) =>
+      _certificateGenerateModel.value = value;
+
+  Future<void> generateAiCertificate({
+    required Map<String, dynamic> requireData,
+  }) async {
+    try {
+      generateCertificateLoading = true;
+      certificateGenerateModel = await recruiterHomeProvider!.generateAiCertificate(
+        requireData: requireData,
+      );
+      generateCertificateLoading = false;
+    } catch (err) {
+      generateCertificateLoading = false;
+      rethrow;
+    }
+  }
+
+
+  //  GET TRANSACTION HISTORY
+
+  final _transactionHistoryLoading = false.obs;
+
+  bool get transactionHistoryLoading => _transactionHistoryLoading.value;
+
+  set transactionHistoryLoading(bool value) => _transactionHistoryLoading.value = value;
+
+  // Model
+
+  final _historyModel = RecruiterTransactionHistoryModel().obs;
+
+  RecruiterTransactionHistoryModel get historyModel => _historyModel.value;
+
+  set historyModel(RecruiterTransactionHistoryModel value) =>
+      _historyModel.value = value;
+
+  Future<void> getTransactionHistory({
+    required String recruiterId,
+  }) async {
+    try {
+      transactionHistoryLoading = true;
+      historyModel = await recruiterHomeProvider!.fetchTransactionHistory(
+        recruiterId: recruiterId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      transactionHistoryLoading = false;
     }
   }
 }

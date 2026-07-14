@@ -6,11 +6,13 @@ import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart';
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/syllabus_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/syllabus_view_data_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/syllabus_generate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/syllabus_save_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_test_result_model.dart';
@@ -334,6 +336,51 @@ class RecruiterHomeProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return CreditOrderVerifyModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VERIFY CREDIT ORDER
+
+  Future<CertificateGenerateModel> generateAiCertificate({
+    required Map<String, dynamic> requireData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.generateAiCertificate,
+        options: Options(headers: header),
+        data: requireData,
+      );
+      responseStatus = response.statusCode!;
+      return CertificateGenerateModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CertificateGenerateModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET TRANSACTION HISTORY
+
+  Future<RecruiterTransactionHistoryModel> fetchTransactionHistory({
+    required String recruiterId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getTransactionHistory(recruiterId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterTransactionHistoryModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return RecruiterTransactionHistoryModel.fromJson(err.response!.data);
     }
   }
   

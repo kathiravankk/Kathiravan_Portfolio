@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
-import '../../../../data/models/recruiter_flow/syllabus_data_model.dart';
+import '../../../../data/models/recruiter_flow/syllabus_view_data_model.dart';
 
 class ChatSyllabusUpdateScreen extends StatefulWidget {
   const ChatSyllabusUpdateScreen({super.key});
@@ -21,56 +22,51 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
 
   SyllabusViewData? syllabusData;
   String chatId = "";
-  final TextEditingController messageController = TextEditingController();
 
+  final TextEditingController chatTextController = TextEditingController();
   final ScrollController scrollController = ScrollController();
 
-  List<ChatMessage> chatList = [];
+  final List<ChatMessage> chatList = [];
 
-  bool isTyping = false;
+  List<String> availableOptions = [];
+  List<String> suggestionTopics = [];
 
-  bool isLoading = false;
-  final List<String> selectedOptions = [];
-
-  bool isWaitingResponse = false;
-
-  bool get isOptionSelection =>
-      chatList.isNotEmpty &&
-      (chatList.last.options.isNotEmpty ||
-          chatList.last.suggestionTopics.isNotEmpty);
-
-  bool get isMultiSelect => chatList.isNotEmpty && chatList.last.multiselect;
+  String studentId = "";
+  String jobId = "";
 
   @override
   void initState() {
     super.initState();
     syllabusData = Get.arguments["syllabusData"];
+    studentId = Get.arguments["studentId"] ?? "";
+    jobId = Get.arguments["jobId"] ?? "";
     getInitialChatData();
   }
+
+  // ================= INITIAL LOAD =================
 
   Future<void> getInitialChatData() async {
     try {
       await applicationController.getSyllabusChatData(
         syllabusData: syllabusData!,
       );
+
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
         chatId = applicationController.syllabusChatModel.syllabus!.userId ?? "";
+
         chatList.add(
           ChatMessage(
-            message:
+            text:
                 applicationController.syllabusChatModel.syllabus?.response ??
                 "",
-            isUser: false,
-            options:
-                applicationController.syllabusChatModel.syllabus?.option ?? [],
-            multiselect:
-                applicationController.syllabusChatModel.syllabus?.multiselect ??
-                false,
+            isBot: true,
           ),
         );
 
-        setState(() {});
+        availableOptions =
+            applicationController.syllabusChatModel.syllabus?.option ?? [];
+        suggestionTopics = [];
       } else {
         AppFunctions.apiErrorHandling(
           applicationController.getResponseCode(),
@@ -85,48 +81,59 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
     }
   }
 
+  // ================= CHAT SEND =================
+
   Future<void> syllabusChatMessage({required String message}) async {
+    if (message.trim().isEmpty) return;
+
+    chatList.add(ChatMessage(text: message, isBot: false));
+
+    setState(() {
+      availableOptions = [];
+      suggestionTopics = [];
+    });
+
+    chatTextController.clear();
+    scrollToBottom();
+    FocusScope.of(context).unfocus();
+
     try {
       await applicationController.syllabusChatMessage(
         chatId: chatId,
         message: message,
       );
+
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
+        final aiResponse = applicationController.aiChatResponseModel.aiResponse;
+
         chatList.add(
-          ChatMessage(
-            message:
-                applicationController
-                    .aiChatResponseModel
-                    .aiResponse
-                    ?.response ??
-                "",
-
-            isUser: false,
-
-            options:
-                applicationController.aiChatResponseModel.aiResponse?.option ??
-                [],
-
-            suggestionTopics:
-                applicationController
-                    .aiChatResponseModel
-                    .aiResponse
-                    ?.suggestionTopics ??
-                [],
-
-            multiselect:
-                applicationController
-                    .aiChatResponseModel
-                    .aiResponse
-                    ?.multiselect ??
-                false,
-          ),
+          ChatMessage(text: aiResponse?.response ?? "Nill", isBot: true),
         );
 
-        setState(() {});
+        availableOptions = aiResponse?.option ?? [];
+        suggestionTopics = aiResponse?.suggestionTopics ?? [];
 
         scrollToBottom();
+        if (aiResponse!.status == "completed") {
+          await applicationController.updateSyllabusChatMessage(
+            syllabusData: aiResponse.finalData!,
+            studentId: studentId,
+            jobId: jobId,
+          );
+          if (applicationController.getResponseCode() == 200 ||
+              applicationController.getResponseCode() == 201) {
+            AppAlertUtils.showToast(message: "Syllabus updated successfully!");
+            Get.back();
+            Get.back();
+          }
+          else{
+            AppFunctions.apiErrorHandling(
+              applicationController.getResponseCode(),
+              "Something went wrong, Failed to update syllabus!",
+            );
+          }
+        }
       } else {
         AppFunctions.apiErrorHandling(
           applicationController.getResponseCode(),
@@ -141,8 +148,28 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
     }
   }
 
+  // ================= SINGLE SELECT OPTION TAP =================
+
+  Future<void> onOptionTap(String message) async {
+    // if (message == "Finish & Save") {
+    //   chatList.add(ChatMessage(text: message, isBot: false));
+    //   setState(() {
+    //     availableOptions = [];
+    //     suggestionTopics = [];
+    //   });
+    //   scrollToBottom();
+    //
+    //   /// Part-2
+    //   return;
+    // }
+
+    await syllabusChatMessage(message: message);
+  }
+
+  // ================= SCROLL =================
+
   void scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.delayed(const Duration(milliseconds: 200), () {
       if (scrollController.hasClients) {
         scrollController.animateTo(
           scrollController.position.maxScrollExtent,
@@ -152,6 +179,8 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
       }
     });
   }
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +197,7 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
           backgroundColor: AppColors.transparentColor,
           leading: IconButton(
             icon: const Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back,
               size: 25,
               color: AppColors.whiteColor,
             ),
@@ -184,390 +213,329 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
             ),
           ),
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
+        body: Obx(
+          () => applicationController.syllabusChatLoading
+              ? AppAlertUtils.customLoader()
+              : Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          controller: scrollController,
+                          itemCount: chatList.length,
+                          itemBuilder: (context, i) =>
+                              _buildChatBubble(chatList[i]),
+                        ),
+                      ),
 
-                  children: [
-                    ...chatList.map((e) {
-                      return e.isUser ? userBubble(e) : aiBubble(e);
-                    }),
+                      if (applicationController.chatMessageLoading)
+                        loadingContainer(),
 
-                    if (isTyping) typingWidget(),
-                  ],
+                      if (suggestionTopics.isNotEmpty ||
+                          availableOptions.isNotEmpty)
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 400),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                if (suggestionTopics.isNotEmpty)
+                                  _buildSuggestionTopics(),
+
+                                if (availableOptions.isNotEmpty)
+                                  _buildOptionsChips(),
+
+                                const SizedBox(height: 20),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      _buildInputArea(),
+                    ],
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+
+  // ================= OPTIONS CHIPS (SINGLE SELECT) =================
+
+  Widget _buildOptionsChips() {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: availableOptions.map((option) {
+        return GestureDetector(
+          onTap: applicationController.chatMessageLoading
+              ? null
+              : () => onOptionTap(option),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.chatGradient3,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              option.replaceAll("_", " "),
+              style: AppStyles.customTextStyle(
+                size: 13,
+                weight: FontWeight.w500,
+                color: AppColors.whiteColor,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // ================= SUGGESTION TOPICS (SINGLE SELECT) =================
+
+  Widget _buildSuggestionTopics() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Suggested Topics",
+          style: AppStyles.customTextStyle(
+            size: 14,
+            weight: FontWeight.w600,
+            color: AppColors.whiteColor,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: suggestionTopics.map((topic) {
+            return GestureDetector(
+              onTap: applicationController.chatMessageLoading
+                  ? null
+                  : () => onOptionTap(topic),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  topic,
+                  style: AppStyles.customTextStyle(
+                    size: 13,
+                    weight: FontWeight.w500,
+                    color: AppColors.whiteColor,
+                  ),
                 ),
               ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
 
-              inputWidget(),
+  // ================= INPUT AREA =================
+
+  Widget _buildInputArea() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: AppColors.chatGradient3,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: chatTextController,
+              enabled: !applicationController.chatMessageLoading,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                weight: FontWeight.w400,
+                color: AppColors.whiteColor,
+              ),
+              cursorColor: AppColors.primaryColor,
+              decoration: InputDecoration(
+                hintText: availableOptions.isNotEmpty
+                    ? 'Select an option above or type here...'
+                    : 'Type here...',
+                hintStyle: AppStyles.customTextStyle(
+                  color: AppColors.chatTextColor,
+                  size: 12,
+                ),
+                border: InputBorder.none,
+              ),
+              onSubmitted: (value) async {
+                await syllabusChatMessage(message: chatTextController.text);
+              },
+            ),
+          ),
+          IconButton(
+            icon: Container(
+              height: 35,
+              width: 35,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primaryColor,
+              ),
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.send_outlined,
+                color: AppColors.whiteColor,
+              ),
+            ),
+            onPressed: applicationController.chatMessageLoading
+                ? null
+                : () async {
+                    await syllabusChatMessage(message: chatTextController.text);
+                  },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ================= CHAT BUBBLE =================
+
+  Widget _buildChatBubble(ChatMessage msg) {
+    bool isBot = msg.isBot;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        spacing: 5,
+        crossAxisAlignment: isBot
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
+        children: [
+          Text(
+            isBot ? "Sharks Bot" : "You",
+            style: AppStyles.customTextStyle(
+              color: AppColors.chatTextColor,
+              size: 12,
+              weight: FontWeight.w500,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: isBot
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
+            children: [
+              if (isBot)
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage(AssetImages.aiBotImage),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isBot
+                          ? [AppColors.chatGradient3, AppColors.chatGradient3]
+                          : [AppColors.chatGradient1, AppColors.chatGradient2],
+                    ),
+                    borderRadius: isBot
+                        ? const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                            bottomRight: Radius.circular(15),
+                          )
+                        : const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                            bottomLeft: Radius.circular(15),
+                          ),
+                  ),
+                  child: Text(
+                    msg.text,
+                    style: AppStyles.customTextStyle(
+                      lineSpace: 1.2,
+                      size: 14,
+                      weight: FontWeight.w400,
+                      color: AppColors.whiteColor,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Future<void> sendMessage() async {
-    if (messageController.text.trim().isEmpty) {
-      return;
-    }
-
-    final text = messageController.text.trim();
-
-    chatList.add(ChatMessage(message: text, isUser: true));
-
-    messageController.clear();
-
-    setState(() {});
-
-    scrollToBottom();
-
-    await syllabusChatMessage(message: text);
-  }
-
-  Widget inputWidget() {
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-
-        decoration: BoxDecoration(
-          color: Colors.white,
-
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-        ),
-
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                enabled: !isOptionSelection,
-
-                controller: messageController,
-
-                minLines: 1,
-
-                maxLines: 5,
-
-                textInputAction: TextInputAction.send,
-
-                onSubmitted: (_) => sendMessage(),
-
-                decoration: InputDecoration(
-                  hintText: isOptionSelection
-                      ? "Select an option below"
-                      : "Ask AI...",
-
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-
-            const SizedBox(width: 10),
-
-            InkWell(
-              onTap: sendMessage,
-
-              borderRadius: BorderRadius.circular(100),
-
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-
-                width: 52,
-
-                height: 52,
-
-                decoration: BoxDecoration(
-                  color: isOptionSelection
-                      ? Colors.grey
-                      : AppColors.primaryColor,
-
-                  shape: BoxShape.circle,
-                ),
-
-                child: IconButton(
-                  onPressed: isOptionSelection ? null : sendMessage,
-
-                  icon: const Icon(Icons.send, color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget aiBubble(ChatMessage item) {
+  Widget loadingContainer() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Row(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: AppColors.primaryColor,
-            child: const Icon(
-              Icons.smart_toy_rounded,
-              color: Colors.white,
-              size: 20,
+          Text(
+            "Sharks Bot",
+            style: AppStyles.customTextStyle(
+              color: AppColors.chatTextColor,
+              size: 12,
+              weight: FontWeight.w500,
             ),
           ),
-
-          const SizedBox(width: 10),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: AssetImage(AssetImages.appIconImage),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withOpacity(.18),
-
-                        Colors.white.withOpacity(.08),
+                        AppColors.chatGradient3,
+                        AppColors.chatGradient3,
                       ],
                     ),
-
-                    border: Border.all(color: Colors.white24),
-
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(.15),
-
-                        blurRadius: 8,
-                      ),
-                    ],
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    ),
                   ),
                   child: Text(
-                    item.message,
+                    "Shark Bot typing...",
                     style: AppStyles.customTextStyle(
-                      size: 15,
-                      color: Colors.white,
+                      size: 14,
+                      weight: FontWeight.w500,
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ),
-
-                if (item.options.isNotEmpty) buildOptions(item),
-
-                if (item.suggestionTopics.isNotEmpty)
-                  buildSuggestionTopics(item),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget userBubble(ChatMessage item) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primaryColor,
-
-                    AppColors.primaryColor.withOpacity(.75),
-                  ],
-                ),
-
-                borderRadius: BorderRadius.circular(18),
               ),
-              child: Text(
-                item.message,
-                style: AppStyles.customTextStyle(size: 15, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildOptions(ChatMessage item) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Column(
-        children: [
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: item.options.map((option) {
-              return InkWell(
-                onTap: () {
-                  if(item.multiselect){
-
-                    if(selectedOptions.contains(option)){
-                      selectedOptions.remove(option);
-                    }else{
-                      selectedOptions.add(option);
-                    }
-
-                    setState((){});
-
-                  }else{
-
-                    onOptionTap(option);
-
-                  }
-                },
-
-                borderRadius: BorderRadius.circular(30),
-
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-
-                    color: AppColors.primaryColor,
-                  ),
-
-                  child: Text(
-                    option,
-
-                    style: AppStyles.customTextStyle(size: 14, color: selectedOptions.contains(option)
-                        ? Colors.white
-                        : AppColors.primaryColor,),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          if(item.multiselect)
-
-            Padding(
-
-              padding: const EdgeInsets.only(top:15),
-
-              child: ElevatedButton(
-
-                onPressed: selectedOptions.isEmpty
-                    ? null
-                    : () {
-
-                  onOptionTap(
-                    selectedOptions.join(","),
-                  );
-
-                  selectedOptions.clear();
-
-                },
-
-                child: const Text("Continue"),
-
-              ),
-
-            )
-        ],
-      ),
-
-    );
-  }
-
-  Widget buildSuggestionTopics(ChatMessage item) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-          Text(
-            "Suggested Topics",
-
-            style: AppStyles.customTextStyle(
-              size: 15,
-
-              weight: FontWeight.w600,
-
-              color: Colors.white,
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          ...item.suggestionTopics.map((topic) {
-            return Card(
-              margin: const EdgeInsets.only(bottom: 8),
-
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-
-              child: ListTile(
-                title: Text(topic),
-
-                trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-
-                onTap: () {
-                  onOptionTap(topic);
-                },
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Future<void> onOptionTap(String message) async {
-    chatList.add(ChatMessage(message: message, isUser: true));
-
-    setState(() {});
-
-    scrollToBottom();
-
-    if (message == "Finish & Save") {
-      /// Part-2
-      return;
-    }
-
-    await syllabusChatMessage(message: message);
-  }
-
-  Widget typingWidget() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 15, bottom: 15),
-
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 18,
-
-            backgroundColor: AppColors.primaryColor,
-
-            child: const Icon(Icons.smart_toy, color: Colors.white),
-          ),
-
-          const SizedBox(width: 10),
-
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-
-            decoration: BoxDecoration(
-              color: Colors.white,
-
-              borderRadius: BorderRadius.circular(20),
-            ),
-
-            child: const SizedBox(
-              width: 20,
-
-              height: 20,
-
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+            ],
           ),
         ],
       ),
@@ -576,21 +544,8 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
 }
 
 class ChatMessage {
-  ChatMessage({
-    required this.message,
-    required this.isUser,
-    this.options = const [],
-    this.suggestionTopics = const [],
-    this.multiselect = false,
-  });
+  ChatMessage({required this.text, required this.isBot});
 
-  final String message;
-
-  final bool isUser;
-
-  final List<String> options;
-
-  final List<String> suggestionTopics;
-
-  final bool multiselect;
+  final String text;
+  final bool isBot;
 }

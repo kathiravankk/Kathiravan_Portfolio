@@ -51,6 +51,9 @@ class AssetImages {
   static const String telegramIcon = "assets/images/telegram_icon.png";
   static const String moreOptionsIcon = "assets/images/more_options_icon.png";
   static const String giftIcon = "assets/images/gift_icon.png";
+  static const String issueCertificateIcon = "assets/images/issue_certificate_icon.png";
+  static const String paymentRequiredIcon = "assets/images/payment_required_icon.png";
+  static const String transactionCreditIcon = "assets/images/transaction_credit_icon.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";

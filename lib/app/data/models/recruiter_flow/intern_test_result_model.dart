@@ -282,16 +282,19 @@ class DailyProgress {
     this.status,
     this.completedAt,
     this.id,
+    this.driveLink
   });
 
   final int? dayNumber;
   final String? status;
   final DateTime? completedAt;
   final String? id;
+  final String? driveLink;
 
   factory DailyProgress.fromJson(Map<String, dynamic> json) {
     return DailyProgress(
       dayNumber: json["dayNumber"],
+      driveLink: json["drivelink"]??"",
       status: json["status"],
       completedAt: DateTime.tryParse(json["completedAt"] ?? ""),
       id: json["_id"],

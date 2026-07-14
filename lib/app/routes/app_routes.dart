@@ -75,5 +75,6 @@ class AppRoutes {
   static const certificateViewScreen = "/certificateViewScreen";
   static const recruiterCreditPlanScreen = "/recruiterCreditPlanScreen";
   static const chatSyllabusUpdateScreen = "/chatSyllabusUpdateScreen";
+  static const recruiterTransactionHistoryScreen = "/recruiterTransactionHistoryScreen";
 
 }
