@@ -16,10 +16,14 @@ import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart'
     hide ProjectModelData;
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
+import 'package:internsharks/app/modules/home/view/resume_template_preview_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/syllabus_generation_loading_screen.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
+import 'dart:convert';
+import 'package:internsharks/app/core/utils/resume_file_utils.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class ApplicantActionsScreen extends StatefulWidget {
   const ApplicantActionsScreen({super.key});
@@ -33,6 +37,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       Get.find<InternshipPostController>();
   final RecruiterHomeController homeController =
       Get.find<RecruiterHomeController>();
+  WebViewController? webViewController;
+  bool isResumeLoading = false;
+  ExtractedResumeDataModel? resumeData;
 
   String studentId = "";
   String jobId = "";
@@ -62,6 +69,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
           applicationController.getResponseCode() == 201) {
         setState(() {
           studentData = applicationController.internStudentProfileModel;
+           initResumePreview();
         });
         if (applicationController.internStudentProfileModel.applicationStatus ==
                 "Applied" ||
@@ -81,6 +89,96 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
         "Something went wrong!, Try again later",
       );
     }
+  }
+  Future<void> initResumePreview() async {
+    resumeData = ExtractedResumeDataModel(
+      personalInfo: PersonalInfoModel(
+        name: studentData?.studName ?? "",
+        email: studentData?.studEmail ?? "",
+        phone: studentData?.studMobileNo ?? "",
+        github: studentData?.github ?? "",
+        linkedIn: studentData?.linkedIn ?? "",
+        location: studentData?.location ?? "",
+        gender: "",
+      ),
+      profileSummary: studentData?.profileSummary ?? "",
+      skills: studentData?.studProgrammingLang,
+      certifications: studentData?.studentCertificate,
+      educationData: studentData?.education,
+      colleges: studentData?.college,
+      internships: studentData?.internships,
+      experience: studentData?.experience,
+      projects: studentData?.projects,
+      hobbies: studentData?.hobbies,
+      achievements: studentData?.achievements,
+      publications: studentData?.publications,
+      volunteerExperience: studentData?.volunteerExperience,
+      workShops: studentData?.workshops,
+      paperPresentations: studentData?.paperPresentations,
+      industrialVisits: studentData?.industrialVisits,
+      languages: studentData?.languagesKnown,
+      areasOfInterest: studentData?.areasOfInterest,
+      leaderships: studentData?.leadership,
+      studentId: studentData?.id,
+      higherSecondary: studentData?.education?.school?.higherSecondary,
+      secondary: studentData?.education?.school?.secondary,
+    );
+
+    _initWebview();
+  }
+  void _initWebview() {
+    if (resumeData == null) return;
+
+    final template = templates.firstWhere(
+          (e) =>
+      e.id ==
+          int.parse(
+            studentData?.templateNumber?.isNotEmpty == true
+                ? studentData!.templateNumber!
+                : "1",
+          ),
+      orElse: () => templates.first,
+    );
+
+    webViewController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (_) async {
+            await Future.delayed(const Duration(milliseconds: 300));
+
+            await webViewController!.runJavaScript("""
+          var meta = document.querySelector('meta[name="viewport"]');
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.name = 'viewport';
+            document.head.appendChild(meta);
+          }
+          meta.content =
+          'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+          """);
+
+            final jsonData = jsonEncode(resumeData!.toJson());
+            final safeJson = jsonEncode(jsonData);
+
+            await webViewController!.runJavaScript(
+              "renderResume(JSON.parse($safeJson));",
+            );
+          },
+        ),
+      );
+
+    _loadHtml(template.htmlPath);
+  }
+  Future<void> _loadHtml(String path) async {
+    String html = await DefaultAssetBundle.of(context).loadString(path);
+
+    html = html.replaceFirst(
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '<meta name="viewport" content="width=900, initial-scale=1.0, shrink-to-fit=no">',
+    );
+
+    await webViewController!.loadHtmlString(html);
   }
 
   InternStudentProfileModel? studentData;
@@ -360,7 +458,10 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                               },
                             );
                           },
-                          downloadFunc: () {},
+                          downloadFunc: () async{
+                            await _handleDownload();
+
+                          },
                         )
                       : CustomButtonWidget(
                           buttonFunction: () {
@@ -424,6 +525,29 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
               ),
       ),
     );
+  }
+  Future<void> _handleDownload() async {
+    if (webViewController == null) return;
+
+    setState(() {
+      isResumeLoading = true;
+    });
+
+    try {
+      final firstName =
+          (resumeData?.personalInfo?.name ?? "resume").split(" ").first;
+
+      await ResumeFileUtils.handleDownload(
+        webViewController: webViewController!,
+        fileName: "${firstName}_resume",
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isResumeLoading = false;
+        });
+      }
+    }
   }
 
   Future<bool> _generateAndSaveSyllabus({

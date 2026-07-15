@@ -133,10 +133,16 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                         AppFunctions.navigateScreen(
                           context,
                           AppRoutes.recruiterCreditPlanScreen,
-                            arguments: {
-                              "creditBalance": homeController.profileModel.recruiterCreditId!.balance,
-                              "creditId": homeController.profileModel.recruiterCreditId!.id,
-                            }
+                          arguments: {
+                            "creditBalance": homeController
+                                .profileModel
+                                .recruiterCreditId!
+                                .balance,
+                            "creditId": homeController
+                                .profileModel
+                                .recruiterCreditId!
+                                .id,
+                          },
                         );
                       },
                     ),
@@ -153,7 +159,12 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     CardWidgets.settingsTile(
                       icon: Icons.workspace_premium_outlined,
                       title: "Certificates",
-                      onTap: () {},
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.recruiterCertificateScreen,
+                        );
+                      },
                     ),
                     CardWidgets.settingsTile(
                       icon: Icons.history,

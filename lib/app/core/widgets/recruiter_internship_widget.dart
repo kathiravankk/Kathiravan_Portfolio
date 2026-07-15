@@ -644,14 +644,14 @@ class BottomBar extends StatelessWidget {
             },
           ),
           BottomBarItem(
-            icon: CupertinoIcons.eye,
-            label: "View",
-            onTap: viewFunc,
-          ),
-          BottomBarItem(
             icon: CupertinoIcons.arrow_down_to_line,
             label: "Download",
             onTap: downloadFunc,
+          ),
+          BottomBarItem(
+            icon: CupertinoIcons.eye,
+            label: "View",
+            onTap: viewFunc,
           ),
         ],
       ),
@@ -730,7 +730,7 @@ class CardShell extends StatelessWidget {
       width: double.infinity,
       padding: padding ?? const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A2E).withValues(alpha: 0.85),
+        color: AppColors.recContColor,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),

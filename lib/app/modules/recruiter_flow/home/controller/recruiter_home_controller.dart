@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart';
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
-import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
@@ -53,6 +53,94 @@ class RecruiterHomeController extends GetxController {
   }
 
   // GET ALL STUDENTS LIST
+
+  final RxList<StudentDetails> allStudents = <StudentDetails>[].obs;
+
+  // --- Filtered Data (This is what the UI will listen to) ---
+  final RxList<StudentDetails> filteredStudents = <StudentDetails>[].obs;
+
+  // --- Search State ---
+  final RxString searchQuery = "".obs;
+  final TextEditingController searchController = TextEditingController();
+
+  // --- Dynamic Filter Dropdown Options ---
+  final RxList<String> degreesList = <String>[].obs;
+  final RxList<String> collegesList = <String>[].obs;
+  final RxList<String> departmentsList = <String>[].obs;
+
+  // --- Selected Filter Selections (Keeps state when sheet reopened) ---
+  final RxnString selectedDegree = RxnString();
+  final RxnString selectedCollege = RxnString();
+  final RxnString selectedDepartment = RxnString();
+
+  // Call this after a successful API fetch to populate the data and options
+  void initializeStudentData(List<StudentDetails> rawList) {
+    allStudents.assignAll(rawList);
+
+    // Extract unique values dynamically for filters
+    degreesList.assignAll(rawList
+        .map((s) => s.studentdegree?.trim() ?? "")
+        .where((val) => val.isNotEmpty)
+        .toSet()
+        .toList());
+
+    collegesList.assignAll(rawList
+        .map((s) => s.studentcollegename?.trim() ?? "")
+        .where((val) => val.isNotEmpty)
+        .toSet()
+        .toList());
+
+    departmentsList.assignAll(rawList
+        .map((s) => s.studentfieldofstudy?.trim() ?? "")
+        .where((val) => val.isNotEmpty)
+        .toSet()
+        .toList());
+
+    // Apply combined local filter
+    applySearchAndFilters();
+  }
+
+  // --- Core Filtering Engine ---
+  void applySearchAndFilters() {
+    List<StudentDetails> temp = List.from(allStudents);
+
+    // 1. Apply Filters First
+    if (selectedDegree.value != null) {
+      temp = temp.where((s) => s.studentdegree == selectedDegree.value).toList();
+    }
+    if (selectedCollege.value != null) {
+      temp = temp.where((s) => s.studentcollegename == selectedCollege.value).toList();
+    }
+    if (selectedDepartment.value != null) {
+      temp = temp.where((s) => s.studentfieldofstudy == selectedDepartment.value).toList();
+    }
+
+    // 2. Combine with Search Query (Name search only)
+    if (searchQuery.value.isNotEmpty) {
+      final query = searchQuery.value.toLowerCase();
+      temp = temp.where((s) {
+        final name = s.studName?.toLowerCase() ?? "";
+        return name.contains(query);
+      }).toList();
+    }
+
+    filteredStudents.assignAll(temp);
+  }
+
+  // --- Clear Actions ---
+  void clearSearchText() {
+    searchQuery.value = "";
+    searchController.clear();
+    applySearchAndFilters(); // Re-evaluate filters without the search criteria
+  }
+
+  void resetFiltersOnly() {
+    selectedDegree.value = null;
+    selectedCollege.value = null;
+    selectedDepartment.value = null;
+    applySearchAndFilters(); // Re-evaluate with search text preserved
+  }
+
 
   final _studentListLoading = false.obs;
 
