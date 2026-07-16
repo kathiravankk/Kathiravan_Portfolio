@@ -198,6 +198,12 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                               final student =
                                   homeController.filteredStudents[index];
                               return StudentDetailCard(
+                                viewFunc: (){
+                                  AppFunctions.navigateScreen(context, AppRoutes.internProfileViewScreen,
+                                  arguments: {
+                                    "studentId": student.id,
+                                  });
+                                },
                                 isShortList: student.isFavorite ?? false,
                                 shortlistFunc: () async {
                                   await homeController.shortlistToggleFunc(

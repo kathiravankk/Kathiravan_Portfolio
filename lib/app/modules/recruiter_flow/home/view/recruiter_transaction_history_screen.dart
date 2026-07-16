@@ -70,8 +70,8 @@ class _RecruiterTransactionHistoryScreenState
           automaticallyImplyLeading: false,
           leading: InkWell(
             onTap: () => Get.back(),
-            child: const Icon(
-              CupertinoIcons.back,
+            child: Icon(
+              Icons.arrow_back,
               color: AppColors.whiteColor,
               size: 30,
             ),
@@ -85,42 +85,40 @@ class _RecruiterTransactionHistoryScreenState
             ),
           ),
         ),
-        body: Obx(() {
-          final isLoading = homeController.transactionHistoryLoading;
-          final transactions = homeController.historyModel.transactionData;
-
-          if (isLoading && transactions.isEmpty) {
-            return AppAlertUtils.customLoader();
-          }
-
-          if (transactions.isEmpty) {
-            return _buildEmptyState();
-          }
-
-          final credit = transactions.first.recCredit;
-          final pagination = homeController.historyModel.pagination;
-
-          return RefreshIndicator(
-            color: AppColors.primaryColor,
-            backgroundColor: AppColors.appBgColor_2,
-            onRefresh: getTransactionData,
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              children: [
-                _buildBalanceCard(credit),
-                const SizedBox(height: 24),
-                _buildSectionHeader(
-                  "Transaction History",
-                  pagination == null
-                      ? null
-                      : "${transactions.length} of ${pagination.total ?? transactions.length}",
-                ),
-                const SizedBox(height: 12),
-                ...transactions.map(_buildTransactionCard),
-              ],
-            ),
-          );
-        }),
+        body: Obx(
+          () => homeController.transactionHistoryLoading
+              ? AppAlertUtils.customLoader()
+              : homeController.historyModel.transactionData.isNotEmpty
+              ? RefreshIndicator(
+                  color: AppColors.primaryColor,
+                  backgroundColor: AppColors.appBgColor_2,
+                  onRefresh: getTransactionData,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                    children: [
+                      _buildBalanceCard(
+                        homeController
+                            .historyModel
+                            .transactionData
+                            .first
+                            .recCredit,
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSectionHeader(
+                        "Transaction History",
+                        homeController.historyModel.pagination == null
+                            ? null
+                            : "${homeController.historyModel.transactionData.length} of ${homeController.historyModel.pagination!.total ?? homeController.historyModel.transactionData.length}",
+                      ),
+                      const SizedBox(height: 12),
+                      ...homeController.historyModel.transactionData.map(
+                        _buildTransactionCard,
+                      ),
+                    ],
+                  ),
+                )
+              : _buildEmptyState(),
+        ),
       ),
     );
   }

@@ -7,6 +7,8 @@ import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
@@ -381,6 +383,32 @@ class RecruiterHomeProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return RecruiterTransactionHistoryModel.fromJson(err.response!.data);
+    }
+  }
+
+
+  // GET INTERN PROFILE DATA
+
+  Future<InternStudentProfileModel> fetchInternProfileData({
+    required String studentId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.getInternProfile,
+        options: Options(headers: header),
+        data: {
+          "studentId": studentId
+        }
+      );
+      responseStatus = response.statusCode!;
+      return InternStudentProfileModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return InternStudentProfileModel.fromJson(err.response!.data);
     }
   }
   

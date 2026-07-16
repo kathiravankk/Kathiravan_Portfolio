@@ -14,6 +14,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/internship_post_mode
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 class PostNewInternshipScreen extends StatefulWidget {
   const PostNewInternshipScreen({super.key});
@@ -27,9 +28,9 @@ enum StipendType { free, paid, fees }
 
 class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   final RecruiterHomeController homeController =
-      Get.find<RecruiterHomeController>();
+  Get.find<RecruiterHomeController>();
   final InternshipPostController postController =
-      Get.find<InternshipPostController>();
+  Get.find<InternshipPostController>();
 
   // ============================================================
   // STEP CONTROL
@@ -51,7 +52,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   // ============================================================
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController companyWebsiteController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController aboutCompanyController = TextEditingController();
   String _existingLogoUrl = "";
 
@@ -82,16 +83,19 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   String durationType = "Months"; // "Months" | "Days"
   String? selectedDuration; // dropdown value (months/days count)
   int numberOfPositions = 1;
+  int internshipDuration = 1;
 
-  late List<String> stateList = districtMap.keys.toList()..sort();
+  late List<String> stateList = districtMap.keys.toList()
+    ..sort();
 
   Map<String, List<String>> districtMap = CommonUtils.indiaStatesAndDistricts;
 
   final List<String> internshipModeList = const ["Onsite", "Remote", "Hybrid"];
 
-  List<String> get durationOptions => durationType == "Months"
-      ? List.generate(12, (i) => "${i + 1}")
-      : List.generate(30, (i) => "${i + 1}");
+  List<String> get durationOptions =>
+      durationType == "Months"
+          ? List.generate(12, (i) => "${i + 1}")
+          : List.generate(30, (i) => "${i + 1}");
 
   // ============================================================
   // SECTION 4 — REQUIREMENTS
@@ -109,9 +113,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   ];
   final List<String> selectedQualifications = [];
 
-  final TextEditingController fieldOfStudyController = TextEditingController();
-  final TextEditingController eligibilityCriteriaController =
-      TextEditingController();
+  // final TextEditingController fieldOfStudyController = TextEditingController();
+  // final TextEditingController eligibilityCriteriaController =
+  //     TextEditingController();
 
   final TextEditingController skillInputController = TextEditingController();
   final List<String> requiredSkills = [];
@@ -194,6 +198,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     companyWebsiteController.text = data.companyWebsite ?? "";
     aboutCompanyController.text = data.aboutCompany ?? "";
     _existingLogoUrl = data.companyLogo ?? "";
+    _existingLogoUrl = data.companyLogo ?? "";
 
     // =============================
     // Internship Details
@@ -211,6 +216,20 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     // =============================
     // Projects
     // =============================
+    final String durationStr = (data.internshipDuration ?? "").trim();
+    final String daysStr = (data.days ?? "").trim();
+
+    if (durationStr.isEmpty && daysStr.isNotEmpty && daysStr != "0") {
+      // 1. Day-wise Internship configuration
+      durationType = "Days";
+      selectedDuration = daysStr;
+      internshipDuration = int.tryParse(daysStr) ?? 1;
+    } else {
+      // 2. Month-wise Internship configuration (Default Fallback)
+      durationType = "Months";
+      selectedDuration = durationStr.isNotEmpty ? durationStr : "1";
+      internshipDuration = int.tryParse(durationStr) ?? 1;
+    }
 
     projectControllers.clear();
 
@@ -249,6 +268,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     // =============================
 
     numberOfPositions = data.noOfPosition ?? 1;
+    numberOfPositions = data.noOfPosition ?? 1;
 
     // =============================
     // Qualification
@@ -273,15 +293,31 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     // =============================
     // Stipend
     // =============================
+    //
+    // final stipend = data.internshipStipend ?? "";
+    //
+    // if (stipend == "N/A") {
+    //   stipendType = StipendType.free;
+    //   stipendAmountController.clear();
+    // } else {
+    //   stipendType = StipendType.paid;
+    //   stipendAmountController.text = stipend;
+    // }
+    final stipend = data.internshipStipend ?? "N/A";
+    final fee = data.fee ?? "0"; // Fallback to "0" if null
 
-    final stipend = data.internshipStipend ?? "";
-
-    if (stipend == "Free") {
-      stipendType = StipendType.free;
-      stipendAmountController.clear();
-    } else {
+    if (fee != "0") {
+      // 1. FEES Model
+      stipendType = StipendType.fees;
+      stipendAmountController.text = fee;
+    } else if (stipend != "N/A") {
+      // 2. STIPEND Model
       stipendType = StipendType.paid;
       stipendAmountController.text = stipend;
+    } else {
+      // 3. FREE Model (stipend == "N/A" && fee == "0")
+      stipendType = StipendType.free;
+      stipendAmountController.clear();
     }
 
     setState(() {});
@@ -301,8 +337,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       c.dispose();
     }
     locationLinkController.dispose();
-    fieldOfStudyController.dispose();
-    eligibilityCriteriaController.dispose();
+    // fieldOfStudyController.dispose();
+    // eligibilityCriteriaController.dispose();
     skillInputController.dispose();
     stipendAmountController.dispose();
     _scrollController.dispose();
@@ -328,11 +364,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           backgroundColor: AppColors.transparentColor,
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              size: 25,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
             onPressed: () {
               if (currentStep == 0) {
                 Get.back();
@@ -351,68 +383,78 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           ),
         ),
         body: Obx(
-          () => homeController.profileLoading
+              () =>
+          homeController.profileLoading
               ? AppAlertUtils.customLoader()
               : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 15,
-                      children: [
-                        Text(
-                          "Create Hiring Post",
-                          style: AppStyles.customTextStyle(
-                            size: 24,
-                            color: AppColors.secondaryColor,
-                            weight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          "Create your hiring post to start finding and hiring the right talent",
-                          style: AppStyles.customTextStyle(
-                            size: 16,
-                            color: AppColors.lightText,
-                            weight: FontWeight.w400,
-                            lineSpace: 1.5,
-                          ),
-                        ),
-                        _buildStepIndicator(),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            controller: _scrollController,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              spacing: 20,
-                              children: [
-                                _sectionHeading(),
-                                AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 250),
-                                  child: _buildCurrentStepContent(),
-                                ),
-                                const SizedBox(height: 5),
-                                CustomButtonWidget(
-                                  isLoading:
-                                      postController.createInternshipLoading ||
-                                      postController.updateInternshipLoading,
-                                  buttonText: currentStep == totalSteps - 1
-                                      ? isEditScreen!
-                                            ? "Update Internship"
-                                            : "Post Internship"
-                                      : "Next",
-                                  buttonFunction: () async {
-                                    await _handleNext();
-                                  },
-                                ),
-                                const SizedBox(height: 150),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 15,
+                children: [
+                  Text(
+                    "Create Hiring Post",
+                    style: AppStyles.customTextStyle(
+                      size: 24,
+                      color: AppColors.secondaryColor,
+                      weight: FontWeight.w700,
                     ),
                   ),
-                ),
+                  Text(
+                    "Create your hiring post to start finding and hiring the right talent",
+                    style: AppStyles.customTextStyle(
+                      size: 16,
+                      color: AppColors.lightText,
+                      weight: FontWeight.w400,
+                      lineSpace: 1.5,
+                    ),
+                  ),
+                  _buildStepIndicator(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 20,
+                        children: [
+                          _sectionHeading(),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            child: _buildCurrentStepContent(),
+                          ),
+                          (currentStep == 4 || currentStep == 3)
+                              ? SizedBox(
+                            height:
+                            MediaQuery
+                                .of(context)
+                                .size
+                                .height *
+                                0.2,
+                          )
+                              : const SizedBox(height: 10),
+                          CustomButtonWidget(
+                            isLoading:
+                            postController.createInternshipLoading ||
+                                postController.updateInternshipLoading,
+                            buttonText: currentStep == totalSteps - 1
+                                ? isEditScreen!
+                                ? "Update Internship"
+                                : "Post Internship"
+                                : "Next",
+                            buttonFunction: () async {
+                              await _handleNext();
+                            },
+                          ),
+                          const SizedBox(height: 150),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -510,21 +552,27 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   bool _validateCurrentStep() {
     switch (currentStep) {
       case 0:
-        if (companyNameController.text.trim().isEmpty) {
+        if (companyNameController.text
+            .trim()
+            .isEmpty) {
           AppAlertUtils.showToast(
             message: "Company name is required",
             isError: true,
           );
           return false;
         }
-        if (companyWebsiteController.text.trim().isEmpty) {
+        if (companyWebsiteController.text
+            .trim()
+            .isEmpty) {
           AppAlertUtils.showToast(
             message: "Company website is required",
             isError: true,
           );
           return false;
         }
-        if (aboutCompanyController.text.trim().isEmpty) {
+        if (aboutCompanyController.text
+            .trim()
+            .isEmpty) {
           AppAlertUtils.showToast(
             message: "Please add a short company description",
             isError: true,
@@ -534,7 +582,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         return true;
 
       case 1:
-        if (roleTypeController.text.trim().isEmpty) {
+        if (roleTypeController.text
+            .trim()
+            .isEmpty) {
           AppAlertUtils.showToast(
             message: "Internship role is required",
             isError: true,
@@ -548,7 +598,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         //   );
         //   return false;
         // }
-        if (descriptionController.text.trim().isEmpty) {
+        if (descriptionController.text
+            .trim()
+            .isEmpty) {
           AppAlertUtils.showToast(
             message: "Internship responsibilities are required",
             isError: true,
@@ -569,7 +621,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           }
         }
 
-        if (projectDescriptions.toSet().length != projectDescriptions.length) {
+        if (projectDescriptions
+            .toSet()
+            .length != projectDescriptions.length) {
           AppAlertUtils.showToast(
             message: "Duplicate project descriptions are not allowed",
             isError: true,
@@ -628,7 +682,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
 
       case 4:
         if (stipendType == StipendType.paid &&
-            stipendAmountController.text.trim().isEmpty) {
+            stipendAmountController.text
+                .trim()
+                .isEmpty) {
           AppAlertUtils.showToast(
             message: "Please enter the stipend amount",
             isError: true,
@@ -636,7 +692,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           return false;
         }
         if (stipendType == StipendType.fees &&
-            stipendAmountController.text.trim().isEmpty) {
+            stipendAmountController.text
+                .trim()
+                .isEmpty) {
           AppAlertUtils.showToast(
             message: "Please enter the internship fee",
             isError: true,
@@ -721,12 +779,12 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                 borderRadius: BorderRadius.circular(10),
                 child: _existingLogoUrl.isNotEmpty
                     ? Image.network(
-                        _existingLogoUrl,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _logoFallback(),
-                      )
+                  _existingLogoUrl,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _logoFallback(),
+                )
                     : _logoFallback(),
               ),
               const Icon(
@@ -855,7 +913,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                     controller: projectControllers[index],
                     labelText: "Project ${index + 1}",
                     hintText:
-                        "Describe project ${index + 1} (used for syllabus generation)",
+                    "Describe project ${index +
+                        1} (used for syllabus generation)",
                     isNumberKeyboard: false,
                   ),
                 ),
@@ -886,7 +945,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         }),
         InkWell(
           onTap: () {
-            if (projectControllers.last.text.trim().isEmpty) {
+            if (projectControllers.last.text
+                .trim()
+                .isEmpty) {
               AppAlertUtils.showToast(
                 message: "Please fill the current project description first",
                 isError: true,
@@ -921,8 +982,6 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     );
   }
 
-  int internshipDuration = 1;
-
   // ============================================================
   // STEP 3 — LOCATION & DURATION
   // ============================================================
@@ -937,17 +996,18 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           icon: CupertinoIcons.map,
           value: selectedState,
           placeholder: "Select State",
-          onTap: () => _showOptionPicker(
-            title: "Select State",
-            options: stateList,
-            selected: selectedState,
-            onSelected: (val) {
-              setState(() {
-                selectedState = val;
-                selectedDistrict = null;
-              });
-            },
-          ),
+          onTap: () =>
+              _showOptionPicker(
+                title: "Select State",
+                options: stateList,
+                selected: selectedState,
+                onSelected: (val) {
+                  setState(() {
+                    selectedState = val;
+                    selectedDistrict = null;
+                  });
+                },
+              ),
         ),
         _buildDropdownPicker(
           label: "District",
@@ -960,28 +1020,31 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           onTap: selectedState == null
               ? null
               : () {
-                  final districts = List<String>.from(
-                    districtMap[selectedState] ?? [],
-                  )..sort();
-                  _showOptionPicker(
-                    title: "Select District",
-                    options: districts,
-                    selected: selectedDistrict,
-                    onSelected: (val) => setState(() => selectedDistrict = val),
-                  );
-                },
+            final districts = List<String>.from(
+              districtMap[selectedState] ?? [],
+            )
+              ..sort();
+            _showOptionPicker(
+              title: "Select District",
+              options: districts,
+              selected: selectedDistrict,
+              onSelected: (val) => setState(() => selectedDistrict = val),
+            );
+          },
         ),
         _buildDropdownPicker(
           label: "Internship Mode",
           icon: CupertinoIcons.briefcase,
           value: selectedInternshipMode,
           placeholder: "Select Mode",
-          onTap: () => _showOptionPicker(
-            title: "Internship Mode",
-            options: internshipModeList,
-            selected: selectedInternshipMode,
-            onSelected: (val) => setState(() => selectedInternshipMode = val),
-          ),
+          onTap: () =>
+              _showOptionPicker(
+                title: "Internship Mode",
+                options: internshipModeList,
+                selected: selectedInternshipMode,
+                onSelected: (val) =>
+                    setState(() => selectedInternshipMode = val),
+              ),
         ),
         CustomTextField(
           controller: locationLinkController,
@@ -1045,18 +1108,20 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
             _buildRadioOption(
               label: "Months",
               selected: durationType == "Months",
-              onTap: () => setState(() {
-                durationType = "Months";
-                //selectedDuration = null;
-              }),
+              onTap: () =>
+                  setState(() {
+                    durationType = "Months";
+                    //selectedDuration = null;
+                  }),
             ),
             _buildRadioOption(
               label: "Days",
               selected: durationType == "Days",
-              onTap: () => setState(() {
-                durationType = "Days";
-                //selectedDuration = null;
-              }),
+              onTap: () =>
+                  setState(() {
+                    durationType = "Days";
+                    //selectedDuration = null;
+                  }),
             ),
           ],
         ),
@@ -1127,20 +1192,20 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       spacing: 18,
       children: [
         _buildMultiSelectQualifications(),
-        CustomTextField(
-          controller: fieldOfStudyController,
-          labelText: "Field of Study",
-          hintText: "e.g. Computer Science",
-          isNumberKeyboard: false,
-        ),
+        // CustomTextField(
+        //   controller: fieldOfStudyController,
+        //   labelText: "Field of Study",
+        //   hintText: "e.g. Computer Science",
+        //   isNumberKeyboard: false,
+        // ),
         _buildSkillsInput(),
-        CustomTextField(
-          controller: eligibilityCriteriaController,
-          labelText: "Eligibility Criteria",
-          hintText: "Any additional eligibility notes",
-          isNumberKeyboard: false,
-          maxLines: 3,
-        ),
+        // CustomTextField(
+        //   controller: eligibilityCriteriaController,
+        //   labelText: "Eligibility Criteria",
+        //   hintText: "Any additional eligibility notes",
+        //   isNumberKeyboard: false,
+        //   maxLines: 3,
+        // ),
       ],
     );
   }
@@ -1179,27 +1244,29 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                 Expanded(
                   child: selectedQualifications.isEmpty
                       ? Text(
-                          "Select qualifications",
-                          style: AppStyles.customTextStyle(
-                            size: 14,
-                            color: AppColors.greyTextColor,
-                            weight: FontWeight.w400,
-                          ),
-                        )
+                    "Select qualifications",
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.greyTextColor,
+                      weight: FontWeight.w400,
+                    ),
+                  )
                       : Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: selectedQualifications
-                              .map(
-                                (q) => _buildChip(
-                                  label: q,
-                                  onRemove: () => setState(
-                                    () => selectedQualifications.remove(q),
-                                  ),
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: selectedQualifications
+                        .map(
+                          (q) =>
+                          _buildChip(
+                            label: q,
+                            onRemove: () =>
+                                setState(
+                                      () => selectedQualifications.remove(q),
                                 ),
-                              )
-                              .toList(),
-                        ),
+                          ),
+                    )
+                        .toList(),
+                  ),
                 ),
                 const Icon(
                   CupertinoIcons.chevron_down,
@@ -1226,45 +1293,50 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   void _showQualificationPicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.fieldBgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => StatefulBuilder(
-        builder: (context, setSheetState) => SafeArea(
-          child: Wrap(
-            children: List.generate(qualificationOptions.length, (index) {
-              final option = qualificationOptions[index];
-              final isSelected = selectedQualifications.contains(option);
-              return ListTile(
-                title: Text(
-                  option,
-                  style: AppStyles.customTextStyle(
-                    fontFamily: 'Roboto',
-                    color: AppColors.blackColor,
-                    size: 14,
-                    weight: FontWeight.w500,
+      builder: (_) =>
+          StatefulBuilder(
+            builder: (context, setSheetState) =>
+                SafeArea(
+                  child: Wrap(
+                    children: List.generate(
+                        qualificationOptions.length, (index) {
+                      final option = qualificationOptions[index];
+                      final isSelected = selectedQualifications.contains(
+                          option);
+                      return ListTile(
+                        title: Text(
+                          option,
+                          style: AppStyles.customTextStyle(
+                            fontFamily: 'Roboto',
+                            color: AppColors.whiteColor,
+                            size: 14,
+                            weight: FontWeight.w500,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(
+                            Icons.check, color: AppColors.primaryColor)
+                            : null,
+                        onTap: () {
+                          setSheetState(() {
+                            setState(() {
+                              if (isSelected) {
+                                selectedQualifications.remove(option);
+                              } else {
+                                selectedQualifications.add(option);
+                              }
+                            });
+                          });
+                        },
+                      );
+                    }),
                   ),
                 ),
-                trailing: isSelected
-                    ? const Icon(Icons.check, color: AppColors.primaryColor)
-                    : null,
-                onTap: () {
-                  setSheetState(() {
-                    setState(() {
-                      if (isSelected) {
-                        selectedQualifications.remove(option);
-                      } else {
-                        selectedQualifications.add(option);
-                      }
-                    });
-                  });
-                },
-              );
-            }),
           ),
-        ),
-      ),
     );
   }
 
@@ -1278,8 +1350,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           labelText: "Required skills",
           hintText: "e.g. JavaScript, Python, React",
           isNumberKeyboard: false,
-
-          //onFieldSubmitted: (_) => _addSkill(),
+          onFieldSubmitted: (_) => _addSkill(),
           suffixWidget: InkWell(
             onTap: _addSkill,
             child: const Icon(
@@ -1295,11 +1366,12 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
             runSpacing: 8,
             children: requiredSkills
                 .map(
-                  (s) => _buildChip(
+                  (s) =>
+                  _buildChip(
                     label: s,
                     onRemove: () => setState(() => requiredSkills.remove(s)),
                   ),
-                )
+            )
                 .toList(),
           ),
       ],
@@ -1381,10 +1453,11 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
             _buildRadioOption(
               label: "Free Internship",
               selected: stipendType == StipendType.free,
-              onTap: () => setState(() {
-                stipendType = StipendType.free;
-                stipendAmountController.clear();
-              }),
+              onTap: () =>
+                  setState(() {
+                    stipendType = StipendType.free;
+                    stipendAmountController.clear();
+                  }),
             ),
             _buildRadioOption(
               label: "Paid Internship",
@@ -1485,36 +1558,148 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   }) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      // Allows bottom sheet to expand up when keyboard opens
       backgroundColor: AppColors.fieldBgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => SafeArea(
-        child: ListView.builder(
-          itemCount: options.length,
-          itemBuilder: (context, index) {
-            final option = options[index];
-            return ListTile(
-              title: Text(
-                option,
-                style: AppStyles.customTextStyle(
-                  fontFamily: 'Roboto',
-                  color: AppColors.whiteColor,
-                  size: 14,
-                  weight: FontWeight.w500,
+      builder: (_) {
+        String searchQuery = ""; // Keeps track of what the user is typing
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            // Filter the items dynamically based on search query
+            final filteredOptions = options
+                .where(
+                  (option) =>
+                  option.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+                .toList();
+
+            return Container(
+              constraints: BoxConstraints(
+                maxHeight:
+                MediaQuery
+                    .of(context)
+                    .size
+                    .height *
+                    0.7, // Cap height at 70% of screen
+              ),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery
+                    .of(
+                  context,
+                )
+                    .viewInsets
+                    .bottom, // Pushes up above keyboard
+              ),
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Title and Search Bar Header
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: AppStyles.customTextStyle(
+                              color: AppColors.whiteColor,
+                              size: 16,
+                              weight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          // Search Input Field
+                          TextField(
+                            style: AppStyles.customTextStyle(
+                              color: AppColors.whiteColor,
+                              size: 14,
+                            ),
+                            cursorColor: AppColors.primaryColor,
+                            decoration: InputDecoration(
+                              hintText: "Search...",
+                              hintStyle: AppStyles.customTextStyle(
+                                color: AppColors.greyTextColor,
+                                size: 14,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search,
+                                color: AppColors.greyTextColor,
+                                size: 20,
+                              ),
+                              filled: true,
+                              fillColor: AppColors.disableFieldColor,
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                            onChanged: (value) {
+                              // Using setModalState forces only the bottom sheet layout to update
+                              setModalState(() {
+                                searchQuery = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: AppColors.fieldBorderColor, height: 1),
+
+                    // Screen Options List
+                    Expanded(
+                      child: filteredOptions.isEmpty
+                          ? Center(
+                        child: Text(
+                          "No options found",
+                          style: AppStyles.customTextStyle(
+                            color: AppColors.greyTextColor,
+                            size: 14,
+                          ),
+                        ),
+                      )
+                          : ListView.builder(
+                        itemCount: filteredOptions.length,
+                        itemBuilder: (context, index) {
+                          final option = filteredOptions[index];
+                          return ListTile(
+                            title: Text(
+                              option,
+                              style: AppStyles.customTextStyle(
+                                fontFamily: 'Roboto',
+                                color: AppColors.whiteColor,
+                                size: 14,
+                                weight: FontWeight.w500,
+                              ),
+                            ),
+                            trailing: selected == option
+                                ? const Icon(
+                              Icons.check,
+                              color: AppColors.primaryColor,
+                            )
+                                : null,
+                            onTap: () {
+                              onSelected(option);
+                              Get.back();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              trailing: selected == option
-                  ? const Icon(Icons.check, color: AppColors.primaryColor)
-                  : null,
-              onTap: () {
-                onSelected(option);
-                Get.back();
-              },
             );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -1523,9 +1708,13 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   // ============================================================
 
   Future<void> _postInternship() async {
-    final String stipendValue = stipendType == StipendType.free
-        ? "Free"
-        : stipendAmountController.text.trim();
+    final String stipendValue = stipendType == StipendType.paid
+        ? stipendAmountController.text.trim()
+        : "N/A";
+
+    final String feeValue = stipendType == StipendType.fees
+        ? stipendAmountController.text.trim()
+        : "0";
 
     final Map<String, dynamic> payload = {
       "recruiterId": recruiterId,
@@ -1539,9 +1728,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       "intershipdescription": descriptionController.text.trim(),
       "aboutinternship": descriptionController.text.trim(),
       "studentqualification": selectedQualifications,
-      "fieldofstudy": fieldOfStudyController.text.trim(),
+      //"fieldofstudy": fieldOfStudyController.text.trim(),
       "requiredskills": requiredSkills,
-      "eligibilitycriteria": eligibilityCriteriaController.text.trim(),
+      //"eligibilitycriteria": eligibilityCriteriaController.text.trim(),
       "companystate": selectedState ?? "",
       "companycity": selectedDistrict ?? "",
       "locationlink": locationLinkController.text.trim(),
@@ -1554,6 +1743,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       "noofposition": numberOfPositions.toString(),
       "internpositions": numberOfPositions.toString(),
       "internshipstipend": stipendValue,
+      "fee": feeValue,
       "project_description": projectControllers
           .map((c) => c.text.trim())
           .where((t) => t.isNotEmpty)
@@ -1562,29 +1752,54 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
 
     try {
       debugPrint("Internship payload: $payload");
-      isEditScreen == true
-          ? await postController.updateNewInternship(
-              internshipData: payload,
-              jobId: internPostData!.id ?? "",
-            )
-          : await postController.createNewInternship(internshipData: payload);
-      if (postController.getResponseCode() == 200 ||
-          postController.getResponseCode() == 201) {
+
+      if (isEditScreen == true) {
+        await postController.updateNewInternship(
+          internshipData: payload,
+          jobId: internPostData?.id ?? "",
+        );
+      } else {
+        await postController.createNewInternship(internshipData: payload);
+      }
+
+      final int responseCode = postController.getResponseCode();
+
+      if (responseCode == 200 || responseCode == 201) {
+        // Safely deduce the server message without forcing direct dot-notation properties blindly
+        debugPrint(postController.createInternshipModel.toJson().toString(), wrapWidth: 1024);
+        String? serverMessage;
+        try {
+          serverMessage = isEditScreen == true
+              ? postController.createInternshipModel?.message
+              : postController.createInternshipModel?.message;
+        } catch (_) {
+          // Fallback catch if the models themselves are structurally distinct or null
+        }
+
+        final String fallbackText = "Internship ${isEditScreen == true
+            ? "updated"
+            : "posted"} successfully!";
+
         AppAlertUtils.showToast(
-          message:
-              postController.createInternshipModel.message ??
-              "Internship ${isEditScreen == true ? "updated" : "posted"} successfully!",
+          message: serverMessage ?? fallbackText,
           isError: false,
         );
-        Get.back();
+
+        // Using Get.offAll() prevents failures if AppRoutes configuration names contain mismatches
+        Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+        // Note: If Get.offAllNamed still fails, replace temporary with: Get.offAll(() => RecruiterDashboardScreen());
+
       } else {
         AppFunctions.apiErrorHandling(
-          postController.getResponseCode(),
-          postController.createInternshipModel.message ??
-              "Failed to ${isEditScreen == true ? "update" : "post"} internship.",
+          responseCode,
+          "Failed to process internship request.",
         );
       }
-    } catch (e) {
+    } catch (e, stacktrace) {
+      // Crucial step: prints exactly what broke line-by-line to your terminal console logs
+      debugPrint("Error during submission flow execution: $e");
+      debugPrint("Stacktrace layout: $stacktrace");
+
       AppAlertUtils.showToast(
         message: "Something went wrong. Please try again.",
         isError: true,

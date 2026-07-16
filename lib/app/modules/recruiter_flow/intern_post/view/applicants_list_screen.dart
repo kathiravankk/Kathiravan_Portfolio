@@ -80,9 +80,9 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
         leading: InkWell(
           onTap: () => Get.back(),
           child: const Icon(
-            CupertinoIcons.back,
+            Icons.arrow_back,
             color: AppColors.whiteColor,
-            size: 30,
+            size: 25,
           ),
         ),
         title: Text(
@@ -172,6 +172,9 @@ class _ApplicantsListScreenState extends State<ApplicantsListScreen> {
                       applicant: applicant,
                       projectList: projectList,
                       internshipData: internshipData!,
+                      shortlistFunc: (){
+
+                      },
                     );
                   },
                 ),
@@ -188,18 +191,23 @@ class _ApplicantsCard extends StatelessWidget {
     required this.applicant,
     required this.projectList,
     required this.internshipData,
+    required this.shortlistFunc,
   });
 
   final ApplicantsData applicant;
   final List<String> projectList;
   final PostData internshipData;
+  final VoidCallback shortlistFunc;
 
   @override
   Widget build(BuildContext context) {
+    // Check if favorite flag exists inside user details profile fallback safely
+    final bool isShortlisted = applicant.studentDetails?.isFavorite ?? false;
+
     return Card(
       color: AppColors.containerBgColor,
       child: Padding(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         child: Column(
           children: [
             Row(
@@ -207,72 +215,79 @@ class _ApplicantsCard extends StatelessWidget {
                 CircleAvatar(
                   maxRadius: 35,
                   backgroundImage: NetworkImage(
-                    applicant.studentDetails!.studProfile ?? '',
+                    applicant.studentDetails?.studProfile ?? '',
                   ),
                 ),
                 const SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: .start,
-                  mainAxisAlignment: .start,
-                  children: [
-                    Text(
-                      applicant.studentDetails!.studName!.capitalize ?? '',
-                      style: AppStyles.customTextStyle(
-                        size: 15,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w500,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        applicant.studentDetails?.studName?.capitalize ??
+                            'Anonymous Student',
+                        style: AppStyles.customTextStyle(
+                          size: 15,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.emeraldBg,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 4,
-                            horizontal: 10,
-                          ),
-                          child: Text(
-                            'Applied',
-                            style: AppStyles.customTextStyle(
-                              size: 13,
-                              color: AppColors.emeraldColor,
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.emeraldBg,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 10,
+                            ),
+                            child: Text(
+                              'Applied',
+                              style: AppStyles.customTextStyle(
+                                size: 13,
+                                color: AppColors.emeraldColor,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          '• Applied on ${_formatDate(applicant.createdAt)}',
-                          style: AppStyles.customTextStyle(
-                            size: 12,
-                            color: AppColors.greyTextColor,
-                            weight: FontWeight.w400,
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              '• Applied on ${_formatDate(
+                                  applicant.createdAt)}',
+                              overflow: TextOverflow.ellipsis,
+                              style: AppStyles.customTextStyle(
+                                size: 12,
+                                color: AppColors.greyTextColor,
+                                weight: FontWeight.w400,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 10,
               children: [
                 CustomButtonWidget(
-                  width: 100,
-                  height: 30,
+                  width: 95,
+                  height: 35,
                   buttonFunction: () {
                     AppFunctions.navigateScreen(
                       context,
                       AppRoutes.applicationActionScreen,
                       arguments: {
                         'jobId': applicant.job,
-                        'studentId': applicant.studentDetails!.id,
+                        'studentId': applicant.studentDetails?.id,
                         'applicationId': applicant.id,
                         'projectList': projectList,
                         "internshipData": internshipData,
@@ -281,52 +296,72 @@ class _ApplicantsCard extends StatelessWidget {
                   },
                   buttonWidget: Row(
                     spacing: 5,
-                    mainAxisAlignment: .center,
-                    crossAxisAlignment: .center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         CupertinoIcons.eye,
                         color: AppColors.blackColor,
-                        size: 13,
+                        size: 14,
                       ),
                       Text(
                         'View',
                         style: AppStyles.customTextStyle(
                           size: 12,
                           color: AppColors.blackColor,
+                          weight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.containerBgColor),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 5,
-                  ),
-                  child: Row(
-                    spacing: 5,
-                    mainAxisAlignment: .center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.bookmark,
-                        color: AppColors.whiteColor,
-                        size: 16,
+
+                // Refactored Interactive Shortlist Button Integration
+                GestureDetector(
+                  onTap: shortlistFunc,
+                  child: Container(
+                    height: 35,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isShortlisted
+                            ? AppColors.secondaryColor
+                            : AppColors.lightBorderColor,
                       ),
-                      Text(
-                        'Shortlist',
-                        style: AppStyles.customTextStyle(
-                          size: 12,
-                          color: AppColors.whiteColor,
+                      color: isShortlisted
+                          ? AppColors.secondaryColor.withOpacity(0.1)
+                          : AppColors.transparentColor,
+                    ),
+                    child: Row(
+                      spacing: 5,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isShortlisted
+                              ? CupertinoIcons.bookmark_fill
+                              : CupertinoIcons.bookmark,
+                          color: isShortlisted
+                              ? AppColors.secondaryColor
+                              : AppColors.whiteColor,
+                          size: 16,
                         ),
-                      ),
-                    ],
+                        Text(
+                          isShortlisted ? 'Shortlisted' : 'Shortlist',
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            color: isShortlisted
+                                ? AppColors.secondaryColor
+                                : AppColors.whiteColor,
+                            weight: isShortlisted ? FontWeight.w600 : FontWeight
+                                .w400,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+
                 _buildTypeContainer(
                   type: internshipData.internshipStipend != "N/A"
                       ? "STIPEND"
@@ -343,35 +378,46 @@ class _ApplicantsCard extends StatelessWidget {
   }
 
   Widget _buildTypeContainer({required String type}) {
+    final bool isStipend = type == "STIPEND";
+    final bool isFees = type == "FEES";
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.lightBorderColor),
-        color: type == "STIPEND"
+        color: isStipend
             ? AppColors.lightContColor2
-            : type == "FEES"
+            : isFees
             ? AppColors.lightContColor
             : AppColors.transparentColor,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: Row(
         spacing: 5,
-        mainAxisAlignment: .center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            type == "STIPEND"
+            isStipend
                 ? Icons.work_history_outlined
-                : type == "FEES"
+                : isFees
                 ? Icons.school_outlined
                 : Icons.currency_rupee_rounded,
-            color: type == "STIPEND" ? AppColors.blueTextColor : type == "FEES" ? AppColors.primaryColor :AppColors.whiteColor,
+            color: isStipend
+                ? AppColors.blueTextColor
+                : isFees
+                ? AppColors.primaryColor
+                : AppColors.whiteColor,
             size: 16,
           ),
           Text(
             type,
             style: AppStyles.customTextStyle(
               size: 12,
-              color: type == "STIPEND" ? AppColors.blueTextColor : type == "FEES" ? AppColors.primaryColor :AppColors.whiteColor,
+              color: isStipend
+                  ? AppColors.blueTextColor
+                  : isFees
+                  ? AppColors.primaryColor
+                  : AppColors.whiteColor,
               weight: FontWeight.w600,
             ),
           ),
@@ -384,8 +430,6 @@ class _ApplicantsCard extends StatelessWidget {
     if (iso == null || iso.isEmpty) return "—";
     try {
       final dt = DateTime.parse(iso);
-
-      // Static list of month names for quick lookup
       const months = [
         "Jan",
         "Feb",
@@ -398,14 +442,11 @@ class _ApplicantsCard extends StatelessWidget {
         "Sep",
         "Oct",
         "Nov",
-        "Dec",
+        "Dec"
       ];
-
-      // Pads the day to 2 digits (e.g., 05 or 20)
       final day = dt.day.toString().padLeft(2, '0');
-      final monthStr = months[dt.month - 1]; // DateTime.month is 1-indexed
+      final monthStr = months[dt.month - 1];
       final year = dt.year;
-
       return "$day $monthStr $year";
     } catch (_) {
       return "—";

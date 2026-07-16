@@ -2,14 +2,17 @@ class IssuedCertificateModel {
   IssuedCertificateModel({
     this.success,
     this.data,
+    this.message
   });
 
   final bool? success;
+  final String? message;
   final InternCertificateData? data;
 
   factory IssuedCertificateModel.fromJson(Map<String, dynamic> json) {
     return IssuedCertificateModel(
       success: json["success"],
+      message: json["message"]??"",
       data: json["data"] == null
           ? null
           : InternCertificateData.fromJson(json["data"]),

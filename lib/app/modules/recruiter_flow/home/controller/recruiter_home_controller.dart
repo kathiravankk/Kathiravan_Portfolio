@@ -5,6 +5,8 @@ import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
@@ -613,6 +615,38 @@ class RecruiterHomeController extends GetxController {
       rethrow;
     } finally {
       transactionHistoryLoading = false;
+    }
+  }
+
+  //  GET INTERN PROFILE
+
+  final _internProfileLoading = false.obs;
+
+  bool get internProfileLoading => _internProfileLoading.value;
+
+  set internProfileLoading(bool value) => _internProfileLoading.value = value;
+
+  // Model
+
+  final _internProfileModel = InternStudentProfileModel().obs;
+
+  InternStudentProfileModel get internProfileModel => _internProfileModel.value;
+
+  set internProfileModel(InternStudentProfileModel value) =>
+      _internProfileModel.value = value;
+
+  Future<void> getInternProfileData({
+    required String studentId,
+  }) async {
+    try {
+      internProfileLoading = true;
+      internProfileModel = await recruiterHomeProvider!.fetchInternProfileData(
+        studentId: studentId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      internProfileLoading = false;
     }
   }
 }

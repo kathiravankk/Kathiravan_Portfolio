@@ -70,7 +70,7 @@ class _ShortlistedStudentsListScreenState
           backgroundColor: AppColors.transparentColor,
           leading: IconButton(
             icon: const Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back,
               size: 25,
               color: AppColors.whiteColor,
             ),
@@ -82,7 +82,7 @@ class _ShortlistedStudentsListScreenState
             "Shortlisted Students",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),

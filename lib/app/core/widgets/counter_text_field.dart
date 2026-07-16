@@ -137,11 +137,11 @@ class _CounterTextFieldState extends State<CounterTextField> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Divider
-                  Container(
-                    width: 1,
-                    height: 24,
-                    color: AppColors.fieldBorderColor,
-                  ),
+                  // Container(
+                  //   width: 1,
+                  //   height: 24,
+                  //   color: AppColors.fieldBorderColor,
+                  // ),
                   // Decrement
                   _CounterButton(
                     icon: Icons.remove,

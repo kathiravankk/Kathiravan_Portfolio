@@ -636,13 +636,13 @@ class BottomBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          BottomBarItem(
-            icon: CupertinoIcons.heart,
-            label: "Like",
-            onTap: () {
-              // controller.likeApplicant(applicant.id);
-            },
-          ),
+          // BottomBarItem(
+          //   icon: CupertinoIcons.heart,
+          //   label: "Like",
+          //   onTap: () {
+          //     // controller.likeApplicant(applicant.id);
+          //   },
+          // ),
           BottomBarItem(
             icon: CupertinoIcons.arrow_down_to_line,
             label: "Download",

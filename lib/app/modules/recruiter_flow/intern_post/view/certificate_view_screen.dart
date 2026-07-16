@@ -5,6 +5,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart'
     show FullScreenImagePreview;
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
@@ -92,7 +93,8 @@ class _CertificateViewScreenState extends State<CertificateViewScreen> {
         body: Obx(
           () => applicationController.issuedCertificateLoading
               ? AppAlertUtils.customLoader()
-              : Padding(
+              : applicationController.certificateModel.success != false
+              ? Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,20 +123,21 @@ class _CertificateViewScreenState extends State<CertificateViewScreen> {
                               children: [
                                 downloadShareContainer(
                                   certificate:
-                                  applicationController
-                                      .certificateModel
-                                      .data!
-                                      .certificate ??
+                                      applicationController
+                                          .certificateModel
+                                          .data!
+                                          .certificate ??
                                       "",
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                ),
+                )
+              : CustomEmptyWidget(),
         ),
       ),
     );

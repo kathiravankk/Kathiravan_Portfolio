@@ -47,7 +47,7 @@ class _PostedInternshipViewScreenState
             children: [
               IconButton(
                 icon: const Icon(
-                    Icons.arrow_back_ios, color: AppColors.whiteColor),
+                    Icons.arrow_back, color: AppColors.whiteColor),
                 onPressed: () => Get.back(),
               ),
               Expanded(

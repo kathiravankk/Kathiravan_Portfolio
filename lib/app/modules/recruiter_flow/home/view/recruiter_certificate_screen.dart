@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
@@ -23,12 +24,16 @@ class RecruiterCertificateScreen extends StatefulWidget {
 class _RecruiterCertificateScreenState
     extends State<RecruiterCertificateScreen> {
   final InternshipPostController postController =
-      Get.find<InternshipPostController>();
+  Get.find<InternshipPostController>();
   final InternshipPostController applicationController =
-      Get.find<InternshipPostController>();
+  Get.find<InternshipPostController>();
+  final TextEditingController searchController = TextEditingController();
 
   String? recruiterId = "";
   List<PostData>? internshipList = [];
+
+  // Backing master list and UI list
+  List<ApplicantsData>? _allApplicants = [];
   List<ApplicantsData>? applicantsList = [];
 
   String jobId = "";
@@ -78,6 +83,7 @@ class _RecruiterCertificateScreenState
 
   Future<void> getApplicantsData() async {
     applicantsList!.clear();
+    _allApplicants!.clear();
     try {
       await applicationController.getApplicants(
         jobId: jobId,
@@ -85,38 +91,77 @@ class _RecruiterCertificateScreenState
       );
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
-        applicantsList = applicationController.applicantsModel.applicantsList;
+        // Store in master list copy
+        _allApplicants = List.from(applicationController.applicantsModel.applicantsList ?? []);
+        applicantsList = List.from(_allApplicants!);
+
         debugPrint("+++++++++++++++++++++++++++");
         debugPrint(applicantsList!.length.toString());
-        internCount = applicantsList!.length;
+
+        // Re-apply filter if user already typed something before changing tabs
+        if (searchController.text.isNotEmpty) {
+          filterSearch(searchController.text);
+        } else {
+          setState(() {
+            internCount = applicantsList!.length;
+          });
+        }
       } else {
         setState(() {
           internCount = applicantsList?.length ?? 0;
         });
         AppFunctions.apiErrorHandling(
           applicationController.getResponseCode(),
-          "Something went wrong!, Try again later",
+          applicationController.applicantsModel.message ??
+              "Something went wrong!, Try again later",
         );
       }
     } catch (error) {
-      internCount = applicantsList?.length ?? 0;
+      setState(() {
+        internCount = applicantsList?.length ?? 0;
+      });
       AppFunctions.apiErrorHandling(
         applicationController.getResponseCode(),
-        "Something went wrong!, Try again later",
+        applicationController.applicantsModel.message ??
+            "Something went wrong!, Try again later",
       );
       rethrow;
     }
   }
 
+  // Filter Logic Implementation
+  void filterSearch(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        applicantsList = List.from(_allApplicants!);
+        internCount = applicantsList!.length;
+      });
+      return;
+    }
+
+    final lowercaseQuery = query.toLowerCase();
+    setState(() {
+      applicantsList = _allApplicants!.where((applicant) {
+        final name = applicant.studentDetails?.studName?.toLowerCase() ?? "";
+        final email = applicant.studentDetails?.studEmail?.toLowerCase() ?? "";
+        return name.contains(lowercaseQuery) || email.contains(lowercaseQuery);
+      }).toList();
+      internCount = applicantsList!.length;
+    });
+  }
+
   Future<void> onJobSelected(
-    int index,
-    String selectedJobId,
-    PostData postData,
-  ) async {
+      int index,
+      String selectedJobId,
+      PostData postData,
+      ) async {
     if (selectedIndex.value == index) return;
     selectedIndex.value = index;
     jobId = selectedJobId;
     internshipData = postData;
+
+    // Clear search bar UI when switching tabs
+    searchController.clear();
     await getApplicantsData();
   }
 
@@ -135,7 +180,7 @@ class _RecruiterCertificateScreenState
           backgroundColor: AppColors.transparentColor,
           leading: IconButton(
             icon: const Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back,
               size: 25,
               color: AppColors.whiteColor,
             ),
@@ -147,32 +192,76 @@ class _RecruiterCertificateScreenState
             "Certificates",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),
         ),
         body: Obx(
-          () => postController.internPostLoading
+              () => postController.internPostLoading
               ? AppAlertUtils.customLoader()
               : RefreshIndicator(
-                  backgroundColor: AppColors.appBgColor_2,
-                  color: AppColors.primaryColor,
-                  onRefresh: () async {
-                    getInternshipData();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      spacing: 15,
-                      children: [
-                        _buildInternshipCardsList(),
-                        Expanded(child: _buildApplicantsList()),
-                      ],
-                    ),
-                  ),
-                ),
+            backgroundColor: AppColors.appBgColor_2,
+            color: AppColors.primaryColor,
+            onRefresh: () async {
+              getInternshipData();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                spacing: 15,
+                children: [
+                  searchWidget(),
+                  _buildInternshipCardsList(),
+                  Expanded(child: _buildApplicantsList()),
+                ],
+              ),
+            ),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget searchWidget() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.recContColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: TextField(
+        controller: searchController,
+        textAlign: TextAlign.start,
+        style: AppStyles.customTextStyle(
+          size: 14,
+          color: AppColors.whiteColor,
+          weight: FontWeight.w400,
+        ),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: "Search by name,email...",
+          hintStyle: AppStyles.customTextStyle(
+            size: 12,
+            color: AppColors.disableButtonColor,
+            weight: FontWeight.w400,
+          ),
+          prefixIcon: Icon(
+            CupertinoIcons.search,
+            color: AppColors.primaryColor,
+            size: 20,
+          ),
+          suffixIcon: searchController.text.isNotEmpty
+              ? IconButton(
+            icon: const Icon(Icons.clear, color: AppColors.redColor),
+            onPressed: () {
+              searchController.clear();
+              filterSearch("");
+            },
+          )
+              : const SizedBox.shrink(),
+          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+        ),
+        onChanged: (value) => filterSearch(value),
       ),
     );
   }
@@ -182,7 +271,7 @@ class _RecruiterCertificateScreenState
       return const SizedBox.shrink();
     }
     return SizedBox(
-      height: 50,
+      height: 40,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: internshipList!.length,
@@ -194,14 +283,16 @@ class _RecruiterCertificateScreenState
             onTap: () =>
                 onJobSelected(index, job.id ?? "", internshipList![index]),
             child: Container(
-              padding: const EdgeInsets.all(15),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 3),
               decoration: BoxDecoration(
-                color: AppColors.recContColor,
-                borderRadius: BorderRadius.circular(16),
+                color: isSelected
+                    ? AppColors.selContColor
+                    : AppColors.transparentColor,
+                borderRadius: BorderRadius.circular(30),
                 border: Border.all(
                   color: isSelected
                       ? AppColors.primaryColor
-                      : AppColors.primaryColor.withValues(alpha: 0.1),
+                      : AppColors.fieldBorderColor,
                   width: 1,
                 ),
               ),
@@ -212,9 +303,11 @@ class _RecruiterCertificateScreenState
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: AppStyles.customTextStyle(
-                  size: 14,
+                  size: 12,
                   lineSpace: 1.4,
-                  color: AppColors.whiteColor,
+                  color: isSelected
+                      ? AppColors.whiteColor
+                      : AppColors.fieldBorderColor,
                   weight: FontWeight.w700,
                 ),
               ),
@@ -230,7 +323,7 @@ class _RecruiterCertificateScreenState
       return AppAlertUtils.customLoader();
     }
 
-    if (applicantsList!.isEmpty) {
+    if (applicantsList == null || applicantsList!.isEmpty) {
       return CustomEmptyWidget();
     }
 
@@ -256,12 +349,23 @@ class _RecruiterCertificateScreenState
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundColor: AppColors.whiteColor.withOpacity(0.1),
+            backgroundColor: AppColors.whiteColor.withValues(alpha: 0.1),
             backgroundImage:
-                (applicant.studentDetails!.studProfile ?? "").isNotEmpty
-                ? NetworkImage(applicant.studentDetails!.studProfile ?? "")
+            (applicant.studentDetails != null
+                ? applicant.studentDetails!.studProfile ?? ""
+                : "")
+                .isNotEmpty
+                ? NetworkImage(
+              applicant.studentDetails != null
+                  ? applicant.studentDetails!.studProfile ?? ""
+                  : "",
+            )
                 : null,
-            child: (applicant.studentDetails!.studProfile ?? "").isEmpty
+            child:
+            (applicant.studentDetails != null
+                ? applicant.studentDetails!.studProfile ?? ""
+                : "")
+                .isEmpty
                 ? Icon(Icons.person, color: AppColors.whiteColor)
                 : null,
           ),
@@ -271,9 +375,12 @@ class _RecruiterCertificateScreenState
               spacing: 10,
               children: [
                 Text(
-                  applicant.studentDetails!.studName ?? "",
+                  applicant.studentDetails != null
+                      ? applicant.studentDetails!.studName ??
+                      "Anonymous Student"
+                      : "Anonymous Student",
                   style: AppStyles.customTextStyle(
-                    size: 14,
+                    size: 15,
                     color: AppColors.whiteColor,
                     weight: FontWeight.w600,
                   ),
@@ -282,23 +389,35 @@ class _RecruiterCertificateScreenState
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 10,
+                      spacing: 5,
                       children: [
                         Text(
-                          applicant.studentDetails!.role!.capitalize ?? "",
+                          applicant.studentDetails != null
+                              ? applicant.studentDetails!.studEmail ?? ""
+                              : "NA",
                           style: AppStyles.customTextStyle(
-                            size: 12,
-                            color: AppColors.whiteColor,
-                            weight: FontWeight.w600,
+                            size: 13,
+                            color: AppColors.contLightText2,
+                            weight: FontWeight.w500,
                           ),
                         ),
-                        Text(
-                          applicant.studentDetails!.updatedAt ?? "",
-                          style: AppStyles.customTextStyle(
-                            size: 12,
-                            color: AppColors.primaryColor,
-                            weight: FontWeight.w600,
-                          ),
+                        Row(
+                          spacing: 3,
+                          children: [
+                            Icon(
+                              Icons.verified_outlined,
+                              color: AppColors.primaryColor,
+                              size: 15,
+                            ),
+                            Text(
+                              "ISSUED: ${AppFunctions.formatIsoDate(applicant.studentDetails != null ? applicant.studentDetails!.updatedAt ?? "" : "NA")}",
+                              style: AppStyles.customTextStyle(
+                                size: 11,
+                                color: AppColors.primaryColor,
+                                weight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -308,11 +427,16 @@ class _RecruiterCertificateScreenState
                         AppFunctions.navigateScreen(
                           context,
                           AppRoutes.certificateViewScreen,
-                          arguments: {"jobId": jobId, "studentId": applicant.studentDetails!.id},
+                          arguments: {
+                            "jobId": jobId,
+                            "studentId": applicant.studentDetails != null
+                                ? applicant.studentDetails!.id
+                                : "",
+                          },
                         );
                       },
                       icon: Icon(
-                        Icons.remove_red_eye,
+                        Icons.remove_red_eye_outlined,
                         color: AppColors.secondaryColor,
                       ),
                     ),

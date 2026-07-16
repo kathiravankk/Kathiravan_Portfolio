@@ -42,7 +42,8 @@ class InternshipData {
   final String? internshipMode;
   final String? days;
   final String? recruiter;
-  final Industry? industry;
+  //final Industry? industry;
+  final dynamic? industry;
   final int? noOfPosition;
   final int? internPositions;
   final int? filledPositions;
@@ -112,9 +113,10 @@ class InternshipData {
       internshipMode: json['internshipmode']??"",
       days: json['days']??"",
       recruiter: json['recruiter']??"",
-      industry: json['industry'] != null
-          ? Industry.fromJson(json['industry'])
-          : null,
+      // industry: json['industry'] != null
+      //     ? Industry.fromJson(json['industry'])
+      //     : null,
+      industry: json["industry"]??"",
       noOfPosition: json['noofposition']??0,
       internPositions: json['internpositions']??0,
       filledPositions: json['filledpositions']??0,
@@ -151,7 +153,7 @@ class InternshipData {
       'internshipmode': internshipMode,
       'days': days,
       'recruiter': recruiter,
-      'industry': industry?.toJson(),
+      'industry': industry,
       'noofposition': noOfPosition,
       'internpositions': internPositions,
       'filledpositions': filledPositions,

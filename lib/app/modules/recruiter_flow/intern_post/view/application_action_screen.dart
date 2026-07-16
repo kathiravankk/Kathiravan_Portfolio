@@ -69,7 +69,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
           applicationController.getResponseCode() == 201) {
         setState(() {
           studentData = applicationController.internStudentProfileModel;
-           initResumePreview();
+          initResumePreview();
         });
         if (applicationController.internStudentProfileModel.applicationStatus ==
                 "Applied" ||
@@ -90,6 +90,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       );
     }
   }
+
   Future<void> initResumePreview() async {
     resumeData = ExtractedResumeDataModel(
       personalInfo: PersonalInfoModel(
@@ -126,12 +127,13 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
 
     _initWebview();
   }
+
   void _initWebview() {
     if (resumeData == null) return;
 
     final template = templates.firstWhere(
-          (e) =>
-      e.id ==
+      (e) =>
+          e.id ==
           int.parse(
             studentData?.templateNumber?.isNotEmpty == true
                 ? studentData!.templateNumber!
@@ -170,6 +172,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
 
     _loadHtml(template.htmlPath);
   }
+
   Future<void> _loadHtml(String path) async {
     String html = await DefaultAssetBundle.of(context).loadString(path);
 
@@ -458,9 +461,8 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                               },
                             );
                           },
-                          downloadFunc: () async{
+                          downloadFunc: () async {
                             await _handleDownload();
-
                           },
                         )
                       : CustomButtonWidget(
@@ -526,6 +528,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       ),
     );
   }
+
   Future<void> _handleDownload() async {
     if (webViewController == null) return;
 
@@ -534,8 +537,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     });
 
     try {
-      final firstName =
-          (resumeData?.personalInfo?.name ?? "resume").split(" ").first;
+      final firstName = (resumeData?.personalInfo?.name ?? "resume")
+          .split(" ")
+          .first;
 
       await ResumeFileUtils.handleDownload(
         webViewController: webViewController!,
@@ -620,6 +624,10 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       if (homeController.getResponseCode() != 200 &&
           homeController.getResponseCode() != 201) {
         debugPrint("Generate failed");
+        AppFunctions.apiErrorHandling(
+          homeController.getResponseCode(),
+          "Failed to generate syllabus",
+        );
         return false;
       }
 
@@ -717,7 +725,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.transparentColor,
+          color: borderColor,
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: borderColor),
         ),
@@ -748,7 +756,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
       backgroundColor: AppColors.transparentColor,
       leading: InkWell(
         onTap: () => Get.back(),
-        child: const Icon(Icons.arrow_back_ios, color: AppColors.whiteColor),
+        child: const Icon(Icons.arrow_back, color: AppColors.whiteColor),
       ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

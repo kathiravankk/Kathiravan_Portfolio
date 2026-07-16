@@ -152,7 +152,7 @@ class StipendPaymentDialog extends StatelessWidget {
                 Text(
                   "$title:",
                   style: AppStyles.customTextStyle(
-                    size: 14,
+                    size: 12,
                     color: AppColors.greyTextColor,
                   ),
                 ),
@@ -162,7 +162,7 @@ class StipendPaymentDialog extends StatelessWidget {
                 Text(
                   value,
                   style: AppStyles.customTextStyle(
-                    size: 22,
+                    size: 14,
                     color: AppColors.whiteColor,
                     weight: FontWeight.w700,
                   ),
@@ -174,7 +174,7 @@ class StipendPaymentDialog extends StatelessWidget {
                     child: Text(
                       subtitle,
                       style: AppStyles.customTextStyle(
-                        size: 13,
+                        size: 10,
                         color: AppColors.primaryColor,
                       ),
                     ),

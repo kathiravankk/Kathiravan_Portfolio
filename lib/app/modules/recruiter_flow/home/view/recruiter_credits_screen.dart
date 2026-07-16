@@ -14,6 +14,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/credit_plan_card_widget.dart';
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 
 class _BuyCreditColors {
@@ -34,7 +35,6 @@ class _RecruiterCreditsPlanScreenState
   final RecruiterHomeController homeController =
       Get.find<RecruiterHomeController>();
 
-
   final CFPaymentGatewayService cfPaymentGatewayService =
       CFPaymentGatewayService();
 
@@ -52,6 +52,7 @@ class _RecruiterCreditsPlanScreenState
     super.initState();
     _initCashFreeCallbacks();
     //getCreditData();
+    getProfileData();
     getCreditPlanData();
   }
 
@@ -71,6 +72,25 @@ class _RecruiterCreditsPlanScreenState
         handlePaymentFailure(orderId.toString(), error);
       },
     );
+  }
+
+  Future<void> getProfileData() async {
+    String? recruiterId = await LocalStorageService.getRecruiterId();
+    try {
+      await homeController.getRecruiterProfileData(recruiterId: recruiterId!);
+      if (homeController.getResponseCode() != 200 &&
+          homeController.getResponseCode() != 201) {
+        AppFunctions.apiErrorHandling(
+          homeController.getResponseCode(),
+          "Something went wrong, Try again later!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        homeController.getResponseCode(),
+        "Something went wrong, Try again later!",
+      );
+    }
   }
 
   // ── DATA FETCHING ──────────────────────────────────────────────────────────
@@ -203,14 +223,14 @@ class _RecruiterCreditsPlanScreenState
 
       if (verifyData.orderStatus?.toUpperCase() == "PAID") {
         // Refresh credit balance
-        //await getCreditData();
+        await getProfileData();
         AppAlertUtils.showToast(
           message: verifyData.message ?? "Credits added successfully! 🎉",
         );
       } else {
         AppAlertUtils.showToast(
           message:
-          verifyData.message ??
+              verifyData.message ??
               "Payment verification pending. Credits will be added shortly.",
           isError: true,
         );
@@ -218,7 +238,7 @@ class _RecruiterCreditsPlanScreenState
     } else {
       AppAlertUtils.showToast(
         message:
-        "Verification failed. Please contact support with order ID: $orderId",
+            "Verification failed. Please contact support with order ID: $orderId",
         isError: true,
       );
     }
@@ -258,7 +278,7 @@ class _RecruiterCreditsPlanScreenState
           backgroundColor: AppColors.transparentColor,
           leading: IconButton(
             icon: const Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back,
               size: 25,
               color: AppColors.whiteColor,
             ),
@@ -366,7 +386,7 @@ class _RecruiterCreditsPlanScreenState
                                             ),
                                           ),
                                           Text(
-                                            "${creditBalance ?? 0} Credits",
+                                            "${homeController.profileModel.recruiterCreditId!.balance ?? 0} Credits",
                                             style: AppStyles.customTextStyle(
                                               size: 16,
                                               weight: FontWeight.w800,
@@ -482,7 +502,7 @@ class _RecruiterCreditsPlanScreenState
     );
   }
 
-  Widget iconWidget(String iconText, String titleText){
+  Widget iconWidget(String iconText, String titleText) {
     return Column(
       spacing: 10,
       children: [
@@ -494,11 +514,20 @@ class _RecruiterCreditsPlanScreenState
             shape: BoxShape.circle,
             color: AppColors.disableBorderColor,
           ),
-          child: Text(iconText, style: AppStyles.customTextStyle(size: 24, weight: FontWeight.bold),),
+          child: Text(
+            iconText,
+            style: AppStyles.customTextStyle(size: 24, weight: FontWeight.bold),
+          ),
         ),
-        Text(titleText, style: AppStyles.customTextStyle(size: 12, weight: FontWeight.w400, color: AppColors.lightColorText),)
+        Text(
+          titleText,
+          style: AppStyles.customTextStyle(
+            size: 12,
+            weight: FontWeight.w400,
+            color: AppColors.lightColorText,
+          ),
+        ),
       ],
     );
   }
 }
-

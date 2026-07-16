@@ -265,7 +265,7 @@ class InternStudentProfileModel {
 
     templateNumber = json['templateNumber'];
     studDob = json['studdob'];
-    studentBanner = json['student_banner'];
+    studentBanner = json['student_banner'] ??"";
 
     isActive = json['isActive'];
     referralCode = json['referralCode'];

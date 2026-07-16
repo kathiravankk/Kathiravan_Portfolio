@@ -77,5 +77,7 @@ class AppRoutes {
   static const chatSyllabusUpdateScreen = "/chatSyllabusUpdateScreen";
   static const recruiterTransactionHistoryScreen = "/recruiterTransactionHistoryScreen";
   static const recruiterCertificateScreen = "/recruiterCertificateScreen";
+  static const internProfileViewScreen = "/internProfileViewScreen";
+  static const recruiterSyllabusDetailScreen = "/recruiterSyllabusDetailScreen";
 
 }

@@ -65,6 +65,10 @@ class _RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
       ),
       child: Scaffold(
         backgroundColor: AppColors.transparentColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          iconTheme:  IconThemeData(color: AppColors.whiteColor),
+        ),
         body: Obx(
           () => homeController.profileLoading
               ? AppAlertUtils.customLoader()
@@ -78,10 +82,6 @@ class _RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                     child: Column(
                       children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * .07,
-                        ),
-
                         SvgPicture.asset(AssetImages.referRecruiters),
 
                         Image.asset(AssetImages.freeCreditsUser, height: 140),

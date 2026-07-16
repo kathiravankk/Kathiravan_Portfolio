@@ -1,6 +1,6 @@
 class AppApiUrls {
   // BASE URL
-  static const String baseUrl = newBaseUrl;
+  static const String baseUrl = newProdBaseUrl;
   static const String oldBaseUrl = "https://fulupo.selfietoons.com/api/";
   static const String newBaseUrl = "https://dev.api.internsharks.ai/api/";
   static const String newProdBaseUrl = "https://api.internsharks.ai/api/";
@@ -146,6 +146,7 @@ class AppApiUrls {
   static String generateAiCertificate= "${baseUrl}generate";
   static String createStipendOrder= "${baseUrl}createstippedpay";
   static String verifyStipendOrder= "${baseUrl}verifystippedpay";
+  static String getInternProfile= "${baseUrl}student/getstudentdetail";
   static String getTransactionHistory(String recruiterId)=> "${baseUrl}recruiter/getallcredittransaction/$recruiterId";
   static String syllabusDataUpdate(String studentId, String jobId)=> "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
   static String checkStipendStatus(String studentId, String jobId)=> "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";

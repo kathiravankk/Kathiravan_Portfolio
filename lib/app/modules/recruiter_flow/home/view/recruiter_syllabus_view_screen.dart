@@ -2,18 +2,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:internsharks/app/core/utils/app_colors.dart';
-import 'package:internsharks/app/core/utils/app_styles.dart';
-import 'package:internsharks/app/core/utils/asset_images.dart';
-import 'package:internsharks/app/core/widgets/code_example_widget.dart';
 import '../../../../data/models/recruiter_flow/syllabus_view_data_model.dart'
-    show ProjectSchedule, Topic, ScheduleGroup, SyllabusViewData;
+    show ScheduleGroup, SyllabusViewData;
 
+/// Recruiter-facing syllabus overview.
+///
+/// UI/flow deliberately mirrors [InternshipSyllabusScreen]:
+///  - same background image + Scaffold(transparent) shell
+///  - same AppBar with a total-count pill on the right
+///  - month sections -> expandable week tiles -> day cards
+///  - day cards carry a "View" action that pushes into a dedicated
+///    detail screen (RecruiterSyllabusDetailViewScreen) instead of
+///    expanding topics inline.
 class RecruiterSyllabusViewScreen extends StatefulWidget {
   const RecruiterSyllabusViewScreen({super.key});
 
@@ -24,21 +31,24 @@ class RecruiterSyllabusViewScreen extends StatefulWidget {
 
 class _RecruiterSyllabusViewScreenState
     extends State<RecruiterSyllabusViewScreen> {
+  final RecruiterHomeController homeController =
+  Get.find<RecruiterHomeController>();
+
   SyllabusViewData? _syllabus;
   bool _isMonthBased = false;
+
+  // Top level groups: Month groups (month-based) or Day groups (day-based)
   List<ScheduleGroup> _groups = [];
 
-  // Path strings ("0", "0-1", "0-1-2" ...) uniquely identify a node
-  // anywhere in the tree, however deep it goes.
-  final Set<String> _expandedGroups = {};
-  final Set<String> _expandedTopics = {};
-
-  final RecruiterHomeController homeController =
-      Get.find<RecruiterHomeController>();
+  // Track which week tiles are expanded ("monthIndex-weekIndex" -> expanded)
+  final Set<String> _expandedWeeks = {};
 
   String studentId = "";
   String jobId = "";
-  final bool? forcedMode = null;
+
+  // ─────────────────────────────────────────
+  // INIT
+  // ─────────────────────────────────────────
 
   @override
   void initState() {
@@ -59,12 +69,14 @@ class _RecruiterSyllabusViewScreenState
 
           if (_syllabus != null) {
             _isMonthBased =
-                forcedMode ??
-                (_syllabus!.month.isNotEmpty && _syllabus!.days.isEmpty);
+                _syllabus!.month.isNotEmpty && _syllabus!.days.isEmpty;
             _groups = _isMonthBased ? _syllabus!.month : _syllabus!.days;
           }
 
-          _autoExpandFirstBranch();
+          // Open the first week by default so the list isn't empty on load.
+          if (_isMonthBased && _groups.isNotEmpty) {
+            _expandedWeeks.add("0-0");
+          }
         });
       } else {
         AppFunctions.apiErrorHandling(
@@ -84,64 +96,46 @@ class _RecruiterSyllabusViewScreenState
     }
   }
 
-  /// Auto-expands straight down the first branch (Month 1 -> Week 1 -> Day 1,
-  /// or just Day 1 for day-based plans) so the screen isn't empty on load.
-  void _autoExpandFirstBranch() {
-    if (_groups.isEmpty) return;
-    String path = "0";
-    ScheduleGroup current = _groups.first;
-    _expandedGroups.add(path);
-    while (current.hasChildren) {
-      path = "$path-0";
-      current = current.children.first;
-      _expandedGroups.add(path);
-    }
-  }
-
-  String _topicKey(Topic topic, String groupPath, int topicIndex) =>
-      topic.id ?? "$groupPath-topic-$topicIndex";
+  // ─────────────────────────────────────────
+  // BUILD
+  // ─────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.appBackgroundImg),
-          fit: BoxFit.cover,
+    return Obx(
+          () => homeController.syllabusLoading
+          ? AppAlertUtils.customLoader()
+          : Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Obx(
-        () => homeController.syllabusLoading
-            ? AppAlertUtils.customLoader()
-            : Scaffold(
-                backgroundColor: AppColors.transparentColor,
-                appBar: _buildAppBar(),
-                body: _syllabus == null || _groups.isEmpty
-                    ? CustomEmptyWidget()
-                    : SafeArea(
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(20),
-                          itemCount: _groups.length,
-                          itemBuilder: (context, index) => _groupTile(
-                            _groups[index],
-                            depth: 0,
-                            path: "$index",
-                          ),
-                        ),
-                      ),
-              ),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: _buildAppBar(),
+          body: _syllabus == null || _groups.isEmpty
+              ? const CustomEmptyWidget()
+              : ListView(
+            padding: const EdgeInsets.all(20),
+            children: _isMonthBased
+                ? _buildMonthSections()
+                : _buildDaySections(),
+          ),
+        ),
       ),
     );
   }
 
   // ─────────────────────────────────────────
-  // APP BAR
+  // APP BAR — same shell as InternshipSyllabusScreen, plus "Edit with AI"
   // ─────────────────────────────────────────
 
   PreferredSizeWidget _buildAppBar() {
     final totalLabel = _isMonthBased
-        ? "${_syllabus?.totalMonth ?? _groups.length} Months Total"
-        : "${_syllabus?.totalDays ?? _groups.length} Days Total";
+        ? "${_syllabus?.totalMonth ?? _groups.length} months Total"
+        : "${_syllabus?.totalDays ?? _groups.length} days Total";
 
     return AppBar(
       backgroundColor: AppColors.transparentColor,
@@ -163,94 +157,139 @@ class _RecruiterSyllabusViewScreenState
         ),
       ),
       actions: [
-        Visibility(
-          visible: _syllabus!.status != "completed",
-          child: GestureDetector(
-            onTap: (){
+        if (_syllabus != null && _syllabus!.status != "completed")
+          GestureDetector(
+            onTap: () {
               AppFunctions.navigateScreen(
-                  context, AppRoutes.chatSyllabusUpdateScreen, arguments: {
-                "syllabusData": _syllabus,
-                "studentId": studentId,
-                "jobId": jobId,
-              });
-
+                context,
+                AppRoutes.chatSyllabusUpdateScreen,
+                arguments: {
+                  "syllabusData": _syllabus,
+                  "studentId": studentId,
+                  "jobId": jobId,
+                },
+              );
             },
             child: Container(
-              margin: const EdgeInsets.only(right: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              margin: const EdgeInsets.only(right: 8),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: AppColors.primaryColor),
               ),
-              child:
-                  Row(
-                    spacing: 5,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(CupertinoIcons.sparkles, color: AppColors.primaryColor, size: 15,),
-                      Text(
-                        "Edit with AI",
-                        style: AppStyles.customTextStyle(
-                          size: 12,
-                          color: AppColors.primaryColor,
-                          weight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 5,
+                children: [
+                  const Icon(
+                    CupertinoIcons.sparkles,
+                    color: AppColors.primaryColor,
+                    size: 15,
                   ),
+                  Text(
+                    "Edit with AI",
+                    style: AppStyles.customTextStyle(
+                      size: 12,
+                      color: AppColors.primaryColor,
+                      weight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
+        // Container(
+        //   margin: const EdgeInsets.only(right: 12),
+        //   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        //   decoration: BoxDecoration(
+        //     color: AppColors.selectedContColor,
+        //     borderRadius: BorderRadius.circular(20),
+        //   ),
+        //   child: Text(
+        //     totalLabel,
+        //     style: AppStyles.customTextStyle(
+        //       size: 14,
+        //       color: AppColors.whiteColor,
+        //       weight: FontWeight.w400,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
 
   // ─────────────────────────────────────────
-  // GROUP TILE — recursive: handles Month -> Week -> Day nesting for
-  // month-based plans, and a single Day level for day-based plans.
+  // MONTH-BASED UI — Month header + expandable week tiles + day cards
   // ─────────────────────────────────────────
 
-  Widget _groupTile(
-    ScheduleGroup group, {
-    required int depth,
+  List<Widget> _buildMonthSections() {
+    final widgets = <Widget>[];
+
+    for (int mIndex = 0; mIndex < _groups.length; mIndex++) {
+      final month = _groups[mIndex];
+      widgets.add(_sectionTitle(month.title ?? "Month ${mIndex + 1}"));
+
+      final weeks = month.children;
+      for (int wIndex = 0; wIndex < weeks.length; wIndex++) {
+        final week = weeks[wIndex];
+        final weekPath = "$mIndex-$wIndex";
+        final weekTitle = week.title ?? "Week ${wIndex + 1}";
+
+        widgets.add(
+          _expandableWeekTile(
+            week: week,
+            weekNumber: wIndex + 1,
+            weekTitle: weekTitle,
+            path: weekPath,
+          ),
+        );
+      }
+    }
+    return widgets;
+  }
+
+  Widget _expandableWeekTile({
+    required ScheduleGroup week,
+    required int weekNumber,
+    required String weekTitle,
     required String path,
   }) {
-    final isExpanded = _expandedGroups.contains(path);
-    final label = group.title ?? _defaultLabelFor(depth, path);
-    final icon = _iconFor(depth);
-    final titleSize = (15 - depth).clamp(11, 15).toDouble();
+    final isExpanded = _expandedWeeks.contains(path);
+    final days = week.children;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12, left: depth * 10.0),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: AppColors.contColor2,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.contBorderColor2),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // ── Week header ───────────────────────
           GestureDetector(
             onTap: () => setState(() {
               isExpanded
-                  ? _expandedGroups.remove(path)
-                  : _expandedGroups.add(path);
+                  ? _expandedWeeks.remove(path)
+                  : _expandedWeeks.add(path);
             }),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               child: Row(
                 children: [
-                  Icon(icon, size: 16, color: AppColors.primaryColor),
+                  _circleIndicator(label: "$weekNumber"),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      label,
+                      "Week $weekNumber: $weekTitle",
                       style: AppStyles.customTextStyle(
-                        size: titleSize,
-                        color: AppColors.secondaryColor,
-                        weight: FontWeight.w700,
+                        lineSpace: 1.3,
+                        size: 12,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -259,30 +298,29 @@ class _RecruiterSyllabusViewScreenState
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.keyboard_arrow_down_rounded,
                     color: AppColors.lightTextColor,
-                    size: 22,
+                    size: 20,
                   ),
                 ],
               ),
             ),
           ),
 
-          // Body — either nested sub-groups, or (at the deepest level) topics
+          // ── Expanded day cards ────────────────
           if (isExpanded) ...[
-            Divider(color: AppColors.contBorderColor2, height: 1, thickness: 1),
+            Divider(
+                color: AppColors.contBorderColor2, height: 1, thickness: 1),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: group.hasChildren
-                    ? List.generate(
-                        group.children.length,
-                        (i) => _groupTile(
-                          group.children[i],
-                          depth: depth + 1,
-                          path: "$path-$i",
-                        ),
-                      )
-                    : _buildLeafBody(group, path),
+                children: List.generate(
+                  days.length,
+                      (dIndex) => _dayCardInWeek(
+                    day: days[dIndex],
+                    weekNumber: weekNumber,
+                    dayNumber: dIndex + 1,
+                  ),
+                ),
               ),
             ),
           ],
@@ -291,434 +329,225 @@ class _RecruiterSyllabusViewScreenState
     );
   }
 
-  String _defaultLabelFor(int depth, String path) {
-    final index = int.tryParse(path.split("-").last) ?? 0;
-    switch (depth) {
-      case 0:
-        return _isMonthBased ? "Month ${index + 1}" : "Day ${index + 1}";
-      case 1:
-        return "Week ${index + 1}";
-      default:
-        return "Day ${index + 1}";
-    }
-  }
-
-  IconData _iconFor(int depth) {
-    switch (depth) {
-      case 0:
-        return _isMonthBased
-            ? Icons.calendar_month_outlined
-            : Icons.calendar_today_outlined;
-      case 1:
-        return Icons.view_week_outlined;
-      default:
-        return Icons.calendar_today_outlined;
-    }
-  }
-
-  /// Renders the deepest level of a branch: topic cards + project task
-  /// cards, pulled from every [ScheduleData] entry under this group.
-  List<Widget> _buildLeafBody(ScheduleGroup group, String path) {
-    final widgets = <Widget>[];
-
-    for (final scheduleData in group.data) {
-      final topics = scheduleData.topics;
-      for (int i = 0; i < topics.length; i++) {
-        widgets.add(_topicCard(topics[i], path, i));
-        widgets.add(const SizedBox(height: 10));
-      }
-
-      for (final project in scheduleData.projectSchedule) {
-        widgets.add(_projectScheduleCard(project));
-        widgets.add(const SizedBox(height: 10));
-      }
-    }
-
-    if (widgets.isEmpty) {
-      widgets.add(
-        Text(
-          "No topics added yet.",
-          style: AppStyles.customTextStyle(
-            size: 12,
-            color: AppColors.lightTextColor,
-            weight: FontWeight.w300,
-          ),
-        ),
-      );
-    }
-
-    return widgets;
-  }
-
-  // ─────────────────────────────────────────
-  // TOPIC CARD
-  // ─────────────────────────────────────────
-
-  Widget _topicCard(Topic topic, String groupPath, int topicIndex) {
-    final key = _topicKey(topic, groupPath, topicIndex);
-    final isExpanded = _expandedTopics.contains(key);
+  Widget _dayCardInWeek({
+    required ScheduleGroup day,
+    required int weekNumber,
+    required int dayNumber,
+  }) {
+    final topicTitle = _leafTitle(day) ?? "Day $dayNumber";
 
     return Container(
-      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.appBgColor_2,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.contBorderColor2),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          GestureDetector(
-            onTap: () => setState(() {
-              isExpanded
-                  ? _expandedTopics.remove(key)
-                  : _expandedTopics.add(key);
-            }),
-            child: Row(
+          Container(
+            width: 34,
+            height: 34,
+            decoration: const BoxDecoration(
+              color: AppColors.contBorderColor2,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              "$dayNumber",
+              style: AppStyles.customTextStyle(
+                size: 12,
+                color: AppColors.lightTextColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    "Topic ${topicIndex + 1}: ${topic.title ?? ""}",
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      lineSpace: 1.3,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w700,
-                    ),
+                Text(
+                  "DAY $dayNumber",
+                  style: AppStyles.customTextStyle(
+                    size: 9,
+                    color: AppColors.lightTextColor,
+                    weight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Icon(
-                  isExpanded
-                      ? Icons.keyboard_arrow_up_rounded
-                      : Icons.keyboard_arrow_down_rounded,
-                  color: AppColors.lightTextColor,
-                  size: 20,
+                const SizedBox(height: 2),
+                Text(
+                  topicTitle,
+                  style: AppStyles.customTextStyle(
+                    lineSpace: 1.3,
+                    size: 11,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
           ),
-          if (isExpanded) ...[
-            const SizedBox(height: 10),
-            if ((topic.explanation ?? "").isNotEmpty)
-              Text(
-                topic.explanation ?? "",
-                style: AppStyles.customTextStyle(
-                  size: 12,
-                  lineSpace: 1.3,
-                  color: AppColors.lightText,
-                  weight: FontWeight.w300,
-                ),
-              ),
-            if ((topic.youtubeUrl ?? "").isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _youtubeButton(topic.youtubeUrl!),
-            ],
-            if ((topic.visualExplanation ?? "").isNotEmpty) ...[
-              const SizedBox(height: 14),
-              _visualExplanationBox(topic.visualExplanation!),
-            ],
-            if (topic.codeExamples.isNotEmpty) ...[
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.edit_document,
-                    color: AppColors.primaryColor,
-                    size: 15,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "Code Examples",
-                    style: AppStyles.customTextStyle(
-                      size: 13,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              ...topic.codeExamples.map(
-                (code) => CodeExampleWidget(code: code),
-              ),
-            ],
-            if (topic.homework.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _homeworkBox(topic.homework),
-            ],
-          ],
+          const SizedBox(width: 8),
+          _viewButton(
+            onTap: () => _openDetail(
+              day: day,
+              dayNumber: dayNumber,
+              weekNumber: weekNumber,
+            ),
+          ),
         ],
       ),
     );
   }
 
   // ─────────────────────────────────────────
-  // VISUAL EXPLANATION
+  // DAY-BASED UI — flat day list, same card style as
+  // InternshipSyllabusScreen's _flatDayTile
   // ─────────────────────────────────────────
 
-  Widget _visualExplanationBox(String rawText) {
-    final items = _parseNumberedList(rawText);
+  List<Widget> _buildDaySections() {
+    return List.generate(_groups.length, (i) {
+      final day = _groups[i];
+      final title = _leafTitle(day) ?? "Day ${i + 1}";
+      return _flatDayTile(day: day, dayNumber: i + 1, title: title);
+    });
+  }
 
+  Widget _flatDayTile({
+    required ScheduleGroup day,
+    required int dayNumber,
+    required String title,
+  }) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.contColor2,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.contBorderColor2),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.image_outlined,
-                size: 15,
-                color: AppColors.primaryColor,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "VISUAL EXPLANATION",
-                style: AppStyles.customTextStyle(
-                  size: 11,
-                  color: AppColors.primaryColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          if (items.length > 1)
-            ...items.map(
-              (line) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text(
-                  line,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "DAY $dayNumber",
                   style: AppStyles.customTextStyle(
-                    size: 12,
-                    lineSpace: 1.4,
-                    color: AppColors.primaryColor,
-                    weight: FontWeight.w400,
+                    size: 10,
+                    color: AppColors.lightTextColor,
+                    weight: FontWeight.w500,
                   ),
                 ),
-              ),
-            )
-          else
-            Text(
-              rawText,
-              style: AppStyles.customTextStyle(
-                size: 12,
-                lineSpace: 1.4,
-                color: AppColors.primaryColor,
-                weight: FontWeight.w400,
-              ),
+                const SizedBox(height: 4),
+                Text(
+                  title,
+                  style: AppStyles.customTextStyle(
+                    lineSpace: 1.3,
+                    size: 13,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
+          ),
+          const SizedBox(width: 8),
+          _viewButton(
+            onTap: () => _openDetail(day: day, dayNumber: dayNumber),
+          ),
         ],
       ),
     );
   }
 
-  List<String> _parseNumberedList(String text) {
-    final matches = RegExp(r'(?=\d+\.\s)').allMatches(text).toList();
-    if (matches.length < 2) return [text.trim()];
+  // ─────────────────────────────────────────
+  // SHARED HELPERS
+  // ─────────────────────────────────────────
 
-    final parts = <String>[];
-    for (int i = 0; i < matches.length; i++) {
-      final start = matches[i].start;
-      final end = i + 1 < matches.length ? matches[i + 1].start : text.length;
-      final chunk = text.substring(start, end).trim();
-      if (chunk.isNotEmpty) parts.add(chunk);
-    }
-    return parts;
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 10),
+      child: Text(
+        title,
+        style: AppStyles.customTextStyle(
+          size: 14,
+          color: AppColors.secondaryColor,
+          weight: FontWeight.w700,
+        ),
+      ),
+    );
   }
 
-  // ─────────────────────────────────────────
-  // HOMEWORK
-  // ─────────────────────────────────────────
-
-  Widget _homeworkBox(List<String> items) {
+  Widget _circleIndicator({required String label}) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: AppColors.contColor3,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.contBorderColor3),
+      width: 28,
+      height: 28,
+      decoration: const BoxDecoration(
+        color: AppColors.primaryColor,
+        shape: BoxShape.circle,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.assignment_turned_in_outlined,
-                size: 15,
-                color: AppColors.whiteColor,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "HOMEWORK",
-                style: AppStyles.customTextStyle(
-                  size: 12,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          ...items.map(
-            (hw) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 2),
-                    child: Icon(
-                      Icons.circle,
-                      size: 6,
-                      color: AppColors.lightTextColor,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      hw,
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        lineSpace: 1.3,
-                        color: AppColors.lightText,
-                        weight: FontWeight.w300,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: AppStyles.customTextStyle(
+          size: 14,
+          color: AppColors.whiteColor,
+          weight: FontWeight.w700,
+        ),
       ),
     );
   }
 
-  // ─────────────────────────────────────────
-  // PROJECT SCHEDULE
-  // ─────────────────────────────────────────
-
-  Widget _projectScheduleCard(ProjectSchedule project) {
-    final dayOrMonthLabel = _isMonthBased
-        ? "Month ${project.month ?? ""}"
-        : "Day ${project.day ?? ""}";
-
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: AppColors.disableFieldColor,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: AppColors.disableBorderColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.assignment_outlined,
-                color: AppColors.primaryColor,
-                size: 18,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                "Project Task – $dayOrMonthLabel",
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if ((project.project ?? "").isNotEmpty)
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Project: ",
-                    style: AppStyles.customTextStyle(
-                      size: 12,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                    ),
-                  ),
-                  TextSpan(
-                    text: project.project ?? "",
-                    style: AppStyles.customTextStyle(
-                      size: 12,
-                      color: AppColors.lightText,
-                      weight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          const SizedBox(height: 6),
-          Text(
-            project.task ?? "",
-            style: AppStyles.customTextStyle(
-              size: 12,
-              lineSpace: 1.3,
-              color: AppColors.chatTextColor,
-              weight: FontWeight.w300,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─────────────────────────────────────────
-  // YOUTUBE LINK
-  // ─────────────────────────────────────────
-
-  Widget _youtubeButton(String url) {
+  Widget _viewButton({required VoidCallback onTap}) {
     return GestureDetector(
-      onTap: () async {
-        final uri = Uri.tryParse(url);
-        if (uri != null && await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        }
-      },
+      onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.disableContColor,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.disableContBorder),
+          color: AppColors.primaryColor,
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.play_circle_outline,
-              size: 16,
-              color: AppColors.primaryColor,
-            ),
-            const SizedBox(width: 6),
-            Text(
-              "Watch Video",
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: AppColors.primaryColor,
-                weight: FontWeight.w500,
-              ),
-            ),
-          ],
+        child: Text(
+          "View",
+          style: AppStyles.customTextStyle(
+            size: 10,
+            color: AppColors.whiteColor,
+            weight: FontWeight.w600,
+          ),
         ),
       ),
+    );
+  }
+
+  /// Pulls the first topic title out of a leaf day group's data, so day
+  /// cards show something meaningful instead of just "Day N".
+  String? _leafTitle(ScheduleGroup day) {
+    if (day.data.isEmpty) return day.title;
+    final firstData = day.data.first;
+    if (firstData.topics.isNotEmpty) {
+      return firstData.topics.first.title ?? day.title;
+    }
+    return day.title;
+  }
+
+  void _openDetail({
+    required ScheduleGroup day,
+    required int dayNumber,
+    int? weekNumber,
+  }) {
+    AppFunctions.navigateScreen(
+      context,
+      AppRoutes.recruiterSyllabusDetailScreen,
+      arguments: {
+        "dayData": day,
+        "dayNumber": dayNumber,
+        "weekNumber": weekNumber,
+        "isMonthBased": _isMonthBased,
+      },
     );
   }
 }

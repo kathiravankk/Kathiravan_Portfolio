@@ -21,16 +21,14 @@ class RecruiterInternsScreen extends StatefulWidget {
 }
 
 class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
-  final InternshipPostController postController =
-  Get.find<InternshipPostController>();
-  final InternshipPostController applicationController =
-  Get.find<InternshipPostController>();
+  final InternshipPostController postController = Get.find<InternshipPostController>();
+  final InternshipPostController applicationController = Get.find<InternshipPostController>();
 
   List<PostData>? internshipList = [];
 
   // --- Search & Filter Setup ---
-  List<ApplicantsData> allApplicants = []; // Keeps raw master copies
-  List<ApplicantsData> filteredApplicantsList = []; // Used by the UI grid/list
+  List<ApplicantsData> allApplicants = [];
+  List<ApplicantsData> filteredApplicantsList = [];
 
   String jobId = "";
   String companyName = "";
@@ -48,8 +46,8 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
 
   @override
   void initState() {
-    getInternshipData();
     super.initState();
+    getInternshipData();
   }
 
   @override
@@ -61,20 +59,19 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   // Maps display labels to API-expected status values
   String _mapFilterToApiStatus(String label) {
     switch (label) {
-    case "Ongoing":
-    return "ongoing";
-    case "Completed":
-    return "Completed";
-    case "Upcoming":
-    return "Selected";
-    case "All":
-      return "";
-    default:
-    return "";
+      case "Ongoing":
+        return "ongoing";
+      case "Completed":
+        return "Completed";
+      case "Upcoming":
+        return "Selected";
+      case "All":
+      default:
+        return "";
     }
   }
 
-  // --- Filtering Engine (Search within already shown/filtered API results) ---
+  // --- Local Filtering Engine (Search within already shown API results) ---
   void filterSearch(String query) {
     if (query.trim().isEmpty) {
       setState(() {
@@ -112,81 +109,89 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
       if (postController.getResponseCode() == 200 ||
           postController.getResponseCode() == 201) {
         internshipList = postController.internPostModel.jobs ?? [];
-        companyName = internshipList![0].companyName ?? "Company";
         if (internshipList != null && internshipList!.isNotEmpty) {
+          companyName = internshipList![0].companyName ?? "Company";
           jobId = internshipList![0].id ?? "";
           selectedIndex.value = 0;
           internshipData = internshipList![0];
+
+          // Reset filters strictly on a full main data reload
+          selectedStatusFilter = "All";
+          searchController.clear();
+
           await getApplicantsData();
+        } else {
+          setState(() {});
         }
-        setState(() {});
       } else {
         AppFunctions.apiErrorHandling(
           postController.getResponseCode(),
-          postController.internPostModel.message ??
-              "Something went wrong!, Try again later",
+          postController.internPostModel.message ?? "Something went wrong!, Try again later",
         );
       }
     } catch (error) {
       AppFunctions.apiErrorHandling(
         postController.getResponseCode(),
-        postController.internPostModel.message ??
-            "Something went wrong!, Try again later",
+        postController.internPostModel.message ?? "Something went wrong!, Try again later",
       );
-      rethrow;
     }
   }
 
+  // --- Fixed Method: Removed the hardcoded reset lines from the root of execution ---
   Future<void> getApplicantsData() async {
-    selectedStatusFilter = "All";
-    searchController.clear(); // Clear search query whenever reloading dataset
     try {
       final String apiStatus = _mapFilterToApiStatus(selectedStatusFilter);
       await applicationController.getApplicants(jobId: jobId, status: apiStatus);
 
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
-        final fetched =
-            applicationController.applicantsModel.applicantsList ?? [];
+        final fetched = applicationController.applicantsModel.applicantsList ?? [];
         setState(() {
           allApplicants = List.from(fetched);
           filteredApplicantsList = List.from(fetched);
           internCount = filteredApplicantsList.length;
         });
+
+        // Re-apply search locally if text was entered prior to status filter shifts
+        if (searchController.text.isNotEmpty) {
+          filterSearch(searchController.text);
+        }
       } else {
-        setState(() {
-          allApplicants.clear();
-          filteredApplicantsList.clear();
-          internCount = 0;
-        });
+        _clearApplicantsState();
         AppFunctions.apiErrorHandling(
           applicationController.getResponseCode(),
-          "Something went wrong!, Try again later",
+          applicationController.applicantsModel.message ?? "Something went wrong!, Try again later",
         );
       }
     } catch (error) {
-      setState(() {
-        allApplicants.clear();
-        filteredApplicantsList.clear();
-        internCount = 0;
-      });
+      _clearApplicantsState();
       AppFunctions.apiErrorHandling(
         applicationController.getResponseCode(),
-        "Something went wrong!, Try again later",
+        applicationController.applicantsModel.message ?? "Something went wrong!, Try again later",
       );
-      rethrow;
     }
   }
 
-  Future<void> onJobSelected(
-      int index,
-      String selectedJobId,
-      PostData postData,
-      ) async {
+  void _clearApplicantsState() {
+    setState(() {
+      allApplicants.clear();
+      filteredApplicantsList.clear();
+      internCount = 0;
+    });
+  }
+
+  Future<void> onJobSelected(int index, String selectedJobId, PostData postData) async {
     if (selectedIndex.value == index) return;
     selectedIndex.value = index;
     jobId = selectedJobId;
     internshipData = postData;
+
+    // Reset inputs specifically when changing layout context to a different internship card
+    setState(() {
+      selectedStatusFilter = "All";
+      searchController.clear();
+    });
+
     await getApplicantsData();
   }
 
@@ -206,8 +211,10 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
           ),
         ),
       ),
-      bodyWidget: Obx(
-            () => postController.internPostLoading
+      bodyWidget: Obx(() {
+        final bool isLoading = postController.internPostLoading || applicationController.applicantsLoading;
+
+        return isLoading
             ? AppAlertUtils.customLoader()
             : RefreshIndicator(
           backgroundColor: AppColors.appBgColor_2,
@@ -224,8 +231,8 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
               Expanded(child: _buildApplicantsList()),
             ],
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -239,7 +246,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
       padding: const EdgeInsets.all(15),
       child: Row(
         children: [
-          Icon(Icons.group_outlined, color: AppColors.whiteColor, size: 22),
+          const Icon(Icons.group_outlined, color: AppColors.whiteColor, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: RichText(
@@ -280,71 +287,69 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final job = internshipList![index];
-          final bool isSelected = selectedIndex.value == index;
-          return GestureDetector(
-            onTap: () =>
-                onJobSelected(index, job.id ?? "", internshipList![index]),
-            child: Container(
-              width: 150,
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: AppColors.recContColor,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isSelected
-                      ? AppColors.primaryColor
-                      : AppColors.primaryColor.withValues(alpha: 0.1),
-                  width: 1,
+          return Obx(() {
+            final bool isSelected = selectedIndex.value == index;
+            return GestureDetector(
+              onTap: () => onJobSelected(index, job.id ?? "", job),
+              child: Container(
+                width: 150,
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: AppColors.recContColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.primaryColor.withValues(alpha: 0.1),
+                    width: 1,
+                  ),
                 ),
-              ),
-              child: Column(
-                spacing: 10,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      job.companyLogo ?? "",
-                      height: 50,
-                      width: 50,
-                      errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.photo_camera_back_outlined),
-                    ),
-                  ),
-                  Text(
-                    job.roleType ?? "",
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      lineSpace: 1.4,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w700,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.selContColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      "${(job.totalApplicants ?? 0).toString()} Selected",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w600,
+                child: Column(
+                  spacing: 10,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        job.companyLogo ?? "",
+                        height: 50,
+                        width: 50,
+                        errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.photo_camera_back_outlined, color: AppColors.whiteColor),
                       ),
                     ),
-                  ),
-                ],
+                    Text(
+                      job.roleType ?? "",
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.customTextStyle(
+                        size: 14,
+                        lineSpace: 1.4,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w700,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.selContColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        "${(job.totalApplicants ?? 0).toString()} Selected",
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          });
         },
       ),
     );
@@ -359,54 +364,44 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
               color: AppColors.recContColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            alignment: Alignment.center,
-            child: Center(
-              child: TextField(
-                controller: searchController,
-                textAlign: TextAlign.start,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
+            child: TextField(
+              controller: searchController,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w400,
+              ),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: "Search by name, email...",
+                hintStyle: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.disableButtonColor,
                   weight: FontWeight.w400,
                 ),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "Search by name, email, or mobile number...",
-                  hintStyle: AppStyles.customTextStyle(
-                    size: 12,
-                    color: AppColors.disableButtonColor,
-                    weight: FontWeight.w400,
-                  ),
-                  prefixIcon: Icon(
-                    CupertinoIcons.search,
-                    color: AppColors.primaryColor,
-                    size: 20,
-                  ),
-                  suffixIcon: searchController.text.isNotEmpty
-                      ? IconButton(
-                    icon: const Icon(
-                      Icons.clear,
-                      color: AppColors.redColor,
-                    ),
-                    onPressed: () {
-                      searchController.clear();
-                      filterSearch("");
-                    },
-                  )
-                      : const SizedBox.shrink(),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                prefixIcon: const Icon(
+                  CupertinoIcons.search,
+                  color: AppColors.primaryColor,
+                  size: 20,
                 ),
-                onChanged: (value) => filterSearch(value),
+                suffixIcon: searchController.text.isNotEmpty
+                    ? IconButton(
+                  icon: const Icon(Icons.clear, color: AppColors.redColor),
+                  onPressed: () {
+                    searchController.clear();
+                    filterSearch("");
+                  },
+                )
+                    : null,
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
+              onChanged: filterSearch,
             ),
           ),
         ),
         const SizedBox(width: 12),
-        // --- Refactored Dropdown Filter Widget ---
         Theme(
-          data: Theme.of(context).copyWith(
-            cardColor: AppColors.recContColor, // Sets the popup menu's background color
-          ),
+          data: Theme.of(context).copyWith(cardColor: AppColors.recContColor),
           child: PopupMenuButton<String>(
             color: AppColors.recContColor,
             initialValue: selectedStatusFilter,
@@ -415,12 +410,12 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
               setState(() {
                 selectedStatusFilter = value;
               });
-              await getApplicantsData(); // Re-trigger API with updated filter
+              await getApplicantsData();
             },
             offset: const Offset(0, 55),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: AppColors.primaryColor),
+              side: const BorderSide(color: AppColors.primaryColor),
             ),
             itemBuilder: (BuildContext context) {
               return filterOptions.map((String option) {
@@ -434,18 +429,12 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
                         option,
                         style: AppStyles.customTextStyle(
                           size: 14,
-                          color: isCurrent
-                              ? AppColors.primaryColor
-                              : AppColors.whiteColor,
+                          color: isCurrent ? AppColors.primaryColor : AppColors.whiteColor,
                           weight: isCurrent ? FontWeight.w700 : FontWeight.w400,
                         ),
                       ),
                       if (isCurrent)
-                        Icon(
-                          Icons.check_circle_outline,
-                          color: AppColors.primaryColor,
-                          size: 18,
-                        )
+                        const Icon(Icons.check_circle_outline, color: AppColors.primaryColor, size: 18)
                     ],
                   ),
                 );
@@ -461,10 +450,10 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.filter_list, color: AppColors.whiteColor, size: 20),
+                  const Icon(Icons.filter_list, color: AppColors.whiteColor, size: 20),
                   const SizedBox(width: 6),
                   Text(
-                    selectedStatusFilter, // Dynamically updates label
+                    selectedStatusFilter,
                     style: AppStyles.customTextStyle(
                       size: 14,
                       color: AppColors.whiteColor,
@@ -472,11 +461,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Icon(
-                    Icons.arrow_drop_down,
-                    color: AppColors.whiteColor.withOpacity(0.7),
-                    size: 18,
-                  ),
+                  Icon(Icons.arrow_drop_down, color: AppColors.whiteColor.withOpacity(0.7), size: 18),
                 ],
               ),
             ),
@@ -487,10 +472,6 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   }
 
   Widget _buildApplicantsList() {
-    if (applicationController.applicantsLoading) {
-      return AppAlertUtils.customLoader();
-    }
-
     if (filteredApplicantsList.isEmpty) {
       return const CustomEmptyWidget();
     }
@@ -507,14 +488,16 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   }
 
   Widget _buildApplicantCard(ApplicantsData applicant) {
+    final details = applicant.studentDetails;
     return GestureDetector(
       onTap: () {
+        if (details == null || internshipData == null) return;
         AppFunctions.navigateScreen(
           context,
           AppRoutes.applicationActionScreen,
           arguments: {
             'jobId': applicant.job,
-            'studentId': applicant.studentDetails!.id,
+            'studentId': details.id,
             'applicationId': applicant.id,
             'projectList': internshipData!.projectDescription,
             "internshipData": internshipData,
@@ -536,15 +519,12 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: AppColors.whiteColor.withOpacity(0.1),
-                  backgroundImage:
-                  (applicant.studentDetails!.studProfile ?? "").isNotEmpty
-                      ? NetworkImage(
-                    applicant.studentDetails!.studProfile ?? "",
-                  )
+                  backgroundColor: AppColors.whiteColor.withValues(alpha: 0.1),
+                  backgroundImage: (details?.studProfile ?? "").isNotEmpty
+                      ? NetworkImage(details!.studProfile!)
                       : null,
-                  child: (applicant.studentDetails!.studProfile ?? "").isEmpty
-                      ? Icon(Icons.person, color: AppColors.whiteColor)
+                  child: (details?.studProfile ?? "").isEmpty
+                      ? const Icon(Icons.person, color: AppColors.whiteColor)
                       : null,
                 ),
                 Expanded(
@@ -557,9 +537,9 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           _buildTypeContainer(
-                            type: internshipData!.internshipStipend != "N/A"
+                            type: internshipData?.internshipStipend != "N/A"
                                 ? "STIPEND"
-                                : internshipData!.fee != "0"
+                                : internshipData?.fee != "0"
                                 ? "FEES"
                                 : "FREE",
                           ),
@@ -567,7 +547,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
                         ],
                       ),
                       Text(
-                        applicant.studentDetails!.studName ?? "",
+                        details?.studName ?? "Anonymous Student",
                         style: AppStyles.customTextStyle(
                           size: 16,
                           color: AppColors.whiteColor,
@@ -579,27 +559,19 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
                 ),
               ],
             ),
-            _buildInfoRow(
-              Icons.email_outlined,
-              applicant.studentDetails!.studEmail ?? "",
-            ),
-            if ((applicant.studentDetails!.studMobileNo ?? "").isNotEmpty)
-              _buildInfoRow(
-                Icons.call,
-                applicant.studentDetails!.studMobileNo ?? "",
+            _buildInfoRow(Icons.email_outlined, details?.studEmail ?? "NA"),
+            if ((details?.studMobileNo ?? "").isNotEmpty)
+              _buildInfoRow(Icons.call, details?.studMobileNo ?? "NA"),
+            _buildInfoRow(Icons.school_outlined, details?.studentfieldofstudy ?? "NA"),
+            if (details?.studprogramminglang != null)
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: List<Widget>.from(
+                  (details!.studprogramminglang as List)
+                      .map((skill) => _buildSkillChip(skill.toString())),
+                ),
               ),
-            _buildInfoRow(
-              Icons.school_outlined,
-              applicant.studentDetails!.studentfieldofstudy ?? "",
-            ),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: List<Widget>.from(
-                (applicant.studentDetails!.studprogramminglang as List? ?? [])
-                    .map((skill) => _buildSkillChip(skill.toString())),
-              ),
-            ),
           ],
         ),
       ),
@@ -607,13 +579,16 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   }
 
   Widget _buildTypeContainer({required String type}) {
+    final bool isStipend = type == "STIPEND";
+    final bool isFees = type == "FEES";
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.lightBorderColor),
-        color: type == "STIPEND"
+        color: isStipend
             ? AppColors.lightContColor2
-            : type == "FEES"
+            : isFees
             ? AppColors.lightContColor
             : AppColors.transparentColor,
       ),
@@ -623,14 +598,14 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            type == "STIPEND"
+            isStipend
                 ? Icons.work_history_outlined
-                : type == "FEES"
+                : isFees
                 ? Icons.school_outlined
                 : Icons.currency_rupee_rounded,
-            color: type == "STIPEND"
+            color: isStipend
                 ? AppColors.blueTextColor
-                : type == "FEES"
+                : isFees
                 ? AppColors.primaryColor
                 : AppColors.whiteColor,
             size: 16,
@@ -639,9 +614,9 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
             type,
             style: AppStyles.customTextStyle(
               size: 12,
-              color: type == "STIPEND"
+              color: isStipend
                   ? AppColors.blueTextColor
-                  : type == "FEES"
+                  : isFees
                   ? AppColors.primaryColor
                   : AppColors.whiteColor,
               weight: FontWeight.w600,
@@ -668,7 +643,7 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
-    if (text.isEmpty) return const SizedBox.shrink();
+    if (text.isEmpty || text == "NA") return const SizedBox.shrink();
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
