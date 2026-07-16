@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/widgets/card_widgets.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -80,7 +81,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            showProfileImageViewer(
+                            CommonUtils.showProfileImageViewer(
                               context,
                               profileController.profileDataModel.studProfile ??
                                   "",
@@ -342,128 +343,47 @@ class _HomeDrawerState extends State<HomeDrawer> {
     );
   }
 
-  void showProfileImageViewer(
-    BuildContext context,
-    String imageUrl,
-    String userName,
-  ) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: "Profile",
-      barrierColor: AppColors.fieldBgColor.withValues(alpha: 0.9),
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (_, __, ___) {
-        return SafeArea(
-          child: Stack(
-            children: [
-              /// Close Button
-              Positioned(
-                top: 15,
-                right: 15,
-                child: IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(
-                    Icons.close,
-                    color: AppColors.whiteColor,
-                    size: 28,
-                  ),
-                ),
-              ),
 
-              /// Content
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Hero(
-                      tag: "profile_image",
-                      child: Container(
-                        width: 280,
-                        height: 280,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.primaryColor,
-                            width: 3,
-                          ),
-                          image: DecorationImage(
-                            image: NetworkImage(imageUrl),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    Text(
-                      userName,
-                      style: AppStyles.customTextStyle(
-                        size: 18,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      transitionBuilder: (_, animation, __, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: ScaleTransition(
-            scale: Tween<double>(begin: .8, end: 1).animate(animation),
-            child: child,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _drawerItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    bool isLogOut = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onTap,
-            child: Row(
-              spacing: 15,
-              children: [
-                Icon(
-                  icon,
-                  color: isLogOut
-                      ? AppColors.failTextColor
-                      : AppColors.whiteColor,
-                  size: 23,
-                ),
-                Text(
-                  title,
-                  style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: isLogOut
-                        ? AppColors.failTextColor
-                        : AppColors.whiteColor,
-                    weight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
+  // Widget _drawerItem({
+  //   required IconData icon,
+  //   required String title,
+  //   required VoidCallback onTap,
+  //   bool isLogOut = false,
+  // }) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(10),
+  //     child: Column(
+  //       children: [
+  //         InkWell(
+  //           onTap: onTap,
+  //           child: Row(
+  //             spacing: 15,
+  //             children: [
+  //               Icon(
+  //                 icon,
+  //                 color: isLogOut
+  //                     ? AppColors.failTextColor
+  //                     : AppColors.whiteColor,
+  //                 size: 23,
+  //               ),
+  //               Text(
+  //                 title,
+  //                 style: AppStyles.customTextStyle(
+  //                   size: 14,
+  //                   color: isLogOut
+  //                       ? AppColors.failTextColor
+  //                       : AppColors.whiteColor,
+  //                   weight: FontWeight.w500,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         SizedBox(height: 10),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 void showLogoutPopup(BuildContext context) {

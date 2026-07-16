@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -472,7 +470,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
               color: isDayCompleted
                   ? AppColors.primaryColor
                   : isDayLocked
-                  ? AppColors.contBorderColor2.withOpacity(0.5)
+                  ? AppColors.contBorderColor2.withValues(alpha: 0.5)
                   : AppColors.contBorderColor2,
               shape: BoxShape.circle,
             ),

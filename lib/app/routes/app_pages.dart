@@ -35,9 +35,28 @@ import 'package:internsharks/app/modules/login/view/register_resume_upload_scree
 import 'package:internsharks/app/modules/login/view/resume_template_view_screen.dart';
 import 'package:internsharks/app/modules/login/view/step_update_screen.dart';
 import 'package:internsharks/app/modules/login/view/student_register_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_home_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/intern_profile_view.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_certificate_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_credits_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_detail_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_view_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_transaction_history_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/intern_test_result_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/binding/internship_post_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/applicants_list_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/application_action_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/certificate_view_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/chat_syllabus_update_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/post_new_internship_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_view_screen.dart' show PostedInternshipViewScreen;
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/recruiter_interns_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/choose_path_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profile_screen.dart';
-import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_dashboard_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_dashboard_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_login_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_register_screen.dart';
 import '../modules/home/view/account_setting_screen.dart';
@@ -47,8 +66,10 @@ import '../modules/profile/view/mobile_update_screen.dart';
 import '../modules/home/view/manage_resume_screen.dart';
 import '../modules/login/view/register_selfie_preview_screen.dart';
 import '../modules/login/view/splash_screen.dart';
+import '../modules/recruiter_flow/home/view/recruiter_profile_edit_screen.dart';
 import '../modules/recruiter_flow/login/binding/recruiter_login_binding.dart';
 import '../modules/recruiter_flow/login/view/recruiter_verification_screen.dart';
+import '../modules/recruiter_flow/home/view/recruiter_referral_screen.dart';
 
 part 'app_routes.dart';
 
@@ -245,6 +266,10 @@ class AppPages {
     ),
     appPage(name: AppRoutes.homeProfileScreen, page: () => HomeProfileScreen()),
     appPage(name: AppRoutes.myAppliesScreen, page: () => MyAppliesScreen()),
+    appPage(
+      name: AppRoutes.referralCodeScreen,
+      page: () => ReferralCodeScreen(),
+    ),
 
     /// RECRUITER FLOW SCREENS
     appPage(name: AppRoutes.choosePathScreen, page: () => ChoosePathScreen()),
@@ -256,6 +281,7 @@ class AppPages {
     appPage(
       name: AppRoutes.recruiterDashboardScreen,
       page: () => RecruiterDashboardScreen(),
+      bindings: [RecruiterHomeBinding(), InternshipPostBinding()],
     ),
     appPage(
       name: AppRoutes.recruiterRegisterScreen,
@@ -266,10 +292,85 @@ class AppPages {
       page: () => RecruiterVerificationScreen(),
     ),
     appPage(
+      name: AppRoutes.shortlistedStudentsListScreen,
+      page: ()=>ShortlistedStudentsListScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterProfileScreen,
+      page: ()=>RecruiterProfileScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterProfileEditScreen,
+      page: ()=>RecruiterProfileEditScreen(),
+    ),
+    appPage(
+      name: AppRoutes.postedInternshipScreen,
+      page: ()=>PostedInternshipScreen(),
+    ),
+    appPage(
       name: AppRoutes.companyProfileScreen,
       page: () => CompanyProfileScreen(),
       bindings: [DashboardBindings()],
     ),
-    appPage(name: AppRoutes.referralCodeScreen, page: () => ReferralCodeScreen()),
+    appPage(
+      name: AppRoutes.recruiterReferralScreen,
+      page: () => RecruiterReferralScreen(),
+    ),
+    appPage(
+      name: AppRoutes.applicationActionScreen,
+      page: () => ApplicantActionsScreen(),
+    ),
+    appPage(
+      name: AppRoutes.applicantsListScreen,
+      page: () => ApplicantsListScreen(),
+    ),
+    appPage(
+      name: AppRoutes.postNewInternshipScreen,
+      page: () => PostNewInternshipScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterInternsScreen,
+      page: () => RecruiterInternsScreen(),
+    ),
+    appPage(
+      name: AppRoutes.postedInternshipViewScreen,
+      page: () => PostedInternshipViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterSyllabusViewScreen,
+      page: () => RecruiterSyllabusViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.internTestResultScreen,
+      page: () => InternTestResultScreen(),
+    ),
+    appPage(
+      name: AppRoutes.certificateViewScreen,
+      page: () => CertificateViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterCreditPlanScreen,
+      page: () => RecruiterCreditsPlanScreen(),
+    ),
+    appPage(
+      name: AppRoutes.chatSyllabusUpdateScreen,
+      page: () => ChatSyllabusUpdateScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterTransactionHistoryScreen,
+      page: () => RecruiterTransactionHistoryScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterCertificateScreen,
+      page: () => RecruiterCertificateScreen(),
+    ),
+    appPage(
+      name: AppRoutes.internProfileViewScreen,
+      page: () => InternProfileViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterSyllabusDetailScreen,
+      page: () => RecruiterSyllabusDetailViewScreen(),
+    ),
   ];
 }

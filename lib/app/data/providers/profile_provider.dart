@@ -26,7 +26,7 @@ class ProfileProvider {
   // GET PROFILE DATA
 
   Future<ProfileDataModel> fetchProfileData({required String studentId}) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -49,7 +49,7 @@ class ProfileProvider {
   Future<CommonLoginOtpModel> postUpdateMobileOtp({
     required String mobileNo,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -73,7 +73,7 @@ class ProfileProvider {
     required String mobileNo,
     required String otpNo,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -94,7 +94,7 @@ class ProfileProvider {
   // SEND MOBILE UPDATE OTP
 
   Future<CommonLoginOtpModel> postUpdateEmailOtp({required String email}) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -118,7 +118,7 @@ class ProfileProvider {
     required String email,
     required String otpNo,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -139,7 +139,7 @@ class ProfileProvider {
   // GET SAVED JOBS DATA
 
   Future<SavedInternshipModel> fetchSavedJobsData() async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -161,7 +161,7 @@ class ProfileProvider {
   Future<SavedNewInternshipModel> putSavedJobsData({
     required String jobId,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -184,7 +184,7 @@ class ProfileProvider {
   Future<SavedNewInternshipModel> deleteSavedJobsData({
     required String jobId,
   }) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -205,7 +205,7 @@ class ProfileProvider {
   // GET FILTER OPTIONS
 
   Future<FilterOptionModel> fetchFilterOption() async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -247,7 +247,7 @@ class ProfileProvider {
   // REMOVE WATER MARK
 
   Future<RemoveWatermarkModel> deleteWaterMark({required String imageUrl}) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
@@ -270,7 +270,7 @@ class ProfileProvider {
   // BANNER LIKE DISLIKE
 
   Future<BannerLikeModel> aiBannerLike({required Map<String, dynamic> likeData}) async {
-    Map<String, dynamic> header = await AppApiHeader.header();
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),

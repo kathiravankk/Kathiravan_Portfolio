@@ -19,7 +19,7 @@ class CustomButtonWidget extends StatelessWidget {
     super.key,
     required this.buttonFunction,
     this.buttonIcon,
-    required this.buttonText,
+     this.buttonText = "",
     this.width = double.infinity,
     this.height = 50,
     this.disable = false,

@@ -1,6 +1,6 @@
 class AppApiUrls {
   // BASE URL
-  static const String baseUrl = newBaseUrl;
+  static const String baseUrl = newProdBaseUrl;
   static const String oldBaseUrl = "https://fulupo.selfietoons.com/api/";
   static const String newBaseUrl = "https://dev.api.internsharks.ai/api/";
   static const String newProdBaseUrl = "https://api.internsharks.ai/api/";
@@ -119,8 +119,36 @@ class AppApiUrls {
   static String registerMobileVerifyOtp = "${baseUrl}student/verifyMobileOTP";
   static String checkExistAccount = "${baseUrl}student/checkExistence";
   static String newRecruiterRegister = "${baseUrl}recruiter/recruiterregister";
-
-
-
+  static String getRecruiterProfile = "${baseUrl}recruiter/getrecruiterbyid";
+  static String getAllStudentsList = "${baseUrl}student/getallstudentdetail";
+  static String getShortlistedStudents = "${baseUrl}favorite/getfavorites";
+  static String addToShortlistedStudents = "${baseUrl}favorite/add";
+  static String removeShortlistedStudents = "${baseUrl}favorite/deletefavorite";
+  static String recruiterUpdateProfile = "${baseUrl}recruiter/recruiterregisterupdate";
+  static String getPostedInternships(String recruiterId) => "${baseUrl}jobpost/jobs/$recruiterId";
+  static String getJobApplicants(String jobId, String status) => "${baseUrl}getjob/jobs/$jobId?status=$status";
+  static String getInternStudentProfile(String jobId) => "${baseUrl}student/getstudentdetail?jobId=$jobId";
+  static String newInternPost = "${baseUrl}jobpost/recruiter-jobpost";
+  static String updateNewInternPost(String jobId) => "${baseUrl}jobpost/job/$jobId";
+  static String sendInternshipRequest = "${baseUrl}favorite/sendapplicationrequest";
+  static String updateApplicationStatus(String applicationId) => "${baseUrl}getjob/updatejobstatus/$applicationId";
+  static String getRecruiterReview(String jobId) => "${baseUrl}job/reviews?jobId=$jobId";
+  static String generateSyllabus= "${baseUrl}generate-syllabus";
+  static String saveSyllabus= "${baseUrl}savesyllabus";
+  static String getSyllabus(String studentId, String jobId)=> "${baseUrl}syllabus/recruiter/$studentId/$jobId";
+  static String getStudentResult(String studentId, String jobId)=> "${baseUrl}getresult?jobId=$jobId&studentId=$studentId";
+  static String getIssuedCertificate(String studentId, String jobId)=> "${baseUrl}viewstudentcertificate?jobId=$jobId&studentId=$studentId";
+  static String getRecruiterCreditPlans= "${baseUrl}recruiterplan/getallrecruiterplan";
+  static String createRecruiterCreditOrder= "${baseUrl}recruiter/create-order";
+  static String verifyRecruiterCreditOrder= "${baseUrl}recruiter/verify";
+  static String updateSyllabusData= "${baseUrl}updatesyllabus";
+  static String syllabusUpdateChat= "${baseUrl}jsonchatsyllabusupdate";
+  static String generateAiCertificate= "${baseUrl}generate";
+  static String createStipendOrder= "${baseUrl}createstippedpay";
+  static String verifyStipendOrder= "${baseUrl}verifystippedpay";
+  static String getInternProfile= "${baseUrl}student/getstudentdetail";
+  static String getTransactionHistory(String recruiterId)=> "${baseUrl}recruiter/getallcredittransaction/$recruiterId";
+  static String syllabusDataUpdate(String studentId, String jobId)=> "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
+  static String checkStipendStatus(String studentId, String jobId)=> "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";
 
 }

@@ -203,7 +203,11 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 10,
                         children: [
-                          _buildSearchBar(),
+                          ProfileWidgets.buildSearchBar(
+                            buttonFunc: (){
+                              AppFunctions.navigateScreen(context, AppRoutes.allInternshipScreen);
+                            }
+                          ),
                           const SizedBox(height: 10),
                           _buildBannerCarousel(),
                           dashboardController.recommentedModel.internshipList !=

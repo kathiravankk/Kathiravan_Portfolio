@@ -19,6 +19,8 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixWidget;
   final Widget? prefixWidget;
   final void Function(String)? onChanged;
+  // 1. Add the field definition here
+  final void Function(String)? onFieldSubmitted;
   final String? Function(String?)? validator;
 
   const CustomTextField({
@@ -28,7 +30,9 @@ class CustomTextField extends StatelessWidget {
     this.isNumberKeyboard = true,
     this.hintText = "",
     this.onChanged,
-    this.maxLines= 1,
+    // 2. Add the parameter to the constructor
+    this.onFieldSubmitted,
+    this.maxLines = 1,
     this.width,
     this.prefixText,
     this.maxLength = 3000,
@@ -54,14 +58,16 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: BoxConstraints(minHeight: 55),
+          constraints: const BoxConstraints(minHeight: 55),
           width: width != null ? width! : double.maxFinite,
           child: TextFormField(
             validator: validator,
             maxLines: maxLines,
             controller: controller,
             onChanged: onChanged,
-            maxLength: isNumberKeyboard ? 10 :maxLength,
+            // 3. Pass it down to the underlying TextFormField
+            onFieldSubmitted: onFieldSubmitted,
+            maxLength: isNumberKeyboard ? 10 : maxLength,
             keyboardType: isNumberKeyboard
                 ? TextInputType.number
                 : TextInputType.visiblePassword,
@@ -75,32 +81,26 @@ class CustomTextField extends StatelessWidget {
               isNumberKeyboard
                   ? FilteringTextInputFormatter.digitsOnly
                   : FilteringTextInputFormatter.allow(
-                      RegExp(r'^[\u0020-\u007E]+$'),
-                    ),
+                RegExp(r'^[\u0020-\u007E]+$'),
+              ),
             ],
-            cursorColor:
-            AppColors.primaryColor,
+            cursorColor: AppColors.primaryColor,
             cursorErrorColor: AppColors.primaryColor,
             autofocus: false,
             decoration: InputDecoration(
               focusColor: AppColors.primaryColor,
-
               suffixIcon: suffixWidget,
-
               enabled: isEnabled,
               counterText: "",
               hintText: hintText,
-
               hintStyle: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
                 color: AppColors.greyColor,
                 size: 15,
                 weight: FontWeight.w500,
               ),
-
               filled: true,
               isDense: true,
-
               fillColor: isEnabled
                   ? AppColors.fieldBgColor
                   : isProfileFlow
@@ -108,25 +108,25 @@ class CustomTextField extends StatelessWidget {
                   : AppColors.disableFieldColor,
 
               /// FIXED PREFIX
-              prefixIcon: prefixWidget ?? ((prefixText != null && prefixText!.isNotEmpty)
-                  ? Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: Text(
-                  prefixText!,
-                  textAlign: TextAlign.center,
-                  style: AppStyles.customTextStyle(
-                    fontFamily: "Roboto",
-                    color: AppColors.whiteColor,
-                    size: 14,
-                    weight: FontWeight.w500,
-                  ),
-                ),
-              )
-                  : null),
+              prefixIcon: prefixWidget ??
+                  ((prefixText != null && prefixText!.isNotEmpty)
+                      ? Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: Text(
+                      prefixText!,
+                      textAlign: TextAlign.center,
+                      style: AppStyles.customTextStyle(
+                        fontFamily: "Roboto",
+                        color: AppColors.whiteColor,
+                        size: 14,
+                        weight: FontWeight.w500,
+                      ),
+                    ),
+                  )
+                      : null),
 
               /// IMPORTANT
-              prefixIconConstraints:
-              prefixWidget != null ||
+              prefixIconConstraints: prefixWidget != null ||
                   (prefixText != null && prefixText!.isNotEmpty)
                   ? const BoxConstraints(
                 minWidth: 45,
@@ -147,8 +147,7 @@ class CustomTextField extends StatelessWidget {
               /// DYNAMIC PADDING
               contentPadding: EdgeInsets.symmetric(
                 vertical: 22,
-                horizontal:
-                prefixWidget != null ||
+                horizontal: prefixWidget != null ||
                     (prefixText != null && prefixText!.isNotEmpty)
                     ? 10
                     : 18,

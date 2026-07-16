@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
 
 class RecruiterRegisterProvider {
@@ -197,4 +198,6 @@ class RecruiterRegisterProvider {
       }
     }
   }
+
+
 }

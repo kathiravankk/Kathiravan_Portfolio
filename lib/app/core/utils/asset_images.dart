@@ -24,7 +24,9 @@ class AssetImages {
   //static const String aiLoadingGif = "assets/images/ai_loading.gif";
   static const String aiLoadingGif = "assets/images/new_ai_loading.gif";
   //static const String welcomeScreenBg = "assets/images/welcome_screen_bg.png";
-  static const String welcomeScreenBg = "assets/images/new_welcome_screen_bg.png";
+  //static const String welcomeScreenBg = "assets/images/new_welcome_screen_bg.png";
+  //static const String welcomeScreenBg = "assets/images/new_splash_screen_bg.png";
+  static const String welcomeScreenBg = "assets/images/new_splash_screen_bg.png";
   static const String loginBg = "assets/images/login_bg_new.png";
   static const String appLogoNew = "assets/images/app_logo_new.png";
   static const String appBgNew = "assets/images/app_bg_new.png";
@@ -50,6 +52,9 @@ class AssetImages {
   static const String telegramIcon = "assets/images/telegram_icon.png";
   static const String moreOptionsIcon = "assets/images/more_options_icon.png";
   static const String giftIcon = "assets/images/gift_icon.png";
+  static const String issueCertificateIcon = "assets/images/issue_certificate_icon.png";
+  static const String paymentRequiredIcon = "assets/images/payment_required_icon.png";
+  static const String transactionCreditIcon = "assets/images/transaction_credit_icon.png";
 
   //Category Images
   static const String salesForceImg = "assets/images/sales_force_img.png";
@@ -65,6 +70,8 @@ class AssetImages {
   static const String tourismServiceImg = "assets/images/tourism_service.png";
   static const String miningImg = "assets/images/mining_img.png";
   static const String logisticImg = "assets/images/logistic_img.png";
+  static const String syllabusAlertIcon = "assets/images/syllabus_alert_icon.png";
+  static const String creditWalletImage = "assets/images/credit_wallet_img.png";
 
 
 
@@ -73,4 +80,9 @@ class AssetImages {
   static const String resumeThumbnail2 = "assets/images/templates_thumbnail/resume_thumbnail_2.png";
   static const String resumeThumbnail3 = "assets/images/templates_thumbnail/resume_thumbnail_3.png";
   static const String resumeThumbnail4 = "assets/images/templates_thumbnail/resume_thumbnail_4.png";
+
+  // Referral Icons
+  static const String freeCreditsUser = "assets/images/free_credits_user.png";
+  static const String referRecruiters = "assets/images/svgs/refer_recruiters.svg";
+
 }

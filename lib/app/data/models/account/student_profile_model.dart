@@ -30,7 +30,7 @@ class StudentProfileModel {
   String? portfolioWebsite;
   List<Project>? projects;
   List<ExperienceData>? experience;
-  List<Internship>? internships;
+  List<InternShipModel>? internships;
   List<dynamic>? industrialVisits;
   List<Training>? trainings;
   List<dynamic>? parents;
@@ -157,7 +157,7 @@ class StudentProfileModel {
           [],
 
       internships: (json['internships'] as List?)
-          ?.map((e) => Internship.fromJson(e))
+          ?.map((e) => InternShipModel.fromJson(e))
           .toList() ??
           [],
 
@@ -301,7 +301,7 @@ class Project {
 //     };
 //   }
 // }
-class Internship {
+class InternShipModel {
   String? company;
   String? role;
   String? duration;
@@ -309,7 +309,7 @@ class Internship {
   dynamic description;
 
 
-  Internship({
+  InternShipModel({
     required this.company,
     this.role,
     required this.duration,
@@ -317,8 +317,8 @@ class Internship {
     this.description
   });
 
-  factory Internship.fromJson(Map<String, dynamic> json) {
-    return Internship(
+  factory InternShipModel.fromJson(Map<String, dynamic> json) {
+    return InternShipModel(
       company: json['company']??"",
       role: json['role']??"",
       duration: json['duration']??"",

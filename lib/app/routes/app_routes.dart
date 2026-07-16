@@ -60,5 +60,24 @@ class AppRoutes {
   static const recruiterLoginScreen = "/recruiterLoginScreen";
   static const recruiterDashboardScreen = "/recruiterDashboardScreen";
   static const companyProfileScreen = "/companyProfileScreen";
+  static const shortlistedStudentsListScreen = "/shortlistedStudentsListScreen";
+  static const recruiterProfileScreen = "/recruiterProfileScreen";
+  static const recruiterProfileEditScreen = "/recruiterProfileEditScreen";
+  static const postedInternshipScreen = "/postedInternshipScreen";
+  static const recruiterReferralScreen = "/recruiterReferralScreen";
+  static const applicationActionScreen = "/applicationActionScreen";
+  static const applicantsListScreen = "/applicantsListScreen";
+  static const postNewInternshipScreen = "/postNewInternshipScreen";
+  static const recruiterInternsScreen = "/recruiterInternsScreen";
+  static const postedInternshipViewScreen = "/postedInternshipViewScreen";
+  static const recruiterSyllabusViewScreen = "/recruiterSyllabusViewScreen";
+  static const internTestResultScreen = "/internTestResultScreen";
+  static const certificateViewScreen = "/certificateViewScreen";
+  static const recruiterCreditPlanScreen = "/recruiterCreditPlanScreen";
+  static const chatSyllabusUpdateScreen = "/chatSyllabusUpdateScreen";
+  static const recruiterTransactionHistoryScreen = "/recruiterTransactionHistoryScreen";
+  static const recruiterCertificateScreen = "/recruiterCertificateScreen";
+  static const internProfileViewScreen = "/internProfileViewScreen";
+  static const recruiterSyllabusDetailScreen = "/recruiterSyllabusDetailScreen";
 
 }

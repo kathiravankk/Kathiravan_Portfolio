@@ -10,7 +10,6 @@ import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-import 'package:slider_button/slider_button.dart';
 import '../../../data/repositories/local_storage_service.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -179,7 +178,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             Positioned(
-              bottom: 40,
+              bottom: 80,
               left: 30,
               right: 30,
               child: SliderButtonWidget(
