@@ -8,6 +8,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/app_background_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/recruiter_internship_widget.dart';
 import 'package:internsharks/app/core/widgets/syllabus_generation_dialog.dart';
@@ -190,12 +191,13 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
   Widget build(BuildContext context) {
     return AppScaffoldWidget(
       appBarWidget: _buildAppBar(
-        studentData != null ? studentData!.applicationStatus ?? "" : "",
+        studentData != null ? studentData!.applicationStatus ?? "" : "Nil",
       ),
       bodyWidget: Obx(
         () => applicationController.studentProfileLoading
             ? AppAlertUtils.customLoader()
-            : Column(
+            : studentData != null
+            ? Column(
                 children: [
                   // ── Accept / Reject action strip ────────────────────
                   Visibility(
@@ -524,7 +526,8 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                           ),
                         ),
                 ],
-              ),
+              )
+            : CustomEmptyWidget(),
       ),
     );
   }

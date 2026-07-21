@@ -40,7 +40,7 @@ import 'package:internsharks/app/modules/recruiter_flow/home/view/intern_profile
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_certificate_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_credits_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
-import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_detail_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_detail_view_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_view_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_transaction_history_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/shortlisted_students_list_screen.dart';

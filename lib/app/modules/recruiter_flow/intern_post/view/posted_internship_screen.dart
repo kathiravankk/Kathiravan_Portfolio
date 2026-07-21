@@ -15,17 +15,21 @@ class PostedInternshipScreen extends StatefulWidget {
   const PostedInternshipScreen({super.key});
 
   @override
-  State<PostedInternshipScreen> createState() => _PostedInternshipScreenState();
+  State<PostedInternshipScreen> createState() => PostedInternshipScreenState();
 }
 
-class _PostedInternshipScreenState extends State<PostedInternshipScreen> {
+class PostedInternshipScreenState extends State<PostedInternshipScreen> {
   final InternshipPostController postController =
       Get.find<InternshipPostController>();
 
-  @override
-  void initState() {
-    super.initState();
-    getInternshipData();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getInternshipData();
+  // }
+
+  Future<void> refreshData() async {
+    await getInternshipData();
   }
 
   String? recruiterId = "";
@@ -428,9 +432,7 @@ class _JobCard extends StatelessWidget {
                       AppFunctions.navigateScreen(
                         context,
                         AppRoutes.postedInternshipViewScreen,
-                        arguments: {
-                          "internshipData": job,
-                        }
+                        arguments: {"internshipData": job},
                       );
                     },
                   ),
@@ -559,7 +561,14 @@ class _JobCard extends StatelessWidget {
                   weight: FontWeight.w500,
                 ),
               ),
-              onTap: () => Get.back(),
+              onTap: () {
+                Get.back();
+                AppFunctions.navigateScreen(
+                  context,
+                  AppRoutes.postedInternshipViewScreen,
+                  arguments: {"internshipData": job},
+                );
+              },
             ),
             ListTile(
               leading: const Icon(
@@ -574,7 +583,14 @@ class _JobCard extends StatelessWidget {
                   weight: FontWeight.w500,
                 ),
               ),
-              onTap: () => Get.back(),
+              onTap: () {
+                Get.back();
+                AppFunctions.navigateScreen(
+                  context,
+                  AppRoutes.postNewInternshipScreen,
+                  arguments: {"internPostData": job, "isEditScreen": true},
+                );
+              },
             ),
             ListTile(
               leading: const Icon(
@@ -589,23 +605,39 @@ class _JobCard extends StatelessWidget {
                   weight: FontWeight.w500,
                 ),
               ),
-              onTap: () => Get.back(),
+              onTap: job.totalApplicants != 0
+                  ? () {
+                      Get.back();
+                      AppFunctions.navigateScreen(
+                        context,
+                        AppRoutes.applicantsListScreen,
+                        arguments: {
+                          "jobId": job.id,
+                          "companyLogoUrl": job.companyLogo,
+                          "companyName": job.companyName,
+                          "roleType": job.roleType,
+                          "projectList": job.projectDescription,
+                          "internshipData": job,
+                        },
+                      );
+                    }
+                  : () {},
             ),
-            ListTile(
-              leading: const Icon(
-                CupertinoIcons.trash,
-                color: Colors.redAccent,
-              ),
-              title: Text(
-                "Delete Internship",
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: Colors.redAccent,
-                  weight: FontWeight.w500,
-                ),
-              ),
-              onTap: () => Get.back(),
-            ),
+            // ListTile(
+            //   leading: const Icon(
+            //     CupertinoIcons.trash,
+            //     color: Colors.redAccent,
+            //   ),
+            //   title: Text(
+            //     "Delete Internship",
+            //     style: AppStyles.customTextStyle(
+            //       size: 14,
+            //       color: Colors.redAccent,
+            //       weight: FontWeight.w500,
+            //     ),
+            //   ),
+            //   onTap: () => Get.back(),
+            // ),
             const SizedBox(height: 8),
           ],
         ),

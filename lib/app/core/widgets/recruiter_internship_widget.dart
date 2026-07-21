@@ -774,7 +774,7 @@ class SectionCard extends StatelessWidget {
                     size: 12,
                     color: AppColors.whiteColor,
                     weight: FontWeight.w700,
-                    lineSpace: 0.8,
+                    lineSpace: 1.2,
                   ),
                 ),
               ),

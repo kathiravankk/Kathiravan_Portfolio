@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/student_detail_card.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 class ShortlistedStudentsListScreen extends StatefulWidget {
   const ShortlistedStudentsListScreen({super.key});
@@ -104,6 +105,13 @@ class _ShortlistedStudentsListScreenState
                           itemCount: studentsList!.length,
                           itemBuilder: (context, index) {
                             return buildApplicantCard(
+                              viewFunc: (){
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.internProfileViewScreen,
+                                  arguments: {"studentId": studentsList![index].student!.id},
+                                );
+                              },
                               applicant: studentsList![index],
                               isShortList:
                                   studentsList![index].status == "Shortlisted"
@@ -170,106 +178,110 @@ class _ShortlistedStudentsListScreenState
     required ShortlistedData applicant,
     required bool isShortList,
     required VoidCallback? shortlistFunc,
+    required VoidCallback? viewFunc,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.recContColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 8,
-        children: [
-          Row(
-            spacing: 15,
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: AppColors.whiteColor.withOpacity(0.1),
-                backgroundImage:
-                    (applicant.student!.studProfile ?? "").isNotEmpty
-                    ? NetworkImage(applicant.student!.studProfile ?? "")
-                    : null,
-                child: (applicant.student!.studProfile ?? "").isEmpty
-                    ? Icon(Icons.person, color: AppColors.whiteColor)
-                    : null,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 5,
-                  children: [
-                    Row(
-                      spacing: 10,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: AppColors.lightBorderColor,
+    return GestureDetector(
+      onTap: viewFunc,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.recContColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
+          children: [
+            Row(
+              spacing: 15,
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: AppColors.whiteColor.withOpacity(0.1),
+                  backgroundImage:
+                      (applicant.student!.studProfile ?? "").isNotEmpty
+                      ? NetworkImage(applicant.student!.studProfile ?? "")
+                      : null,
+                  child: (applicant.student!.studProfile ?? "").isEmpty
+                      ? Icon(Icons.person, color: AppColors.whiteColor)
+                      : null,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 5,
+                    children: [
+                      Row(
+                        spacing: 10,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: AppColors.lightBorderColor,
+                              ),
+                              color: AppColors.lightContColor,
                             ),
-                            color: AppColors.lightContColor,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 5,
-                          ),
-                          child: Text(
-                            "Shortlisted",
-                            style: AppStyles.customTextStyle(
-                              size: 10,
-                              color: AppColors.whiteColor,
-                              weight: FontWeight.w400,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 5,
+                            ),
+                            child: Text(
+                              "Shortlisted",
+                              style: AppStyles.customTextStyle(
+                                size: 10,
+                                color: AppColors.whiteColor,
+                                weight: FontWeight.w400,
+                              ),
                             ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: shortlistFunc!,
-                          icon: isShortList
-                              ? Icon(
-                                  Icons.bookmark,
-                                  color: AppColors.secondaryColor,
-                                )
-                              : Icon(
-                                  Icons.bookmark_border_sharp,
-                                  color: AppColors.secondaryColor,
-                                ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      applicant.student!.studName ?? "",
-                      style: AppStyles.customTextStyle(
-                        size: 16,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w600,
+                          IconButton(
+                            onPressed: shortlistFunc!,
+                            icon: isShortList
+                                ? Icon(
+                                    Icons.bookmark,
+                                    color: AppColors.secondaryColor,
+                                  )
+                                : Icon(
+                                    Icons.bookmark_border_sharp,
+                                    color: AppColors.secondaryColor,
+                                  ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      Text(
+                        applicant.student!.studName ?? "",
+                        style: AppStyles.customTextStyle(
+                          size: 16,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            _buildInfoRow(
+              Icons.email_outlined,
+              applicant.student!.studEmail ?? "",
+            ),
+            _buildInfoRow(
+              Icons.school_outlined,
+              applicant.student!.studentfieldofstudy ?? "",
+            ),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: List<Widget>.from(
+                (applicant.student!.studprogramminglang as List? ?? []).map(
+                  (skill) => _buildSkillChip(skill.toString()),
                 ),
               ),
-            ],
-          ),
-          _buildInfoRow(
-            Icons.email_outlined,
-            applicant.student!.studEmail ?? "",
-          ),
-          _buildInfoRow(
-            Icons.school_outlined,
-            applicant.student!.studentfieldofstudy ?? "",
-          ),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: List<Widget>.from(
-              (applicant.student!.studprogramminglang as List? ?? []).map(
-                (skill) => _buildSkillChip(skill.toString()),
-              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

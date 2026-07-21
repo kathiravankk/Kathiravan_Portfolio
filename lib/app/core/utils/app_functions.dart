@@ -52,7 +52,7 @@ class AppFunctions {
         isError: true,
       );
       LocalStorageService.clearUser();
-      Get.offAllNamed(AppRoutes.studentLoginScreen);
+      Get.offAllNamed(AppRoutes.choosePathScreen);
     } else if (responseCode == 403) {
       AppAlertUtils.showToast(
         message: "Insufficient Balance!, Please Buy Credits!",
@@ -64,6 +64,10 @@ class AppFunctions {
       //showToast(message: "Session expired, Please login again!", isError: true);
       //Get.offAllNamed(AppRoutes.loginScreen);
     } else if (responseCode == 500) {
+      AppAlertUtils.showToast(message: message, isError: true);
+
+    }
+    else if (responseCode == 410) {
       AppAlertUtils.showToast(message: message, isError: true);
     } else if (responseCode == 502) {
       AppAlertUtils.showToast(message: message, isError: true);
@@ -167,40 +171,40 @@ class AppFunctions {
     }
   }
 
-  static String getCategoryImage({required String service}) {
-    switch (service) {
-      case "Information Technology" || "EdTech":
-        return AssetImages.softwareImg;
-      case "Logistics" || "Aluminium Extrusion (Manufacturing)":
-        return AssetImages.logisticImg;
-      case "Finance":
-        return AssetImages.financeImg;
-      case "Healthcare" || "Orthopaedic & Spine Clinic":
-        return AssetImages.healthCareImg;
-      case "Hospitality & Tourism":
-        return AssetImages.tourismServiceImg;
-      case "Mining":
-        return AssetImages.miningImg;
-      case "IT/Software" || "HR Cosultancy ":
-        return AssetImages.softwareImg;
-      case "Customer Service":
-        return AssetImages.customerServiceImg;
-      case "Marketing" :
-        return AssetImages.marketingImg;
-      case "Designing":
-        return AssetImages.designImg;
-      case "AI Engineering":
-        return AssetImages.aiEngineeringImg;
-      case "BPO":
-        return AssetImages.bpoImg;
-      case "Salesforce" ||  "Hypercommerce":
-        return AssetImages.salesForceImg;
-      case "":
-        return AssetImages.softwareImg;
-      default:
-        return AssetImages.softwareImg;
-    }
-  }
+  // static String getCategoryImage({required String service}) {
+  //   switch (service) {
+  //     case "Information Technology" || "EdTech":
+  //       return AssetImages.softwareImg;
+  //     case "Logistics" || "Aluminium Extrusion (Manufacturing)":
+  //       return AssetImages.logisticImg;
+  //     case "Finance":
+  //       return AssetImages.financeImg;
+  //     case "Healthcare" || "Orthopaedic & Spine Clinic":
+  //       return AssetImages.healthCareImg;
+  //     case "Hospitality & Tourism":
+  //       return AssetImages.tourismServiceImg;
+  //     case "Mining":
+  //       return AssetImages.miningImg;
+  //     case "IT/Software" || "HR Cosultancy ":
+  //       return AssetImages.softwareImg;
+  //     case "Customer Service":
+  //       return AssetImages.customerServiceImg;
+  //     case "Marketing" :
+  //       return AssetImages.marketingImg;
+  //     case "Designing":
+  //       return AssetImages.designImg;
+  //     case "AI Engineering":
+  //       return AssetImages.aiEngineeringImg;
+  //     case "BPO":
+  //       return AssetImages.bpoImg;
+  //     case "Salesforce" ||  "Hypercommerce":
+  //       return AssetImages.salesForceImg;
+  //     case "":
+  //       return AssetImages.softwareImg;
+  //     default:
+  //       return AssetImages.softwareImg;
+  //   }
+  // }
 
   static String convertPostedDate(String dateTimeString) {
     if (dateTimeString.isEmpty) {

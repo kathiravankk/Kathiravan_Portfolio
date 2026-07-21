@@ -323,13 +323,13 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
       } else {
         AppFunctions.apiErrorHandling(
           loginController.getResponseCode(),
-          loginController.commonPostModel.message ?? "Something went wrong!",
+          loginController.commonPostModel.message ?? "Something went wrong!, Try again later",
         );
       }
     } catch (error) {
       AppFunctions.apiErrorHandling(
         loginController.getResponseCode(),
-        loginController.commonPostModel.message ?? "Something went wrong!",
+        loginController.commonPostModel.message ?? "Something went wrong!, Try again later",
       );
     }
   }

@@ -220,6 +220,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     final String daysStr = (data.days ?? "").trim();
 
     if (durationStr.isEmpty && daysStr.isNotEmpty && daysStr != "0") {
+      debugPrint("&&&&&&&&&&&&&");
+      debugPrint("$durationStr+$daysStr----------------------------------------------------------");
       // 1. Day-wise Internship configuration
       durationType = "Days";
       selectedDuration = daysStr;
@@ -1060,7 +1062,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         _buildDurationTypeSelector(),
         CounterTextField(
           labelText: "Internship Duration ($durationType)",
-          value: internshipDuration,
+          value: int.parse(selectedDuration!),
           onChanged: (value) {
             setState(() {
               internshipDuration = value;

@@ -398,7 +398,21 @@ class _RecruiterVerificationScreenState
       );
 
       if (registerController.getResponseCode() == 200) {
-        await toCheckExistAccount();
+        //await toCheckExistAccount();
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.companyProfileScreen,
+          arguments: {
+            "name": recruiterName,
+            "email": recruiterEmail,
+            "mobile": recruiterMobile,
+            "alternateMobile": alternateMobile,
+            "designation": designation,
+            "gender": gender,
+            "employeeCount": employeeCount,
+            "refCode": refCode,
+          },
+        );
       } else {
         AppFunctions.apiErrorHandling(
           registerController.getResponseCode(),

@@ -151,18 +151,32 @@ class RecruiterCredit {
   String? id;
   int? balance;
   int? totalUsed;
+  int? freeCredits;
   int? v;
 
-  RecruiterCredit({this.id, this.balance, this.totalUsed, this.v});
+  RecruiterCredit({
+    this.id,
+    this.balance,
+    this.totalUsed,
+    this.v,
+    this.freeCredits,
+  });
 
   RecruiterCredit.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     balance = json['balance'];
     totalUsed = json['totalUsed'];
+    freeCredits = json['freeCredits'] ?? 0;
     v = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
-    return {'_id': id, 'balance': balance, 'totalUsed': totalUsed, '__v': v};
+    return {
+      '_id': id,
+      'freeCredits': freeCredits,
+      'balance': balance,
+      'totalUsed': totalUsed,
+      '__v': v,
+    };
   }
 }

@@ -1106,7 +1106,8 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
       // Your API response sample doesn't include an "environment" field —
       // default to PRODUCTION here, or wire this to your app's env config
       // the same way BuyCreditScreen does if the field exists on the model.
-      final CFEnvironment environment = CFEnvironment.PRODUCTION;
+      //final CFEnvironment environment = CFEnvironment.PRODUCTION;
+      final CFEnvironment environment = CFEnvironment.SANDBOX;
 
       final session = CFSessionBuilder()
           .setEnvironment(environment)

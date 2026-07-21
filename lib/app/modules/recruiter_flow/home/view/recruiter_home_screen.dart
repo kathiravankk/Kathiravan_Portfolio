@@ -20,19 +20,24 @@ class RecruiterHomeScreen extends StatefulWidget {
   const RecruiterHomeScreen({super.key, this.onProfileTap});
 
   @override
-  State<RecruiterHomeScreen> createState() => _RecruiterHomeScreenState();
+  State<RecruiterHomeScreen> createState() => RecruiterHomeScreenState();
 }
 
-class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
+class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
   final RecruiterHomeController homeController =
       Get.find<RecruiterHomeController>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  void initState() {
-    getProfileData();
-    getStudentsListData();
-    super.initState();
+  // @override
+  // void initState() {
+  //   getProfileData();
+  //   getStudentsListData();
+  //   super.initState();
+  // }
+
+  Future<void> refreshData() async {
+    await getProfileData();
+    await getStudentsListData();
   }
 
   Future<void> getProfileData() async {
@@ -121,11 +126,16 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                       const Spacer(),
                       ProfileWidgets.creditContainer(
                         creditCount:
-                            homeController
-                                .profileModel
-                                .recruiterCreditId!
-                                .balance ??
-                            0,
+                            ((homeController
+                                    .profileModel
+                                    .recruiterCreditId!
+                                    .freeCredits ??
+                                0) +
+                            (homeController
+                                    .profileModel
+                                    .recruiterCreditId!
+                                    .balance ??
+                                0)),
                         viewFunc: () {
                           AppFunctions.navigateScreen(
                             context,
@@ -198,11 +208,12 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                               final student =
                                   homeController.filteredStudents[index];
                               return StudentDetailCard(
-                                viewFunc: (){
-                                  AppFunctions.navigateScreen(context, AppRoutes.internProfileViewScreen,
-                                  arguments: {
-                                    "studentId": student.id,
-                                  });
+                                viewFunc: () {
+                                  AppFunctions.navigateScreen(
+                                    context,
+                                    AppRoutes.internProfileViewScreen,
+                                    arguments: {"studentId": student.id},
+                                  );
                                 },
                                 isShortList: student.isFavorite ?? false,
                                 shortlistFunc: () async {
@@ -268,12 +279,22 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                 // ),
                 decoration: InputDecoration(
                   hintText: "Search by student name...",
-                  hintStyle: AppStyles.customTextStyle(size: 12, color: AppColors.lightHintText, weight: FontWeight.w500),
-                  prefixIcon: const Icon(CupertinoIcons.search, color: AppColors.primaryColor),
+                  hintStyle: AppStyles.customTextStyle(
+                    size: 12,
+                    color: AppColors.lightHintText,
+                    weight: FontWeight.w500,
+                  ),
+                  prefixIcon: const Icon(
+                    CupertinoIcons.search,
+                    color: AppColors.primaryColor,
+                  ),
                   suffixIcon: Obx(
                     () => homeController.searchQuery.value.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: AppColors.redColor),
+                            icon: const Icon(
+                              Icons.clear,
+                              color: AppColors.redColor,
+                            ),
                             onPressed: () => homeController.clearSearchText(),
                           )
                         : const SizedBox.shrink(),
@@ -388,7 +409,11 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                         ),
                         child: Text(
                           "Reset Filters",
-                          style: AppStyles.customTextStyle(size: 14, color: AppColors.primaryColor, weight: FontWeight.w700),
+                          style: AppStyles.customTextStyle(
+                            size: 14,
+                            color: AppColors.primaryColor,
+                            weight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -410,9 +435,13 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
                         ),
-                        child:  Text(
+                        child: Text(
                           "Apply",
-                          style: AppStyles.customTextStyle(size: 14, color: AppColors.recContColor, weight: FontWeight.w700),
+                          style: AppStyles.customTextStyle(
+                            size: 14,
+                            color: AppColors.recContColor,
+                            weight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -439,7 +468,7 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
       children: [
         Text(
           label,
-          style:AppStyles.customTextStyle(
+          style: AppStyles.customTextStyle(
             color: AppColors.whiteColor,
             size: 14,
             weight: FontWeight.w700,
@@ -451,28 +480,38 @@ class _RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
           decoration: BoxDecoration(
             color: AppColors.fieldBgColor,
             borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColors.fieldBorderColor)
+            border: Border.all(color: AppColors.fieldBorderColor),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               dropdownColor: AppColors.recContColor,
-              icon: Icon(Icons.keyboard_arrow_down, color: AppColors.primaryColor,),
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.primaryColor,
+              ),
               value: value,
               isDense: true,
               isExpanded: true,
               hint: Text(
                 "Select $label",
-                style: AppStyles.customTextStyle(size: 12, color: AppColors.greyColor, weight: FontWeight.w500),
+                style: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.greyColor,
+                  weight: FontWeight.w500,
+                ),
               ),
               items: items.map((String val) {
                 return DropdownMenuItem<String>(
                   value: val,
-                  child: Text(val, style: AppStyles.customTextStyle(
-                    fontFamily: "Roboto",
-                    color: AppColors.whiteColor,
-                    size: 14,
-                    weight: FontWeight.w500,
-                  )),
+                  child: Text(
+                    val,
+                    style: AppStyles.customTextStyle(
+                      fontFamily: "Roboto",
+                      color: AppColors.whiteColor,
+                      size: 14,
+                      weight: FontWeight.w500,
+                    ),
+                  ),
                 );
               }).toList(),
               onChanged: onChanged,

@@ -16,15 +16,20 @@ class RecruiterReferralScreen extends StatefulWidget {
 
   @override
   State<RecruiterReferralScreen> createState() =>
-      _RecruiterReferralScreenState();
+      RecruiterReferralScreenState();
 }
 
-class _RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
-  @override
-  void initState() {
-    super.initState();
-    getProfileData();
+class RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
+  final referralKey = GlobalKey<RecruiterReferralScreenState>();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getProfileData();
+  // }
+  Future<void> refreshData() async {
+    await getProfileData();
   }
+
 
   String? recruiterId = "";
   String? referCode = "";

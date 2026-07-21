@@ -17,12 +17,14 @@ class RecruiterInternsScreen extends StatefulWidget {
   const RecruiterInternsScreen({super.key});
 
   @override
-  State<RecruiterInternsScreen> createState() => _RecruiterInternsScreenState();
+  State<RecruiterInternsScreen> createState() => RecruiterInternsScreenState();
 }
 
-class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
+class RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   final InternshipPostController postController = Get.find<InternshipPostController>();
   final InternshipPostController applicationController = Get.find<InternshipPostController>();
+
+
 
   List<PostData>? internshipList = [];
 
@@ -44,10 +46,14 @@ class _RecruiterInternsScreenState extends State<RecruiterInternsScreen> {
   String selectedStatusFilter = "All";
   final List<String> filterOptions = ["All", "Ongoing", "Completed", "Upcoming"];
 
-  @override
-  void initState() {
-    super.initState();
-    getInternshipData();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getInternshipData();
+  // }
+
+  Future<void> refreshData() async {
+    await getInternshipData();
   }
 
   @override

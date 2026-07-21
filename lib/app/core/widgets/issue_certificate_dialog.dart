@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart' show AppStyles;
@@ -95,21 +96,14 @@ class _IssueCertificateDialogState extends State<IssueCertificateDialog> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       5,
-                      (index) => IconButton(
-                        splashRadius: 20,
-                        onPressed: () {
-                          setState(() {
-                            rating = index + 1;
-                          });
-                        },
-                        icon: Icon(
-                          index < rating ? Icons.star : Icons.star_border,
-                          color: Colors.amber,
-                          size: 36,
-                        ),
+                      (index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: buildStar(index),
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 10),
 
                   Text(
                     "($rating-Star Rating)",
@@ -218,6 +212,31 @@ class _IssueCertificateDialogState extends State<IssueCertificateDialog> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildStar(int index) {
+    bool isSelected = index < rating;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          rating = index + 1;
+        });
+      },
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 200),
+        scale: isSelected ? 1.1 : 1,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: Icon(
+            isSelected ? CupertinoIcons.star_fill : CupertinoIcons.star,
+            key: ValueKey(isSelected),
+            color: isSelected ? AppColors.secondaryColor : AppColors.greyIcon,
+            size: 30,
+          ),
         ),
       ),
     );

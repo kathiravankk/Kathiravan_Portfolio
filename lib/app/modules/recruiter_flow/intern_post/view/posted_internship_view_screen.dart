@@ -86,7 +86,7 @@ class _PostedInternshipViewScreenState
                       color: AppColors.primaryColor,
                     ),
                     Text(
-                      "Internship Review",
+                      "Review",
                       style: AppStyles.customTextStyle(
                         size: 12,
                         color: AppColors.primaryColor,

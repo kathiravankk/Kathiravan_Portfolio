@@ -280,7 +280,7 @@ class _ApplicantsCard extends StatelessWidget {
               children: [
                 CustomButtonWidget(
                   width: 95,
-                  height: 35,
+                  height: 30,
                   buttonFunction: () {
                     AppFunctions.navigateScreen(
                       context,
@@ -300,7 +300,7 @@ class _ApplicantsCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Icon(
-                        CupertinoIcons.eye,
+                        Icons.remove_red_eye_outlined,
                         color: AppColors.blackColor,
                         size: 14,
                       ),
@@ -317,50 +317,50 @@ class _ApplicantsCard extends StatelessWidget {
                 ),
 
                 // Refactored Interactive Shortlist Button Integration
-                GestureDetector(
-                  onTap: shortlistFunc,
-                  child: Container(
-                    height: 35,
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isShortlisted
-                            ? AppColors.secondaryColor
-                            : AppColors.lightBorderColor,
-                      ),
-                      color: isShortlisted
-                          ? AppColors.secondaryColor.withOpacity(0.1)
-                          : AppColors.transparentColor,
-                    ),
-                    child: Row(
-                      spacing: 5,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          isShortlisted
-                              ? CupertinoIcons.bookmark_fill
-                              : CupertinoIcons.bookmark,
-                          color: isShortlisted
-                              ? AppColors.secondaryColor
-                              : AppColors.whiteColor,
-                          size: 16,
-                        ),
-                        Text(
-                          isShortlisted ? 'Shortlisted' : 'Shortlist',
-                          style: AppStyles.customTextStyle(
-                            size: 12,
-                            color: isShortlisted
-                                ? AppColors.secondaryColor
-                                : AppColors.whiteColor,
-                            weight: isShortlisted ? FontWeight.w600 : FontWeight
-                                .w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: shortlistFunc,
+                //   child: Container(
+                //     height: 35,
+                //     padding: const EdgeInsets.symmetric(horizontal: 15),
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(20),
+                //       border: Border.all(
+                //         color: isShortlisted
+                //             ? AppColors.secondaryColor
+                //             : AppColors.lightBorderColor,
+                //       ),
+                //       color: isShortlisted
+                //           ? AppColors.secondaryColor.withOpacity(0.1)
+                //           : AppColors.transparentColor,
+                //     ),
+                //     child: Row(
+                //       spacing: 5,
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         Icon(
+                //           isShortlisted
+                //               ? CupertinoIcons.bookmark_fill
+                //               : CupertinoIcons.bookmark,
+                //           color: isShortlisted
+                //               ? AppColors.secondaryColor
+                //               : AppColors.whiteColor,
+                //           size: 16,
+                //         ),
+                //         Text(
+                //           isShortlisted ? 'Shortlisted' : 'Shortlist',
+                //           style: AppStyles.customTextStyle(
+                //             size: 12,
+                //             color: isShortlisted
+                //                 ? AppColors.secondaryColor
+                //                 : AppColors.whiteColor,
+                //             weight: isShortlisted ? FontWeight.w600 : FontWeight
+                //                 .w400,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
 
                 _buildTypeContainer(
                   type: internshipData.internshipStipend != "N/A"
