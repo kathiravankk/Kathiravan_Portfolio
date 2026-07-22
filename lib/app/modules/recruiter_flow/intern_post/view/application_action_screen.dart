@@ -244,6 +244,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                                 arguments: {
                                   "studentId": studentId,
                                   "jobId": jobId,
+                                  "syllabusStatus": studentData!.applicationStatus,
                                 },
                               );
                             },

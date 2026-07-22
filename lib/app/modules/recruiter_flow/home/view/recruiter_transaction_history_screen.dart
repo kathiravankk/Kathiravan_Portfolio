@@ -24,10 +24,12 @@ class _RecruiterTransactionHistoryScreenState
       Get.find<RecruiterHomeController>();
 
   String? recruiterId = "";
+  int? creditBalance = 0;
 
   @override
   void initState() {
     super.initState();
+    creditBalance = Get.arguments["creditBalance"] ?? 0;
     getTransactionData();
   }
 
@@ -96,13 +98,7 @@ class _RecruiterTransactionHistoryScreenState
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                     children: [
-                      _buildBalanceCard(
-                        homeController
-                            .historyModel
-                            .transactionData
-                            .first
-                            .recCredit,
-                      ),
+                      _buildBalanceCard(creditBalance ?? 0),
                       const SizedBox(height: 24),
                       _buildSectionHeader(
                         "Transaction History",
@@ -179,9 +175,9 @@ class _RecruiterTransactionHistoryScreenState
     );
   }
 
-  Widget _buildBalanceCard(dynamic credit) {
-    final balance = credit?.balance ?? 0;
-    final totalUsed = credit?.totalUsed ?? 0;
+  Widget _buildBalanceCard(int credit) {
+    // final balance = credit?.balance ?? 0;
+    // final totalUsed = credit?.totalUsed ?? 0;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -214,7 +210,7 @@ class _RecruiterTransactionHistoryScreenState
                   ),
                 ),
                 Text(
-                  "$balance",
+                  "$credit",
                   style: AppStyles.customTextStyle(
                     size: 30,
                     color: AppColors.primaryColor,

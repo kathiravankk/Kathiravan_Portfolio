@@ -208,7 +208,7 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
             "Syllabus Update AI Agent",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),
@@ -283,6 +283,7 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
                 size: 13,
                 weight: FontWeight.w500,
                 color: AppColors.whiteColor,
+                lineSpace: 1.5
               ),
             ),
           ),
@@ -329,6 +330,7 @@ class _ChatSyllabusUpdateScreenState extends State<ChatSyllabusUpdateScreen> {
                     size: 13,
                     weight: FontWeight.w500,
                     color: AppColors.whiteColor,
+                    lineSpace: 1.5
                   ),
                 ),
               ),

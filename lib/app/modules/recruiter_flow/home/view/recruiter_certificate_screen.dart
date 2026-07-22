@@ -24,9 +24,9 @@ class RecruiterCertificateScreen extends StatefulWidget {
 class _RecruiterCertificateScreenState
     extends State<RecruiterCertificateScreen> {
   final InternshipPostController postController =
-  Get.find<InternshipPostController>();
+      Get.find<InternshipPostController>();
   final InternshipPostController applicationController =
-  Get.find<InternshipPostController>();
+      Get.find<InternshipPostController>();
   final TextEditingController searchController = TextEditingController();
 
   String? recruiterId = "";
@@ -92,7 +92,9 @@ class _RecruiterCertificateScreenState
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
         // Store in master list copy
-        _allApplicants = List.from(applicationController.applicantsModel.applicantsList ?? []);
+        _allApplicants = List.from(
+          applicationController.applicantsModel.applicantsList ?? [],
+        );
         applicantsList = List.from(_allApplicants!);
 
         debugPrint("+++++++++++++++++++++++++++");
@@ -151,10 +153,10 @@ class _RecruiterCertificateScreenState
   }
 
   Future<void> onJobSelected(
-      int index,
-      String selectedJobId,
-      PostData postData,
-      ) async {
+    int index,
+    String selectedJobId,
+    PostData postData,
+  ) async {
     if (selectedIndex.value == index) return;
     selectedIndex.value = index;
     jobId = selectedJobId;
@@ -198,26 +200,26 @@ class _RecruiterCertificateScreenState
           ),
         ),
         body: Obx(
-              () => postController.internPostLoading
+          () => postController.internPostLoading
               ? AppAlertUtils.customLoader()
               : RefreshIndicator(
-            backgroundColor: AppColors.appBgColor_2,
-            color: AppColors.primaryColor,
-            onRefresh: () async {
-              getInternshipData();
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                spacing: 15,
-                children: [
-                  searchWidget(),
-                  _buildInternshipCardsList(),
-                  Expanded(child: _buildApplicantsList()),
-                ],
-              ),
-            ),
-          ),
+                  backgroundColor: AppColors.appBgColor_2,
+                  color: AppColors.primaryColor,
+                  onRefresh: () async {
+                    getInternshipData();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      spacing: 15,
+                      children: [
+                        searchWidget(),
+                        _buildInternshipCardsList(),
+                        Expanded(child: _buildApplicantsList()),
+                      ],
+                    ),
+                  ),
+                ),
         ),
       ),
     );
@@ -252,12 +254,12 @@ class _RecruiterCertificateScreenState
           ),
           suffixIcon: searchController.text.isNotEmpty
               ? IconButton(
-            icon: const Icon(Icons.clear, color: AppColors.redColor),
-            onPressed: () {
-              searchController.clear();
-              filterSearch("");
-            },
-          )
+                  icon: const Icon(Icons.clear, color: AppColors.redColor),
+                  onPressed: () {
+                    searchController.clear();
+                    filterSearch("");
+                  },
+                )
               : const SizedBox.shrink(),
           contentPadding: const EdgeInsets.symmetric(vertical: 15),
         ),
@@ -338,6 +340,8 @@ class _RecruiterCertificateScreenState
   }
 
   Widget _buildApplicantCard(ApplicantsData applicant) {
+    debugPrint(applicant.isCertificateGenerated!.toString());
+    debugPrint("_____________________");
     return Container(
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -351,21 +355,21 @@ class _RecruiterCertificateScreenState
             radius: 30,
             backgroundColor: AppColors.whiteColor.withValues(alpha: 0.1),
             backgroundImage:
-            (applicant.studentDetails != null
-                ? applicant.studentDetails!.studProfile ?? ""
-                : "")
-                .isNotEmpty
+                (applicant.studentDetails != null
+                        ? applicant.studentDetails!.studProfile ?? ""
+                        : "")
+                    .isNotEmpty
                 ? NetworkImage(
-              applicant.studentDetails != null
-                  ? applicant.studentDetails!.studProfile ?? ""
-                  : "",
-            )
+                    applicant.studentDetails != null
+                        ? applicant.studentDetails!.studProfile ?? ""
+                        : "",
+                  )
                 : null,
             child:
-            (applicant.studentDetails != null
-                ? applicant.studentDetails!.studProfile ?? ""
-                : "")
-                .isEmpty
+                (applicant.studentDetails != null
+                        ? applicant.studentDetails!.studProfile ?? ""
+                        : "")
+                    .isEmpty
                 ? Icon(Icons.person, color: AppColors.whiteColor)
                 : null,
           ),
@@ -377,7 +381,7 @@ class _RecruiterCertificateScreenState
                 Text(
                   applicant.studentDetails != null
                       ? applicant.studentDetails!.studName ??
-                      "Anonymous Student"
+                            "Anonymous Student"
                       : "Anonymous Student",
                   style: AppStyles.customTextStyle(
                     size: 15,
@@ -401,43 +405,55 @@ class _RecruiterCertificateScreenState
                             weight: FontWeight.w500,
                           ),
                         ),
-                        Row(
-                          spacing: 3,
-                          children: [
-                            Icon(
-                              Icons.verified_outlined,
-                              color: AppColors.primaryColor,
-                              size: 15,
-                            ),
-                            Text(
-                              "ISSUED: ${AppFunctions.formatIsoDate(applicant.studentDetails != null ? applicant.studentDetails!.updatedAt ?? "" : "NA")}",
-                              style: AppStyles.customTextStyle(
-                                size: 11,
-                                color: AppColors.primaryColor,
-                                weight: FontWeight.w600,
+                        applicant.isCertificateGenerated!
+                            ? Row(
+                                spacing: 3,
+                                children: [
+                                  Icon(
+                                    Icons.verified_outlined,
+                                    color: AppColors.primaryColor,
+                                    size: 15,
+                                  ),
+                                  Text(
+                                    "ISSUED: ${AppFunctions.formatIsoDate(applicant.studentDetails != null ? applicant.studentDetails!.updatedAt ?? "" : "NA")}",
+                                    style: AppStyles.customTextStyle(
+                                      size: 11,
+                                      color: AppColors.primaryColor,
+                                      weight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                "Not Issued",
+                                style: AppStyles.customTextStyle(
+                                  size: 11,
+                                  color: AppColors.secondaryColor,
+                                  weight: FontWeight.w600,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                     const Spacer(),
-                    IconButton(
-                      onPressed: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.certificateViewScreen,
-                          arguments: {
-                            "jobId": jobId,
-                            "studentId": applicant.studentDetails != null
-                                ? applicant.studentDetails!.id
-                                : "",
-                          },
-                        );
-                      },
-                      icon: Icon(
-                        Icons.remove_red_eye_outlined,
-                        color: AppColors.secondaryColor,
+                    Visibility(
+                      visible: applicant.isCertificateGenerated!,
+                      child: IconButton(
+                        onPressed: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.certificateViewScreen,
+                            arguments: {
+                              "jobId": jobId,
+                              "studentId": applicant.studentDetails != null
+                                  ? applicant.studentDetails!.id
+                                  : "",
+                            },
+                          );
+                        },
+                        icon: Icon(
+                          Icons.remove_red_eye_outlined,
+                          color: AppColors.secondaryColor,
+                        ),
                       ),
                     ),
                   ],

@@ -183,6 +183,18 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                         AppFunctions.navigateScreen(
                           context,
                           AppRoutes.recruiterTransactionHistoryScreen,
+                          arguments: {
+                            "creditBalance": ((homeController
+                                .profileModel
+                                .recruiterCreditId!
+                                .freeCredits ??
+                                0) +
+                                (homeController
+                                    .profileModel
+                                    .recruiterCreditId!
+                                    .balance ??
+                                    0))
+                          }
                         );
                       },
                     ),

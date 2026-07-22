@@ -40,6 +40,7 @@ class ApplicantsData {
   String? createdAt;
   String? updatedAt;
   String? selectedAt;
+  bool? isCertificateGenerated;
   int? v;
   List<DailyProgress>? dailyProgress;
 
@@ -52,6 +53,7 @@ class ApplicantsData {
     this.currentDay,
     this.jobMessage,
     this.internProjectLink,
+    this.isCertificateGenerated,
     this.createdAt,
     this.updatedAt,
     this.selectedAt,
@@ -68,6 +70,7 @@ class ApplicantsData {
         : null;
 
     recruiter = json['recruiter'];
+    isCertificateGenerated = json['certificateGenerated']??false;
     status = json['status'];
     currentDay = json['currentDay'] ?? 0;
     jobMessage = json['jobmessage'] ?? "";
@@ -105,6 +108,7 @@ class ApplicantsData {
       'currentDay': currentDay,
       'jobmessage': jobMessage,
       'internProjectlink': internProjectLink,
+      'certificateGenerated': isCertificateGenerated,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'selectedAt': selectedAt,

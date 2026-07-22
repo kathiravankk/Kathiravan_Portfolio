@@ -36,6 +36,7 @@ class _RecruiterSyllabusViewScreenState
 
   String studentId = "";
   String jobId = "";
+  String syllabusStatus = "";
 
   // ─────────────────────────────────────────
   // INIT
@@ -45,6 +46,7 @@ class _RecruiterSyllabusViewScreenState
   void initState() {
     studentId = Get.arguments?["studentId"] ?? "";
     jobId = Get.arguments?["jobId"] ?? "";
+    syllabusStatus = Get.arguments?["syllabusStatus"] ?? "";
     super.initState();
     getSyllabusData();
   }
@@ -124,6 +126,8 @@ class _RecruiterSyllabusViewScreenState
   // ─────────────────────────────────────────
 
   PreferredSizeWidget _buildAppBar() {
+    debugPrint(syllabusStatus);
+    debugPrint("__________________");
     final totalLabel = _isMonthBased
         ? "${_syllabus?.totalMonth ?? _groups.length} months Total"
         : "${_syllabus?.totalDays ?? _groups.length} days Total";
@@ -150,7 +154,7 @@ class _RecruiterSyllabusViewScreenState
         ),
       ),
       actions: [
-        if (_syllabus != null && _syllabus!.status != "completed")
+        if (_syllabus != null && syllabusStatus != "Completed")
           GestureDetector(
             onTap: () {
               AppFunctions.navigateScreen(

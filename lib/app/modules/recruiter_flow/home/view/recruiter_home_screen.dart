@@ -224,12 +224,12 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                                   homeController.filteredStudents.refresh();
                                 },
                                 requestFunc: () {
-                                  Get.dialog(
-                                    SelectInternshipDialog(
-                                      studentId: student.id ?? "",
-                                    ),
-                                    barrierDismissible: true,
-                                  );
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    Get.dialog(
+                                      SelectInternshipDialog(studentId: student.id ?? ""),
+                                      barrierDismissible: true,
+                                    );
+                                  });
                                 },
                                 studentName: student.studName ?? "",
                                 studentProfile: student.studProfile ?? "",
@@ -493,6 +493,7 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
               isDense: true,
               isExpanded: true,
               hint: Text(
+                maxLines: 2,
                 "Select $label",
                 style: AppStyles.customTextStyle(
                   size: 12,
@@ -505,10 +506,13 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                   value: val,
                   child: Text(
                     val,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: AppStyles.customTextStyle(
                       fontFamily: "Roboto",
                       color: AppColors.whiteColor,
                       size: 14,
+                      lineSpace: 1.5,
                       weight: FontWeight.w500,
                     ),
                   ),

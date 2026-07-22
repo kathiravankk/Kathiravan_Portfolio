@@ -608,13 +608,29 @@ class _PostedInternshipViewScreenState
                         weight: FontWeight.w300,
                       ),
                     ),
-                    Text(
-                      internship.noOfPosition.toString(),
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.lightColorText,
-                        weight: FontWeight.w700,
-                      ),
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Text(
+                          internship.internPositions.toString(),
+                          style: AppStyles.customTextStyle(
+                            size: 14,
+                            color: AppColors.lightColorText,
+                            weight: FontWeight.w700,
+                          ),
+                        ),
+                        Visibility(
+                          visible: internship.noOfPosition != 0,
+                          child: Text(
+                            "(Only ${internship.noOfPosition.toString()} left)",
+                            style: AppStyles.customTextStyle(
+                              size: 12,
+                              color: AppColors.primaryColor,
+                              weight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
