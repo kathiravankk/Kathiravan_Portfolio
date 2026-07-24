@@ -10,6 +10,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate
 import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
@@ -409,6 +410,28 @@ class RecruiterHomeProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return InternStudentProfileModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET PAYMENT HISTORY DATA
+
+  Future<RecruiterPaymentHistoryModel> fetchPaymentHistoryData(
+  {required int page,required int limit}
+      ) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+          AppApiUrls.getPaymentHistory(page,limit),
+          options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterPaymentHistoryModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return RecruiterPaymentHistoryModel.fromJson(err.response!.data);
     }
   }
   

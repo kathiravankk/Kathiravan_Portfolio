@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -86,6 +87,17 @@ class _RecruiterTransactionHistoryScreenState
               weight: FontWeight.w700,
             ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                AppFunctions.navigateScreen(
+                  context,
+                  AppRoutes.recruiterPaymentHistoryScreen,
+                );
+              },
+              icon: Icon(Icons.history, color: AppColors.secondaryColor,),
+            ),
+          ],
         ),
         body: Obx(
           () => homeController.transactionHistoryLoading
@@ -101,7 +113,7 @@ class _RecruiterTransactionHistoryScreenState
                       _buildBalanceCard(creditBalance ?? 0),
                       const SizedBox(height: 24),
                       _buildSectionHeader(
-                        "Transaction History",
+                        "Credits History",
                         homeController.historyModel.pagination == null
                             ? null
                             : "${homeController.historyModel.transactionData.length} of ${homeController.historyModel.pagination!.total ?? homeController.historyModel.transactionData.length}",
@@ -134,7 +146,7 @@ class _RecruiterTransactionHistoryScreenState
             "No transactions yet",
             style: AppStyles.customTextStyle(
               size: 15,
-              color: Colors.white70,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),

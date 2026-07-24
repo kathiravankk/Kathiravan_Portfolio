@@ -4,7 +4,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 
 class FeedbackWidget extends StatefulWidget {
-  final Function(int rating, String feedback) onSubmit;
+  final Future<bool> Function(int rating, String feedback) onSubmit;
   final bool isLoading;
 
   const FeedbackWidget({
@@ -27,20 +27,20 @@ class _FeedbackWidgetState extends State<FeedbackWidget>
   bool isSubmitted = false;
 
   void submitFeedback() async {
-    /// ✅ Prevent multiple submit
     if (rating == 0 || isSubmitted || widget.isLoading) return;
 
-    await widget.onSubmit(
+    final success = await widget.onSubmit(
       rating,
       feedbackController.text.trim(),
     );
 
-    /// ✅ Disable widget after success
-    if (mounted) {
+    if (mounted && success) {
       setState(() {
         isSubmitted = true;
       });
     }
+    // if it failed, isSubmitted stays false → stars/text field remain
+    // enabled so the user can retry
   }
 
   Widget buildStar(int index) {

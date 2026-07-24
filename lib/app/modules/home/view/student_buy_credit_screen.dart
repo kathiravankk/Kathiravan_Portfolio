@@ -19,14 +19,14 @@ import 'package:internsharks/app/modules/home/controller/dashboard_controller.da
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 
 
-class BuyCreditScreen extends StatefulWidget {
-  const BuyCreditScreen({super.key});
+class StudentBuyCreditScreen extends StatefulWidget {
+  const StudentBuyCreditScreen({super.key});
 
   @override
-  State<BuyCreditScreen> createState() => _BuyCreditScreenState();
+  State<StudentBuyCreditScreen> createState() => _StudentBuyCreditScreenState();
 }
 
-class _BuyCreditScreenState extends State<BuyCreditScreen> {
+class _StudentBuyCreditScreenState extends State<StudentBuyCreditScreen> {
   final DashboardController homeController = Get.find<DashboardController>();
   final RegisterController registerController = Get.find<RegisterController>();
 
@@ -77,7 +77,7 @@ class _BuyCreditScreenState extends State<BuyCreditScreen> {
       if (mounted) {
         setState(() {
           creditBalance =
-              registerController.creditDataModel.creditData?.balance ?? 0;
+          ((registerController.creditDataModel.creditData?.balance ?? 0)+ (registerController.creditDataModel.creditData?.freeCredits ?? 0));
         });
       }
     }

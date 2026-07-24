@@ -193,7 +193,7 @@ class _RecruiterVerificationScreenState
             buttonText: "Verify Mobile",
             onTap: verifyMobileOtp,
             enabled: mobileOtpController.text.length == 4,
-            isLoading: registerController.verifyMobileOtpLoading,
+            isLoading: registerController.verifyMobileOtpLoading || registerController.sendEmailOtpLoading,
           ),
         ),
         const SizedBox(height: 20),
@@ -374,6 +374,10 @@ class _RecruiterVerificationScreenState
 
       if (registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201) {
+        AppAlertUtils.showToast(
+          message: "OTP sent successfully",
+          isError: false,
+        );
         startEmailTimer();
       } else {
         AppFunctions.apiErrorHandling(
@@ -397,22 +401,22 @@ class _RecruiterVerificationScreenState
         otpNumber: emailOtpController.text,
       );
 
-      if (registerController.getResponseCode() == 200) {
-        await toCheckExistAccount();
-        // AppFunctions.navigateScreen(
-        //   context,
-        //   AppRoutes.companyProfileScreen,
-        //   arguments: {
-        //     "name": recruiterName,
-        //     "email": recruiterEmail,
-        //     "mobile": recruiterMobile,
-        //     "alternateMobile": alternateMobile,
-        //     "designation": designation,
-        //     "gender": gender,
-        //     "employeeCount": employeeCount,
-        //     "refCode": refCode,
-        //   },
-        // );
+      if (registerController.getResponseCode() == 200 || registerController.getResponseCode() == 201) {
+        //await toCheckExistAccount();
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.companyProfileScreen,
+          arguments: {
+            "name": recruiterName,
+            "email": recruiterEmail,
+            "mobile": recruiterMobile,
+            "alternateMobile": alternateMobile,
+            "designation": designation,
+            "gender": gender,
+            "employeeCount": employeeCount,
+            "refCode": refCode,
+          },
+        );
       } else {
         AppFunctions.apiErrorHandling(
           registerController.getResponseCode(),

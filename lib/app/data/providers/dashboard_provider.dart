@@ -239,7 +239,7 @@ class DashboardProvider {
       );
       Response response = await client!.post(
         data: resumeData,
-        AppApiUrls.updateChatResume,
+        AppApiUrls.getUpdateChatResumeData,
         options: Options(headers: header),
       );
       responseStatus = response.statusCode!;

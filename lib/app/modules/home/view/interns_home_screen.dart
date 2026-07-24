@@ -63,7 +63,7 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
         registerController.getResponseCode() == 201) {
       if (mounted) {
         creditBalance =
-            registerController.creditDataModel.creditData?.balance ?? 0;
+        ((registerController.creditDataModel.creditData?.balance ?? 0)+ (registerController.creditDataModel.creditData?.freeCredits ?? 0));
       }
     } else {
       AppFunctions.apiErrorHandling(

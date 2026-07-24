@@ -369,6 +369,7 @@ class ContactItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: AppStyles.customTextStyle(
               size: 12,
+              lineSpace: 1.5,
               color: AppColors.greyTextColor,
               weight: FontWeight.w400,
             ),
@@ -573,6 +574,7 @@ class CertItem extends StatelessWidget {
             size: 12,
             color: AppColors.primaryColor,
             weight: FontWeight.w600,
+            lineSpace: 1.5
           ),
         ),
         Row(

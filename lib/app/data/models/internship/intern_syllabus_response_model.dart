@@ -232,6 +232,7 @@ class TopicData {
   final List<String>? homework;
   final String? id;
   final String? visualExplanation;
+  final String? youtubeUrl;
 
   factory TopicData.fromJson(Map<String, dynamic> json) => TopicData(
     title: json['title'],
@@ -240,6 +241,7 @@ class TopicData {
     codeExamples: _parseStringList(json['code_examples']),
     homework: _parseStringList(json['homework']),
     id: json['_id'],
+    youtubeUrl: json['youtube_url']??"",
   );
 
   TopicData({
@@ -249,6 +251,7 @@ class TopicData {
     this.homework,
     this.id,
     this.visualExplanation,
+    this.youtubeUrl
   });
 
   Map<String, dynamic> toJson() => {
@@ -258,6 +261,7 @@ class TopicData {
     'homework': homework,
     '_id': id,
     'visual_explanation': visualExplanation,
+    "youtube_url": youtubeUrl
   };
 }
 

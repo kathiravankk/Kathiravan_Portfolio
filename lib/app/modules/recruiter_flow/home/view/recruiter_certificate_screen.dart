@@ -415,7 +415,7 @@ class _RecruiterCertificateScreenState
                                     size: 15,
                                   ),
                                   Text(
-                                    "ISSUED: ${AppFunctions.formatIsoDate(applicant.studentDetails != null ? applicant.studentDetails!.updatedAt ?? "" : "NA")}",
+                                    "ISSUED: ${AppFunctions.formatIsoDate(applicant.updatedAt ?? "")}",
                                     style: AppStyles.customTextStyle(
                                       size: 11,
                                       color: AppColors.primaryColor,

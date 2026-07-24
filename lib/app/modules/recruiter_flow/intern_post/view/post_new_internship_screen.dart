@@ -666,6 +666,27 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           );
           return false;
         }
+        // if (skillInputController.text.isEmpty) {
+        //   AppAlertUtils.showToast(
+        //     message: "Please enter at least one skill",
+        //     isError: true,
+        //   );
+        //   return false;
+        // }
+        // if (requiredSkills.isEmpty) {
+        //   AppAlertUtils.showToast(
+        //     message: "Please add this skill by pressing Enter or tapping the add icon",
+        //     isError: true,
+        //   );
+        //   return false;
+        // }
+        if (requiredSkills.isEmpty) {
+          AppAlertUtils.showToast(
+            message: "Please add at least one skill. Press Enter or tap the '+' icon to add it.",
+            isError: true,
+          );
+          return false;
+        }
         return true;
 
       case 4:
@@ -1252,15 +1273,15 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
             ),
           ),
         ),
-        if (selectedQualifications.isEmpty)
-          Text(
-            "Please select at least one qualification",
-            style: AppStyles.customTextStyle(
-              size: 12,
-              color: Colors.redAccent,
-              weight: FontWeight.w400,
-            ),
-          ),
+        // if (selectedQualifications.isEmpty)
+        //   Text(
+        //     "Please select at least one qualification",
+        //     style: AppStyles.customTextStyle(
+        //       size: 12,
+        //       color: Colors.redAccent,
+        //       weight: FontWeight.w400,
+        //     ),
+        //   ),
       ],
     );
   }

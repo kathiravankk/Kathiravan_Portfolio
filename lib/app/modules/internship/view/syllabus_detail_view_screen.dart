@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SyllabusDetailViewScreen extends StatefulWidget {
   const SyllabusDetailViewScreen({super.key});
@@ -391,6 +392,10 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
         const SizedBox(height: 10),
         if (topic.codeExamples != null)
           ...topic.codeExamples!.map((code) => CodeExampleWidget(code: code)),
+        if ((topic.youtubeUrl ?? "").isNotEmpty) ...[
+          const SizedBox(height: 10),
+          youtubeButton(topic.youtubeUrl!),
+        ],
         const SizedBox(height: 10),
         if (topic.homework != null && topic.homework!.isNotEmpty)
           _homeworkCard(topic.homework!),
@@ -448,6 +453,41 @@ class _SyllabusDetailViewScreenState extends State<SyllabusDetailViewScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+  Widget youtubeButton(String url) {
+    return GestureDetector(
+      onTap: () async {
+        final uri = Uri.tryParse(url);
+        if (uri != null && await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.disableContColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.disableContBorder),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.play_circle_outline,
+                size: 16, color: AppColors.primaryColor),
+            const SizedBox(width: 6),
+            Text(
+              "Watch Video",
+              style: AppStyles.customTextStyle(
+                size: 12,
+                lineSpace: 1.5,
+                color: AppColors.primaryColor,
+                weight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
-import 'package:internsharks/app/modules/home/view/buy_credit_screen.dart';
+import 'package:internsharks/app/modules/home/view/student_buy_credit_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/home/view/privacy_policy_screen.dart';
 import 'package:internsharks/app/modules/home/view/referral_code_screen.dart';
@@ -40,6 +40,7 @@ import 'package:internsharks/app/modules/recruiter_flow/home/view/intern_profile
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_certificate_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_credits_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_purchase_history_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_detail_view_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_syllabus_view_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_transaction_history_screen.dart';
@@ -261,7 +262,7 @@ class AppPages {
     appPage(name: AppRoutes.profileEditScreen, page: () => ProfileEditScreen()),
     appPage(
       name: AppRoutes.buyCreditsScreen,
-      page: () => BuyCreditScreen(),
+      page: () => StudentBuyCreditScreen(),
       bindings: [DashboardBindings()],
     ),
     appPage(name: AppRoutes.homeProfileScreen, page: () => HomeProfileScreen()),
@@ -371,6 +372,10 @@ class AppPages {
     appPage(
       name: AppRoutes.recruiterSyllabusDetailScreen,
       page: () => RecruiterSyllabusDetailViewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterPaymentHistoryScreen,
+      page: () => RecruiterPurchaseHistoryScreen(),
     ),
   ];
 }

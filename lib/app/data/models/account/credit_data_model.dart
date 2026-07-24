@@ -25,6 +25,7 @@ class CreditResponseData {
   String? createdAt;
   String? updatedAt;
   int? v;
+  int? freeCredits;
 
   CreditResponseData({
     this.id,
@@ -33,6 +34,7 @@ class CreditResponseData {
     this.createdAt,
     this.updatedAt,
     this.v,
+    this.freeCredits
   });
 
   factory CreditResponseData.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class CreditResponseData {
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
       v: json['__v'] ?? 0,
+      freeCredits: json['freeCredits'] ?? 0,
     );
   }
 

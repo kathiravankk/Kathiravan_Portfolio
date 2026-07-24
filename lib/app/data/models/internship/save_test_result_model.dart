@@ -1,15 +1,15 @@
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 
 class SaveTestResultModel {
-  String? success;
+  bool? success;
   String? message;
   TestResultData? result;
 
   SaveTestResultModel({this.success, this.message, this.result});
 
   SaveTestResultModel.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    message = json['message'];
+    success = json['success']?? false;
+    message = json['message']??"";
     result =
     json['result'] != null ? TestResultData.fromJson(json['result']) : null;
   }

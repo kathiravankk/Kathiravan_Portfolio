@@ -8,6 +8,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate
 import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
@@ -649,4 +650,74 @@ class RecruiterHomeController extends GetxController {
       internProfileLoading = false;
     }
   }
+
+  //  GET PAYMENT HISTORY
+
+  final _paymentHistoryLoading = false.obs;
+
+  bool get paymentHistoryLoading => _paymentHistoryLoading.value;
+
+  set paymentHistoryLoading(bool value) => _paymentHistoryLoading.value = value;
+
+  // Model
+
+  final _paymentHistoryModel = RecruiterPaymentHistoryModel().obs;
+
+  RecruiterPaymentHistoryModel get paymentHistoryModel => _paymentHistoryModel.value;
+
+  set paymentHistoryModel(RecruiterPaymentHistoryModel value) =>
+      _paymentHistoryModel.value = value;
+
+  final _paymentHistoryLoadingMore = false.obs;
+
+  bool get paymentHistoryLoadingMore => _paymentHistoryLoadingMore.value;
+
+  set paymentHistoryLoadingMore(bool value) =>
+      _paymentHistoryLoadingMore.value = value;
+
+  final _paymentHistoryList = <PaymentHisData>[].obs;
+
+  RxList<PaymentHisData> get paymentHistoryList => _paymentHistoryList;
+
+
+  Future<void> getPaymentHistoryData({
+    required int page,
+    required int limit,
+    int? month, // null => "All Time"
+    bool isLoadMore = false,
+  }) async {
+    try {
+      if (isLoadMore) {
+        paymentHistoryLoadingMore = true;
+      } else {
+        paymentHistoryLoading = true;
+      }
+
+      paymentHistoryModel = await recruiterHomeProvider!.fetchPaymentHistoryData(
+        page: page,
+        limit: limit,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      if (isLoadMore) {
+        paymentHistoryLoadingMore = false;
+      } else {
+        paymentHistoryLoading = false;
+      }
+    }
+  }
+
+  // Future<void> getPaymentHistoryData({required int page, required int limit}) async {
+  //   try {
+  //     paymentHistoryLoading = true;
+  //     paymentHistoryModel = await recruiterHomeProvider!.fetchPaymentHistoryData(
+  //       page: page, limit: limit
+  //     );
+  //   } catch (err) {
+  //     rethrow;
+  //   } finally {
+  //     paymentHistoryLoading = false;
+  //   }
+  // }
 }

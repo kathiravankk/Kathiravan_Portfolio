@@ -274,7 +274,7 @@ class AppAlertUtils {
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 3,
+      timeInSecForIosWeb: 7,
       textColor: isError ? AppColors.failTextColor : AppColors.sucTextColor,
       fontSize: 14,
       backgroundColor: isError ? AppColors.failBgColor : AppColors.sucBgColor,

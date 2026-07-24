@@ -128,7 +128,7 @@ class _RecruiterSyllabusDetailViewScreenState
         ),
         if ((topic.youtubeUrl ?? "").isNotEmpty) ...[
           const SizedBox(height: 12),
-          _youtubeButton(topic.youtubeUrl!),
+          youtubeButton(topic.youtubeUrl!),
         ],
         if ((topic.visualExplanation ?? "").isNotEmpty) ...[
           const SizedBox(height: 14),
@@ -372,7 +372,7 @@ class _RecruiterSyllabusDetailViewScreenState
   // YOUTUBE LINK
   // ─────────────────────────────────────────
 
-  Widget _youtubeButton(String url) {
+  Widget youtubeButton(String url) {
     return GestureDetector(
       onTap: () async {
         final uri = Uri.tryParse(url);

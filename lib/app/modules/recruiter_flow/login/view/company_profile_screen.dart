@@ -277,7 +277,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   void showIndustryPicker() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.whiteColor,
+      backgroundColor: AppColors.fieldBgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -291,7 +291,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
                 industry,
                 style: AppStyles.customTextStyle(
                   fontFamily: 'Roboto',
-                  color: AppColors.blackColor,
+                  color: AppColors.whiteColor,
                   size: 14,
                   weight: FontWeight.w500,
                 ),

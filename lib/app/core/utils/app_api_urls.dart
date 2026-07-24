@@ -52,7 +52,7 @@ class AppApiUrls {
   static String getReviewData(String jobId) =>
       "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
-  static String updateChatResume = "${baseUrl}updatemessage";
+  //static String updateChatResume = "${baseUrl}updatemessage";
 
   // BUY CREDITS
   static String getCreditPlans = "${baseUrl}plans";
@@ -147,6 +147,7 @@ class AppApiUrls {
   static String createStipendOrder= "${baseUrl}createstippedpay";
   static String verifyStipendOrder= "${baseUrl}verifystippedpay";
   static String getInternProfile= "${baseUrl}student/getstudentdetail";
+  static String getPaymentHistory(int page,int limit )=> "${baseUrl}recbuyhistory?page=$page&limit=$limit";
   static String getTransactionHistory(String recruiterId)=> "${baseUrl}recruiter/getallcredittransaction/$recruiterId";
   static String syllabusDataUpdate(String studentId, String jobId)=> "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
   static String checkStipendStatus(String studentId, String jobId)=> "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";
