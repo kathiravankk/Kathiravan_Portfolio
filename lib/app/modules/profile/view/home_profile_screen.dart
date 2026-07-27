@@ -104,6 +104,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             updateData: {
               "student_banner":
                   profileController.resDpModel.status!.imageUrl ?? "",
+              "isWaterMarkRemoved": false,
             },
           );
 

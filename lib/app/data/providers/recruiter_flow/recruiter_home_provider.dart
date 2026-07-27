@@ -369,6 +369,7 @@ class RecruiterHomeProvider {
 
   Future<RecruiterTransactionHistoryModel> fetchTransactionHistory({
     required String recruiterId,
+    required int page,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
@@ -376,7 +377,7 @@ class RecruiterHomeProvider {
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.get(
-        AppApiUrls.getTransactionHistory(recruiterId),
+        AppApiUrls.getTransactionHistory(recruiterId, page),
         options: Options(headers: header),
       );
       responseStatus = response.statusCode!;
@@ -416,16 +417,15 @@ class RecruiterHomeProvider {
   // GET PAYMENT HISTORY DATA
 
   Future<RecruiterPaymentHistoryModel> fetchPaymentHistoryData(
-  {required int page,required int limit}
-      ) async {
+      {required int page, required int limit}) async {
     Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
     try {
       client!.interceptors.add(
         LogInterceptor(requestBody: true, responseBody: true),
       );
       Response response = await client!.get(
-          AppApiUrls.getPaymentHistory(page,limit),
-          options: Options(headers: header),
+        AppApiUrls.getPaymentHistory(page, limit),
+        options: Options(headers: header),
       );
       responseStatus = response.statusCode!;
       return RecruiterPaymentHistoryModel.fromJson(response.data);

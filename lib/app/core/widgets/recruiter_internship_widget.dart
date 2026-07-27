@@ -4,6 +4,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -424,12 +425,12 @@ class WorkExperienceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final experiences = student.experience ?? [];
+    final experiences = student.internships ?? [];
 
     return SectionCard(
       icon: CupertinoIcons.briefcase_fill,
       iconColor: const Color(0xFF4A90E2),
-      title: "WORK EXPERIENCE",
+      title: "INTERNSHIPS",
       child: experiences.isEmpty
           ? const BodyText("—")
           : Column(
@@ -446,7 +447,7 @@ class WorkExperienceCard extends StatelessWidget {
 class WorkExpItem extends StatelessWidget {
   const WorkExpItem({super.key, required this.exp});
 
-  final ExperienceData exp;
+  final InternShipModel exp;
 
   @override
   Widget build(BuildContext context) {

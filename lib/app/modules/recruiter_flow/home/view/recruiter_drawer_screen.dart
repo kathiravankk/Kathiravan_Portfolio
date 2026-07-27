@@ -178,11 +178,11 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     ),
                     CardWidgets.settingsTile(
                       icon: Icons.history,
-                      title: "Transaction History",
+                      title: "My Transaction",
                       onTap: () {
                         AppFunctions.navigateScreen(
                           context,
-                          AppRoutes.recruiterTransactionHistoryScreen,
+                          AppRoutes.recruiterCreditHistoryScreen,
                           arguments: {
                             "creditBalance": ((homeController
                                 .profileModel

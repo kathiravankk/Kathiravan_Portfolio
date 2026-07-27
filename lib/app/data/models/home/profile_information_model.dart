@@ -344,12 +344,14 @@ class CreditData {
   String? createdAt;
   String? updatedAt;
   int? balance;
+  int? freeCredits;
   int? totalUsed;
   int? vId;
 
   CreditData.fromJson(Map<String, dynamic> json) {
     cId = json["_id"] ?? "";
     createdAt = json["createdAt"] ?? "";
+    freeCredits = json["freeCredits"] ?? 0;
     updatedAt = json["updatedAt"] ?? "";
     balance = json["balance"] ?? 0;
     totalUsed = json["totalUsed"] ?? 0;
@@ -360,6 +362,7 @@ class CreditData {
     "_id": cId,
     "createdAt": createdAt,
     "updatedAt": updatedAt,
+    "freeCredits": freeCredits,
     "balance": balance,
     "totalUsed": totalUsed,
     "__v": vId,

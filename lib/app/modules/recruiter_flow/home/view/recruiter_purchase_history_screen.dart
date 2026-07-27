@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
@@ -23,17 +24,17 @@ class _RecruiterPurchaseHistoryScreenState
   final RecruiterHomeController homeController =
   Get.find<RecruiterHomeController>();
 
-  final ScrollController _scrollController = ScrollController();
-
   int page = 1;
   final int limit = 10;
-  bool isFetchingMore = false;
 
   // null = "All Time". Otherwise 1-12 for month-wise filter.
+  // NOTE: this is NOT sent to the backend — the API doesn't support it.
+  // It's applied locally in the controller over whatever has been
+  // fetched so far via "Load More".
   int? selectedMonth;
 
   final List<Map<String, dynamic>> monthOptions = const [
-    {"label": "All Time", "value": null},
+    {"label": "All Time", "value": 0},
     {"label": "January", "value": 1},
     {"label": "February", "value": 2},
     {"label": "March", "value": 3},
@@ -51,52 +52,18 @@ class _RecruiterPurchaseHistoryScreenState
   @override
   void initState() {
     super.initState();
-    getPaymentHistory(isInitial: true);
-    _scrollController.addListener(_onScroll);
+    _fetchInitial();
   }
 
-  @override
-  void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final nearBottom = _scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200;
-
-    if (nearBottom && !isFetchingMore) {
-      final totalPages = homeController.paymentHistoryModel.totalPages ?? 1;
-      if (page < totalPages) {
-        page++;
-        getPaymentHistory(isInitial: false);
-      }
-    }
-  }
-
-  Future<void> getPaymentHistory({required bool isInitial}) async {
+  Future<void> _fetchInitial() async {
+    page = 1;
     try {
-      if (isInitial) {
-        page = 1;
-      } else {
-        isFetchingMore = true;
-      }
-
       await homeController.getPaymentHistoryData(
         limit: limit,
         page: page,
         month: selectedMonth,
-        isLoadMore: !isInitial,
+        isLoadMore: false,
       );
-
-      final newRecords = homeController.paymentHistoryModel.payment ?? [];
-      if (isInitial) {
-        homeController.paymentHistoryList.assignAll(newRecords);
-      } else {
-        homeController.paymentHistoryList.addAll(newRecords);
-      }
     } catch (err, stackTrace) {
       debugPrint("getPaymentHistory error: $err");
       debugPrint(stackTrace.toString());
@@ -104,14 +71,46 @@ class _RecruiterPurchaseHistoryScreenState
         homeController.getResponseCode(),
         "Something went wrong, try again later!",
       );
-    } finally {
-      isFetchingMore = false;
     }
   }
 
+  Future<void> _loadMore() async {
+    if (homeController.paymentHistoryLoadingMore ||
+        !homeController.paymentHistoryHasMore) {
+      return;
+    }
+    page++;
+    try {
+      await homeController.getPaymentHistoryData(
+        limit: limit,
+        page: page,
+        month: selectedMonth,
+        isLoadMore: true,
+      );
+    } catch (err, stackTrace) {
+      page--; // revert bump so retry re-requests the same page
+      debugPrint("getPaymentHistory loadMore error: $err");
+      debugPrint(stackTrace.toString());
+      AppFunctions.apiErrorHandling(
+        homeController.getResponseCode(),
+        "Something went wrong, try again later!",
+      );
+    }
+  }
+
+  // void _onMonthSelected(dynamic value) {
+  //   setState(() => selectedMonth = value);
+  //   // Local-only filter — no API call, just re-filter what's loaded.
+  //   homeController.filterPaymentHistoryByMonth(value);
+  // }
   void _onMonthSelected(dynamic value) {
-    setState(() => selectedMonth = value);
-    getPaymentHistory(isInitial: true);
+    setState(() {
+      selectedMonth = value == 0 ? null : value;
+    });
+
+    homeController.filterPaymentHistoryByMonth(
+      value == 0 ? null : value,
+    );
   }
 
   @override
@@ -149,52 +148,70 @@ class _RecruiterPurchaseHistoryScreenState
         body: Obx(
               () => homeController.paymentHistoryLoading
               ? AppAlertUtils.customLoader()
-              : Column(
-            children: [
-              const SizedBox(height: 8),
-              _buildSummaryCard(),
-              const SizedBox(height: 16),
-              Expanded(
-                child: homeController.paymentHistoryList.isNotEmpty
-                    ? RefreshIndicator(
-                  onRefresh: () =>
-                      getPaymentHistory(isInitial: true),
-                  child: ListView.separated(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    itemCount: homeController
-                        .paymentHistoryList.length +
-                        (homeController.paymentHistoryLoadingMore
-                            ? 1
-                            : 0),
-                    separatorBuilder: (_, __) => Divider(
-                      color:
-                      AppColors.whiteColor.withOpacity(0.08),
-                      height: 24,
+              : Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const SizedBox(height: 8),
+                _buildSummaryCard(),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: homeController.paymentHistoryList.isNotEmpty
+                      ? RefreshIndicator(
+                    backgroundColor: AppColors.appBgColor_2,
+                    color: AppColors.primaryColor,
+                    onRefresh: _fetchInitial,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 12),
+                      itemCount: homeController
+                          .paymentHistoryList.length +
+                          1,
+                      separatorBuilder: (_, __) => Divider(
+                        color: AppColors.whiteColor
+                            .withValues(alpha: 0.08),
+                        height: 24,
+                      ),
+                      itemBuilder: (context, index) {
+                        if (index ==
+                            homeController
+                                .paymentHistoryList.length) {
+                          return _buildLoadMoreFooter();
+                        }
+                        final item = homeController
+                            .paymentHistoryList[index];
+                        return _buildPaymentTile(item);
+                      },
                     ),
-                    itemBuilder: (context, index) {
-                      if (index >=
-                          homeController
-                              .paymentHistoryList.length) {
-                        return const Padding(
-                          padding:
-                          EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2),
-                          ),
-                        );
-                      }
-                      final item = homeController
-                          .paymentHistoryList[index];
-                      return _buildPaymentTile(item);
-                    },
-                  ),
-                )
-                    : const CustomEmptyWidget(),
-              ),
-            ],
+                  )
+                      : const CustomEmptyWidget(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadMoreFooter() {
+    if (!homeController.paymentHistoryHasMore) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: homeController.paymentHistoryLoadingMore
+            ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
+            : InkWell(
+          onTap: _loadMore,
+          child: Text(
+            "Load More",
+            style: AppStyles.customTextStyle(
+              size: 14,
+              color: AppColors.primaryColor,
+              weight: FontWeight.w600,
+            ),
           ),
         ),
       ),
@@ -207,36 +224,35 @@ class _RecruiterPurchaseHistoryScreenState
         orElse: () => monthOptions.first)["label"] as String;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
-        color: AppColors.whiteColor.withOpacity(0.04),
+        color: AppColors.whiteColor.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.secondaryColor.withOpacity(0.3)),
+        border: Border.all(color: AppColors.syllabusContBorder),
       ),
       child: Row(
         children: [
           Container(
-            height: 56,
-            width: 56,
+            height: 80,
+            width: 80,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               image: DecorationImage(
-                image: AssetImage(AssetImages.transactionCreditIcon),
+                image: AssetImage(AssetImages.purchaseIcon),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          const SizedBox(width: 12),
           Expanded(
             child: Column(
+              spacing: 10,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Purchase Credits",
                   style: AppStyles.customTextStyle(
                     size: 14,
-                    color: AppColors.whiteColor.withOpacity(0.7),
+                    color: AppColors.whiteColor,
                     weight: FontWeight.w500,
                   ),
                 ),
@@ -265,7 +281,7 @@ class _RecruiterPurchaseHistoryScreenState
 
   Widget _buildMonthDropdown(String currentLabel) {
     return PopupMenuButton<dynamic>(
-      color: AppColors.blackColor,
+      color: AppColors.fieldBgColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onSelected: _onMonthSelected,
       itemBuilder: (context) => monthOptions
@@ -284,8 +300,8 @@ class _RecruiterPurchaseHistoryScreenState
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.whiteColor.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: AppColors.syllabusContBorder),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -295,12 +311,12 @@ class _RecruiterPurchaseHistoryScreenState
               style: AppStyles.customTextStyle(
                 size: 13,
                 color: AppColors.whiteColor,
-                weight: FontWeight.w600,
+                weight: FontWeight.w500,
               ),
             ),
             const SizedBox(width: 4),
             Icon(Icons.keyboard_arrow_down,
-                color: AppColors.whiteColor, size: 18),
+                color: AppColors.primaryColor, size: 18),
           ],
         ),
       ),
@@ -313,25 +329,28 @@ class _RecruiterPurchaseHistoryScreenState
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          height: 44,
-          width: 44,
+          height: 40,
+          width: 40,
           decoration: BoxDecoration(
-            color: _planColor(item.planName).withOpacity(0.2),
+            color: _planColor(item.planName).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(Icons.shopping_bag_rounded,
               color: _planColor(item.planName), size: 20),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
           flex: 3,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
             children: [
               Text(
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 item.planName ?? "Custom Plan",
                 style: AppStyles.customTextStyle(
-                  size: 14,
+                  size: 13,
                   color: AppColors.whiteColor,
                   weight: FontWeight.w700,
                 ),
@@ -339,8 +358,8 @@ class _RecruiterPurchaseHistoryScreenState
               Text(
                 "${item.creditsAdded ?? 0} Credits",
                 style: AppStyles.customTextStyle(
-                  size: 12,
-                  color: AppColors.whiteColor.withOpacity(0.6),
+                  size: 11,
+                  color: AppColors.whiteColor.withValues(alpha: 0.6),
                   weight: FontWeight.w400,
                 ),
               ),
@@ -363,38 +382,36 @@ class _RecruiterPurchaseHistoryScreenState
           child: Text(
             _formatDate(item.createdAt),
             style: AppStyles.customTextStyle(
-              size: 12,
-              color: AppColors.whiteColor.withOpacity(0.7),
+              size: 11,
+              color: AppColors.whiteColor.withValues(alpha: 0.7),
               weight: FontWeight.w400,
             ),
           ),
         ),
         Expanded(
-          flex: 2,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: statusInfo.color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(statusInfo.icon, color: statusInfo.color, size: 12),
-                  const SizedBox(width: 4),
-                  Text(
-                    statusInfo.label,
-                    style: AppStyles.customTextStyle(
-                      size: 11,
-                      color: statusInfo.color,
-                      weight: FontWeight.w600,
-                    ),
+          flex: 3,
+          child: Container(
+            padding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: statusInfo.color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(statusInfo.icon, color: statusInfo.color, size: 12),
+                const SizedBox(width: 4),
+                Text(
+                  statusInfo.label,
+                  style: AppStyles.customTextStyle(
+                    size: 10,
+                    color: statusInfo.color,
+                    weight: FontWeight.w600,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -406,7 +423,7 @@ class _RecruiterPurchaseHistoryScreenState
     if (isoDate == null) return "-";
     try {
       final date = DateTime.parse(isoDate).toLocal();
-      return "${DateFormat('dd MMM yyyy').format(date)}\n"
+      return "${DateFormat('dd MMM yyyy').format(date)}\n\n"
           "${DateFormat('hh:mm a').format(date)}";
     } catch (_) {
       return "-";
