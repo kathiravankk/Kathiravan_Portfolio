@@ -16,7 +16,7 @@ class SyllabusGenerationDialog extends StatefulWidget {
     required this.initialProjectDescription,
     required this.onGenerate,
     this.creditCost = 20,
-    this.levels = const ["Low", "Intermediate", "High"],
+    this.levels = const ["Intermediate", "High"],
     this.defaultLevel = "Intermediate",
   });
 
@@ -25,7 +25,7 @@ class SyllabusGenerationDialog extends StatefulWidget {
     required List<String> initialProjectDescription,
     required void Function(String projectDescription, String level) onGenerate,
     int creditCost = 20,
-    List<String> levels = const ["Low", "Intermediate", "High"],
+    List<String> levels = const ["Intermediate", "High"],
     String defaultLevel = "Intermediate",
   }) {
     return showDialog(
@@ -198,7 +198,7 @@ class _SyllabusGenerationDialogState extends State<SyllabusGenerationDialog> {
                       .map(
                         (level) => DropdownMenuItem(
                           value: level,
-                          child: Text(level.toUpperCase()),
+                          child: Text(level),
                         ),
                       )
                       .toList(),

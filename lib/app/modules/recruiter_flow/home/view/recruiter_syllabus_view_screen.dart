@@ -12,15 +12,6 @@ import 'package:internsharks/app/routes/app_pages.dart';
 import '../../../../data/models/recruiter_flow/syllabus_view_data_model.dart'
     show ScheduleGroup, SyllabusViewData;
 
-/// Recruiter-facing syllabus overview.
-///
-/// UI/flow deliberately mirrors [InternshipSyllabusScreen]:
-///  - same background image + Scaffold(transparent) shell
-///  - same AppBar with a total-count pill on the right
-///  - month sections -> expandable week tiles -> day cards
-///  - day cards carry a "View" action that pushes into a dedicated
-///    detail screen (RecruiterSyllabusDetailViewScreen) instead of
-///    expanding topics inline.
 class RecruiterSyllabusViewScreen extends StatefulWidget {
   const RecruiterSyllabusViewScreen({super.key});
 
@@ -32,7 +23,7 @@ class RecruiterSyllabusViewScreen extends StatefulWidget {
 class _RecruiterSyllabusViewScreenState
     extends State<RecruiterSyllabusViewScreen> {
   final RecruiterHomeController homeController =
-  Get.find<RecruiterHomeController>();
+      Get.find<RecruiterHomeController>();
 
   SyllabusViewData? _syllabus;
   bool _isMonthBased = false;
@@ -45,6 +36,7 @@ class _RecruiterSyllabusViewScreenState
 
   String studentId = "";
   String jobId = "";
+  String syllabusStatus = "";
 
   // ─────────────────────────────────────────
   // INIT
@@ -54,6 +46,7 @@ class _RecruiterSyllabusViewScreenState
   void initState() {
     studentId = Get.arguments?["studentId"] ?? "";
     jobId = Get.arguments?["jobId"] ?? "";
+    syllabusStatus = Get.arguments?["syllabusStatus"] ?? "";
     super.initState();
     getSyllabusData();
   }
@@ -102,28 +95,28 @@ class _RecruiterSyllabusViewScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => homeController.syllabusLoading
-          ? AppAlertUtils.customLoader()
-          : Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AssetImages.appBackgroundImg),
-            fit: BoxFit.cover,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
         ),
-        child: Scaffold(
-          backgroundColor: AppColors.transparentColor,
-          appBar: _buildAppBar(),
-          body: _syllabus == null || _groups.isEmpty
-              ? const CustomEmptyWidget()
-              : ListView(
-            padding: const EdgeInsets.all(20),
-            children: _isMonthBased
-                ? _buildMonthSections()
-                : _buildDaySections(),
-          ),
-        ),
+      ),
+      child: Obx(
+        () => homeController.syllabusLoading
+            ? AppAlertUtils.customLoader()
+            : Scaffold(
+                backgroundColor: AppColors.transparentColor,
+                appBar: _buildAppBar(),
+                body: _syllabus == null || _groups.isEmpty
+                    ? const CustomEmptyWidget()
+                    : ListView(
+                        padding: const EdgeInsets.all(20),
+                        children: _isMonthBased
+                            ? _buildMonthSections()
+                            : _buildDaySections(),
+                      ),
+              ),
       ),
     );
   }
@@ -133,6 +126,8 @@ class _RecruiterSyllabusViewScreenState
   // ─────────────────────────────────────────
 
   PreferredSizeWidget _buildAppBar() {
+    debugPrint(syllabusStatus);
+    debugPrint("__________________");
     final totalLabel = _isMonthBased
         ? "${_syllabus?.totalMonth ?? _groups.length} months Total"
         : "${_syllabus?.totalDays ?? _groups.length} days Total";
@@ -150,14 +145,16 @@ class _RecruiterSyllabusViewScreenState
       ),
       title: Text(
         _syllabus?.subject ?? "Syllabus",
+        maxLines: 2,
         style: AppStyles.customTextStyle(
           size: 18,
+          lineSpace: 1.5,
           color: AppColors.secondaryColor,
           weight: FontWeight.w600,
         ),
       ),
       actions: [
-        if (_syllabus != null && _syllabus!.status != "completed")
+        if (_syllabus != null && syllabusStatus != "Completed")
           GestureDetector(
             onTap: () {
               AppFunctions.navigateScreen(
@@ -172,8 +169,7 @@ class _RecruiterSyllabusViewScreenState
             },
             child: Container(
               margin: const EdgeInsets.only(right: 8),
-              padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
@@ -276,8 +272,7 @@ class _RecruiterSyllabusViewScreenState
                   : _expandedWeeks.add(path);
             }),
             child: Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               child: Row(
                 children: [
                   _circleIndicator(label: "$weekNumber"),
@@ -307,15 +302,13 @@ class _RecruiterSyllabusViewScreenState
 
           // ── Expanded day cards ────────────────
           if (isExpanded) ...[
-            Divider(
-                color: AppColors.contBorderColor2, height: 1, thickness: 1),
+            Divider(color: AppColors.contBorderColor2, height: 1, thickness: 1),
             Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child: Column(
                 children: List.generate(
                   days.length,
-                      (dIndex) => _dayCardInWeek(
+                  (dIndex) => _dayCardInWeek(
                     day: days[dIndex],
                     weekNumber: weekNumber,
                     dayNumber: dIndex + 1,

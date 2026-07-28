@@ -45,21 +45,37 @@ class StudentDetailCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Align(
-              alignment: .centerRight,
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                onPressed: shortlistFunc!,
-                icon: isLoading!
-                    ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
-                    : isShortList!
-                    ? Icon(Icons.bookmark, color: AppColors.secondaryColor)
-                    : Icon(
-                        Icons.bookmark_border_sharp,
-                        color: AppColors.secondaryColor,
-                      ),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: shortlistFunc!,
+                  child: isLoading!
+                      ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
+                      : isShortList!
+                      ? Icon(Icons.bookmark, color: AppColors.secondaryColor)
+                      : Icon(
+                    Icons.bookmark_border_sharp,
+                    color: AppColors.secondaryColor,
+                  ),
+                )
+              ],
             ),
+            // Align(
+            //   alignment: .centerRight,
+            //   child: IconButton(
+            //     padding: EdgeInsets.zero,
+            //     onPressed: shortlistFunc!,
+            //     icon: isLoading!
+            //         ? CupertinoActivityIndicator(color: AppColors.secondaryColor)
+            //         : isShortList!
+            //         ? Icon(Icons.bookmark, color: AppColors.secondaryColor)
+            //         : Icon(
+            //             Icons.bookmark_border_sharp,
+            //             color: AppColors.secondaryColor,
+            //           ),
+            //   ),
+            // ),
 
             Container(
               width: 75,
@@ -156,6 +172,8 @@ class StudentDetailCard extends StatelessWidget {
                 ),
               ],
             ),
+
+            //const SizedBox(height: 15,),
 
             const Spacer(),
 

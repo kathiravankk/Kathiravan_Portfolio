@@ -25,7 +25,7 @@ class _SelectInternshipDialogState extends State<SelectInternshipDialog> {
   final InternshipPostController postController =
       Get.find<InternshipPostController>();
 
-  final RxSet<String> selectedJobIds = <String>{}.obs;
+  final Set<String> selectedJobIds = <String>{};
 
   @override
   void initState() {
@@ -59,11 +59,13 @@ class _SelectInternshipDialogState extends State<SelectInternshipDialog> {
 
   void toggleSelection(String jobId) {
     if (jobId.isEmpty) return;
-    if (selectedJobIds.contains(jobId)) {
-      selectedJobIds.remove(jobId);
-    } else {
-      selectedJobIds.add(jobId);
-    }
+    setState(() {
+      if (selectedJobIds.contains(jobId)) {
+        selectedJobIds.remove(jobId);
+      } else {
+        selectedJobIds.add(jobId);
+      }
+    });
   }
 
   Future<void> sendRequest() async {
@@ -146,13 +148,20 @@ class _SelectInternshipDialogState extends State<SelectInternshipDialog> {
                     padding: EdgeInsets.zero,
                     itemCount: jobs.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    // itemBuilder: (context, index) {
+                    //   final job = jobs[index];
+                    //   return Obx(
+                    //     () => internshipTile(
+                    //       job: job,
+                    //       isSelected: selectedJobIds.contains(job.id),
+                    //     ),
+                    //   );
+                    // },
                     itemBuilder: (context, index) {
                       final job = jobs[index];
-                      return Obx(
-                        () => internshipTile(
-                          job: job,
-                          isSelected: selectedJobIds.contains(job.id),
-                        ),
+                      return internshipTile(
+                        job: job,
+                        isSelected: selectedJobIds.contains(job.id),
                       );
                     },
                   ),

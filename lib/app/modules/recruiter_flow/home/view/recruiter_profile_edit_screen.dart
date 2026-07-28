@@ -468,7 +468,7 @@ class _RecruiterProfileEditScreenState
       backgroundColor: AppColors.transparentColor,
       leading: InkWell(
         onTap: () => Get.back(),
-        child: const Icon(CupertinoIcons.back, color: AppColors.whiteColor),
+        child: const Icon(Icons.arrow_back, color: AppColors.whiteColor),
       ),
       title: Text(
         "Edit Profile",

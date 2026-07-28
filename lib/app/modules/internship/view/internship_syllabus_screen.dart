@@ -77,7 +77,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       // Project link
       final links = statusData?.internProjectLink ?? [];
       isProjectSubmitted = links.isNotEmpty;
-      projectController.text = links.isNotEmpty ? (links.first) : "";
+      projectController.text = links.isNotEmpty ? (links.last) : "";
 
       // Build dayProgressMap from dailyProgress list
       dayProgressMap.clear();
@@ -782,8 +782,8 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                   context: context,
                   title: "Mock Test Instructions",
                   content:
-                      "This mock test contains 15 questions.\n\n"
-                      "Total test duration is 7 minutes 30 seconds.\n\n"
+                      "This mock test contains 30 questions.\n\n"
+                      "Total test duration is 15 minutes.\n\n"
                       "Please feel free to attend the test.\n"
                       "Once the time is up, your answers will be automatically submitted.",
                   cancelText: "Do it later",
@@ -811,6 +811,13 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
     return StatefulBuilder(
       builder: (context, setLocalState) {
+        final trimmed = projectController.text.trim();
+        final parsedUri = Uri.tryParse(trimmed);
+        final isValidUrl = trimmed.isNotEmpty &&
+            parsedUri != null &&
+            (parsedUri.isScheme("http") || parsedUri.isScheme("https")) &&
+            parsedUri.host.isNotEmpty;
+
         return Container(
           padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
@@ -970,8 +977,20 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
               const SizedBox(height: 8),
 
               /// URL VALIDATION MESSAGE
-              if (projectController.text.trim().isNotEmpty &&
-                  !Uri.tryParse(projectController.text.trim())!.hasAbsolutePath)
+              // if (projectController.text.trim().isNotEmpty &&
+              //     !Uri.tryParse(projectController.text.trim())!.hasAbsolutePath)
+              //   Padding(
+              //     padding: const EdgeInsets.only(left: 5),
+              //     child: Text(
+              //       "Please enter a valid project URL",
+              //       style: AppStyles.customTextStyle(
+              //         size: 11,
+              //         color: AppColors.failTextColor,
+              //         weight: FontWeight.w400,
+              //       ),
+              //     ),
+              //   ),
+              if (trimmed.isNotEmpty && !isValidUrl)
                 Padding(
                   padding: const EdgeInsets.only(left: 5),
                   child: Text(
@@ -1016,6 +1035,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                   }
 
                   await _submitProject();
+                  if (!mounted) return;
 
                   /// AFTER SUCCESS
                   if (internController.getResponseCode() == 200 ||
@@ -1035,7 +1055,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
                 disable:
                     !canSubmitProject ||
-                    (isProjectSubmitted && !isEditingProject),
+                    (isProjectSubmitted && !isEditingProject) || (trimmed.isNotEmpty && !isValidUrl),
               ),
             ],
           ),

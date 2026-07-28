@@ -29,7 +29,8 @@ class _McqTestScreenState extends State<McqTestScreen> {
   String selectedOption = "";
 
   Timer? timer;
-  int totalSeconds = 450;
+  //int totalSeconds = 450;
+  int totalSeconds = 0;
 
   List<String> answers = [];
 
@@ -43,6 +44,10 @@ class _McqTestScreenState extends State<McqTestScreen> {
     McqQuestionModel model = Get.arguments["mockTestModel"];
     jobId = Get.arguments["jobId"] ?? "";
     studentId = Get.arguments["studentId"];
+
+    // API returns minutes (e.g. 15) → convert to seconds for the countdown
+    final minutes = model.timeDuration ?? 0;
+    totalSeconds = minutes * 60;
 
     prepareQuestions(model);
     startTimer();
@@ -59,9 +64,9 @@ class _McqTestScreenState extends State<McqTestScreen> {
   }
 
   void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (totalSeconds == 0) {
-        timer.cancel();
+    timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (totalSeconds <= 0) {
+        t.cancel();
         submitTest();
       } else {
         setState(() {
@@ -72,9 +77,8 @@ class _McqTestScreenState extends State<McqTestScreen> {
   }
 
   String get formattedTime {
-    int minutes = totalSeconds ~/ 60;
-    int seconds = totalSeconds % 60;
-
+    final minutes = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
     return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 
@@ -97,10 +101,12 @@ class _McqTestScreenState extends State<McqTestScreen> {
       submitTest();
     }
   }
+  bool _isSubmitting = false;
 
   Future<void> submitTest() async {
+    if (_isSubmitting) return;
+    _isSubmitting = true;
     stopTimer();
-
     bool isLoaderVisible = false;
 
     try {
@@ -160,12 +166,15 @@ class _McqTestScreenState extends State<McqTestScreen> {
 
   Future<void> saveTestResult({required Map<String, dynamic> testData}) async {
     await internController.saveTestResult(testData: testData);
-    if (internController.getResponseCode() == 200 ||
-        internController.getResponseCode() == 201) {
+
+    if (!mounted) return; // bail if screen already gone
+
+    final code = internController.getResponseCode();
+    debugPrint("saveTestResult response code: $code, success: ${internController.saveTestModel.success}");
+
+    if (internController.saveTestModel.success == true) {
       AppAlertUtils.showToast(
-        message:
-            internController.saveTestModel.message ??
-            "Test Submitted Successfully!",
+        message: internController.saveTestModel.message ?? "Test Submitted Successfully!",
       );
       AppFunctions.navigateScreen(
         context,
@@ -178,9 +187,8 @@ class _McqTestScreenState extends State<McqTestScreen> {
       );
     } else {
       AppFunctions.apiErrorHandling(
-        internController.getResponseCode(),
-        internController.saveTestModel.message ??
-            "Something went wrong, Try again later!",
+        code,
+        internController.saveTestModel.message ?? "Something went wrong, Try again later!",
       );
     }
   }
@@ -220,6 +228,7 @@ class _McqTestScreenState extends State<McqTestScreen> {
                value ?? "",
                 style: AppStyles.customTextStyle(
                   size: 12,
+                  lineSpace: 1.3,
                   color: AppColors.whiteColor,
                   weight: FontWeight.w500,
                 ),

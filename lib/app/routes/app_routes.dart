@@ -79,5 +79,8 @@ class AppRoutes {
   static const recruiterCertificateScreen = "/recruiterCertificateScreen";
   static const internProfileViewScreen = "/internProfileViewScreen";
   static const recruiterSyllabusDetailScreen = "/recruiterSyllabusDetailScreen";
+  static const recruiterPaymentHistoryScreen = "/recruiterPaymentHistoryScreen";
+  static const recruiterCreditHistoryScreen = "/recruiterCreditHistoryScreen";
+  static const creditConsumptionScreen = "/creditConsumptionScreen";
 
 }

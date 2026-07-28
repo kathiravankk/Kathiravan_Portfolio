@@ -25,6 +25,19 @@ class RecruiterDashboardScreen extends StatefulWidget {
 
 class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final homeKey = GlobalKey<RecruiterHomeScreenState>();
+  final postKey = GlobalKey<PostedInternshipScreenState>();
+  final internKey = GlobalKey<RecruiterInternsScreenState>();
+  final referralKey = GlobalKey<RecruiterReferralScreenState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshTab(0);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +66,11 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: GestureDetector(
-              onTap: (){
-                AppFunctions.navigateScreen(context, AppRoutes.postNewInternshipScreen);
+              onTap: () {
+                AppFunctions.navigateScreen(
+                  context,
+                  AppRoutes.postNewInternshipScreen,
+                );
               },
               child: Container(
                 width: 58,
@@ -62,10 +78,7 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.blackColor,
-                  border: Border.all(
-                    color: AppColors.secondaryColor,
-                    width: 2,
-                  ),
+                  border: Border.all(color: AppColors.secondaryColor, width: 2),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.secondaryColor.withValues(alpha: 0.45),
@@ -78,25 +91,48 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
               ),
             ),
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           backgroundColor: AppColors.transparentColor,
           drawer: const RecruiterDrawerScreen(),
           bottomNavigationBar: null,
           body: CustomNavBar(
             isStudentFlow: false,
+            onTabChanged: _refreshTab,
             screens: [
               RecruiterHomeScreen(
                 onProfileTap: () {
                   _scaffoldKey.currentState?.openDrawer();
                 },
+                key: homeKey,
               ),
-              PostedInternshipScreen(),
-              RecruiterInternsScreen(),
-              RecruiterReferralScreen(),
+              PostedInternshipScreen(key: postKey),
+              RecruiterInternsScreen(key: internKey),
+              RecruiterReferralScreen(key: referralKey),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _refreshTab(int index) {
+    switch (index) {
+      case 0:
+        homeKey.currentState?.refreshData();
+        break;
+
+      case 1:
+        postKey.currentState?.refreshData();
+        break;
+
+      case 2:
+        internKey.currentState?.refreshData();
+        break;
+
+      case 3:
+        referralKey.currentState?.refreshData();
+        break;
+    }
   }
 }

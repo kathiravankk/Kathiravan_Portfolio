@@ -5,7 +5,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_nav_bar.dart';
-import 'package:internsharks/app/core/widgets/home_drawer.dart';
+import 'package:internsharks/app/core/widgets/intern_home_drawer.dart';
 import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/internship/view/my_internship_screen.dart';
@@ -46,7 +46,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         ),
         child: Scaffold(
           key: _scaffoldKey,           // drawer lives HERE
-          drawer: HomeDrawer(),
+          drawer: InternHomeDrawer(),
           backgroundColor: AppColors.transparentColor,
           bottomNavigationBar: null,
           body: CustomNavBar(

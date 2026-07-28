@@ -14,10 +14,10 @@ class CreateStipendOrderModel {
   factory CreateStipendOrderModel.fromJson(
       Map<String, dynamic> json) {
     return CreateStipendOrderModel(
-      success: json["success"],
-      message: json["message"],
-      paymentSessionId: json["paymentSessionId"],
-      orderId: json["orderId"],
+      success: json["success"]??false,
+      message: json["message"]??"",
+      paymentSessionId: json["paymentSessionId"]??"",
+      orderId: json["orderId"]??"",
     );
   }
 

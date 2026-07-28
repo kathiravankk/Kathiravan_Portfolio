@@ -4,6 +4,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/widgets/card_widgets.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
@@ -58,7 +59,7 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
           topRight: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
-        color: AppColors.drawerColor,
+        color: AppColors.fieldBgColor,
       ),
       padding: const EdgeInsets.all(15),
       child: Obx(
@@ -71,11 +72,20 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     Row(
                       spacing: 15,
                       children: [
-                        CircleAvatar(
-                          radius: 28,
-                          backgroundColor: AppColors.contColor2,
-                          backgroundImage: NetworkImage(
-                            homeController.profileModel.recCompanyLogo ?? "",
+                        GestureDetector(
+                          onTap: () {
+                            CommonUtils.showProfileImageViewer(
+                              context,
+                              homeController.profileModel.recCompanyLogo ?? "",
+                              homeController.profileModel.recCompanyName ?? "",
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 28,
+                            backgroundColor: AppColors.contColor2,
+                            backgroundImage: NetworkImage(
+                              homeController.profileModel.recCompanyLogo ?? "",
+                            ),
                           ),
                         ),
                         Expanded(
@@ -168,11 +178,23 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                     ),
                     CardWidgets.settingsTile(
                       icon: Icons.history,
-                      title: "Transaction History",
+                      title: "My Transaction",
                       onTap: () {
                         AppFunctions.navigateScreen(
                           context,
-                          AppRoutes.recruiterTransactionHistoryScreen,
+                          AppRoutes.recruiterCreditHistoryScreen,
+                          arguments: {
+                            "creditBalance": ((homeController
+                                .profileModel
+                                .recruiterCreditId!
+                                .freeCredits ??
+                                0) +
+                                (homeController
+                                    .profileModel
+                                    .recruiterCreditId!
+                                    .balance ??
+                                    0))
+                          }
                         );
                       },
                     ),

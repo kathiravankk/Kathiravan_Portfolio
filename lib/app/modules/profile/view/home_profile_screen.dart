@@ -104,6 +104,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
             updateData: {
               "student_banner":
                   profileController.resDpModel.status!.imageUrl ?? "",
+              "isWaterMarkRemoved": false,
             },
           );
 
@@ -352,8 +353,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           actions: [
             ProfileWidgets.creditContainer(
               creditCount:
-                  profileController.profileDataModel.studentCreditId!.balance ??
-                  0,
+              ((registerController.creditDataModel.creditData?.balance ?? 0)+ (registerController.creditDataModel.creditData?.freeCredits ?? 0)),
               viewFunc: () {
                 AppFunctions.navigateScreen(
                   context,

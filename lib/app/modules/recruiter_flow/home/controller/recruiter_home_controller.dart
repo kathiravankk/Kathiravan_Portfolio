@@ -8,6 +8,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate
 import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
@@ -80,23 +81,29 @@ class RecruiterHomeController extends GetxController {
     allStudents.assignAll(rawList);
 
     // Extract unique values dynamically for filters
-    degreesList.assignAll(rawList
-        .map((s) => s.studentdegree?.trim() ?? "")
-        .where((val) => val.isNotEmpty)
-        .toSet()
-        .toList());
+    degreesList.assignAll(
+      rawList
+          .map((s) => s.studentdegree?.trim() ?? "")
+          .where((val) => val.isNotEmpty)
+          .toSet()
+          .toList(),
+    );
 
-    collegesList.assignAll(rawList
-        .map((s) => s.studentcollegename?.trim() ?? "")
-        .where((val) => val.isNotEmpty)
-        .toSet()
-        .toList());
+    collegesList.assignAll(
+      rawList
+          .map((s) => s.studentcollegename?.trim() ?? "")
+          .where((val) => val.isNotEmpty)
+          .toSet()
+          .toList(),
+    );
 
-    departmentsList.assignAll(rawList
-        .map((s) => s.studentfieldofstudy?.trim() ?? "")
-        .where((val) => val.isNotEmpty)
-        .toSet()
-        .toList());
+    departmentsList.assignAll(
+      rawList
+          .map((s) => s.studentfieldofstudy?.trim() ?? "")
+          .where((val) => val.isNotEmpty)
+          .toSet()
+          .toList(),
+    );
 
     // Apply combined local filter
     applySearchAndFilters();
@@ -108,13 +115,19 @@ class RecruiterHomeController extends GetxController {
 
     // 1. Apply Filters First
     if (selectedDegree.value != null) {
-      temp = temp.where((s) => s.studentdegree == selectedDegree.value).toList();
+      temp = temp
+          .where((s) => s.studentdegree == selectedDegree.value)
+          .toList();
     }
     if (selectedCollege.value != null) {
-      temp = temp.where((s) => s.studentcollegename == selectedCollege.value).toList();
+      temp = temp
+          .where((s) => s.studentcollegename == selectedCollege.value)
+          .toList();
     }
     if (selectedDepartment.value != null) {
-      temp = temp.where((s) => s.studentfieldofstudy == selectedDepartment.value).toList();
+      temp = temp
+          .where((s) => s.studentfieldofstudy == selectedDepartment.value)
+          .toList();
     }
 
     // 2. Combine with Search Query (Name search only)
@@ -142,7 +155,6 @@ class RecruiterHomeController extends GetxController {
     selectedDepartment.value = null;
     applySearchAndFilters(); // Re-evaluate with search text preserved
   }
-
 
   final _studentListLoading = false.obs;
 
@@ -312,15 +324,16 @@ class RecruiterHomeController extends GetxController {
 
   bool get updateProfileLoading => _updateProfileLoading.value;
 
-  set updateProfileLoading(bool value) =>
-      _updateProfileLoading.value = value;
+  set updateProfileLoading(bool value) => _updateProfileLoading.value = value;
 
-
-  Future<void> updateRecruiterProfile({required Map<String, dynamic>updateData}) async {
+  Future<void> updateRecruiterProfile({
+    required Map<String, dynamic> updateData,
+  }) async {
     try {
       updateProfileLoading = true;
-      commonPostModel = await recruiterHomeProvider!
-          .updateRecruiterProfile(updateData: updateData);
+      commonPostModel = await recruiterHomeProvider!.updateRecruiterProfile(
+        updateData: updateData,
+      );
     } catch (err) {
       rethrow;
     } finally {
@@ -341,16 +354,20 @@ class RecruiterHomeController extends GetxController {
 
   final _syllabusGenerateModel = SyllabusGenerateModel().obs;
 
-  SyllabusGenerateModel get syllabusGenerateModel => _syllabusGenerateModel.value;
+  SyllabusGenerateModel get syllabusGenerateModel =>
+      _syllabusGenerateModel.value;
 
   set syllabusGenerateModel(SyllabusGenerateModel value) =>
       _syllabusGenerateModel.value = value;
 
-  Future<void> generateSyllabus({required Map<String, dynamic> requireData}) async {
+  Future<void> generateSyllabus({
+    required Map<String, dynamic> requireData,
+  }) async {
     try {
       syllabusGenerateLoading = true;
-      syllabusGenerateModel = await recruiterHomeProvider!
-          .generateSyllabus(requireData: requireData);
+      syllabusGenerateModel = await recruiterHomeProvider!.generateSyllabus(
+        requireData: requireData,
+      );
     } catch (err) {
       rethrow;
     } finally {
@@ -364,8 +381,7 @@ class RecruiterHomeController extends GetxController {
 
   bool get syllabusSaveLoading => _syllabusSaveLoading.value;
 
-  set syllabusSaveLoading(bool value) =>
-      _syllabusSaveLoading.value = value;
+  set syllabusSaveLoading(bool value) => _syllabusSaveLoading.value = value;
 
   // Model
 
@@ -376,11 +392,14 @@ class RecruiterHomeController extends GetxController {
   set syllabusSaveModel(SyllabusSaveModel value) =>
       _syllabusSaveModel.value = value;
 
-  Future<void> saveSyllabus({required SyllabusGenerateModel syllabusData}) async {
+  Future<void> saveSyllabus({
+    required SyllabusGenerateModel syllabusData,
+  }) async {
     try {
       syllabusSaveLoading = true;
-      syllabusSaveModel = await recruiterHomeProvider!
-          .saveSyllabus(syllabusData: syllabusData);
+      syllabusSaveModel = await recruiterHomeProvider!.saveSyllabus(
+        syllabusData: syllabusData,
+      );
     } catch (err) {
       rethrow;
     } finally {
@@ -394,8 +413,7 @@ class RecruiterHomeController extends GetxController {
 
   bool get syllabusLoading => _syllabusLoading.value;
 
-  set syllabusLoading(bool value) =>
-      _syllabusLoading.value = value;
+  set syllabusLoading(bool value) => _syllabusLoading.value = value;
 
   // Model
 
@@ -406,11 +424,16 @@ class RecruiterHomeController extends GetxController {
   set syllabusModel(SyllabusViewDataModel value) =>
       _syllabusModel.value = value;
 
-  Future<void> getSyllabus({required String studentId, required String jobId}) async {
+  Future<void> getSyllabus({
+    required String studentId,
+    required String jobId,
+  }) async {
     try {
       syllabusLoading = true;
-      syllabusModel = await recruiterHomeProvider!
-          .fetchSyllabus(studentId: studentId, jobId: jobId);
+      syllabusModel = await recruiterHomeProvider!.fetchSyllabus(
+        studentId: studentId,
+        jobId: jobId,
+      );
     } catch (err) {
       rethrow;
     } finally {
@@ -424,8 +447,7 @@ class RecruiterHomeController extends GetxController {
 
   bool get studentResultLoading => _studentResultLoading.value;
 
-  set studentResultLoading(bool value) =>
-      _studentResultLoading.value = value;
+  set studentResultLoading(bool value) => _studentResultLoading.value = value;
 
   // Model
 
@@ -436,11 +458,16 @@ class RecruiterHomeController extends GetxController {
   set testResultModel(InternTestResultModel value) =>
       _testResultModel.value = value;
 
-  Future<void> getStudentResult({required String studentId, required String jobId}) async {
+  Future<void> getStudentResult({
+    required String studentId,
+    required String jobId,
+  }) async {
     try {
       studentResultLoading = true;
-      testResultModel = await recruiterHomeProvider!
-          .fetchStudentResult(studentId: studentId, jobId: jobId);
+      testResultModel = await recruiterHomeProvider!.fetchStudentResult(
+        studentId: studentId,
+        jobId: jobId,
+      );
     } catch (err) {
       rethrow;
     } finally {
@@ -535,14 +562,11 @@ class RecruiterHomeController extends GetxController {
   set verifyCreditOrderModel(CreditOrderVerifyModel value) =>
       _verifyCreditOrderModel.value = value;
 
-  Future<void> verifyCreditPlanOrder({
-    required String orderId,
-  }) async {
+  Future<void> verifyCreditPlanOrder({required String orderId}) async {
     try {
       verifyCreditLoading = true;
-      verifyCreditOrderModel = await recruiterHomeProvider!.verifyCreditPlanOrder(
-        orderId: orderId,
-      );
+      verifyCreditOrderModel = await recruiterHomeProvider!
+          .verifyCreditPlanOrder(orderId: orderId);
       verifyCreditLoading = false;
     } catch (err) {
       verifyCreditLoading = false;
@@ -558,7 +582,8 @@ class RecruiterHomeController extends GetxController {
 
   bool get generateCertificateLoading => _generateCertificateLoading.value;
 
-  set generateCertificateLoading(bool value) => _generateCertificateLoading.value = value;
+  set generateCertificateLoading(bool value) =>
+      _generateCertificateLoading.value = value;
 
   // Model
 
@@ -575,9 +600,8 @@ class RecruiterHomeController extends GetxController {
   }) async {
     try {
       generateCertificateLoading = true;
-      certificateGenerateModel = await recruiterHomeProvider!.generateAiCertificate(
-        requireData: requireData,
-      );
+      certificateGenerateModel = await recruiterHomeProvider!
+          .generateAiCertificate(requireData: requireData);
       generateCertificateLoading = false;
     } catch (err) {
       generateCertificateLoading = false;
@@ -585,36 +609,107 @@ class RecruiterHomeController extends GetxController {
     }
   }
 
-
-  //  GET TRANSACTION HISTORY
+  // //  GET TRANSACTION HISTORY
+  //
+  // final _transactionHistoryLoading = false.obs;
+  //
+  // bool get transactionHistoryLoading => _transactionHistoryLoading.value;
+  //
+  // set transactionHistoryLoading(bool value) =>
+  //     _transactionHistoryLoading.value = value;
+  //
+  // // Model
+  //
+  // final _historyModel = RecruiterTransactionHistoryModel().obs;
+  //
+  // RecruiterTransactionHistoryModel get historyModel => _historyModel.value;
+  //
+  // set historyModel(RecruiterTransactionHistoryModel value) =>
+  //     _historyModel.value = value;
+  //
+  // Future<void> getTransactionHistory({required String recruiterId, required int page}) async {
+  //   try {
+  //     transactionHistoryLoading = true;
+  //     historyModel = await recruiterHomeProvider!.fetchTransactionHistory(
+  //       recruiterId: recruiterId,
+  //       page: page
+  //     );
+  //   } catch (err) {
+  //     rethrow;
+  //   } finally {
+  //     transactionHistoryLoading = false;
+  //   }
+  // }
+  // GET TRANSACTION HISTORY
 
   final _transactionHistoryLoading = false.obs;
-
   bool get transactionHistoryLoading => _transactionHistoryLoading.value;
+  set transactionHistoryLoading(bool value) =>
+      _transactionHistoryLoading.value = value;
 
-  set transactionHistoryLoading(bool value) => _transactionHistoryLoading.value = value;
-
-  // Model
+  final _transactionHistoryLoadingMore = false.obs;
+  bool get transactionHistoryLoadingMore =>
+      _transactionHistoryLoadingMore.value;
+  set transactionHistoryLoadingMore(bool value) =>
+      _transactionHistoryLoadingMore.value = value;
 
   final _historyModel = RecruiterTransactionHistoryModel().obs;
-
-  RecruiterTransactionHistoryModel get historyModel => _historyModel.value;
-
+  RecruiterTransactionHistoryModel get historyModel =>
+      _historyModel.value;
   set historyModel(RecruiterTransactionHistoryModel value) =>
       _historyModel.value = value;
 
+  /// UI List
+  final _transactionHistoryList = <RecruiterTransactionData>[].obs;
+  RxList<RecruiterTransactionData> get transactionHistoryList =>
+      _transactionHistoryList;
+
+  /// Has More
+  final _transactionHistoryHasMore = true.obs;
+  bool get transactionHistoryHasMore =>
+      _transactionHistoryHasMore.value;
+
   Future<void> getTransactionHistory({
     required String recruiterId,
+    required int page,
+    bool isLoadMore = false,
   }) async {
     try {
-      transactionHistoryLoading = true;
+      if (isLoadMore) {
+        transactionHistoryLoadingMore = true;
+      } else {
+        transactionHistoryLoading = true;
+      }
+
       historyModel = await recruiterHomeProvider!.fetchTransactionHistory(
         recruiterId: recruiterId,
+        page: page,
       );
+
+      final newData = historyModel.transactionData;
+
+      if (isLoadMore) {
+        _transactionHistoryList.addAll(newData);
+      } else {
+        _transactionHistoryList.assignAll(newData);
+      }
+
+      final pagination = historyModel.pagination;
+
+      if (pagination != null) {
+        _transactionHistoryHasMore.value =
+            (pagination.current ?? 1) < (pagination.total ?? 1);
+      } else {
+        _transactionHistoryHasMore.value = false;
+      }
     } catch (err) {
       rethrow;
     } finally {
-      transactionHistoryLoading = false;
+      if (isLoadMore) {
+        transactionHistoryLoadingMore = false;
+      } else {
+        transactionHistoryLoading = false;
+      }
     }
   }
 
@@ -635,9 +730,7 @@ class RecruiterHomeController extends GetxController {
   set internProfileModel(InternStudentProfileModel value) =>
       _internProfileModel.value = value;
 
-  Future<void> getInternProfileData({
-    required String studentId,
-  }) async {
+  Future<void> getInternProfileData({required String studentId}) async {
     try {
       internProfileLoading = true;
       internProfileModel = await recruiterHomeProvider!.fetchInternProfileData(
@@ -648,5 +741,184 @@ class RecruiterHomeController extends GetxController {
     } finally {
       internProfileLoading = false;
     }
+  }
+
+  // //  GET PAYMENT HISTORY
+  //
+  // final _paymentHistoryLoading = false.obs;
+  //
+  // bool get paymentHistoryLoading => _paymentHistoryLoading.value;
+  //
+  // set paymentHistoryLoading(bool value) => _paymentHistoryLoading.value = value;
+  //
+  // // Model
+  //
+  // final _paymentHistoryModel = RecruiterPaymentHistoryModel().obs;
+  //
+  // RecruiterPaymentHistoryModel get paymentHistoryModel => _paymentHistoryModel.value;
+  //
+  // set paymentHistoryModel(RecruiterPaymentHistoryModel value) =>
+  //     _paymentHistoryModel.value = value;
+  //
+  // final _paymentHistoryLoadingMore = false.obs;
+  //
+  // bool get paymentHistoryLoadingMore => _paymentHistoryLoadingMore.value;
+  //
+  // set paymentHistoryLoadingMore(bool value) =>
+  //     _paymentHistoryLoadingMore.value = value;
+  //
+  // final _paymentHistoryList = <PaymentHisData>[].obs;
+  //
+  // RxList<PaymentHisData> get paymentHistoryList => _paymentHistoryList;
+  //
+  //
+  // Future<void> getPaymentHistoryData({
+  //   required int page,
+  //   required int limit,
+  //   int? month, // null => "All Time"
+  //   bool isLoadMore = false,
+  // }) async {
+  //   try {
+  //     if (isLoadMore) {
+  //       paymentHistoryLoadingMore = true;
+  //     } else {
+  //       paymentHistoryLoading = true;
+  //     }
+  //
+  //     paymentHistoryModel = await recruiterHomeProvider!.fetchPaymentHistoryData(
+  //       page: page,
+  //       limit: limit,
+  //     );
+  //   } catch (err) {
+  //     rethrow;
+  //   } finally {
+  //     if (isLoadMore) {
+  //       paymentHistoryLoadingMore = false;
+  //     } else {
+  //       paymentHistoryLoading = false;
+  //     }
+  //   }
+  // }
+
+  // Future<void> getPaymentHistoryData({required int page, required int limit}) async {
+  //   try {
+  //     paymentHistoryLoading = true;
+  //     paymentHistoryModel = await recruiterHomeProvider!.fetchPaymentHistoryData(
+  //       page: page, limit: limit
+  //     );
+  //   } catch (err) {
+  //     rethrow;
+  //   } finally {
+  //     paymentHistoryLoading = false;
+  //   }
+  // }
+
+  // GET PAYMENT HISTORY
+
+  final _paymentHistoryLoading = false.obs;
+
+  bool get paymentHistoryLoading => _paymentHistoryLoading.value;
+
+  set paymentHistoryLoading(bool value) => _paymentHistoryLoading.value = value;
+
+  // Raw API response (used for totalPages / meta info).
+  final _paymentHistoryModel = RecruiterPaymentHistoryModel().obs;
+
+  RecruiterPaymentHistoryModel get paymentHistoryModel =>
+      _paymentHistoryModel.value;
+
+  set paymentHistoryModel(RecruiterPaymentHistoryModel value) =>
+      _paymentHistoryModel.value = value;
+
+  final _paymentHistoryLoadingMore = false.obs;
+
+  bool get paymentHistoryLoadingMore => _paymentHistoryLoadingMore.value;
+
+  set paymentHistoryLoadingMore(bool value) =>
+      _paymentHistoryLoadingMore.value = value;
+
+  // Every record fetched from the API so far (unfiltered), across every
+  // "Load More" page requested in this session.
+  final _paymentHistoryFullList = <PaymentHisData>[].obs;
+
+  // What the UI actually renders — full list after the local month
+  // filter (if any) is applied.
+  final _paymentHistoryList = <PaymentHisData>[].obs;
+
+  RxList<PaymentHisData> get paymentHistoryList => _paymentHistoryList;
+
+  // Whether the backend has more pages left.
+  final _paymentHistoryHasMore = true.obs;
+
+  bool get paymentHistoryHasMore => _paymentHistoryHasMore.value;
+
+  // Currently applied local month filter (null = "All Time").
+  int? _paymentHistorySelectedMonth;
+
+  Future<void> getPaymentHistoryData({
+    required int page,
+    required int limit,
+    int? month, // NOT sent to the API — applied locally only
+    bool isLoadMore = false,
+  }) async {
+    try {
+      _paymentHistorySelectedMonth = month;
+
+      if (isLoadMore) {
+        paymentHistoryLoadingMore = true;
+      } else {
+        paymentHistoryLoading = true;
+      }
+
+      paymentHistoryModel = await recruiterHomeProvider!
+          .fetchPaymentHistoryData(page: page, limit: limit);
+
+      final newRecords = paymentHistoryModel.payment ?? [];
+
+      if (isLoadMore) {
+        _paymentHistoryFullList.addAll(newRecords);
+      } else {
+        _paymentHistoryFullList.assignAll(newRecords);
+      }
+
+      final totalPages = paymentHistoryModel.totalPages ?? 1;
+      _paymentHistoryHasMore.value = page < totalPages;
+
+      _applyPaymentHistoryMonthFilter();
+    } catch (err) {
+      rethrow;
+    } finally {
+      if (isLoadMore) {
+        paymentHistoryLoadingMore = false;
+      } else {
+        paymentHistoryLoading = false;
+      }
+    }
+  }
+
+  // Re-applies the local month filter without another API call — call
+  // this directly from the month dropdown's onSelected.
+  void filterPaymentHistoryByMonth(int? month) {
+    _paymentHistorySelectedMonth = month;
+    _applyPaymentHistoryMonthFilter();
+  }
+
+  void _applyPaymentHistoryMonthFilter() {
+    if (_paymentHistorySelectedMonth == null) {
+      _paymentHistoryList.assignAll(_paymentHistoryFullList);
+      return;
+    }
+    _paymentHistoryList.assignAll(
+      _paymentHistoryFullList.where((e) {
+        final createdAt = e.createdAt;
+        if (createdAt == null) return false;
+        try {
+          return DateTime.parse(createdAt).toLocal().month ==
+              _paymentHistorySelectedMonth;
+        } catch (_) {
+          return false;
+        }
+      }),
+    );
   }
 }

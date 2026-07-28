@@ -156,9 +156,7 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
                     FeedbackWidget(
                       isLoading: internController.feedBackLoading,
                       onSubmit: (rating, feedback) async {
-                        debugPrint(rating.toString());
-                        debugPrint(feedback);
-                        await addFeedbackReview(
+                        return await addFeedbackReview(
                           rating: rating,
                           review: feedback,
                         );
@@ -185,7 +183,7 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
     );
   }
 
-  Future<void> addFeedbackReview({
+  Future<bool> addFeedbackReview({
     required int rating,
     required String review,
   }) async {
@@ -194,20 +192,25 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
       "studentId": studentId,
       "review": review,
       "rating": rating,
+      "feedbacktype": "Other",
     };
+
     await internController.giveFeedBackReview(feedBackData: feedBackData);
-    if (internController.getResponseCode() == 200 ||
-        internController.getResponseCode() == 201) {
+
+    final code = internController.getResponseCode();
+
+    if (code == 200 || code == 201) {
       AppAlertUtils.showToast(
-        message:
-            internController.reviewModel.message ??
-            "Feeback Submitted Successfully!",
+        message: internController.reviewModel.message ??
+            "Feedback Submitted Successfully!",
       );
+      return true;
     } else {
       AppFunctions.apiErrorHandling(
-        internController.getResponseCode(),
+        code,
         internController.reviewModel.message ?? "Please try again later!",
       );
+      return false;
     }
   }
 
@@ -520,13 +523,13 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
   }
 
   String getResultLabel(int score) {
-    if (score <= 5) {
+    if (score <= 10) {
       return "Fail";
-    } else if (score <= 8) {
+    } else if (score <= 16) {
       return "Pass";
-    } else if (score <= 11) {
+    } else if (score <= 22) {
       return "Good";
-    } else if (score <= 13) {
+    } else if (score <= 26) {
       return "Very Good";
     } else {
       return "Excellent";

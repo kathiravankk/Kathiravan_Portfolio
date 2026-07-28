@@ -9,12 +9,14 @@ class CustomNavBar extends StatefulWidget {
   final bool isStudentFlow;
   final List<Widget>? screens;
   final GlobalKey<ScaffoldState>? scaffoldKey;
+  final ValueChanged<int>? onTabChanged;
 
   const CustomNavBar({
     super.key,
     this.screens,
     this.scaffoldKey,
     this.isStudentFlow = true,
+    this.onTabChanged
   });
 
   @override
@@ -308,6 +310,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     return InkWell(
       onTap: () {
         currentIndex.value = index;
+        widget.onTabChanged?.call(index);
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

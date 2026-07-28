@@ -2,6 +2,8 @@ class McqQuestionModel {
   List<QuestionDataModel>? page1;
   List<QuestionDataModel>? page2;
   List<QuestionDataModel>? page3;
+  int? tokenUsage;
+  int? timeDuration;
 
   McqQuestionModel({this.page1, this.page2, this.page3});
 
@@ -26,6 +28,8 @@ class McqQuestionModel {
         page3!.add(QuestionDataModel.fromJson(v));
       });
     }
+    tokenUsage = json['token_usage']??0;
+    timeDuration = json['time_duration']??0;
   }
 
   Map<String, dynamic> toJson() {
@@ -42,7 +46,8 @@ class McqQuestionModel {
     if (page3 != null) {
       data['page3'] = page3!.map((v) => v.toJson()).toList();
     }
-
+    data['token_usage'] = tokenUsage;
+    data['time_duration'] = timeDuration;
     return data;
   }
 }

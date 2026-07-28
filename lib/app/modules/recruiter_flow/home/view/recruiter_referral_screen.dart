@@ -16,15 +16,20 @@ class RecruiterReferralScreen extends StatefulWidget {
 
   @override
   State<RecruiterReferralScreen> createState() =>
-      _RecruiterReferralScreenState();
+      RecruiterReferralScreenState();
 }
 
-class _RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
-  @override
-  void initState() {
-    super.initState();
-    getProfileData();
+class RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
+  final referralKey = GlobalKey<RecruiterReferralScreenState>();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getProfileData();
+  // }
+  Future<void> refreshData() async {
+    await getProfileData();
   }
+
 
   String? recruiterId = "";
   String? referCode = "";
@@ -165,7 +170,7 @@ class _RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
             ),
             alignment: Alignment.center,
             child: Text(
-              referCode ?? "",
+              homeController.profileModel.referCode  ?? "",
               style: AppStyles.customTextStyle(
                 size: 22,
                 weight: FontWeight.w700,
@@ -186,12 +191,12 @@ class _RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              onPressed: referCode!.isEmpty && referCode != null
+              onPressed: homeController.profileModel.referCode!.isEmpty && homeController.profileModel.referCode != null
                   ? () {
                 AppAlertUtils.showToast(message: "Referral Code is Empty!", isError: true);
               }
                   : () {
-                      ReferralUtils.copyCode(code: referCode!);
+                      ReferralUtils.copyCode(code: homeController.profileModel.referCode ?? "");
                     },
               icon: const Icon(Icons.copy, color: Colors.white),
               label: Text(
@@ -407,7 +412,7 @@ Invite them to join Internsharks and help them connect with qualified candidates
 
 https://internsharks.ai
 
-🎟️ Your Referral Code: *$referCode*
+🎟️ Your Referral Code: *${homeController.profileModel.referCode ?? ""}*
 
 💡 Ask the recruiter to enter this code during signup to complete your referral.
 

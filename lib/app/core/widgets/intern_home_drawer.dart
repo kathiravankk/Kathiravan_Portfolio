@@ -13,14 +13,14 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 
-class HomeDrawer extends StatefulWidget {
-  const HomeDrawer({super.key});
+class InternHomeDrawer extends StatefulWidget {
+  const InternHomeDrawer({super.key});
 
   @override
-  State<HomeDrawer> createState() => _HomeDrawerState();
+  State<InternHomeDrawer> createState() => _InternHomeDrawerState();
 }
 
-class _HomeDrawerState extends State<HomeDrawer> {
+class _InternHomeDrawerState extends State<InternHomeDrawer> {
   final DashboardController dashboardController =
       Get.find<DashboardController>();
 

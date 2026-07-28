@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
@@ -24,32 +25,61 @@ class _RecruiterTransactionHistoryScreenState
       Get.find<RecruiterHomeController>();
 
   String? recruiterId = "";
+  int? creditBalance = 0;
+  int page = 1;
 
   @override
   void initState() {
     super.initState();
+    creditBalance = Get.arguments["creditBalance"] ?? 0;
     getTransactionData();
   }
 
   Future<void> getTransactionData() async {
+    page = 1;
+
     try {
       recruiterId = await LocalStorageService.getRecruiterId();
-      await homeController.getTransactionHistory(recruiterId: recruiterId!);
-      if (homeController.getResponseCode() == 200 ||
-          homeController.getResponseCode() == 201) {
-      } else {
+
+      await homeController.getTransactionHistory(
+        recruiterId: recruiterId!,
+        page: page,
+        isLoadMore: false,
+      );
+
+      if (homeController.getResponseCode() != 200 &&
+          homeController.getResponseCode() != 201) {
         AppFunctions.apiErrorHandling(
           homeController.getResponseCode(),
           "Something went wrong, try again later!",
         );
       }
     } catch (err, stackTrace) {
-      debugPrint("getTransactionData error: $err");
+      debugPrint(err.toString());
       debugPrint(stackTrace.toString());
+
       AppFunctions.apiErrorHandling(
         homeController.getResponseCode(),
         "Something went wrong, try again later!",
       );
+    }
+  }
+  Future<void> _loadMore() async {
+    if (homeController.transactionHistoryLoadingMore ||
+        !homeController.transactionHistoryHasMore) {
+      return;
+    }
+
+    page++;
+
+    try {
+      await homeController.getTransactionHistory(
+        recruiterId: recruiterId!,
+        page: page,
+        isLoadMore: true,
+      );
+    } catch (_) {
+      page--;
     }
   }
 
@@ -88,36 +118,74 @@ class _RecruiterTransactionHistoryScreenState
         body: Obx(
           () => homeController.transactionHistoryLoading
               ? AppAlertUtils.customLoader()
-              : homeController.historyModel.transactionData.isNotEmpty
+              : homeController.transactionHistoryList.isNotEmpty
               ? RefreshIndicator(
                   color: AppColors.primaryColor,
                   backgroundColor: AppColors.appBgColor_2,
                   onRefresh: getTransactionData,
-                  child: ListView(
+                  child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                    children: [
-                      _buildBalanceCard(
-                        homeController
-                            .historyModel
-                            .transactionData
-                            .first
-                            .recCredit,
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSectionHeader(
-                        "Transaction History",
-                        homeController.historyModel.pagination == null
-                            ? null
-                            : "${homeController.historyModel.transactionData.length} of ${homeController.historyModel.pagination!.total ?? homeController.historyModel.transactionData.length}",
-                      ),
-                      const SizedBox(height: 12),
-                      ...homeController.historyModel.transactionData.map(
-                        _buildTransactionCard,
-                      ),
-                    ],
+                    child: Column(
+                      children: [
+                        _buildBalanceCard(creditBalance ?? 0),
+                        const SizedBox(height: 24),
+                        _buildSectionHeader(
+                          "Credits History",
+                          homeController.historyModel.pagination == null
+                              ? null
+                              : "${homeController.transactionHistoryList.length} of ${homeController.historyModel.pagination?.total ?? 0}",
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: ListView.separated(
+                            padding: EdgeInsets.zero,
+                            itemCount: homeController.transactionHistoryList.length + 1,
+                            separatorBuilder: (_, __) => const SizedBox(height: 10),
+                            itemBuilder: (context, index) {
+
+                              if (index ==
+                                  homeController.transactionHistoryList.length) {
+                                return Visibility(
+                                  visible: !(homeController.transactionHistoryList.length == homeController.historyModel.pagination?.total),
+                                    child: _buildLoadMoreFooter());
+                              }
+
+                              return _buildTransactionCard(
+                                homeController.transactionHistoryList[index],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : _buildEmptyState(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadMoreFooter() {
+    if (!homeController.transactionHistoryHasMore) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: homeController.transactionHistoryLoadingMore
+            ? const CupertinoActivityIndicator()
+            : InkWell(
+          onTap: _loadMore,
+          child: Text(
+            "Load More",
+            style: AppStyles.customTextStyle(
+              size: 14,
+              color: AppColors.primaryColor,
+              weight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );
@@ -138,7 +206,7 @@ class _RecruiterTransactionHistoryScreenState
             "No transactions yet",
             style: AppStyles.customTextStyle(
               size: 15,
-              color: Colors.white70,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),
@@ -179,9 +247,9 @@ class _RecruiterTransactionHistoryScreenState
     );
   }
 
-  Widget _buildBalanceCard(dynamic credit) {
-    final balance = credit?.balance ?? 0;
-    final totalUsed = credit?.totalUsed ?? 0;
+  Widget _buildBalanceCard(int credit) {
+    // final balance = credit?.balance ?? 0;
+    // final totalUsed = credit?.totalUsed ?? 0;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -214,7 +282,7 @@ class _RecruiterTransactionHistoryScreenState
                   ),
                 ),
                 Text(
-                  "$balance",
+                  "$credit",
                   style: AppStyles.customTextStyle(
                     size: 30,
                     color: AppColors.primaryColor,

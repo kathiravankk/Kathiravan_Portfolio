@@ -48,7 +48,7 @@ class _CertificateViewScreenState extends State<CertificateViewScreen> {
       } else {
         AppFunctions.apiErrorHandling(
           applicationController.getResponseCode(),
-          "Something went wrong!, Try again later",
+          "Failed to get certificate!, Try again later",
         );
       }
     } catch (error) {

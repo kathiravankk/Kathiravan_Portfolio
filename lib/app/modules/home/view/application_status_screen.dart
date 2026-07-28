@@ -258,7 +258,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                               child: _buildStatusItem(
                                 iconWidget:
                                     appliedData!.status == "Selected" ||
-                                        appliedData!.status == "Shortlisted"
+                                        appliedData!.status == "Shortlisted" || appliedData!.status == "Completed"
                                     ? Icon(
                                         Icons.check_circle_sharp,
                                         color: AppColors.sucTextColor,

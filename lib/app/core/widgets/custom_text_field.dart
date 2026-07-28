@@ -95,9 +95,9 @@ class CustomTextField extends StatelessWidget {
               hintText: hintText,
               hintStyle: AppStyles.customTextStyle(
                 fontFamily: "Roboto",
-                color: AppColors.greyColor,
-                size: 15,
-                weight: FontWeight.w500,
+                color: AppColors.cardBorder2,
+                size: 14,
+                weight: FontWeight.w300,
               ),
               filled: true,
               isDense: true,

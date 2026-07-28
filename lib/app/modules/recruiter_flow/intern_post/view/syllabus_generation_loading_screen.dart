@@ -29,36 +29,96 @@ class _SyllabusGeneratingScreenState extends State<SyllabusGeneratingScreen> {
   ];
 
   int _currentStep = 0;
+
   Timer? _timer;
+  Timer? _progressTimer;
   bool _apiDone = false;
   bool _success = false;
+  double _progress = 0.0;
+
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _startProgressAnimation();
     _startStepCycle();
     _runProcess();
   }
 
+  void _startProgressAnimation() {
+    _progressTimer = Timer.periodic(
+      const Duration(milliseconds: 220),
+          (timer) {
+        if (!mounted) return;
+        if (!_apiDone) {
+          if (_progress < 0.10) {
+            _progress += 0.015;
+          } else if (_progress < 0.25) {
+            _progress += 0.008;
+          } else if (_progress < 0.45) {
+            _progress += 0.0045;
+          } else if (_progress < 0.65) {
+            _progress += 0.0025;
+          } else if (_progress < 0.80) {
+            _progress += 0.0015;
+          } else if (_progress < 0.90) {
+            _progress += 0.0008;
+          } else if (_progress < 0.95) {
+            _progress += 0.00025;
+          }
+        } else {
+          if (_progress < 1) {
+            _progress += 0.04;
+            if (_progress > 1) {
+              _progress = 1;
+            }
+          }
+        }
+        setState(() {});
+      },
+    );
+  }
   void _startStepCycle() {
-    _timer = Timer.periodic(const Duration(milliseconds: 1400), (timer) {
-      if (!mounted) return;
-
-      final atSecondToLast = _currentStep == _steps.length - 2;
-      final canAdvance =
-          _currentStep < _steps.length - 1 && !(atSecondToLast && !_apiDone);
-
-      if (canAdvance) {
-        setState(() => _currentStep++);
-        _scrollToCurrent();
-      }
-
-      if (_success && _apiDone && _currentStep >= _steps.length - 1) {
-        timer.cancel();
-        _finishAndPop();
-      }
-    });
+    _progressTimer = Timer.periodic(
+      const Duration(milliseconds: 250),
+          (timer) {
+        if (!mounted) return;
+        if (!_apiDone) {
+          if (_progress < 0.15) {
+            _progress += 0.020;
+          } else if (_progress < 0.40) {
+            _progress += 0.010;
+          } else if (_progress < 0.65) {
+            _progress += 0.006;
+          } else if (_progress < 0.80) {
+            _progress += 0.003;
+          } else if (_progress < 0.92) {
+            _progress += 0.0015;
+          } else if (_progress < 0.95) {
+            _progress += 0.0005;
+          }
+        } else {
+          _progress += 0.04;
+          if (_progress >= 1) {
+            _progress = 1;
+            timer.cancel();
+            _finishAndPop();
+          }
+        }
+        _updateStep();
+        setState(() {});
+      },
+    );
+  }
+  void _updateStep() {
+    final step =
+    (_progress * _steps.length).floor();
+    if (step != _currentStep &&
+        step < _steps.length) {
+      _currentStep = step;
+      _scrollToCurrent();
+    }
   }
 
   Future<void> _runProcess() async {
@@ -67,38 +127,35 @@ class _SyllabusGeneratingScreenState extends State<SyllabusGeneratingScreen> {
     } catch (_) {
       _success = false;
     }
-
     if (!mounted) return;
-
-    /// API completed
     _apiDone = true;
-
-    /// If failed don't wait for remaining fake steps.
-    if (!_success) {
-      _timer?.cancel();
-
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (mounted) {
-          Navigator.pop(context, false);
-        }
-      });
-
-      return;
+    if (_success) {
+      while (_progress < 0.95) {
+        _progress += 0.005;
+      }
     }
-
-    /// Success
-    if (_currentStep >= _steps.length - 1) {
-      _timer?.cancel();
-      _finishAndPop();
+    if (!_success) {
+      _progressTimer?.cancel();
+      Navigator.pop(context, false);
     }
   }
 
+
   void _finishAndPop() {
     if (!mounted) return;
-    setState(() => _currentStep = _steps.length - 1);
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) Navigator.of(context).pop(_success);
+    _progress = 1.0;
+    _progressTimer?.cancel();
+    setState(() {
+      _currentStep = _steps.length - 1;
     });
+    Future.delayed(
+      const Duration(milliseconds: 600),
+          () {
+        if (mounted) {
+          Navigator.of(context).pop(_success);
+        }
+      },
+    );
   }
 
   void _scrollToCurrent() {
@@ -114,15 +171,14 @@ class _SyllabusGeneratingScreenState extends State<SyllabusGeneratingScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _progressTimer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final progress = (_currentStep + 1) / _steps.length;
-
-    return PopScope(
+    final progress = _progress;    return PopScope(
       canPop: false,
       child: Container(
         decoration: BoxDecoration(

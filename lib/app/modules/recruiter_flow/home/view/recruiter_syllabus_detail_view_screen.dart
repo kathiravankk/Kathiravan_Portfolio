@@ -4,14 +4,11 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/code_example_widget.dart';
+import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../data/models/recruiter_flow/syllabus_view_data_model.dart'
     show ScheduleGroup, Topic, ProjectSchedule;
 
-/// Recruiter's full read-only view of a single day: topics, code examples,
-/// homework and project tasks. Same visual language as [SyllabusDetailViewScreen]
-/// (topic sections, homework card, project task card) but with no
-/// "Mark as Complete" / submission UI, since the recruiter is only reviewing.
 class RecruiterSyllabusDetailViewScreen extends StatefulWidget {
   const RecruiterSyllabusDetailViewScreen({super.key});
 
@@ -58,12 +55,7 @@ class _RecruiterSyllabusDetailViewScreenState
         backgroundColor: AppColors.transparentColor,
         appBar: _buildAppBar(),
         body: (topics.isEmpty && projectSchedule.isEmpty)
-            ? const Center(
-          child: Text(
-            "No content available.",
-            style: TextStyle(color: Colors.white),
-          ),
-        )
+            ? CustomEmptyWidget()
             : SafeArea(
           child: ListView(
             padding: const EdgeInsets.all(20),
@@ -136,7 +128,7 @@ class _RecruiterSyllabusDetailViewScreenState
         ),
         if ((topic.youtubeUrl ?? "").isNotEmpty) ...[
           const SizedBox(height: 12),
-          _youtubeButton(topic.youtubeUrl!),
+          youtubeButton(topic.youtubeUrl!),
         ],
         if ((topic.visualExplanation ?? "").isNotEmpty) ...[
           const SizedBox(height: 14),
@@ -380,7 +372,7 @@ class _RecruiterSyllabusDetailViewScreenState
   // YOUTUBE LINK
   // ─────────────────────────────────────────
 
-  Widget _youtubeButton(String url) {
+  Widget youtubeButton(String url) {
     return GestureDetector(
       onTap: () async {
         final uri = Uri.tryParse(url);
