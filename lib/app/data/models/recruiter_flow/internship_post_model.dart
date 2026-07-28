@@ -34,7 +34,9 @@ class PostData {
   final String? companyWebsite;
   final String? companyLogo;
   final String? roleType;
-  final String? internshipCoordinator;
+  final String? internshipNameCoordinator;
+  final String? internshipMobileCoordinator;
+  final String? internshipEmailCoordinator;
   final String? aboutInternship;
   final List<String>? studentQualification;
   final List<String>? requiredSkills;
@@ -62,7 +64,7 @@ class PostData {
   final int? v;
 
   PostData({
-    this.internshipCoordinator,
+    this.internshipNameCoordinator,
     this.id,
     this.companyName,
     this.aboutCompany,
@@ -93,6 +95,8 @@ class PostData {
     this.rejectedApplicants,
     this.createdAt,
     this.updatedAt,
+    this.internshipEmailCoordinator,
+    this.internshipMobileCoordinator,
     this.v,
   });
 
@@ -102,9 +106,11 @@ class PostData {
       companyName: json['companyname']??"",
       aboutCompany: json['aboutcompany']??"",
       companyWebsite: json['companywebsite']??"",
+      internshipEmailCoordinator: json['coordinatorEmail']??"",
+      internshipMobileCoordinator: json['coordinatorMobile']??"",
       companyLogo: json['companylogo']??"",
       roleType: json['roletype']??"",
-      internshipCoordinator: json['internship_coordinator']??"",
+      internshipNameCoordinator: json['internship_coordinator']??"",
       aboutInternship: json['aboutinternship']??"",
       studentQualification: json['studentqualification'] != null
           ? List<String>.from(json['studentqualification'])
@@ -150,7 +156,7 @@ class PostData {
     'companywebsite': companyWebsite,
     'companylogo': companyLogo,
     'roletype': roleType,
-    'internship_coordinator': internshipCoordinator,
+    'internship_coordinator': internshipNameCoordinator,
     'totalApplications': totalApplicants,
     'aboutinternship': aboutInternship,
     'studentqualification': studentQualification,

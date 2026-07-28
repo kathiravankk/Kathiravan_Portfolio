@@ -52,7 +52,9 @@ class _RecruiterPurchaseHistoryScreenState
   @override
   void initState() {
     super.initState();
-    _fetchInitial();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchInitial();
+    });
   }
 
   Future<void> _fetchInitial() async {

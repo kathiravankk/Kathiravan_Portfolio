@@ -59,7 +59,7 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
           topRight: Radius.circular(20),
           bottomRight: Radius.circular(20),
         ),
-        color: AppColors.drawerColor,
+        color: AppColors.fieldBgColor,
       ),
       padding: const EdgeInsets.all(15),
       child: Obx(

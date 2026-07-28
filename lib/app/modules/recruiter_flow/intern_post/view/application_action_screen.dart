@@ -526,6 +526,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                             ],
                           ),
                         ),
+                  const SizedBox(height: 20,)
                 ],
               )
             : CustomEmptyWidget(),

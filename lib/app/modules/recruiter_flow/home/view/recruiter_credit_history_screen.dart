@@ -112,11 +112,53 @@ class _RecruiterCreditsHistoryScreenState
                   const SizedBox(height: 18),
                   buildConsumptionGuide(),
                   const SizedBox(height: 20),
+                  buildPaymentCard(),
                 ],
               ),
             ),
           );
         }),
+      ),
+    );
+  }
+
+  Widget buildPaymentCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.recContainerColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.recBorderColor),
+      ),
+      padding: EdgeInsets.all(10),
+      child: Row(
+        children: [
+          Image.asset(AssetImages.creditConsumeImg, height: 35, width: 35),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 5,
+              children: [
+                Text(
+                  "All payments are 100% secure.",
+                  style: AppStyles.customTextStyle(
+                    size: 12,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  "We do not store any payment details.",
+                  style: AppStyles.customTextStyle(
+                    size: 12,
+                    color: AppColors.lightText,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -168,7 +210,7 @@ class _RecruiterCreditsHistoryScreenState
             child: Text(
               "Free Credits",
               style: AppStyles.customTextStyle(
-                size: 15,
+                size: 14,
                 color: Colors.green,
                 weight: FontWeight.w700,
               ),
@@ -244,7 +286,7 @@ class _RecruiterCreditsHistoryScreenState
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: AppStyles.customTextStyle(
-                    size: 14,
+                    size: 13,
                     color: Colors.white,
                     weight: FontWeight.w600,
                   ),
@@ -441,7 +483,7 @@ class _RecruiterCreditsHistoryScreenState
             child: Text(
               "Purchase History",
               style: AppStyles.customTextStyle(
-                size: 15,
+                size: 14,
                 color: const Color(0xff8B5CF6),
                 weight: FontWeight.w700,
               ),
@@ -502,7 +544,7 @@ class _RecruiterCreditsHistoryScreenState
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: AppStyles.customTextStyle(
-                    size: 14,
+                    size: 13,
                     color: Colors.white,
                     weight: FontWeight.w600,
                   ),
@@ -526,7 +568,7 @@ class _RecruiterCreditsHistoryScreenState
                 "₹${item.amount ?? 0}",
                 style: AppStyles.customTextStyle(
                   size: 15,
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                   weight: FontWeight.w700,
                 ),
               ),
@@ -534,8 +576,8 @@ class _RecruiterCreditsHistoryScreenState
               Text(
                 item.status ?? "",
                 style: AppStyles.customTextStyle(
-                  size: 11,
-                  color: Colors.greenAccent,
+                  size: 10,
+                  color: AppColors.primaryColor,
                   weight: FontWeight.w600,
                 ),
               ),
@@ -666,7 +708,7 @@ class _RecruiterCreditsHistoryScreenState
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
-              Icons.info_outline,
+              Icons.speaker_notes_outlined,
               color: Colors.green,
               size: 18,
             ),
@@ -676,8 +718,9 @@ class _RecruiterCreditsHistoryScreenState
             child: Text(
               "Credit Consumption Guide",
               style: AppStyles.customTextStyle(
-                size: 15,
-                color: Colors.green,
+                size: 14,
+                color: AppColors.greenTextColor,
+                lineSpace: 1.2,
                 weight: FontWeight.w700,
               ),
             ),
@@ -690,13 +733,23 @@ class _RecruiterCreditsHistoryScreenState
                 AppRoutes.creditConsumptionScreen,
               );
             },
-            child: Text(
-              "View All",
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: Colors.white,
-                weight: FontWeight.w500,
-              ),
+            child: Row(
+              spacing: 5,
+              children: [
+                Text(
+                  "View All",
+                  style: AppStyles.customTextStyle(
+                    size: 12,
+                    color: Colors.white,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_sharp,
+                  color: AppColors.whiteColor,
+                  size: 12,
+                ),
+              ],
             ),
           ),
         ],
@@ -797,7 +850,7 @@ class _RecruiterCreditsHistoryScreenState
   ];
 }
 
-class  ConsumptionGuide {
+class ConsumptionGuide {
   final String title;
   final int credit;
   final IconData icon;
@@ -810,4 +863,3 @@ class  ConsumptionGuide {
     required this.color,
   });
 }
-

@@ -20,7 +20,7 @@ import 'package:internsharks/app/modules/home/controller/dashboard_controller.da
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import '../../../core/widgets/home_drawer.dart';
+import '../../../core/widgets/intern_home_drawer.dart';
 
 class InternsHomeScreen extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey; // ADD THIS

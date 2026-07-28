@@ -61,7 +61,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   // ============================================================
   //final TextEditingController titleController = TextEditingController();
   final TextEditingController roleTypeController = TextEditingController();
-  final TextEditingController coordinatorController = TextEditingController();
+  final TextEditingController coordinatorNameController = TextEditingController();
+  final TextEditingController coordinatorMobileController = TextEditingController();
+  final TextEditingController coordinatorEmailController = TextEditingController();
 
   // final TextEditingController qualificationController =
   //     TextEditingController(); // e.g. "3+ years of experience"
@@ -202,7 +204,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     // Internship Details
     // =============================
     roleTypeController.text = data.roleType ?? "";
-    coordinatorController.text = data.internshipCoordinator ?? "";
+    coordinatorNameController.text = data.internshipNameCoordinator ?? "";
+    coordinatorMobileController.text = data.internshipMobileCoordinator ?? "";
+    coordinatorEmailController.text = data.internshipEmailCoordinator ?? "";
 
     // If you have a separate title in API
     // titleController.text = "";
@@ -332,7 +336,9 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     aboutCompanyController.dispose();
     //titleController.dispose();
     roleTypeController.dispose();
-    coordinatorController.dispose();
+    coordinatorNameController.dispose();
+    coordinatorEmailController.dispose();
+    coordinatorMobileController.dispose();
     //qualificationController.dispose();
     descriptionController.dispose();
     for (final c in projectControllers) {
@@ -877,12 +883,34 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           maxLines: 5,
         ),
         CustomTextField(
-          controller: coordinatorController,
-          labelText: "Internship Coordinator",
+          controller: coordinatorNameController,
+          labelText: "Coordinator's Name",
           hintText: "Ex: Kathir",
           isNumberKeyboard: false,
           prefixWidget: const Icon(
             CupertinoIcons.person_badge_plus,
+            color: AppColors.primaryColor,
+            size: 20,
+          ),
+        ),
+        CustomTextField(
+          controller: coordinatorMobileController,
+          labelText: "Coordinator's Mobile Number",
+          hintText: "Ex: 9090909090",
+          isNumberKeyboard: true,
+          prefixWidget: const Icon(
+            CupertinoIcons.phone,
+            color: AppColors.primaryColor,
+            size: 20,
+          ),
+        ),
+        CustomTextField(
+          controller: coordinatorEmailController,
+          labelText: "Coordinator's Contact Email",
+          hintText: "Ex: kathir123@gmail.com",
+          isNumberKeyboard: false,
+          prefixWidget: const Icon(
+            CupertinoIcons.mail,
             color: AppColors.primaryColor,
             size: 20,
           ),
@@ -1705,7 +1733,10 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
       "aboutcompany": aboutCompanyController.text.trim(),
       "companywebsite": companyWebsiteController.text.trim(),
       "roletype": roleTypeController.text.trim(),
-      "internship_coordinator": coordinatorController.text.trim(),
+      "internship_coordinator": coordinatorNameController.text.trim(),
+      "coordinatorName": coordinatorNameController.text.trim(),
+      "coordinatorEmail": coordinatorEmailController.text.trim(),
+      "coordinatorMobile": coordinatorMobileController.text.trim(),
       // "title": titleController.text.trim(),
       // "qualification": qualificationController.text.trim(),
       "intershipdescription": descriptionController.text.trim(),

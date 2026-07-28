@@ -114,17 +114,6 @@ class _RecruiterTransactionHistoryScreenState
               weight: FontWeight.w700,
             ),
           ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                AppFunctions.navigateScreen(
-                  context,
-                  AppRoutes.recruiterPaymentHistoryScreen,
-                );
-              },
-              icon: Icon(Icons.history, color: AppColors.secondaryColor,),
-            ),
-          ],
         ),
         body: Obx(
           () => homeController.transactionHistoryLoading

@@ -342,126 +342,140 @@ class _RecruiterCertificateScreenState
   Widget _buildApplicantCard(ApplicantsData applicant) {
     debugPrint(applicant.isCertificateGenerated!.toString());
     debugPrint("_____________________");
-    return Container(
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: AppColors.recContColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        spacing: 10,
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: AppColors.whiteColor.withValues(alpha: 0.1),
-            backgroundImage:
-                (applicant.studentDetails != null
-                        ? applicant.studentDetails!.studProfile ?? ""
-                        : "")
-                    .isNotEmpty
-                ? NetworkImage(
+    return GestureDetector(
+      onTap: () {
+        AppFunctions.navigateScreen(
+          context,
+          AppRoutes.internTestResultScreen,
+          arguments: {
+            "studentId":  applicant.studentDetails != null
+                ? applicant.studentDetails!.id
+                : "",
+            "jobId": jobId,
+          },
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: AppColors.recContColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: AppColors.whiteColor.withValues(alpha: 0.1),
+              backgroundImage:
+                  (applicant.studentDetails != null
+                          ? applicant.studentDetails!.studProfile ?? ""
+                          : "")
+                      .isNotEmpty
+                  ? NetworkImage(
+                      applicant.studentDetails != null
+                          ? applicant.studentDetails!.studProfile ?? ""
+                          : "",
+                    )
+                  : null,
+              child:
+                  (applicant.studentDetails != null
+                          ? applicant.studentDetails!.studProfile ?? ""
+                          : "")
+                      .isEmpty
+                  ? Icon(Icons.person, color: AppColors.whiteColor)
+                  : null,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 10,
+                children: [
+                  Text(
                     applicant.studentDetails != null
-                        ? applicant.studentDetails!.studProfile ?? ""
-                        : "",
-                  )
-                : null,
-            child:
-                (applicant.studentDetails != null
-                        ? applicant.studentDetails!.studProfile ?? ""
-                        : "")
-                    .isEmpty
-                ? Icon(Icons.person, color: AppColors.whiteColor)
-                : null,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                Text(
-                  applicant.studentDetails != null
-                      ? applicant.studentDetails!.studName ??
-                            "Anonymous Student"
-                      : "Anonymous Student",
-                  style: AppStyles.customTextStyle(
-                    size: 15,
-                    color: AppColors.whiteColor,
-                    weight: FontWeight.w600,
+                        ? applicant.studentDetails!.studName ??
+                              "Anonymous Student"
+                        : "Anonymous Student",
+                    style: AppStyles.customTextStyle(
+                      size: 15,
+                      color: AppColors.whiteColor,
+                      weight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Row(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 5,
-                      children: [
-                        Text(
-                          applicant.studentDetails != null
-                              ? applicant.studentDetails!.studEmail ?? ""
-                              : "NA",
-                          style: AppStyles.customTextStyle(
-                            size: 13,
-                            color: AppColors.contLightText2,
-                            weight: FontWeight.w500,
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 5,
+                        children: [
+                          Text(
+                            applicant.studentDetails != null
+                                ? applicant.studentDetails!.studEmail ?? ""
+                                : "NA",
+                            style: AppStyles.customTextStyle(
+                              size: 13,
+                              color: AppColors.contLightText2,
+                              weight: FontWeight.w500,
+                            ),
+                          ),
+                          applicant.isCertificateGenerated!
+                              ? Row(
+                                  spacing: 3,
+                                  children: [
+                                    Icon(
+                                      Icons.verified_outlined,
+                                      color: AppColors.primaryColor,
+                                      size: 15,
+                                    ),
+                                    Text(
+                                      "ISSUED: ${AppFunctions.formatIsoDate(applicant.updatedAt ?? "")}",
+                                      style: AppStyles.customTextStyle(
+                                        size: 11,
+                                        color: AppColors.primaryColor,
+                                        weight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Text(
+                                  "Not Issued",
+                                  style: AppStyles.customTextStyle(
+                                    size: 11,
+                                    color: AppColors.secondaryColor,
+                                    weight: FontWeight.w600,
+                                  ),
+                                ),
+                        ],
+                      ),
+                      const Spacer(),
+                      Visibility(
+                        visible: applicant.isCertificateGenerated!,
+                        child: IconButton(
+                          onPressed: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.certificateViewScreen,
+                              arguments: {
+                                "jobId": jobId,
+                                "studentId": applicant.studentDetails != null
+                                    ? applicant.studentDetails!.id
+                                    : "",
+                              },
+                            );
+                          },
+                          icon: Icon(
+                            Icons.remove_red_eye_outlined,
+                            color: AppColors.secondaryColor,
                           ),
                         ),
-                        applicant.isCertificateGenerated!
-                            ? Row(
-                                spacing: 3,
-                                children: [
-                                  Icon(
-                                    Icons.verified_outlined,
-                                    color: AppColors.primaryColor,
-                                    size: 15,
-                                  ),
-                                  Text(
-                                    "ISSUED: ${AppFunctions.formatIsoDate(applicant.updatedAt ?? "")}",
-                                    style: AppStyles.customTextStyle(
-                                      size: 11,
-                                      color: AppColors.primaryColor,
-                                      weight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                "Not Issued",
-                                style: AppStyles.customTextStyle(
-                                  size: 11,
-                                  color: AppColors.secondaryColor,
-                                  weight: FontWeight.w600,
-                                ),
-                              ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Visibility(
-                      visible: applicant.isCertificateGenerated!,
-                      child: IconButton(
-                        onPressed: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.certificateViewScreen,
-                            arguments: {
-                              "jobId": jobId,
-                              "studentId": applicant.studentDetails != null
-                                  ? applicant.studentDetails!.id
-                                  : "",
-                            },
-                          );
-                        },
-                        icon: Icon(
-                          Icons.remove_red_eye_outlined,
-                          color: AppColors.secondaryColor,
-                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

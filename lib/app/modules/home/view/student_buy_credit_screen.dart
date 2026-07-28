@@ -12,12 +12,18 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/credit_plan_card.dart';
+import 'package:internsharks/app/core/widgets/credit_plan_card_widget.dart';
+import 'package:internsharks/app/core/widgets/intern_credit_card_widget.dart';
 import 'package:internsharks/app/data/models/home/credit_plan_model.dart';
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 
+class _BuyCreditColors {
+  static const gold = Color(0xFFFFC93C);
+  static const footerText = Color(0xFF7A8B87);
+}
 
 class StudentBuyCreditScreen extends StatefulWidget {
   const StudentBuyCreditScreen({super.key});
@@ -272,165 +278,268 @@ class _StudentBuyCreditScreenState extends State<StudentBuyCreditScreen> {
           ),
         ),
         body: Obx(
-          () => homeController.creditPlanLoading
+              () => homeController.creditPlanLoading
               ? AppAlertUtils.customLoader()
               : SingleChildScrollView(
-                  child: Container(
-                    margin: const EdgeInsets.all(20),
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: AppColors.whiteColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // ── Title ─────────────────────────────────────────────
-                        Row(
-                          spacing: 5,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(AssetImages.creditsIconNew, height: 25,width: 25,),
-                            Text(
-                              "Buy Credits",
-                              style: AppStyles.customTextStyle(
-                                size: 16,
-                                weight: FontWeight.w700,
-                                color: AppColors.blackColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 15),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 50),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-                        // ── Subtitle ──────────────────────────────────────────
-                        Text(
-                          "Use credits to apply internships & unlock premium features",
-                          textAlign: TextAlign.center,
-                          style: AppStyles.customTextStyle(
-                            size: 12,
-                            weight: FontWeight.w400,
-                            color: AppColors.blackLight,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
+                /// HERO SECTION
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-                        // ── Balance banner ────────────────────────────────────
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withValues(alpha: 0.09),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            "Your Balance: ${creditBalance ?? 0} Credits",
-                            textAlign: TextAlign.center,
-                            style: AppStyles.customTextStyle(
-                              size: 13,
-                              weight: FontWeight.w700,
-                              color: AppColors.primaryColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
 
-                        // ── Section label ──────────────────────────────────────
-                        Text(
-                          "CHOOSE A TOP-UP PLAN",
-                          style: AppStyles.customTextStyle(
-                            size: 14,
-                            weight: FontWeight.w700,
-                            color: AppColors.blackColor,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-
-                        // ── Plan grid ─────────────────────────────────────────
-                        GridView.builder(
-                          shrinkWrap: true,
-                          itemCount: creditPlan!.length,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 0.8,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
-                              ),
-                          itemBuilder: (context, index) {
-                            final plan = creditPlan![index];
-                            final bool isThisPlanLoading =
-                                _processingPlanId == plan.id;
-
-                            return CreditPlanCard(
-                              plan: plan,
-                              onPressedFunc: () => onBuyTapped(plan),
-                              // Show loader only on the tapped card
-                              isLoading: isThisPlanLoading,
-                              // Disable all cards while any order is processing
-                              isDisabled:
-                                  _processingPlanId != null && !isThisPlanLoading,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 15),
-
-                        // ── Feature tags ──────────────────────────────────────
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.lightWhiteCont,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          Row(
                             children: [
-                              Text(
-                                "✅ No expiry",
-                                style: AppStyles.customTextStyle(
-                                  size: 10,
-                                  weight: FontWeight.w500,
-                                  color: AppColors.blackColor,
-                                ),
+
+                              Image.asset(
+                                AssetImages.creditsIconNew,
+                                height: 30,
+                                width: 30,
                               ),
+
+                              const SizedBox(width: 8),
+
                               Text(
-                                "⚡ Instant activation",
+                                "Buy Credits",
                                 style: AppStyles.customTextStyle(
-                                  size: 10,
-                                  weight: FontWeight.w500,
-                                  color: AppColors.blackColor,
-                                ),
-                              ),
-                              Text(
-                                "🔒 Secure payment",
-                                style: AppStyles.customTextStyle(
-                                  size: 10,
-                                  weight: FontWeight.w500,
-                                  color: AppColors.blackColor,
+                                  size: 24,
+                                  weight: FontWeight.w800,
+                                  color: AppColors.whiteColor,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: 10),
 
-                        // ── Footer ────────────────────────────────────────────
-                        Text(
-                          "Powered by Cashfree • 100% Secure Payments",
-                          style: AppStyles.customTextStyle(
-                            size: 10,
-                            weight: FontWeight.w500,
-                            color: AppColors.blackColor,
+                          const SizedBox(height: 10),
+
+                          Text(
+                            "Use credits to apply internships & unlock premium features",
+                            style: AppStyles.customTextStyle(
+                              size: 12,
+                              weight: FontWeight.w400,
+                              color: AppColors.lightWhiteCont,
+                              lineSpace: 1.5,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
+
+                          const SizedBox(height: 15),
+
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.creditContColor2,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                color: AppColors.disableBorderColor,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+
+                                Container(
+                                  height: 34,
+                                  width: 34,
+                                  alignment: Alignment.center,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.disableBorderColor,
+                                  ),
+                                  child: Image.asset(
+                                    AssetImages.creditsIconNew,
+                                    height: 22,
+                                    width: 22,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 12),
+
+                                Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+
+                                    Text(
+                                      "Your Balance",
+                                      style: AppStyles.customTextStyle(
+                                        size: 12,
+                                        weight: FontWeight.w400,
+                                        color: Colors.white60,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 5),
+
+                                    Text(
+                                      "${creditBalance ?? 0} Credits",
+                                      style: AppStyles.customTextStyle(
+                                        size: 16,
+                                        weight: FontWeight.w800,
+                                        color: _BuyCreditColors.gold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Image.asset(
+                      AssetImages.creditWalletImage,
+                      height: 170,
+                      width: 170,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                Row(
+                  children: [
+
+                    const Icon(
+                      Icons.arrow_forward,
+                      color: AppColors.primaryColor,
+                      size: 20,
+                    ),
+
+                    const SizedBox(width: 6),
+
+                    Text(
+                      "CHOOSE A TOP-UP PLAN",
+                      style: AppStyles.customTextStyle(
+                        size: 14,
+                        weight: FontWeight.w700,
+                        color: AppColors.whiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 14),
+
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: creditPlan!.length,
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.70,
+                    crossAxisSpacing: 14,
+                    mainAxisSpacing: 24,
+                  ),
+                  itemBuilder: (context, index) {
+
+                    final plan = creditPlan![index];
+
+                    final bool isThisPlanLoading =
+                        _processingPlanId == plan.id;
+
+                    return InternCreditCardWidget(
+                      plan: plan,
+                      index: index,
+                      onPressedFunc: () => onBuyTapped(plan),
+                      isLoading: isThisPlanLoading,
+                      isDisabled:
+                      _processingPlanId != null &&
+                          !isThisPlanLoading,
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.recContainerColor2,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.spaceEvenly,
+                    children: [
+
+                      iconWidget("✅", "No expiry"),
+
+                      iconWidget("⚡", "Instant activation"),
+
+                      iconWidget("🔒", "Secure payment"),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+
+                Center(
+                  child: Text(
+                    "Powered by Cashfree • 100% Secure Payments",
+                    style: AppStyles.customTextStyle(
+                      size: 10,
+                      weight: FontWeight.w500,
+                      color: _BuyCreditColors.footerText,
                     ),
                   ),
                 ),
+              ],
+            ),
+          ),
         ),
       ),
+    );
+  }
+  Widget iconWidget(String iconText, String titleText) {
+    return Column(
+      children: [
+
+        Container(
+          height: 30,
+          width: 30,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.disableBorderColor,
+          ),
+          child: Text(
+            iconText,
+            style: AppStyles.customTextStyle(
+              size: 24,
+              weight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        Text(
+          titleText,
+          style: AppStyles.customTextStyle(
+            size: 12,
+            weight: FontWeight.w400,
+            color: AppColors.lightColorText,
+          ),
+        ),
+      ],
     );
   }
 }

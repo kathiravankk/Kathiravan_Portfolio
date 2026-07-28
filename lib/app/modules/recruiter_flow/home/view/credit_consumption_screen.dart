@@ -277,16 +277,17 @@ class _CreditConsumptionScreenState extends State<CreditConsumptionScreen> {
                 Text(
                   "Credits are non-refundable and cannot be transferred.",
                   style: AppStyles.customTextStyle(
-                    size: 16,
+                    size: 14,
                     color: AppColors.whiteColor,
                     weight: FontWeight.w600,
+                    lineSpace: 1.4
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   "Make sure to review the credits required before using any feature.",
                   style: AppStyles.customTextStyle(
-                    size: 13,
+                    size: 12,
                     color: Colors.white60,
                     lineSpace: 1.5,
                     weight: FontWeight.w400,
