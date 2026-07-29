@@ -521,5 +521,67 @@ class InternshipPostController extends GetxController {
     }
   }
 
+  //  SEND COORDINATOR OTP
+
+  final _sendCoordinatorOtpLoading = false.obs;
+
+  bool get sendCoordinatorOtpLoading => _sendCoordinatorOtpLoading.value;
+
+  set sendCoordinatorOtpLoading(bool value) => _sendCoordinatorOtpLoading.value = value;
+
+  // Model
+  final _sendOtpModel = CoordinatorOtpModel().obs;
+
+  CoordinatorOtpModel get sendOtpModel => _sendOtpModel.value;
+
+  set sendOtpModel(CoordinatorOtpModel value) => _sendOtpModel.value = value;
+
+  Future<void> sendCoordinatorOtp({
+    required String mobileNumber,
+  }) async {
+    try {
+      sendCoordinatorOtpLoading = true;
+      sendOtpModel= await internshipPostProvider!.sendCoordinatorOtp(
+        mobileNumber: mobileNumber,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      sendCoordinatorOtpLoading = false;
+    }
+  }
+
+  //  VERIFY COORDINATOR OTP
+
+  final _verifyCoordinatorOtpLoading = false.obs;
+
+  bool get verifyCoordinatorOtpLoading => _verifyCoordinatorOtpLoading.value;
+
+  set verifyCoordinatorOtpLoading(bool value) => _verifyCoordinatorOtpLoading.value = value;
+
+   // Model
+  final _commonPostModel = CommonLoginOtpModel().obs;
+
+  CommonLoginOtpModel get commonPostModel => _commonPostModel.value;
+
+  set commonPostModel(CommonLoginOtpModel value) => _commonPostModel.value = value;
+
+  Future<void> verifyCoordinatorOtp({
+    required String mobileNumber,
+    required String otpNumber,
+  }) async {
+    try {
+      verifyCoordinatorOtpLoading = true;
+      commonPostModel= await internshipPostProvider!.verifyCoordinatorOtp(
+        mobileNumber: mobileNumber,
+        otpNumber: otpNumber,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      verifyCoordinatorOtpLoading = false;
+    }
+  }
+
 
 }

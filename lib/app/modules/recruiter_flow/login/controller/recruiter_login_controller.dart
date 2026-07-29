@@ -119,5 +119,27 @@ class RecruiterLoginController extends GetxController {
       rethrow;
     }
   }
+  // DELETE ACCOUNT
+
+  // Loading
+
+  final _recruiterDeleteLoading = false.obs;
+
+  bool get recruiterDeleteLoading => _recruiterDeleteLoading.value;
+
+  set recruiterDeleteLoading(bool value) => _recruiterDeleteLoading.value = value;
+
+
+  Future<void> deleteRecruiterAccount() async {
+    try {
+      recruiterDeleteLoading = true;
+      commonPostModel = await recruiterLoginProvider!.removeRecruiterAccount(
+      );
+      recruiterDeleteLoading = false;
+    } catch (err) {
+      recruiterDeleteLoading = false;
+      rethrow;
+    }
+  }
 
 }

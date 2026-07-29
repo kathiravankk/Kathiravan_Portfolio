@@ -403,4 +403,56 @@ class InternshipPostProvider {
       return CommonLoginOtpModel.fromJson(err.response!.data);
     }
   }
+
+  // SEND COORDINATOR OTP
+
+  Future<CoordinatorOtpModel> sendCoordinatorOtp({
+    required String mobileNumber,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+          AppApiUrls.sendCoordinatorOtp,
+          options: Options(headers: header),
+          data: {
+            "mobile": mobileNumber
+          }
+      );
+      responseStatus = response.statusCode!;
+      return CoordinatorOtpModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CoordinatorOtpModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VERIFY COORDINATOR OTP
+
+  Future<CommonLoginOtpModel> verifyCoordinatorOtp({
+    required String mobileNumber,
+    required String otpNumber,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+          AppApiUrls.verifyCoordinatorOtp,
+          options: Options(headers: header),
+          data: {
+            "mobile": mobileNumber,
+            "otp": otpNumber
+          }
+      );
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CommonLoginOtpModel.fromJson(err.response!.data);
+    }
+  }
 }

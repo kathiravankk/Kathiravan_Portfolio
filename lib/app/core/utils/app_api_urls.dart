@@ -151,5 +151,9 @@ class AppApiUrls {
   static String getTransactionHistory(String recruiterId, int page)=> "${baseUrl}recruiter/getallcredittransaction/$recruiterId?page=$page&limit=10";
   static String syllabusDataUpdate(String studentId, String jobId)=> "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
   static String checkStipendStatus(String studentId, String jobId)=> "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";
+  static String recruiterDeleteAccount = "${baseUrl}recruiter/delete";
+  static String sendCoordinatorOtp = "${baseUrl}sendcoordinatorotp";
+  static String verifyCoordinatorOtp = "${baseUrl}verifycoordinatorotp";
+
 
 }

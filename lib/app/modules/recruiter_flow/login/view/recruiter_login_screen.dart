@@ -329,7 +329,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
 
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
-        if (loginController.commonPostModel.userType == "recruiter") {
+        if (loginController.commonPostModel.userType != "student") {
           AppAlertUtils.showToast(
             message:
                 loginController.commonPostModel.message ??

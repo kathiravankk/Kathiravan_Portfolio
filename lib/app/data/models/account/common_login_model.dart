@@ -61,3 +61,31 @@ class VerifyEmailOtpModel {
     emailVerified = json["emailVerified"] ?? false;
   }
 }
+
+class CoordinatorOtpModel {
+  final bool? success;
+  final bool? alreadyVerified;
+  final String? message;
+
+  CoordinatorOtpModel({
+    this.success,
+    this.alreadyVerified,
+    this.message,
+  });
+
+  factory CoordinatorOtpModel.fromJson(Map<String, dynamic> json) {
+    return CoordinatorOtpModel(
+      success: json["success"],
+      alreadyVerified: json["alreadyVerified"],
+      message: json["message"],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "success": success,
+      "alreadyVerified": alreadyVerified,
+      "message": message,
+    };
+  }
+}

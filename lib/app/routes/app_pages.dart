@@ -62,6 +62,7 @@ import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profi
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_dashboard_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_login_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_register_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_setting_screen.dart';
 import '../modules/home/view/account_setting_screen.dart';
 import '../modules/home/view/application_status_screen.dart';
 import '../modules/profile/view/email_update_screen.dart';
@@ -386,6 +387,10 @@ class AppPages {
     appPage(
       name: AppRoutes.creditConsumptionScreen,
       page: () => CreditConsumptionScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterSettingScreen,
+      page: () => RecruiterSettingScreen(),
     ),
   ];
 }
