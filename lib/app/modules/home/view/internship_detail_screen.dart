@@ -76,19 +76,19 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     //   );
     // }
 
-    return Obx(
-      () =>
-          dashboardController.internshipDetailLoading ||
-              dashboardController.reviewDataLoading
-          ? AppAlertUtils.customLoader()
-          : Container(
+    return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(AssetImages.appBackgroundImg),
                   fit: BoxFit.cover,
                 ),
               ),
-              child: Scaffold(
+              child: Obx(
+                    () =>
+                dashboardController.internshipDetailLoading ||
+                    dashboardController.reviewDataLoading
+                    ? AppAlertUtils.customLoader()
+                    : Scaffold(
                 backgroundColor: AppColors.transparentColor,
                 floatingActionButton: Visibility(
                   visible: !isStatusFlow,

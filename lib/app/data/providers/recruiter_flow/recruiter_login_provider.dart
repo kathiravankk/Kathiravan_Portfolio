@@ -62,6 +62,7 @@ class RecruiterLoginProvider {
       )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
+      debugPrint(response.data.toString(), wrapWidth: 3000);
       return RecruiterLoginModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response!.statusCode!;

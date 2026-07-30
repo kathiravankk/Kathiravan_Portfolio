@@ -6,6 +6,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -243,6 +244,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     await ResumeFileUtils.handleShare(
       webViewController: webViewController!,
       fileName: "${firstName}_resume",
+        shareText: CommonUtils.resumeShareContent
     );
   }
 

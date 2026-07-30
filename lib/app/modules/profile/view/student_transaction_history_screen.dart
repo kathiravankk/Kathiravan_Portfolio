@@ -5,27 +5,30 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/data/models/account/student_credit_history_model.dart';
+import 'package:internsharks/app/data/models/account/student_purchase_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:intl/intl.dart';
 
-class RecruiterCreditsHistoryScreen extends StatefulWidget {
-  const RecruiterCreditsHistoryScreen({super.key});
+class StudentTransactionHistoryScreen extends StatefulWidget {
+  const StudentTransactionHistoryScreen({super.key});
 
   @override
-  State<RecruiterCreditsHistoryScreen> createState() =>
-      _RecruiterCreditsHistoryScreenState();
+  State<StudentTransactionHistoryScreen> createState() =>
+      _StudentTransactionHistoryScreenState();
 }
 
-class _RecruiterCreditsHistoryScreenState
-    extends State<RecruiterCreditsHistoryScreen> {
-  final RecruiterHomeController homeController =
-      Get.find<RecruiterHomeController>();
+class _StudentTransactionHistoryScreenState
+    extends State<StudentTransactionHistoryScreen> {
+  final ProfileController profileController =
+  Get.find<ProfileController>();
 
-  String? recruiterId = "";
+  String? studentId = "";
   int creditBalance = 0;
 
   @override
@@ -37,16 +40,16 @@ class _RecruiterCreditsHistoryScreenState
 
   Future<void> loadData() async {
     try {
-      recruiterId = await LocalStorageService.getRecruiterId();
+      studentId = await LocalStorageService.getStudentId();
 
       await Future.wait([
-        homeController.getPaymentHistoryData(
+        profileController.getPurchaseHistoryData(
           page: 1,
           limit: 5,
           isLoadMore: false,
         ),
-        homeController.getTransactionHistory(
-          recruiterId: recruiterId!,
+        profileController.getCreditHistory(
+          studentId: studentId!,
           page: 1,
           isLoadMore: false,
         ),
@@ -55,7 +58,7 @@ class _RecruiterCreditsHistoryScreenState
       debugPrint(e.toString());
       debugPrint(s.toString());
       AppFunctions.apiErrorHandling(
-        homeController.getResponseCode(),
+        profileController.getResponseCode(),
         "Something went wrong.",
       );
     }
@@ -93,8 +96,8 @@ class _RecruiterCreditsHistoryScreenState
         ),
 
         body: Obx(() {
-          if (homeController.paymentHistoryLoading ||
-              homeController.transactionHistoryLoading) {
+          if (profileController.creditHistoryLoading ||
+              profileController.purchaseHistoryLoading) {
             return AppAlertUtils.customLoader();
           }
           return RefreshIndicator(
@@ -108,7 +111,7 @@ class _RecruiterCreditsHistoryScreenState
                 children: [
                   buildPurchaseHistoryCard(),
                   const SizedBox(height: 18),
-                  buildTransactionHistoryCard(),
+                  buildCreditHistoryCard(),
                   const SizedBox(height: 18),
                   buildConsumptionGuide(),
                   const SizedBox(height: 20),
@@ -163,8 +166,8 @@ class _RecruiterCreditsHistoryScreenState
     );
   }
 
-  Widget buildTransactionHistoryCard() {
-    final transactionList = homeController.transactionHistoryList;
+  Widget buildCreditHistoryCard() {
+    final transactionList = profileController.creditHistoryList;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.recContainerColor,
@@ -173,22 +176,23 @@ class _RecruiterCreditsHistoryScreenState
       ),
       child: Column(
         children: [
-          _buildTransactionHeader(),
+          _buildCreditHeader(),
           Divider(height: 1, color: Colors.white.withOpacity(.06)),
           transactionList.isEmpty
               ? _buildTransactionEmptyWidget()
               : Column(
-                  children: transactionList
-                      .take(5)
-                      .map(_buildTransactionItem)
-                      .toList(),
-                ),
+            children: transactionList
+                .take(5)
+                .map((item) => _buildCreditTransactionItem(item))
+                .cast<Widget>()
+                .toList(),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTransactionHeader() {
+  Widget _buildCreditHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
@@ -220,16 +224,16 @@ class _RecruiterCreditsHistoryScreenState
             onTap: () {
               AppFunctions.navigateScreen(
                 context,
-                AppRoutes.recruiterTransactionHistoryScreen,
+                AppRoutes.studentCreditHistoryScreen,
                 arguments: {
-                  "creditBalance":
-                      ((homeController
-                              .profileModel
-                              .recruiterCreditId!
-                              .freeCredits ??
-                          0) +
-                      (homeController.profileModel.recruiterCreditId!.balance ??
-                          0)),
+                  "creditBalance": 0
+                  // ((profileController
+                  //     .creditModel
+                  //     .recruiterCreditId!
+                  //     .freeCredits ??
+                  //     0) +
+                  //     (profileController.profileModel.recruiterCreditId!.balance ??
+                  //         0)),
                 },
               );
             },
@@ -253,7 +257,7 @@ class _RecruiterCreditsHistoryScreenState
     );
   }
 
-  Widget _buildTransactionItem(RecruiterTransactionData tx) {
+  Widget _buildCreditTransactionItem(CreditHistoryData tx) {
     final isDebit = tx.type == "debit";
     final amountColor = isDebit
         ? AppColors.inCorrectText
@@ -337,7 +341,7 @@ class _RecruiterCreditsHistoryScreenState
       padding: const EdgeInsets.symmetric(vertical: 30),
       child: Column(
         children: [
-          Icon(Icons.receipt_long_outlined, color: Colors.white24, size: 48),
+          Icon(Icons.receipt_long_outlined, color: AppColors.secondaryColor, size: 48),
           const SizedBox(height: 12),
           Text(
             "No transaction history",
@@ -352,7 +356,7 @@ class _RecruiterCreditsHistoryScreenState
     );
   }
 
-  String _transactionTitle(RecruiterTransactionData tx) {
+  String _transactionTitle(CreditHistoryData tx) {
     if (tx.type == "credit") {
       return "Credits Added";
     }
@@ -397,9 +401,15 @@ class _RecruiterCreditsHistoryScreenState
     }
   }
 
-  String _formatTransactionDate(DateTime? date) {
-    if (date == null) return "-";
-    return DateFormat("dd MMM yyyy, hh:mm a").format(date.toLocal());
+  String _formatTransactionDate(String? date) {
+    if (date == null || date.isEmpty) return "-";
+
+    try {
+      final dateTime = DateTime.parse(date);
+      return DateFormat("dd MMM yyyy, hh:mm a").format(dateTime.toLocal());
+    } catch (e) {
+      return "-";
+    }
   }
 
   String _formatApiName(String? apiName) {
@@ -425,7 +435,7 @@ class _RecruiterCreditsHistoryScreenState
             .split("-")
             .map(
               (e) => e.isEmpty ? e : "${e[0].toUpperCase()}${e.substring(1)}",
-            )
+        )
             .join(" ");
     }
   }
@@ -436,7 +446,7 @@ class _RecruiterCreditsHistoryScreenState
   }
 
   Widget buildPurchaseHistoryCard() {
-    final purchaseList = homeController.paymentHistoryList;
+    final purchaseList = profileController.purchaseHistoryList;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.recContainerColor,
@@ -450,12 +460,12 @@ class _RecruiterCreditsHistoryScreenState
           purchaseList.isEmpty
               ? _buildPurchaseEmptyWidget()
               : Column(
-                  children: [
-                    ...purchaseList.take(5).map(_buildPurchaseItem),
-                    Divider(height: 1, color: Colors.white.withOpacity(.06)),
-                    _buildPurchaseFooter(),
-                  ],
-                ),
+            children: [
+              ...purchaseList.take(5).map(_buildPurchaseItem),
+              Divider(height: 1, color: Colors.white.withOpacity(.06)),
+              _buildPurchaseFooter(),
+            ],
+          ),
         ],
       ),
     );
@@ -493,7 +503,7 @@ class _RecruiterCreditsHistoryScreenState
             onTap: () {
               AppFunctions.navigateScreen(
                 context,
-                AppRoutes.recruiterPaymentHistoryScreen,
+                AppRoutes.studentPurchaseHistoryScreen,
               );
             },
             child: Row(
@@ -516,7 +526,7 @@ class _RecruiterCreditsHistoryScreenState
     );
   }
 
-  Widget _buildPurchaseItem(PaymentHisData item) {
+  Widget _buildPurchaseItem(StudentPurchaseData item) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
@@ -591,12 +601,12 @@ class _RecruiterCreditsHistoryScreenState
   }
 
   Widget _buildPurchaseFooter() {
-    final totalSpent = homeController.paymentHistoryList
+    final totalSpent = profileController.purchaseHistoryList
         .where((e) => e.status == "SUCCESS")
         .fold<double>(
-          0,
+      0,
           (sum, e) => sum + (double.tryParse(e.amount.toString()) ?? 0),
-        );
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
@@ -704,12 +714,12 @@ class _RecruiterCreditsHistoryScreenState
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(.15),
+              color: AppColors.pinkColor.withOpacity(.15),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
               Icons.speaker_notes_outlined,
-              color: Colors.green,
+              color: AppColors.pinkColor,
               size: 18,
             ),
           ),
@@ -719,7 +729,7 @@ class _RecruiterCreditsHistoryScreenState
               "Credit Consumption Guide",
               style: AppStyles.customTextStyle(
                 size: 14,
-                color: AppColors.greenTextColor,
+                color: AppColors.pinkColor,
                 lineSpace: 1.2,
                 weight: FontWeight.w700,
               ),

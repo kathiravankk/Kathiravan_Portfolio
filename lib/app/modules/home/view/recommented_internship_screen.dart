@@ -69,140 +69,151 @@ class _RecommentedInternshipScreenState
             "Recommended Internships",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),
         ),
         body: Obx(
           () => dashboardController.recommentedInternshipLoading
-              ? Center(
-                  child: CupertinoActivityIndicator(
-                    color: AppColors.secondaryColor,
-                  ),
-                )
+              ? AppAlertUtils.customLoader()
               : dashboardController.recommentedModel.internshipList!.isNotEmpty
-              ? Stack(
-                  children: [
-                    ListView.separated(
-                      padding: EdgeInsets.all(20),
-                      shrinkWrap: true,
-                      separatorBuilder: (context, index) => SizedBox(height: 10),
-                      itemCount: dashboardController
-                          .recommentedModel
-                          .internshipList!
-                          .length,
-                      itemBuilder: (context, index) => InternshipCard(
-                        viewFunc: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.internshipDetailScreen,
-                            arguments: {
-                              "internshipId": dashboardController
+              ? RefreshIndicator(
+                  color: AppColors.primaryColor,
+                  backgroundColor: AppColors.appBgColor_2,
+                  onRefresh: () async {
+                    await getInternshipData();
+                  },
+                  child: Stack(
+                    children: [
+                      ListView.separated(
+                        padding: EdgeInsets.all(20),
+                        shrinkWrap: true,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 10),
+                        itemCount: dashboardController
+                            .recommentedModel
+                            .internshipList!
+                            .length,
+                        itemBuilder: (context, index) => InternshipCard(
+                          viewFunc: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.internshipDetailScreen,
+                              arguments: {
+                                "internshipId": dashboardController
+                                    .recommentedModel
+                                    .internshipList![index]
+                                    .sId,
+                              },
+                            );
+                          },
+                          isSaved:
+                              dashboardController
                                   .recommentedModel
                                   .internshipList![index]
-                                  .sId,
-                            },
-                          );
-                        },
-                        isSaved:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .isSaved ??
-                            false,
-                        position:  dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .noOfPosition ??
-                            0,
-                        // saveFunc: () {
-                        //   internshipList![index].isSaved!
-                        //       ? removeToSaved(jobId: internshipList![index].sId!)
-                        //       : addToSaved(jobId: internshipList![index].sId!);
-                        // },
-                        saveFunc: () async{ dashboardController.toggleSave(index);},
-                        postedDate: dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .createdAt!,
-                        location: dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .companyCity ??"NA",
-                        role:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .roleType ??
-                            "",
-                        companyName:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .companyName ??
-                            "",
-                        internshipMode:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .internshipMode ??
-                            "NA",
-                        imageUrl:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .companyLogo ??
-                            "",
-                        description:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .internshipDescription ??
-                            "",
-                        duration:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index].internshipDuration!.isNotEmpty &&
-                            dashboardController
-                                .recommentedModel
-                                .internshipList![index].internshipDuration != null
-                            ? "${dashboardController
-                            .recommentedModel
-                            .internshipList![index].internshipDuration!} Months"
-                            : "${dashboardController
-                            .recommentedModel
-                            .internshipList![index].days} Days",
-                        stipendRupees:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .internshipStipend ??
-                            "NA",
-                        internFees:  dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .internFees ?? "NA",
-                        qualification:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .studentQualification!.join(", "),
-                        eligibility:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .eligibilityCriteria ??
-                            "All",
-                        skillList:
-                        dashboardController
-                            .recommentedModel
-                            .internshipList![index]
-                            .requiredSkills ??
-                            [],
+                                  .isSaved ??
+                              false,
+                          position:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .noOfPosition ??
+                              0,
+                          // saveFunc: () {
+                          //   internshipList![index].isSaved!
+                          //       ? removeToSaved(jobId: internshipList![index].sId!)
+                          //       : addToSaved(jobId: internshipList![index].sId!);
+                          // },
+                          saveFunc: () async {
+                            dashboardController.toggleSave(index);
+                          },
+                          postedDate: dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .createdAt!,
+                          location:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .companyCity ??
+                              "NA",
+                          role:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .roleType ??
+                              "",
+                          companyName:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .companyName ??
+                              "",
+                          internshipMode:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .internshipMode ??
+                              "NA",
+                          imageUrl:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .companyLogo ??
+                              "",
+                          description:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .internshipDescription ??
+                              "",
+                          duration:
+                              dashboardController
+                                      .recommentedModel
+                                      .internshipList![index]
+                                      .internshipDuration!
+                                      .isNotEmpty &&
+                                  dashboardController
+                                          .recommentedModel
+                                          .internshipList![index]
+                                          .internshipDuration !=
+                                      null
+                              ? "${dashboardController.recommentedModel.internshipList![index].internshipDuration!} Months"
+                              : "${dashboardController.recommentedModel.internshipList![index].days} Days",
+                          stipendRupees:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .internshipStipend ??
+                              "NA",
+                          internFees:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .internFees ??
+                              "NA",
+                          qualification: dashboardController
+                              .recommentedModel
+                              .internshipList![index]
+                              .studentQualification!
+                              .join(", "),
+                          eligibility:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .eligibilityCriteria ??
+                              "All",
+                          skillList:
+                              dashboardController
+                                  .recommentedModel
+                                  .internshipList![index]
+                                  .requiredSkills ??
+                              [],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               : CustomEmptyWidget(),
         ),

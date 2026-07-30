@@ -55,7 +55,8 @@ class AppApiUrls {
   //static String updateChatResume = "${baseUrl}updatemessage";
 
   // BUY CREDITS
-  static String getCreditPlans = "${baseUrl}plans";
+  //static String getCreditPlans = "${baseUrl}plans";
+  static String getCreditPlans = "${baseUrl}studentpaln/getallstudentplan";
   static String createCreditOrder = "${baseUrl}student/create-order";
   static String verifyCreditOrder = "${baseUrl}student/verify";
 
@@ -89,6 +90,10 @@ class AppApiUrls {
   static String removeWaterMark = "${baseUrl}removewater";
   static String bannerLike = "${baseUrl}studentlike";
   static String studentDeleteAccount = "${baseUrl}student/delete";
+  static String getStudentCreditHistory(String studentId, int page)=> "${baseUrl}student/getallfreecredittransaction/$studentId?page=$page&limit=10";
+  static String getStudentPurchaseHistory(int page,int limit )=> "${baseUrl}getallcreditpayment?page=$page&limit=$limit";
+
+
 
   // INTERNSHIP FLOW
 

@@ -241,7 +241,7 @@ class _SearchAllInternshipScreenState extends State<SearchAllInternshipScreen> {
             screenTitle ?? "Search Internships",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),

@@ -213,13 +213,13 @@ class PostedInternshipScreenState extends State<PostedInternshipScreen> {
           Icon(
             CupertinoIcons.briefcase,
             size: 60,
-            color: AppColors.greyTextColor.withValues(alpha: 0.5),
+            color: AppColors.secondaryColor,
           ),
           Text(
             "No internships posted yet",
             style: AppStyles.customTextStyle(
               size: 16,
-              color: AppColors.greyTextColor,
+              color: AppColors.whiteColor,
               weight: FontWeight.w500,
             ),
           ),
@@ -228,7 +228,7 @@ class PostedInternshipScreenState extends State<PostedInternshipScreen> {
             textAlign: TextAlign.center,
             style: AppStyles.customTextStyle(
               size: 13,
-              color: AppColors.greyTextColor.withValues(alpha: 0.6),
+              color: AppColors.secondaryColor.withValues(alpha: 0.6),
               weight: FontWeight.w400,
             ),
           ),

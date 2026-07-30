@@ -93,7 +93,7 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
             "My Internships",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),

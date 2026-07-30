@@ -68,7 +68,7 @@ class _MyAppliesScreenState extends State<MyAppliesScreen> {
             "My Application",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),

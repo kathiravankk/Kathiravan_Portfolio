@@ -5,6 +5,8 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
+import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart'
     show FullScreenImagePreview;
@@ -261,22 +263,44 @@ class _CertificateViewScreenState extends State<CertificateViewScreen> {
     }
   }
 
+  // Future<void> _shareCertificate(String url) async {
+  //   try {
+  //     final response = await HttpClient().getUrl(Uri.parse(url));
+  //     final res = await response.close();
+  //     final bytes = await consolidateHttpClientResponseBytes(res);
+  //
+  //     final tempDir = await getTemporaryDirectory();
+  //     final file = File(
+  //       '${tempDir.path}/certificate_${DateTime.now().millisecondsSinceEpoch}.jpg',
+  //     );
+  //
+  //     await file.writeAsBytes(bytes);
+  //
+  //     await Share.shareXFiles([XFile(file.path, mimeType: 'image/jpeg')]);
+  //   } catch (e) {
+  //     AppAlertUtils.showToast(message: "Share failed", isError: true);
+  //   }
+  // }
   Future<void> _shareCertificate(String url) async {
     try {
       final response = await HttpClient().getUrl(Uri.parse(url));
       final res = await response.close();
+
       final bytes = await consolidateHttpClientResponseBytes(res);
 
-      final tempDir = await getTemporaryDirectory();
-      final file = File(
-        '${tempDir.path}/certificate_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      await ResumeFileUtils.shareImage(
+        bytes: bytes,
+        fileName: "certificate_${DateTime.now().millisecondsSinceEpoch}",
+        extension: "jpg",
+        mimeType: "image/jpeg",
+        subject: "My Certificate",
+        shareText: CommonUtils.certificateShareContent,
       );
-
-      await file.writeAsBytes(bytes);
-
-      await Share.shareXFiles([XFile(file.path, mimeType: 'image/jpeg')]);
     } catch (e) {
-      AppAlertUtils.showToast(message: "Share failed", isError: true);
+      AppAlertUtils.showToast(
+        message: "Share failed",
+        isError: true,
+      );
     }
   }
 

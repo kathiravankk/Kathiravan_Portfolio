@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/student_credit_history_model.dart';
+import 'package:internsharks/app/data/models/account/student_purchase_history_model.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
 import 'package:internsharks/app/data/models/home/banner_like_model.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
@@ -413,5 +415,187 @@ class ProfileController extends GetxController {
       aiBannerLikeLoading = false;
       rethrow;
     }
+  }
+
+  // GET TRANSACTION HISTORY
+
+  final _creditHistoryLoading = false.obs;
+  bool get creditHistoryLoading => _creditHistoryLoading.value;
+  set creditHistoryLoading(bool value) =>
+      _creditHistoryLoading.value = value;
+
+  final _creditHistoryLoadingMore = false.obs;
+  bool get creditHistoryLoadingMore =>
+      _creditHistoryLoadingMore.value;
+  set creditHistoryLoadingMore(bool value) =>
+      _creditHistoryLoadingMore.value = value;
+
+  final _creditModel = StudentCreditHistoryModel().obs;
+  StudentCreditHistoryModel get creditModel =>
+      _creditModel.value;
+  set creditModel(StudentCreditHistoryModel value) =>
+      _creditModel.value = value;
+
+  /// UI List
+  final _creditHistoryList = <CreditHistoryData>[].obs;
+  RxList<CreditHistoryData> get creditHistoryList =>
+      _creditHistoryList;
+
+  /// Has More
+  final _creditHistoryHasMore = true.obs;
+  bool get creditHistoryHasMore =>
+      _creditHistoryHasMore.value;
+
+  Future<void> getCreditHistory({
+    required String studentId,
+    required int page,
+    bool isLoadMore = false,
+  }) async {
+    try {
+      if (isLoadMore) {
+        creditHistoryLoadingMore = true;
+      } else {
+        creditHistoryLoading = true;
+      }
+
+      creditModel = await profileProvider!.fetchCreditHistory(
+        studentId: studentId,
+        page: page,
+      );
+
+      final newData = creditModel.historyList;
+
+      if (isLoadMore) {
+        _creditHistoryList.addAll(newData!);
+      } else {
+        _creditHistoryList.assignAll(newData!);
+      }
+
+      final pagination = creditModel.pagination;
+
+      if (pagination != null) {
+        _creditHistoryHasMore.value =
+            (pagination.current ?? 1) < (pagination.total ?? 1);
+      } else {
+        _creditHistoryHasMore.value = false;
+      }
+    } catch (err) {
+      rethrow;
+    } finally {
+      if (isLoadMore) {
+        creditHistoryLoadingMore = false;
+      } else {
+        creditHistoryLoading = false;
+      }
+    }
+  }
+
+  // GET PURCHASE HISTORY
+
+  final _purchaseHistoryLoading = false.obs;
+
+  bool get purchaseHistoryLoading => _purchaseHistoryLoading.value;
+
+  set purchaseHistoryLoading(bool value) => _purchaseHistoryLoading.value = value;
+
+  // Raw API response (used for totalPages / meta info).
+  final _purchaseHistoryModel = StudentPurchaseHistoryModel().obs;
+
+  StudentPurchaseHistoryModel get purchaseHistoryModel =>
+      _purchaseHistoryModel.value;
+
+  set purchaseHistoryModel(StudentPurchaseHistoryModel value) =>
+      _purchaseHistoryModel.value = value;
+
+  final _purchaseHistoryLoadingMore = false.obs;
+
+  bool get purchaseHistoryLoadingMore => _purchaseHistoryLoadingMore.value;
+
+  set purchaseHistoryLoadingMore(bool value) =>
+      _purchaseHistoryLoadingMore.value = value;
+
+  // Every record fetched from the API so far (unfiltered), across every
+  // "Load More" page requested in this session.
+  final _purchaseHistoryFullList = <StudentPurchaseData>[].obs;
+
+  // What the UI actually renders — full list after the local month
+  // filter (if any) is applied.
+  final _purchaseHistoryList = <StudentPurchaseData>[].obs;
+
+  RxList<StudentPurchaseData> get purchaseHistoryList => _purchaseHistoryList;
+
+  // Whether the backend has more pages left.
+  final _purchaseHistoryHasMore = true.obs;
+
+  bool get purchaseHistoryHasMore => _purchaseHistoryHasMore.value;
+
+  // Currently applied local month filter (null = "All Time").
+  int? _purchaseHistorySelectedMonth;
+
+  Future<void> getPurchaseHistoryData({
+    required int page,
+    required int limit,
+    int? month, // NOT sent to the API — applied locally only
+    bool isLoadMore = false,
+  }) async {
+    try {
+      _purchaseHistorySelectedMonth = month;
+
+      if (isLoadMore) {
+        purchaseHistoryLoadingMore = true;
+      } else {
+        purchaseHistoryLoading = true;
+      }
+
+      purchaseHistoryModel = await profileProvider!
+          .fetchPurchaseHistoryData(page: page, limit: limit);
+
+      final newRecords = purchaseHistoryModel.purchaseList ?? [];
+
+      if (isLoadMore) {
+        _purchaseHistoryFullList.addAll(newRecords);
+      } else {
+        _purchaseHistoryFullList.assignAll(newRecords);
+      }
+
+      final totalPages = purchaseHistoryModel.totalPages ?? 1;
+      _purchaseHistoryHasMore.value = page < totalPages;
+
+      _applyPaymentHistoryMonthFilter();
+    } catch (err) {
+      rethrow;
+    } finally {
+      if (isLoadMore) {
+        purchaseHistoryLoadingMore = false;
+      } else {
+        purchaseHistoryLoading = false;
+      }
+    }
+  }
+
+  // Re-applies the local month filter without another API call — call
+  // this directly from the month dropdown's onSelected.
+  void filterPaymentHistoryByMonth(int? month) {
+    _purchaseHistorySelectedMonth = month;
+    _applyPaymentHistoryMonthFilter();
+  }
+
+  void _applyPaymentHistoryMonthFilter() {
+    if (_purchaseHistorySelectedMonth == null) {
+      _purchaseHistoryList.assignAll(_purchaseHistoryFullList);
+      return;
+    }
+    _purchaseHistoryList.assignAll(
+      _purchaseHistoryFullList.where((e) {
+        final createdAt = e.createdAt;
+        if (createdAt == null) return false;
+        try {
+          return DateTime.parse(createdAt).toLocal().month ==
+              _purchaseHistorySelectedMonth;
+        } catch (_) {
+          return false;
+        }
+      }),
+    );
   }
 }

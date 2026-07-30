@@ -669,7 +669,7 @@ class RecruiterHomeController extends GetxController {
   bool get transactionHistoryHasMore =>
       _transactionHistoryHasMore.value;
 
-  Future<void> getTransactionHistory({
+  Future<void> getCreditHistory({
     required String recruiterId,
     required int page,
     bool isLoadMore = false,
@@ -681,7 +681,7 @@ class RecruiterHomeController extends GetxController {
         transactionHistoryLoading = true;
       }
 
-      historyModel = await recruiterHomeProvider!.fetchTransactionHistory(
+      historyModel = await recruiterHomeProvider!.fetchCreditHistory(
         recruiterId: recruiterId,
         page: page,
       );

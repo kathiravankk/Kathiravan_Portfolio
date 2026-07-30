@@ -6,6 +6,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -270,6 +271,7 @@ class _ResumeTemplatePreviewScreenState
       await ResumeFileUtils.handleShare(
         webViewController: _controller,
         fileName: "${firstName}_resume",
+          shareText: CommonUtils.resumeShareContent
       );
     } finally {
       if (mounted) setState(() => isLoading = false);

@@ -367,7 +367,7 @@ class RecruiterHomeProvider {
 
   // GET TRANSACTION HISTORY
 
-  Future<RecruiterTransactionHistoryModel> fetchTransactionHistory({
+  Future<RecruiterTransactionHistoryModel> fetchCreditHistory({
     required String recruiterId,
     required int page,
   }) async {

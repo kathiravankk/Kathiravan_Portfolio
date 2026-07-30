@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/account/student_credit_history_model.dart';
+import 'package:internsharks/app/data/models/account/student_purchase_history_model.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
 import 'package:internsharks/app/data/models/home/banner_like_model.dart';
 import 'package:internsharks/app/data/models/home/filter_option_model.dart';
@@ -285,6 +287,50 @@ class ProfileProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return BannerLikeModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET CREDIT HISTORY
+
+  Future<StudentCreditHistoryModel> fetchCreditHistory({
+    required String studentId,
+    required int page,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getStudentCreditHistory(studentId, page),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return StudentCreditHistoryModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return StudentCreditHistoryModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET PURCHASE HISTORY DATA
+
+  Future<StudentPurchaseHistoryModel> fetchPurchaseHistoryData(
+      {required int page, required int limit}) async {
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getStudentPurchaseHistory(page, limit),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return StudentPurchaseHistoryModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return StudentPurchaseHistoryModel.fromJson(err.response!.data);
     }
   }
 }
