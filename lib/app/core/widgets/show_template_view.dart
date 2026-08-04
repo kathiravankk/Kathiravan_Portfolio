@@ -36,7 +36,7 @@ class _ShowTemplateViewState extends State<ShowTemplateView> {
             final jsonData = jsonEncode(widget.resumeData.toJson());
 
             await _controller.runJavaScript("renderResume($jsonData);");
-
+            if (!mounted) return;
             setState(() => _isLoading = false);
           },
         ),

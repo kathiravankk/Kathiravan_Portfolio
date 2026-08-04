@@ -1,6 +1,7 @@
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
+import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/home/profile_information_model.dart'
     show Experience;
@@ -27,7 +28,7 @@ class ReplyData {
   String? profileSummary;
   List<String>? skills;
   List<Project>? projects;
-  List<Experience>? experience;
+  List<ExperienceData>? experience;
   List<InternShipModel>? internships;
   List<dynamic>? industrialVisits;
   EducationModel? education;
@@ -84,10 +85,19 @@ class ReplyData {
     userId = json["user_id"] ?? "";
     response = json["response"] ?? "";
     state = json["state"] ?? "";
-    personalInfo = json['personal_info'] != null
-        ? PersonalInfoModel.fromJson(json['personal_info'])
+    final personalJson = json['personal_info'] ?? json['personal_data'];
+    personalInfo = personalJson != null
+        ? PersonalInfoModel.fromJson(personalJson)
         : null;
-    profileSummary = json['profile_summary'] ?? "";
+    final profile = json['profile_summary'];
+
+    if (profile is String) {
+      profileSummary = profile;
+    } else if (profile is Map<String, dynamic>) {
+      profileSummary = profile['profile_summary'] ?? "";
+    } else {
+      profileSummary = "";
+    }
 
     skills = json['skills'] != null
         ? List<String>.from(json['skills'])
@@ -103,20 +113,19 @@ class ReplyData {
     }
 
     if (json['experience'] != null) {
-      experience = <Experience>[];
+      experience = <ExperienceData>[];
       json['experience'].forEach((e) {
-        experience!.add(Experience.fromJson(e));
+        experience!.add(ExperienceData.fromJson(e));
       });
     } else {
-      experience = <Experience>[];
+      experience = <ExperienceData>[];
     }
 
     internships = (json['internships'] ?? [])
         .map<InternShipModel>((e) => InternShipModel.fromJson(e))
         .toList();
     industrialVisits = json['industrial_visits'] ?? [];
-    toolsAndTechnologies: json['tools_and_technologies'] ?? [];
-
+    toolsAndTechnologies = json['tools_and_technologies'] ?? [];
     education = json['education'] != null
         ? EducationModel.fromJson(json['education'])
         : null;
@@ -162,11 +171,12 @@ class ReplyData {
         ? SchoolEducation.fromJson(json['secondary'])
         : null;
 
-    if (json['colleges'] != null) {
-      colleges = <CollegeData>[];
-      json['colleges'].forEach((e) {
-        colleges!.add(CollegeData.fromJson(e));
-      });
+    final collegeList = json['colleges'] ?? json['college'];
+
+    if (collegeList != null) {
+      colleges = (collegeList as List)
+          .map((e) => CollegeData.fromJson(e))
+          .toList();
     } else {
       colleges = <CollegeData>[];
     }
@@ -199,6 +209,7 @@ class ReplyData {
 
     if (personalInfo != null) {
       data["personal_info"] = personalInfo!.toJson();
+      data["personal_data"] = personalInfo?.toJson();
     }
 
     data["profile_summary"] = profileSummary;
@@ -254,6 +265,9 @@ class ReplyData {
     data["colleges"] = colleges != null
         ? colleges!.map((e) => e.toJson()).toList()
         : [];
+    data["college"] = colleges != null
+        ? colleges!.map((e) => e.toJson()).toList()
+        : [];
 
     data["institution"] = institution != null
         ? institution!.map((e) => e.toJson()).toList()
@@ -270,6 +284,21 @@ class ReplyData {
 class ChatMessage {
   final String text;
   final bool isBot;
+  final String time;
 
-  ChatMessage({required this.text, required this.isBot});
+  ChatMessage({
+    required this.text,
+    required this.isBot,
+    String? time,
+  }) : time = time ?? _getCurrentFormattedTime();
+
+  static String _getCurrentFormattedTime() {
+    final now = DateTime.now();
+    final hour = now.hour == 0
+        ? 12
+        : (now.hour > 12 ? now.hour - 12 : now.hour);
+    final minute = now.minute.toString().padLeft(2, '0');
+    final period = now.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
+  }
 }

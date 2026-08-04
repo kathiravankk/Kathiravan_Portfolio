@@ -27,6 +27,7 @@ class AppApiUrls {
   static const String updateResumeData = "${baseUrl}enhance-resume";
   static const String verifyKycData = "${baseUrl}verify-kyc";
   static const String chatResumeCreation = "${baseUrl}chatbot";
+  static const String createNewChatResume = "${baseUrl}resumechatbot";
   static const String templateRefresh = "${baseUrl}reduceresrefresh";
   static const String chatResumeCredit = "${baseUrl}reduceresumecredit";
   static  String getCreditData(String creditId) => "${baseUrl}credit/$creditId";
@@ -52,6 +53,7 @@ class AppApiUrls {
   static String getReviewData(String jobId) =>
       "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
+  static String chatMcqQuestion = "${baseUrl}resumechatbotmcq";
   //static String updateChatResume = "${baseUrl}updatemessage";
 
   // BUY CREDITS

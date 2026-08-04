@@ -395,7 +395,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
           // Coordinator Login
 
           await LocalStorageService.saveRecruiterId(
-            recruiterId: recruiter?.recruiterInfo?.id ?? "",
+            recruiterId: recruiter?.coordinatorId ?? "",
           );
 
           await LocalStorageService.saveRecruiterCreditId(

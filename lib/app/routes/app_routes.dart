@@ -13,6 +13,7 @@ class AppRoutes {
   static const stepUpdateScreen = '/stepUpdateScreen';
   static const chatResumeCreation = '/chatResumeCreation';
   static const chatResumeTemplateScreen = '/chatResumeTemplateScreen';
+  static const chatNewResumeCreationScreen = '/chatNewResumeCreationScreen';
 
   // HOME FLOW
   static const studentDashBoardScreen = '/dashBoardScreen';

@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:internsharks/app/data/models/account/chat_mcq_question_model.dart';
+import 'package:internsharks/app/data/models/account/chat_mcq_result_model.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/account/create_new_resume_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
 import 'package:internsharks/app/data/providers/student_login_provider.dart';
 
@@ -116,6 +119,102 @@ class StudentLoginController extends GetxController {
       loginVerifyLoading = false;
     } catch (err) {
       loginVerifyLoading = false;
+      rethrow;
+    }
+  }
+
+  //CHAT CREATE NEW RESUME
+
+  final _createNewResumeLoading = false.obs;
+
+  bool get createNewResumeLoading => _createNewResumeLoading.value;
+
+  set createNewResumeLoading(bool value) => _createNewResumeLoading.value = value;
+
+  //Model
+
+  final _createNewResumeModel = CreateNewChatResumeModel().obs;
+
+  CreateNewChatResumeModel get createNewResumeModel => _createNewResumeModel.value;
+
+  set createNewResumeModel(CreateNewChatResumeModel value) =>
+      _createNewResumeModel.value = value;
+
+  Future<void> createNewChatResume({
+    required Map<String, dynamic> chatRequestData
+  }) async {
+    try {
+      createNewResumeLoading = true;
+      createNewResumeModel = await loginProvider!.makeNewChatResume(
+          chatRequestData: chatRequestData
+      );
+      createNewResumeLoading = false;
+    } catch (err) {
+      createNewResumeLoading = false;
+      rethrow;
+    }
+  }
+
+  //CHAT MCQ QUESTION
+
+  final _chatMcqQuestionLoading = false.obs;
+
+  bool get chatMcqQuestionLoading => _chatMcqQuestionLoading.value;
+
+  set chatMcqQuestionLoading(bool value) => _chatMcqQuestionLoading.value = value;
+
+  //Model
+
+  final _chatMcqQuestionModel = ChatMcqQuestionModel().obs;
+
+  ChatMcqQuestionModel get chatMcqQuestionModel => _chatMcqQuestionModel.value;
+
+  set chatMcqQuestionModel(ChatMcqQuestionModel value) =>
+      _chatMcqQuestionModel.value = value;
+
+  Future<void> getChatMcqQuestion({
+    required Map<String, dynamic> chatRequestData
+  }) async {
+    try {
+      chatMcqQuestionLoading = true;
+      chatMcqQuestionModel = await loginProvider!.fetchChatMcqQuestion(
+          chatRequestData: chatRequestData
+      );
+      chatMcqQuestionLoading = false;
+    } catch (err) {
+      chatMcqQuestionLoading = false;
+      rethrow;
+    }
+  }
+
+  //CHAT MCQ Result
+
+  final _chatMcqResultLoading = false.obs;
+
+  bool get chatMcqResultLoading => _chatMcqResultLoading.value;
+
+  set chatMcqResultLoading(bool value) => _chatMcqResultLoading.value = value;
+
+  //Model
+
+  final _chatMcqResultModel = ChatMcqResultModel().obs;
+
+  ChatMcqResultModel get chatMcqResultModel => _chatMcqResultModel.value;
+
+  set chatMcqResultModel(ChatMcqResultModel value) =>
+      _chatMcqResultModel.value = value;
+
+  Future<void> getChatMcqResult({
+    required Map<String, dynamic> chatRequestData
+  }) async {
+    try {
+      chatMcqResultLoading = true;
+      chatMcqResultModel = await loginProvider!.fetchChatMcqResult(
+          chatRequestData: chatRequestData
+      );
+      chatMcqResultLoading = false;
+    } catch (err) {
+      chatMcqResultLoading = false;
       rethrow;
     }
   }

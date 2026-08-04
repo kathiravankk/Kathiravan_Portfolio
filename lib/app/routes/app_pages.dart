@@ -15,6 +15,7 @@ import 'package:internsharks/app/modules/home/view/chat_resume_update_screen.dar
 import 'package:internsharks/app/modules/home/view/student_dashboard_screen.dart';
 import 'package:internsharks/app/modules/home/view/internship_detail_screen.dart';
 import 'package:internsharks/app/modules/internship/view/my_certificates_screen.dart';
+import 'package:internsharks/app/modules/login/view/chat_new_resume_creation_screen.dart';
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
 import 'package:internsharks/app/modules/profile/view/profile_edit_screen.dart';
 import 'package:internsharks/app/modules/profile/view/profile_screen.dart';
@@ -58,7 +59,8 @@ import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/certifi
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/chat_syllabus_update_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/post_new_internship_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_screen.dart';
-import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_view_screen.dart' show PostedInternshipViewScreen;
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/posted_internship_view_screen.dart'
+    show PostedInternshipViewScreen;
 import 'package:internsharks/app/modules/recruiter_flow/intern_post/view/recruiter_interns_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/choose_path_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/company_profile_screen.dart';
@@ -144,6 +146,11 @@ class AppPages {
       name: AppRoutes.chatResumeTemplateScreen,
       page: () => ChatResumeTemplateScreen(),
       bindings: [ProfileBindings()],
+    ),
+    appPage(
+      name: AppRoutes.chatNewResumeCreationScreen,
+      page: () => ChatNewResumeCreationScreen(),
+      bindings: [RegisterBindings()],
     ),
     appPage(
       name: AppRoutes.chatResumeUpdateScreen,
@@ -290,7 +297,6 @@ class AppPages {
       page: () => StudentPurchaseHistoryScreen(),
     ),
 
-
     /// RECRUITER FLOW SCREENS
     appPage(name: AppRoutes.choosePathScreen, page: () => ChoosePathScreen()),
     appPage(
@@ -313,19 +319,19 @@ class AppPages {
     ),
     appPage(
       name: AppRoutes.shortlistedStudentsListScreen,
-      page: ()=>ShortlistedStudentsListScreen(),
+      page: () => ShortlistedStudentsListScreen(),
     ),
     appPage(
       name: AppRoutes.recruiterProfileScreen,
-      page: ()=>RecruiterProfileScreen(),
+      page: () => RecruiterProfileScreen(),
     ),
     appPage(
       name: AppRoutes.recruiterProfileEditScreen,
-      page: ()=>RecruiterProfileEditScreen(),
+      page: () => RecruiterProfileEditScreen(),
     ),
     appPage(
       name: AppRoutes.postedInternshipScreen,
-      page: ()=>PostedInternshipScreen(),
+      page: () => PostedInternshipScreen(),
     ),
     appPage(
       name: AppRoutes.companyProfileScreen,

@@ -27,6 +27,8 @@ class AtsResult {
   final String? response;
   final List<String>? option;
   final bool? multiSelect;
+  final ReplyData? collectedData;
+
 
   AtsResult({
     this.status,
@@ -35,6 +37,7 @@ class AtsResult {
     this.response,
     this.option,
     this.multiSelect,
+    this.collectedData
   });
 
   factory AtsResult.fromJson(Map<String, dynamic> json) {
@@ -45,6 +48,9 @@ class AtsResult {
       response: json['responce'] ?? "",
       option: json['option'] != null ? List<String>.from(json['option']) : [],
       multiSelect: json['multiselect'] ?? false,
+      collectedData: json['final_data'] != null
+          ? ReplyData.fromJson(json['final_data'])
+          : null,
     );
   }
 
@@ -56,6 +62,7 @@ class AtsResult {
       "responce": response,
       "option": option,
       "multiselect": multiSelect,
+      "collected_data": collectedData,
     };
   }
 }
@@ -69,14 +76,14 @@ class UpdateChatResumeModel {
   factory UpdateChatResumeModel.fromJson(Map<String, dynamic> json) {
     return UpdateChatResumeModel(
       success: json['success'] ?? "",
-      aiResponse: json['aiResponse'] != null
-          ? AiResponse.fromJson(json['aiResponse'])
+      aiResponse: json['atsResult'] != null
+          ? AiResponse.fromJson(json['atsResult'])
           : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {"success": success, "aiResponse": aiResponse?.toJson()};
+    return {"success": success, "atsResult": aiResponse?.toJson()};
   }
 }
 
@@ -84,16 +91,20 @@ class AiResponse {
   final String? response;
   final String? status;
   final List<String>? option;
-  final ReplyData? finalUpdatedData;
+  final ReplyData? collectedData;
+  final ReplyData? finalData;
 
-  AiResponse({this.response, this.option, this.status, this.finalUpdatedData});
+  AiResponse({this.response, this.option, this.status, this.collectedData, this.finalData});
 
   factory AiResponse.fromJson(Map<String, dynamic> json) {
     return AiResponse(
       response: json['responce'] ?? "",
       status: json['status'] ?? "",
       option: json['option'] != null ? List<String>.from(json['option']) : [],
-      finalUpdatedData: json['final_data'] != null
+      collectedData: json['collected_data'] != null
+          ? ReplyData.fromJson(json['collected_data'])
+          : null,
+      finalData: json['final_data'] != null
           ? ReplyData.fromJson(json['final_data'])
           : null,
     );
@@ -104,7 +115,8 @@ class AiResponse {
       "responce": response,
       "option": option,
       "status": status,
-      "final_data": finalUpdatedData,
+      "collected_data": collectedData,
+      "final_data": finalData,
     };
   }
 }

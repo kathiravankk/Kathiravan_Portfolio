@@ -419,7 +419,7 @@ class _RegisterResumeUploadScreenState
             onTap: ()  {
               AppFunctions.navigateScreen(
                 context,
-                AppRoutes.chatResumeCreation,
+                AppRoutes.chatNewResumeCreationScreen,
               );
             },
             child: Container(
