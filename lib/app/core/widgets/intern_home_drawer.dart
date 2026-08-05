@@ -313,6 +313,19 @@ class _InternHomeDrawerState extends State<InternHomeDrawer> {
                             );
                           },
                         ),
+                        CardWidgets.settingsTile(
+                          icon: Icons.history_outlined,
+                          title: "My Transaction",
+                          onTap: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.studentTransactionHistoryScreen,
+                              arguments: {
+                                "creditBalance":0
+                              }
+                            );
+                          },
+                        ),
                         CardWidgets.settingsCard(
                           children: [
                             CardWidgets.settingsTile(

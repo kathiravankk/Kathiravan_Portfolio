@@ -27,6 +27,7 @@ class AppApiUrls {
   static const String updateResumeData = "${baseUrl}enhance-resume";
   static const String verifyKycData = "${baseUrl}verify-kyc";
   static const String chatResumeCreation = "${baseUrl}chatbot";
+  static const String createNewChatResume = "${baseUrl}resumechatbot";
   static const String templateRefresh = "${baseUrl}reduceresrefresh";
   static const String chatResumeCredit = "${baseUrl}reduceresumecredit";
   static  String getCreditData(String creditId) => "${baseUrl}credit/$creditId";
@@ -52,10 +53,12 @@ class AppApiUrls {
   static String getReviewData(String jobId) =>
       "${baseUrl}job/reviews?jobId=$jobId";
   static String getUpdateChatResumeData = "${baseUrl}updatejsonresume";
+  static String chatMcqQuestion = "${baseUrl}resumechatbotmcq";
   //static String updateChatResume = "${baseUrl}updatemessage";
 
   // BUY CREDITS
-  static String getCreditPlans = "${baseUrl}plans";
+  //static String getCreditPlans = "${baseUrl}plans";
+  static String getCreditPlans = "${baseUrl}studentpaln/getallstudentplan";
   static String createCreditOrder = "${baseUrl}student/create-order";
   static String verifyCreditOrder = "${baseUrl}student/verify";
 
@@ -89,6 +92,10 @@ class AppApiUrls {
   static String removeWaterMark = "${baseUrl}removewater";
   static String bannerLike = "${baseUrl}studentlike";
   static String studentDeleteAccount = "${baseUrl}student/delete";
+  static String getStudentCreditHistory(String studentId, int page)=> "${baseUrl}student/getallfreecredittransaction/$studentId?page=$page&limit=10";
+  static String getStudentPurchaseHistory(int page,int limit )=> "${baseUrl}getallcreditpayment?page=$page&limit=$limit";
+
+
 
   // INTERNSHIP FLOW
 
@@ -151,5 +158,10 @@ class AppApiUrls {
   static String getTransactionHistory(String recruiterId, int page)=> "${baseUrl}recruiter/getallcredittransaction/$recruiterId?page=$page&limit=10";
   static String syllabusDataUpdate(String studentId, String jobId)=> "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
   static String checkStipendStatus(String studentId, String jobId)=> "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";
+  static String recruiterDeleteAccount = "${baseUrl}recruiter/delete";
+  static String sendCoordinatorOtp = "${baseUrl}sendcoordinatorotp";
+  static String verifyCoordinatorOtp = "${baseUrl}verifycoordinatorotp";
+  static String giveRecruiterReview = "${baseUrl}recruiterreview";
+
 
 }

@@ -8,11 +8,14 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/show_template_view.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
+import 'package:internsharks/app/modules/login/view/resume_template_view_screen.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
@@ -31,16 +34,18 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
   final ScrollController scrollController = ScrollController();
 
   final RxList<ChatMessage> messages = <ChatMessage>[].obs;
+  final RxInt currentTabIndex = 0.obs; // 0 for Chat, 1 for Live Preview
 
   final RegisterController registerController = Get.find<RegisterController>();
   final ProfileController profileController = Get.find<ProfileController>();
   final DashboardController dashboardController =
-      Get.find<DashboardController>();
+  Get.find<DashboardController>();
 
   List<String> availableOptions = [];
   List<String> selectedOptions = [];
 
   int? templateId;
+  String chatUserId = "";
 
   @override
   void initState() {
@@ -64,68 +69,40 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
         "github": profile.github ?? "",
         "location": profile.collegeLocation ?? "",
       },
-
       "profile_summary": profile.profileSummary ?? "",
-
       "skills": profile.studProgrammingLang ?? [],
-
       "areas_of_interest": profile.areasOfInterest ?? [],
-
       "hobbies": List<String>.from(profile.hobbies ?? []),
-
       "languages": List<String>.from(profile.languagesKnown ?? []),
-
-      "volunteer_experience":
-      List<String>.from(profile.volunteerExperience ?? []),
-
+      "volunteer_experience": List<String>.from(
+        profile.volunteerExperience ?? [],
+      ),
       "leadership": List<String>.from(profile.leadership ?? []),
-
       "achievements": List<String>.from(profile.achievements ?? []),
-
       "publications": List<String>.from(profile.publications ?? []),
-
       "workshops": List<String>.from(profile.workshops ?? []),
-
       "paper_presentations": profile.paperPresentations != null
-          ? profile.paperPresentations!
-          .map((e) => e.toJson())
-          .toList()
+          ? profile.paperPresentations!.map((e) => e.toJson()).toList()
           : [],
-
       "industrial_visits": profile.industrialVisits != null
-          ? profile.industrialVisits!
-          .map((e) => e.toJson())
-          .toList()
+          ? profile.industrialVisits!.map((e) => e.toJson()).toList()
           : [],
-
       "projects": profile.projects != null
-          ? profile.projects!
-          .map((e) => e.toJson())
-          .toList()
+          ? profile.projects!.map((e) => e.toJson()).toList()
           : [],
-
       "experience": profile.experience != null
-          ? profile.experience!
-          .map((e) => e.toJson())
-          .toList()
+          ? profile.experience!.map((e) => e.toJson()).toList()
           : [],
-
       "internships": profile.internships != null
-          ? profile.internships!
-          .map((e) => e.toJson())
-          .toList()
+          ? profile.internships!.map((e) => e.toJson()).toList()
           : [],
-
       "education": profile.education?.toJson(),
-
       "certifications": profile.studentCertificate != null
-          ? profile.studentCertificate!
-          .map((e) => e.toJson())
-          .toList()
+          ? profile.studentCertificate!.map((e) => e.toJson()).toList()
           : [],
-
-      "tools_and_technologies":
-      List<String>.from(profile.toolsAndTechnologies ?? []),
+      "tools_and_technologies": List<String>.from(
+        profile.toolsAndTechnologies ?? [],
+      ),
     };
 
     await dashboardController.getUpdateResumeData(resumeData: resumeData);
@@ -133,11 +110,10 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     if (dashboardController.getResponseCode() == 200 ||
         dashboardController.getResponseCode() == 201) {
       final ats = dashboardController.updateChatModel.atsResult;
+      chatUserId = dashboardController.updateChatModel.atsResult?.userId ?? "";
 
       messages.add(ChatMessage(text: ats?.response ?? "", isBot: true));
-
       availableOptions = ats?.option ?? [];
-
       setState(() {});
     } else {
       AppFunctions.apiErrorHandling(
@@ -158,10 +134,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     FocusScope.of(context).unfocus();
 
     await dashboardController.updateChatResumeData(
-      resumeData: {
-        "user_id": dashboardController.updateChatModel.atsResult?.userId ?? "",
-        "message": message,
-      },
+      resumeData: {"user_id": chatUserId, "message": message},
     );
 
     if (dashboardController.getResponseCode() == 200 ||
@@ -182,10 +155,8 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       setState(() {});
       scrollToBottom();
 
-      //if (botResponse.contains("Chat ended")) {
       if (ai?.status == "completed") {
-        Future.delayed(const Duration(milliseconds: 800),
-                () {
+        Future.delayed(const Duration(milliseconds: 800), () {
           availableOptions.clear();
           selectedOptions.clear();
           updateStudentProfile();
@@ -218,7 +189,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
   Future<void> updateStudentProfile() async {
     ReplyData? profileData =
-        dashboardController.updateChatResumeModel.aiResponse!.finalUpdatedData;
+        dashboardController.updateChatResumeModel.aiResponse!.finalData;
 
     if (profileData == null) return;
 
@@ -227,12 +198,12 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
     final higherSecondaryObject = {
       "institution":
-          profileData.education?.school?.higherSecondary.institution ?? "",
+      profileData.education?.school?.higherSecondary.institution ?? "",
       "board": profileData.education?.school?.higherSecondary.board ?? "",
       "percentage":
-          profileData.education?.school?.higherSecondary.percentage ?? "",
+      profileData.education?.school?.higherSecondary.percentage ?? "",
       "year_of_passing":
-          profileData.education?.school?.higherSecondary.yearOfPassing ?? "",
+      profileData.education?.school?.higherSecondary.yearOfPassing ?? "",
     };
 
     final secondaryObject = {
@@ -240,7 +211,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "board": profileData.education?.school?.secondary.board ?? "",
       "percentage": profileData.education?.school?.secondary.percentage ?? "",
       "year_of_passing":
-          profileData.education?.school?.secondary.yearOfPassing ?? "",
+      profileData.education?.school?.secondary.yearOfPassing ?? "",
     };
 
     final educationObject = {
@@ -273,11 +244,9 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
           ? collegeArray.first["end_year"] ?? ""
           : "",
       "studcollegelocation": "",
-
       "studhighschollname": higherSecondaryObject["institution"],
       "studhighschoolpercentage": higherSecondaryObject["percentage"],
       "studhighschoollocation": "",
-
       "studentsecondaryschoolname": secondaryObject["institution"],
       "studentsecondaryschoolpercentage": secondaryObject["percentage"],
       "studsecondaryschoollocation": "",
@@ -285,11 +254,9 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "higher_secondary": jsonEncode([higherSecondaryObject]),
       "secondary": jsonEncode([secondaryObject]),
       "education": jsonEncode(educationObject),
-
       "projects": jsonEncode(
         profileData.projects?.map((e) => e.toJson()).toList() ?? [],
       ),
-
       "areas_of_interest": jsonEncode(profileData.areasOfInterest ?? []),
       "hobbies": jsonEncode(profileData.hobbies ?? []),
       "languages_known": jsonEncode(profileData.languages ?? []),
@@ -298,39 +265,26 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "achievements": jsonEncode(profileData.achievements ?? []),
       "publications": jsonEncode(profileData.publications ?? []),
       "workshops": jsonEncode(profileData.workshops ?? []),
-      "paper_presentations": jsonEncode(
-        profileData.paperPresentations ?? [],
-      ),
-
-      "industrial_visits": jsonEncode(
-        profileData.industrialVisits ?? [],
-      ),
-
+      "paper_presentations": jsonEncode(profileData.paperPresentations ?? []),
+      "industrial_visits": jsonEncode(profileData.industrialVisits ?? []),
       "tools_and_technologies": jsonEncode(
         profileData.toolsAndTechnologies ?? [],
       ),
-
       "experience": jsonEncode(
         profileData.experience?.map((e) => e.toJson()).toList() ?? [],
       ),
-
       "internships": jsonEncode(
         profileData.internships?.map((e) => e.toJson()).toList() ?? [],
       ),
-
       "studentcertificate": jsonEncode(
         profileData.certifications?.map((e) => e.toJson()).toList() ?? [],
       ),
-
       "studprogramminglang": convertToNestedList(profileData.skills ?? []),
-
       "linkedIn": profileData.personalInfo?.linkedIn ?? "",
       "github": profileData.personalInfo?.github ?? "",
       "portfolio_website": profileData.personalInfo?.github ?? "",
       "profile_summary": profileData.profileSummary ?? "",
     };
-
-    debugPrint(updateData.toString());
 
     await registerController.updateStudentProfileData(updateData: updateData);
 
@@ -373,7 +327,6 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             publications: studentData.publications,
             workShops: studentData.workshops,
             paperPresentations: studentData.paperPresentations,
-            //certifications: studentData.studentCertificate,
             educationData: studentData.education,
             industrialVisits: studentData.industrialVisits,
             projects: studentData.projects,
@@ -416,7 +369,60 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     await updateChatResume(message: message);
   }
 
-  // ================= UI =================
+  // ================= DYNAMIC LIVE PREVIEW MODEL BUILDER =================
+
+  ExtractedResumeDataModel buildLivePreviewResumeData() {
+    final profile = profileController.profileDataModel;
+    final ReplyData? collected =
+        dashboardController.updateChatResumeModel.aiResponse?.collectedData;
+
+    final personalInfo = collected?.personalInfo;
+    final education = collected?.education;
+    debugPrint(personalInfo?.name ?? "NAme is not available!");
+
+    return ExtractedResumeDataModel(
+      personalInfo: PersonalInfoModel(
+        name: personalInfo?.name ?? profile.studentName ?? "",
+        gender: personalInfo?.gender ?? profile.studentGender,
+        email: personalInfo?.email ?? profile.studEmail ?? "",
+        phone: personalInfo?.phone ?? profile.studMobileNo ?? "",
+        linkedIn: personalInfo?.linkedIn ?? profile.linkedIn,
+        github: personalInfo?.github ?? profile.github,
+        location: personalInfo?.location ?? profile.collegeLocation ?? "",
+      ),
+      internships: collected?.internships ?? profile.internships ?? [],
+      hobbies: collected?.hobbies ?? profile.hobbies,
+      areasOfInterest: collected?.areasOfInterest ?? profile.areasOfInterest,
+      languages: collected?.languages ?? profile.languagesKnown,
+      volunteerExperience:
+      collected?.volunteerExperience ?? profile.volunteerExperience,
+      leaderships: collected?.leadership ?? profile.leadership,
+      achievements: collected?.achievements ?? profile.achievements,
+      publications: collected?.publications ?? profile.publications,
+      workShops: collected?.workshops ?? profile.workshops,
+      paperPresentations:
+      collected?.paperPresentations ?? profile.paperPresentations,
+      educationData: education ?? profile.education,
+      industrialVisits: collected?.industrialVisits ?? profile.industrialVisits,
+      projects: collected?.projects ?? profile.projects,
+      skills: collected?.skills ?? profile.studProgrammingLang,
+      profileSummary: collected?.profileSummary ?? profile.profileSummary ?? "",
+      colleges: education?.college ?? profile.education?.college,
+      degree: const [],
+      experience: collected?.experience ?? profile.experience,
+      trainings: const [],
+      studentId: profile.id,
+      higherSecondary:
+      education?.school?.higherSecondary ??
+          profile.education?.school?.higherSecondary,
+      institution: const [],
+      parents: const [],
+      secondary:
+      education?.school?.secondary ?? profile.education?.school?.secondary,
+    );
+  }
+
+  // ================= UI BUILD =================
 
   @override
   Widget build(BuildContext context) {
@@ -440,75 +446,177 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
             onPressed: () => Get.back(),
           ),
           elevation: 0,
-          title: Text(
-            "Update Resume",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w600,
+          title: Obx(
+                () => Text(
+              currentTabIndex.value == 0 ? "Update Resume" : "Live Preview",
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.secondaryColor,
+                weight: FontWeight.w600,
+              ),
             ),
           ),
         ),
         body: Obx(
-          () =>
-              dashboardController.getUpdateChatLoading ||
-                  registerController.updateProfileLoading
+              () =>
+          dashboardController.getUpdateChatLoading ||
+              registerController.updateProfileLoading
               ? AppAlertUtils.customLoader()
-              : Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: ListView.builder(
-                              controller: scrollController,
-                              itemCount: messages.length,
-                              itemBuilder: (context, i) =>
-                                  _buildChatBubble(messages[i]),
-                            ),
-                          ),
-                          if (dashboardController.resumeUpdateChatLoading)
-                            loadingContainer(),
-                          if (availableOptions.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: _buildOptionsChips(),
-                            ),
+              : IndexedStack(
+            index: currentTabIndex.value,
+            children: [
+              _buildChatBody(),
+              _buildLivePreviewBody(),
+            ],
+          ),
+        ),
+        bottomNavigationBar: _buildBottomNavigationBar(),
+      ),
+    );
+  }
 
-                          _buildInputArea(),
-                        ],
-                      ),
-                    ),
-                    // Visibility(
-                    //   visible:
-                    //       registerController.updateProfileLoading ||
-                    //       registerController.updateProfileLoading,
-                    //   child: Positioned(
-                    //     child: Center(
-                    //       child: Column(
-                    //         mainAxisAlignment: MainAxisAlignment.center,
-                    //         crossAxisAlignment: CrossAxisAlignment.center,
-                    //         children: [
-                    //           CupertinoActivityIndicator(
-                    //             color: AppColors.secondaryColor,
-                    //           ),
-                    //           Text(
-                    //             "AI Updating your resume..!",
-                    //             textAlign: TextAlign.center,
-                    //             style: AppStyles.customTextStyle(
-                    //               size: 14,
-                    //               weight: FontWeight.w600,
-                    //               color: AppColors.secondaryColor,
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
+  // ================= CHAT VIEW BODY =================
+
+  Widget _buildChatBody() {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: messages.length,
+                  itemBuilder: (context, i) => _buildChatBubble(messages[i]),
                 ),
+              ),
+              if (dashboardController.resumeUpdateChatLoading)
+                loadingContainer(),
+              if (availableOptions.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: _buildOptionsChips(),
+                ),
+              _buildInputArea(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ================= LIVE PREVIEW BODY =================
+
+// ================= LIVE PREVIEW BODY =================
+
+  Widget _buildLivePreviewBody() {
+    final int id = templateId ?? 1;
+    final ResumeTemplateModel previewTemplate = ResumeTemplateModel(
+      id: id,
+      htmlPath: 'assets/images/html_templates/resume_template_$id.html',
+      thumbnailPath:
+      'assets/images/templates_thumbnail/resume_thumbnail_$id.png',
+    );
+
+    // Wrap inside Obx to track reactive updates from dashboardController
+    return Obx(() {
+      // Access reactive update model to trigger rebuilds on API changes
+      final updateModel = dashboardController.updateChatModel;
+
+      // Automatically re-computes with the latest collectedData
+      final updatedResumeData = buildLivePreviewResumeData();
+
+      return ShowLivePreviewWidget(
+        key: ValueKey(
+          '${updatedResumeData.hashCode}_${updateModel.atsResult?.collectedData.hashCode}',
+        ),
+        templateData: previewTemplate,
+        resumeData: updatedResumeData,
+      );
+    });
+  }
+  // ================= BOTTOM NAVIGATION BAR =================
+
+  Widget _buildBottomNavigationBar() {
+    return Obx(
+          () => Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        decoration: BoxDecoration(
+          color: AppColors.chatGradient3,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, -3),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              index: 0,
+              icon: CupertinoIcons.chat_bubble_2_fill,
+              label: "My Chat",
+            ),
+            _buildNavItem(
+              index: 1,
+              icon: CupertinoIcons.eye_fill,
+              label: "Live Preview",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required String label,
+  }) {
+    final bool isSelected = currentTabIndex.value == index;
+
+    return GestureDetector(
+      onTap: () {
+        currentTabIndex.value = index;
+      },
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primaryColor.withOpacity(0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 22,
+              color: isSelected
+                  ? AppColors.primaryColor
+                  : AppColors.chatTextColor,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                weight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                color: isSelected
+                    ? AppColors.primaryColor
+                    : AppColors.chatTextColor,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -553,15 +661,15 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
   // ================= INPUT AREA =================
 
   Widget _buildInputArea() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: AppColors.chatGradient3,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        children: [
-          Expanded(
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppColors.chatGradient3,
+              borderRadius: BorderRadius.circular(30),
+            ),
             child: TextField(
               controller: chatTextController,
               style: AppStyles.customTextStyle(
@@ -587,47 +695,47 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
               },
             ),
           ),
-          IconButton(
-            icon: Container(
-              height: 35,
-              width: 35,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryColor,
-              ),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.send_outlined,
-                color: AppColors.whiteColor,
-              ),
+        ),
+        IconButton(
+          icon: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primaryColor,
             ),
-            onPressed: () async {
-              if (selectedOptions.isNotEmpty) {
-                await sendSelectedOptions();
-              } else {
-                await updateChatResume(message: chatTextController.text);
-              }
-              //await updateStudentProfile();
-            },
+            padding: const EdgeInsets.all(10),
+            alignment: Alignment.center,
+            child: const Icon(
+              CupertinoIcons.location,
+              color: AppColors.whiteColor,
+              size: 25,
+            ),
           ),
-        ],
-      ),
+          onPressed: () async {
+            if (selectedOptions.isNotEmpty) {
+              await sendSelectedOptions();
+            } else {
+              await updateChatResume(message: chatTextController.text);
+            }
+          },
+        ),
+      ],
     );
   }
 
   // ================= CHAT BUBBLE =================
 
+  // ================= CHAT BUBBLE WITH TIMESTAMP =================
+
   Widget _buildChatBubble(ChatMessage msg) {
     bool isBot = msg.isBot;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
-        spacing: 5,
-        crossAxisAlignment: isBot
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.end,
+        crossAxisAlignment:
+        isBot ? CrossAxisAlignment.start : CrossAxisAlignment.end,
         children: [
+          // Header: Sender Name
           Text(
             isBot ? "Sharks Bot" : "You",
             style: AppStyles.customTextStyle(
@@ -636,15 +744,18 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
               weight: FontWeight.w500,
             ),
           ),
+          const SizedBox(height: 5),
+
+          // Message Content
           Row(
-            mainAxisAlignment: isBot
-                ? MainAxisAlignment.start
-                : MainAxisAlignment.end,
+            mainAxisAlignment:
+            isBot ? MainAxisAlignment.start : MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (isBot)
+              if (isBot) ...[
                 Container(
-                  height: 40,
-                  width: 40,
+                  height: 36,
+                  width: 36,
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
                     shape: BoxShape.circle,
@@ -654,10 +765,11 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                     ),
                   ),
                 ),
-              SizedBox(width: 8),
+                const SizedBox(width: 8),
+              ],
               Flexible(
                 child: Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: isBot
@@ -665,16 +777,16 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                           : [AppColors.chatGradient1, AppColors.chatGradient2],
                     ),
                     borderRadius: isBot
-                        ? BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                            bottomRight: Radius.circular(15),
-                          )
-                        : BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                            bottomLeft: Radius.circular(15),
-                          ),
+                        ? const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    )
+                        : const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomLeft: Radius.circular(15),
+                    ),
                   ),
                   child: Text(
                     msg.text,
@@ -689,6 +801,21 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
               ),
             ],
           ),
+
+          const SizedBox(height: 5),
+
+          // Chat Timing Below the Card
+          Padding(
+            padding: EdgeInsets.only(left: isBot ? 44.0 : 0.0), // Indent past the bot avatar
+            child: Text(
+              msg.time,
+              style: AppStyles.customTextStyle(
+                color: AppColors.chatTextColor.withValues(alpha: 0.7),
+                size: 9,
+                weight: FontWeight.w400,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -699,7 +826,6 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       padding: const EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           Text(
             "Sharks Bot",
@@ -709,6 +835,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
               weight: FontWeight.w500,
             ),
           ),
+          const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -724,10 +851,10 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                   ),
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Flexible(
                 child: Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -735,7 +862,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
                         AppColors.chatGradient3,
                       ],
                     ),
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
                       bottomRight: Radius.circular(15),
@@ -770,5 +897,23 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
         );
       }
     });
+  }
+}
+class ShowLivePreviewWidget extends StatelessWidget {
+  final ResumeTemplateModel templateData;
+  final ExtractedResumeDataModel resumeData;
+
+  const ShowLivePreviewWidget({
+    super.key,
+    required this.templateData,
+    required this.resumeData,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ShowTemplateView(
+      htmlAssetPath: templateData.htmlPath,
+      resumeData: resumeData,
+    );
   }
 }

@@ -374,9 +374,10 @@ class ResumeFileUtils {
   // ─────────────────────────────────────────────────────────────────────────────
   // 10. SHARE (WebView) — HomeProfileScreen
   // ─────────────────────────────────────────────────────────────────────────────
-  static Future<void> handleShare({
+  static Future handleShare({
     required WebViewController webViewController,
     required String fileName,
+    String? shareText,
   }) async {
     try {
       final html = await getRenderedHtml(webViewController);
@@ -392,6 +393,7 @@ class ResumeFileUtils {
       await _sharePdfBytes(
         await htmlToPdfBytes(html),
         fileName,
+        shareText: shareText,
       );
     } catch (e) {
       AppAlertUtils.showToast(
@@ -399,6 +401,32 @@ class ResumeFileUtils {
         isError: true,
       );
     }
+  }
+
+  static Future<void> shareImage({
+    required Uint8List bytes,
+    required String fileName,
+    String extension = "png",
+    String mimeType = "image/png",
+    String? subject,
+    String? shareText,
+  }) async {
+    final dir = await getTemporaryDirectory();
+
+    final file = File('${dir.path}/$fileName.$extension');
+
+    await file.writeAsBytes(bytes, flush: true);
+
+    await Share.shareXFiles(
+      [
+        XFile(
+          file.path,
+          mimeType: mimeType,
+        ),
+      ],
+      subject: subject,
+      text: shareText,
+    );
   }
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -443,15 +471,28 @@ class ResumeFileUtils {
   }
 
   // ─── shared share helper ─────────────────────────────────────────────────────
-  static Future<void> _sharePdfBytes(Uint8List bytes, String fileName) async {
+  static Future<void> _sharePdfBytes(
+      Uint8List bytes,
+      String fileName, {
+        String? shareText,
+      }) async {
     final safe = fileName.replaceAll(RegExp(r'[^\w\s\-]'), '_').trim();
+
     final tmp = await getTemporaryDirectory();
+
     final file = File('${tmp.path}/$safe.pdf');
+
     await file.writeAsBytes(bytes, flush: true);
+
     await Share.shareXFiles(
-      [XFile(file.path, mimeType: 'application/pdf')],
-      subject: "$safe.pdf",
-      text: "Check out my resume!",
+      [
+        XFile(
+          file.path,
+          mimeType: 'application/pdf',
+        ),
+      ],
+      subject: safe,
+      text: shareText ?? "Check out my resume!",
     );
   }
 }

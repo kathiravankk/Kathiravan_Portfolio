@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
+import 'package:internsharks/app/core/widgets/feeback_dialog.dart';
 import 'package:internsharks/app/data/models/internship/intern_syllabus_response_model.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
@@ -202,19 +203,19 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () =>
-          internController.syllabusDataLoading ||
-              internController.internStatusLoading
-          ? AppAlertUtils.customLoader()
-          : Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(AssetImages.appBackgroundImg),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: Scaffold(
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(AssetImages.appBackgroundImg),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Obx(
+        () =>
+            internController.syllabusDataLoading ||
+                internController.internStatusLoading
+            ? AppAlertUtils.customLoader()
+            : Scaffold(
                 resizeToAvoidBottomInset: true,
                 backgroundColor: AppColors.transparentColor,
                 appBar: _buildAppBar(),
@@ -224,16 +225,16 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                       ? _buildMonthSections()
                       : _buildDaySections(),
                 ),
-               // bottomNavigationBar: _bottomActionSection(),
-              bottomNavigationBar: AnimatedPadding(
-                duration: const Duration(milliseconds: 250),
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                // bottomNavigationBar: _bottomActionSection(),
+                bottomNavigationBar: AnimatedPadding(
+                  duration: const Duration(milliseconds: 250),
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: _bottomActionSection(),
                 ),
-                child: _bottomActionSection(),
               ),
-              ),
-          ),
+      ),
     );
   }
 
@@ -766,42 +767,117 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _projectSubmissionCard(),
-          GestureDetector(
-            onTap: canAttendMockTest
-                ? () {}
-                : () {
-                    AppAlertUtils.showToast(
-                      message: "Maximum attempts reached for this test!",
-                      isError: true,
-                    );
+          Row(
+            spacing: 10,
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: canAttendMockTest
+                      ? () {}
+                      : () {
+                          AppAlertUtils.showToast(
+                            message: "Maximum attempts reached for this test!",
+                            isError: true,
+                          );
+                        },
+                  child: CustomButtonWidget(
+                    isLoading: internController.getMcqQuestionLoading,
+                    buttonFunction: () async {
+                      AppAlertUtils.showAppAlert(
+                        context: context,
+                        title: "Mock Test Instructions",
+                        content:
+                            "This mock test contains 30 questions.\n\n"
+                            "Total test duration is 15 minutes.\n\n"
+                            "Please feel free to attend the test.\n"
+                            "Once the time is up, your answers will be automatically submitted.",
+                        cancelText: "Do it later",
+                        confirmText: "Attend Now",
+                        onConfirm: () async {
+                          await _generateMcqQuestions();
+                        },
+                      );
+                    },
+                    buttonText: internController.internStatusModel.isTestTaken!
+                        ? "Attended!"
+                        : "Attend Mock Test",
+                    disable: !canAttendMockTest,
+                    height: 45,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: CustomButtonWidget(
+                  height: 45,
+                  buttonFunction: () {
+                    showAddFeedbackDialog(context);
                   },
-            child: CustomButtonWidget(
-              isLoading: internController.getMcqQuestionLoading,
-              buttonFunction: () async {
-                AppAlertUtils.showAppAlert(
-                  context: context,
-                  title: "Mock Test Instructions",
-                  content:
-                      "This mock test contains 30 questions.\n\n"
-                      "Total test duration is 15 minutes.\n\n"
-                      "Please feel free to attend the test.\n"
-                      "Once the time is up, your answers will be automatically submitted.",
-                  cancelText: "Do it later",
-                  confirmText: "Attend Now",
-                  onConfirm: () async {
-                    await _generateMcqQuestions();
-                  },
-                );
-              },
-              buttonText: "Attend Mock Test",
-              disable: !canAttendMockTest,
-              height: 45,
-            ),
+                  buttonText: " Add Feedback",
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 15),
         ],
       ),
     );
+  }
+
+  void showAddFeedbackDialog(BuildContext context) {
+    Get.dialog(
+      FeedbackDialog(
+        onSubmit:
+            ({
+              required int rating,
+              required String review,
+              required String feedbackType,
+              String? referenceLink,
+            }) async {
+              return await addFeedbackReview(
+                rating: rating,
+                review: review,
+                feedbackType: feedbackType,
+                referenceLink: referenceLink,
+              );
+            },
+      ),
+      barrierDismissible: true,
+    );
+  }
+
+  Future<bool> addFeedbackReview({
+    required int rating,
+    required String review,
+    required String feedbackType,
+    String? referenceLink,
+  }) async {
+    Map<String, dynamic> feedBackData = {
+      "jobId": jobId,
+      "studentId": studentId,
+      "review": review,
+      "rating": rating,
+      "feedbacktype": feedbackType,
+      if (referenceLink != null) "referenceLink": referenceLink,
+    };
+
+    await internController.giveFeedBackReview(feedBackData: feedBackData);
+
+    final code = internController.getResponseCode();
+
+    if (code == 200 || code == 201) {
+      AppAlertUtils.showToast(
+        message:
+            internController.reviewModel.message ??
+            "Feedback Submitted Successfully!",
+      );
+      return true;
+    } else {
+      AppFunctions.apiErrorHandling(
+        code,
+        internController.reviewModel.message ?? "Please try again later!",
+      );
+      return false;
+    }
   }
 
   bool isEditingProject = false;
@@ -813,7 +889,8 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       builder: (context, setLocalState) {
         final trimmed = projectController.text.trim();
         final parsedUri = Uri.tryParse(trimmed);
-        final isValidUrl = trimmed.isNotEmpty &&
+        final isValidUrl =
+            trimmed.isNotEmpty &&
             parsedUri != null &&
             (parsedUri.isScheme("http") || parsedUri.isScheme("https")) &&
             parsedUri.host.isNotEmpty;
@@ -964,11 +1041,14 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                             isError: false,
                           );
                         },
-                        child:  Icon(
+                        child: Icon(
                           Icons.copy,
                           size: 20,
-                          color: canSubmitProject &&
-                              (!isProjectSubmitted || isEditingProject) ? AppColors.primaryColor : AppColors.greyColor,
+                          color:
+                              canSubmitProject &&
+                                  (!isProjectSubmitted || isEditingProject)
+                              ? AppColors.primaryColor
+                              : AppColors.greyColor,
                         ),
                       )
                     : null,
@@ -1055,7 +1135,8 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
                 disable:
                     !canSubmitProject ||
-                    (isProjectSubmitted && !isEditingProject) || (trimmed.isNotEmpty && !isValidUrl),
+                    (isProjectSubmitted && !isEditingProject) ||
+                    (trimmed.isNotEmpty && !isValidUrl),
               ),
             ],
           ),
@@ -1080,7 +1161,6 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
             ? internController.syllabusModel.syllabusViewData!.monthData
             : internController.syllabusModel.syllabusViewData!.daysData,
       );
-
 
       if (internController.getResponseCode() == 200 ||
           internController.getResponseCode() == 201) {

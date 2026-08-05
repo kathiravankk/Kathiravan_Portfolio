@@ -61,9 +61,20 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   // ============================================================
   //final TextEditingController titleController = TextEditingController();
   final TextEditingController roleTypeController = TextEditingController();
-  final TextEditingController coordinatorNameController = TextEditingController();
-  final TextEditingController coordinatorMobileController = TextEditingController();
-  final TextEditingController coordinatorEmailController = TextEditingController();
+  final TextEditingController coordinatorNameController =
+      TextEditingController();
+  final TextEditingController coordinatorMobileController =
+      TextEditingController();
+  final TextEditingController coordinatorEmailController =
+      TextEditingController();
+  final TextEditingController otpController = TextEditingController();
+
+  bool isMobileVerified =
+      false; // true once verified/prefilled from an already-verified number
+  bool showOtpField =
+      false; // shows OTP row + Verify button after Send OTP (unverified path)
+  String _verifiedMobileNumber =
+      ""; // the number that is currently in a verified state
 
   // final TextEditingController qualificationController =
   //     TextEditingController(); // e.g. "3+ years of experience"
@@ -138,12 +149,31 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     internPostData = args?["internPostData"] as PostData?;
     isEditScreen = args?["isEditScreen"] ?? false;
 
+    coordinatorMobileController.addListener(_onMobileNumberChanged);
+    otpController.addListener(_onOtpChanged);
+
     getProfileData();
 
     if (isEditScreen == true && internPostData != null) {
       _prefillEditData();
     }
   }
+
+  void _onMobileNumberChanged() {
+    final current = coordinatorMobileController.text.trim();
+    setState(() {
+      // If the number was previously verified but the user has now changed it,
+      // force re-verification (covers the edit-mode "user modifies the number" case).
+      if (isMobileVerified && current != _verifiedMobileNumber) {
+        isMobileVerified = false;
+        showOtpField = false;
+        isAlreadyVerified = false;
+        otpController.clear();
+      }
+    });
+  }
+
+  void _onOtpChanged() => setState(() {});
 
   String? recruiterId = "";
 
@@ -207,6 +237,10 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     coordinatorNameController.text = data.internshipNameCoordinator ?? "";
     coordinatorMobileController.text = data.internshipMobileCoordinator ?? "";
     coordinatorEmailController.text = data.internshipEmailCoordinator ?? "";
+
+    _verifiedMobileNumber = coordinatorMobileController.text.trim();
+    isMobileVerified = _verifiedMobileNumber.length == 10;
+    showOtpField = false;
 
     // If you have a separate title in API
     // titleController.text = "";
@@ -338,7 +372,10 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     roleTypeController.dispose();
     coordinatorNameController.dispose();
     coordinatorEmailController.dispose();
+    coordinatorMobileController.removeListener(_onMobileNumberChanged);
     coordinatorMobileController.dispose();
+    otpController.removeListener(_onOtpChanged);
+    otpController.dispose();
     //qualificationController.dispose();
     descriptionController.dispose();
     for (final c in projectControllers) {
@@ -587,6 +624,25 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           );
           return false;
         }
+        final String coordinatorMobile = coordinatorMobileController.text
+            .trim();
+        if (coordinatorMobile.isNotEmpty) {
+          if (coordinatorMobile.length != 10) {
+            AppAlertUtils.showToast(
+              message:
+                  "Please enter a valid 10-digit coordinator mobile number",
+              isError: true,
+            );
+            return false;
+          }
+          if (!isMobileVerified) {
+            AppAlertUtils.showToast(
+              message: "Please verify the coordinator's mobile number",
+              isError: true,
+            );
+            return false;
+          }
+        }
         // if (titleController.text.trim().isEmpty) {
         //   AppAlertUtils.showToast(
         //     message: "Internship title is required",
@@ -688,7 +744,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         // }
         if (requiredSkills.isEmpty) {
           AppAlertUtils.showToast(
-            message: "Please add at least one skill. Press Enter or tap the '+' icon to add it.",
+            message:
+                "Please add at least one skill. Press Enter or tap the '+' icon to add it.",
             isError: true,
           );
           return false;
@@ -893,17 +950,18 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
             size: 20,
           ),
         ),
-        CustomTextField(
-          controller: coordinatorMobileController,
-          labelText: "Coordinator's Mobile Number",
-          hintText: "Ex: 9090909090",
-          isNumberKeyboard: true,
-          prefixWidget: const Icon(
-            CupertinoIcons.phone,
-            color: AppColors.primaryColor,
-            size: 20,
-          ),
-        ),
+        _buildCoordinatorMobileSection(),
+        // CustomTextField(
+        //   controller: coordinatorMobileController,
+        //   labelText: "Coordinator's Mobile Number",
+        //   hintText: "Ex: 9090909090",
+        //   isNumberKeyboard: true,
+        //   prefixWidget: const Icon(
+        //     CupertinoIcons.phone,
+        //     color: AppColors.primaryColor,
+        //     size: 20,
+        //   ),
+        // ),
         CustomTextField(
           controller: coordinatorEmailController,
           labelText: "Coordinator's Contact Email",
@@ -916,6 +974,104 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
           ),
         ),
         _buildProjectsSection(),
+      ],
+    );
+  }
+
+  Widget _buildCoordinatorMobileSection() {
+    final String mobile = coordinatorMobileController.text.trim();
+    final bool isTenDigits = mobile.length == 10;
+    final bool canSendOtp =
+        isTenDigits &&
+        !isMobileVerified &&
+        !postController.sendCoordinatorOtpLoading;
+    final bool canVerifyOtp =
+        otpController.text.trim().length == 4 &&
+        !postController.verifyCoordinatorOtpLoading;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 12,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          spacing: 10,
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: coordinatorMobileController,
+                labelText: "Coordinator's Mobile Number",
+                hintText: "Ex: 9090909090",
+                isNumberKeyboard: true,
+                isEnabled: !isMobileVerified,
+                suffixWidget: isMobileVerified
+                    ? const Icon(
+                        Icons.check_circle,
+                        color: AppColors.primaryColor,
+                        size: 20,
+                      )
+                    : null,
+                prefixWidget: const Icon(
+                  CupertinoIcons.phone,
+                  color: AppColors.primaryColor,
+                  size: 20,
+                ),
+              ),
+            ),
+            if (!isMobileVerified)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: IgnorePointer(
+                  ignoring: !canSendOtp,
+                  child: Opacity(
+                    opacity: canSendOtp ? 1 : 0.5,
+                    child: SizedBox(
+                      width: 112,
+                      height: 46,
+                      child: CustomButtonWidget(
+                        isLoading: postController.sendCoordinatorOtpLoading,
+                        buttonText: showOtpField ? "Resend OTP" : "Send OTP",
+                        buttonFunction: _handleSendOtp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        if (showOtpField && !isMobileVerified)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            spacing: 10,
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  controller: otpController,
+                  labelText: "Enter OTP",
+                  hintText: "Enter 4-digit OTP",
+                  isNumberKeyboard: true,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: IgnorePointer(
+                  ignoring: !canVerifyOtp,
+                  child: Opacity(
+                    opacity: canVerifyOtp ? 1 : 0.5,
+                    child: SizedBox(
+                      width: 112,
+                      height: 46,
+                      child: CustomButtonWidget(
+                        isLoading: postController.verifyCoordinatorOtpLoading,
+                        buttonText: "Verify OTP",
+                        buttonFunction: _handleVerifyOtp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
@@ -1712,6 +1868,89 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         );
       },
     );
+  }
+
+  bool isAlreadyVerified = false;
+
+  Future<void> _handleSendOtp() async {
+    final String mobile = coordinatorMobileController.text.trim();
+    if (mobile.length != 10) return;
+    try {
+      await postController.sendCoordinatorOtp(mobileNumber: mobile);
+
+      if (postController.getResponseCode() == 200 ||
+          postController.getResponseCode() == 201) {
+        final bool alreadyVerified =
+            postController.sendOtpModel.alreadyVerified ?? false;
+
+        setState(() {
+          isAlreadyVerified = alreadyVerified;
+          if (alreadyVerified) {
+            isMobileVerified = true;
+            showOtpField = false;
+            _verifiedMobileNumber = mobile;
+          } else {
+            isMobileVerified = false;
+            showOtpField = true;
+            otpController.clear();
+          }
+        });
+
+        AppAlertUtils.showToast(
+          message: alreadyVerified
+              ? "Mobile number already verified"
+              : "OTP sent successfully",
+          isError: false,
+        );
+      } else {
+        AppFunctions.apiErrorHandling(
+          postController.getResponseCode(),
+          "Something went wrong. Please try again.",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        postController.getResponseCode(),
+        "Something went wrong. Please try again.",
+      );
+    }
+  }
+
+  Future<void> _handleVerifyOtp() async {
+    final String mobile = coordinatorMobileController.text.trim();
+    final String otp = otpController.text.trim();
+    if (otp.length != 4) return;
+    try {
+      await postController.verifyCoordinatorOtp(
+        mobileNumber: mobile,
+        otpNumber: otp,
+      );
+
+      if (postController.getResponseCode() == 200 ||
+          postController.getResponseCode() == 201) {
+        setState(() {
+          isMobileVerified = true;
+          showOtpField = false;
+          _verifiedMobileNumber = mobile;
+          otpController.clear();
+        });
+
+        AppAlertUtils.showToast(
+          message: "Mobile number verified successfully",
+          isError: false,
+        );
+      } else {
+        AppFunctions.apiErrorHandling(
+          postController.getResponseCode(),
+          "Invalid OTP. Please try again.",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        postController.getResponseCode(),
+        "Something went wrong. Please try again.",
+      );
+    }
   }
 
   // ============================================================

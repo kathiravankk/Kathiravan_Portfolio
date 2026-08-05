@@ -11,6 +11,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profi
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_feedback_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/syllabus_chat_response_model.dart';
@@ -401,6 +402,81 @@ class InternshipPostProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return CommonLoginOtpModel.fromJson(err.response!.data);
+    }
+  }
+
+  // SEND COORDINATOR OTP
+
+  Future<CoordinatorOtpModel> sendCoordinatorOtp({
+    required String mobileNumber,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+          AppApiUrls.sendCoordinatorOtp,
+          options: Options(headers: header),
+          data: {
+            "mobile": mobileNumber
+          }
+      );
+      responseStatus = response.statusCode!;
+      return CoordinatorOtpModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CoordinatorOtpModel.fromJson(err.response!.data);
+    }
+  }
+
+  // VERIFY COORDINATOR OTP
+
+  Future<CommonLoginOtpModel> verifyCoordinatorOtp({
+    required String mobileNumber,
+    required String otpNumber,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+          AppApiUrls.verifyCoordinatorOtp,
+          options: Options(headers: header),
+          data: {
+            "mobile": mobileNumber,
+            "otp": otpNumber
+          }
+      );
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CommonLoginOtpModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GIVE RECRUITER FEEDBACK
+
+  Future<RecruiterFeedbackModel> giveRecruiterFeedback({
+    required Map<String, dynamic> reviewData
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+          AppApiUrls.giveRecruiterReview,
+          options: Options(headers: header),
+          data: reviewData
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterFeedbackModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return RecruiterFeedbackModel.fromJson(err.response!.data);
     }
   }
 }

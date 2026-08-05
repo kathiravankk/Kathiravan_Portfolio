@@ -71,6 +71,7 @@ class _RecruiterDashboardScreenState extends State<RecruiterDashboardScreen> {
                   context,
                   AppRoutes.postNewInternshipScreen,
                 );
+                //AppFunctions.logOutFunc(context);
               },
               child: Container(
                 width: 58,

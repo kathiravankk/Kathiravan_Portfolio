@@ -14,7 +14,16 @@ import 'package:internsharks/app/modules/login/controllers/register_controller.d
 import 'package:internsharks/app/routes/app_pages.dart';
 
 class ResumeTemplateViewScreen extends StatefulWidget {
-  const ResumeTemplateViewScreen({super.key});
+  final ResumeTemplateModel? templateData;
+  final ExtractedResumeDataModel? resumeData;
+  final bool? isChatFlow;
+
+  const ResumeTemplateViewScreen({
+    super.key,
+    this.templateData,
+    this.resumeData,
+    this.isChatFlow,
+  });
 
   @override
   State<ResumeTemplateViewScreen> createState() =>
@@ -31,15 +40,35 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   @override
   void initState() {
     super.initState();
-    templateData = Get.arguments["templateData"];
-    resumeData = Get.arguments["resumeData"] ?? {};
-    isChatFlow = Get.arguments["isChatFlow"] ?? false;
+    // Use passed-in constructor parameters first; fall back to Get.arguments if navigated via route
+    templateData = widget.templateData ?? Get.arguments?["templateData"];
+    resumeData = widget.resumeData ?? Get.arguments?["resumeData"];
+    isChatFlow = widget.isChatFlow ?? Get.arguments?["isChatFlow"] ?? false;
+  }
+
+  @override
+  void didUpdateWidget(covariant ResumeTemplateViewScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update state variables when parent passes updated props in Live Preview
+    if (widget.templateData != oldWidget.templateData) {
+      templateData = widget.templateData;
+    }
+    if (widget.resumeData != oldWidget.resumeData) {
+      resumeData = widget.resumeData;
+    }
+    if (widget.isChatFlow != oldWidget.isChatFlow) {
+      isChatFlow = widget.isChatFlow;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (templateData == null || resumeData == null) {
+      return const SizedBox();
+    }
+
     return Obx(
-      () => Container(
+          () => Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(AssetImages.appBackgroundImg),
@@ -65,7 +94,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
             ),
             actions: [
               Visibility(
-                visible: !isChatFlow!,
+                visible: !(isChatFlow ?? false),
                 child: CustomButtonWidget(
                   width: 130,
                   height: 35,
@@ -77,13 +106,12 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
                   bgColor: AppColors.appBgColor,
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
             ],
           ),
           body: ShowTemplateView(
             htmlAssetPath: templateData!.htmlPath,
             resumeData: resumeData!,
-            //resumeData: ExtractedResumeDataModel(),
           ),
         ),
       ),
@@ -91,13 +119,11 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   }
 
   Future<void> updateResumeFunc() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // final studentId = prefs.getString('student_id');
     final studentId = await LocalStorageService.getStudentId();
 
     resumeData!.templateNumber = templateData!.id.toString();
     resumeData!.studentId = studentId;
-    //resumeData!.studentId = "69804fe251caac65dd42e798";
+
     await registerController.updateResumeProfileData(updateData: resumeData);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
@@ -113,7 +139,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
     } else {
       AppAlertUtils.showToast(
         message:
-            registerController.updateProfileModel.message ??
+        registerController.updateProfileModel.message ??
             "Something went wrong!,Please try again later!",
         isError: true,
       );

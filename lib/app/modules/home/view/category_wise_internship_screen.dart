@@ -51,10 +51,7 @@ class _CategoryWiseInternshipScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => dashboardController.categoryInternshipLoading
-          ? AppAlertUtils.customLoader()
-          : Container(
+    return  Container(
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(AssetImages.appBackgroundImg),
@@ -83,163 +80,173 @@ class _CategoryWiseInternshipScreenState
                     ),
                   ),
                 ),
-                body: dashboardController.categoryInternshipModel.jobs!.isNotEmpty
-                    ? Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          spacing: 15,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${categoryData!.count}+ Internships Available",
-                              style: AppStyles.customTextStyle(
-                                size: 16,
-                                color: AppColors.whiteColor,
-                                weight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              "Explore opportunities in ${categoryData!.categoryName}.",
-                              style: AppStyles.customTextStyle(
-                                size: 14,
-                                color: AppColors.whiteColor,
-                                weight: FontWeight.w300,
-                              ),
-                            ),
-                            const SizedBox(height: 5,),
-                            Expanded(
-                              child: ListView.separated(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(height: 15),
-                                itemCount: dashboardController
-                                    .categoryInternshipModel
-                                    .jobs!
-                                    .length,
-                                itemBuilder: (context, index) => InternshipCard(
-                                  isCategoryFlow: true,
-                                  viewFunc: () {
-                                    AppFunctions.navigateScreen(
-                                      context,
-                                      AppRoutes.internshipDetailScreen,
-                                      arguments: {
-                                        "internshipId": dashboardController
-                                            .categoryInternshipModel
-                                            .jobs![index]
-                                            .sId,
-                                      },
-                                    );
-                                  },
-                                  saveFunc: () async {
-                                    dashboardController.internshipSaveFunc(index);
-                                  },
-                                  // saveFunc: () {
-                                  //   internshipList![index].isSaved!
-                                  //       ? removeToSaved(
-                                  //           jobId: internshipList![index].sId!,
-                                  //         )
-                                  //       : addToSaved(
-                                  //           jobId: internshipList![index].sId!,
-                                  //         );
-                                  // },
-                                  isSaved:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .isSaved ??
-                                      false,
-                                  position: dashboardController
-                                      .categoryInternshipModel
-                                      .jobs![index]
-                                      .noOfPosition ??0,
-                                  postedDate: dashboardController
-                                      .categoryInternshipModel
-                                      .jobs![index]
-                                      .createdAt!,
-                                  role:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .roleType ??
-                                      "",
-                                  companyName:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .companyName ??
-                                      "",
-                                  internshipMode:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .internshipMode ??
-                                      "NA",
-                                  imageUrl:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .companyLogo ??
-                                      "",
-                                  description:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .aboutInternship ??
-                                      "",
-                                  duration:
-                                      dashboardController
-                                              .categoryInternshipModel
-                                              .jobs![index]
-                                              .internshipDuration!
-                                              .isNotEmpty &&
-                                          dashboardController
-                                                  .categoryInternshipModel
-                                                  .jobs![index]
-                                                  .internshipDuration !=
-                                              null
-                                      ? "${dashboardController.categoryInternshipModel.jobs![index].internshipDuration!} Months"
-                                      : "${dashboardController.categoryInternshipModel.jobs![index].days} Days",
-                                  stipendRupees:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .internshipStipend ??
-                                      "NA",
-                                  qualification: dashboardController
-                                      .categoryInternshipModel
-                                      .jobs![index]
-                                      .studentQualification!
-                                      .join(", "),
-                                  eligibility: dashboardController
-                                      .categoryInternshipModel
-                                      .jobs![index]
-                                      .requiredSkills!
-                                      .join(","),
-                                  skillList:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .requiredSkills ??
-                                      [],
-                                  internFees:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .fee ??
-                                      'NA',
-                                  location:
-                                      dashboardController
-                                          .categoryInternshipModel
-                                          .jobs![index]
-                                          .companyCity ??
-                                      "NA",
+                body: Obx(
+                      () => dashboardController.categoryInternshipLoading
+                      ? AppAlertUtils.customLoader()
+                      :dashboardController.categoryInternshipModel.jobs!.isNotEmpty
+                    ? RefreshIndicator(
+                      color: AppColors.primaryColor,
+                      backgroundColor: AppColors.appBgColor_2,
+                      onRefresh: () async {
+                        await getInternshipData();
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Column(
+                            spacing: 15,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${categoryData!.count}+ Internships Available",
+                                style: AppStyles.customTextStyle(
+                                  size: 16,
+                                  color: AppColors.whiteColor,
+                                  weight: FontWeight.w600,
                                 ),
                               ),
-                            ),
-                          ],
+                              Text(
+                                "Explore opportunities in ${categoryData!.categoryName}.",
+                                style: AppStyles.customTextStyle(
+                                  size: 14,
+                                  color: AppColors.whiteColor,
+                                  weight: FontWeight.w300,
+                                ),
+                              ),
+                              const SizedBox(height: 5,),
+                              Expanded(
+                                child: ListView.separated(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(height: 15),
+                                  itemCount: dashboardController
+                                      .categoryInternshipModel
+                                      .jobs!
+                                      .length,
+                                  itemBuilder: (context, index) => InternshipCard(
+                                    isCategoryFlow: true,
+                                    viewFunc: () {
+                                      AppFunctions.navigateScreen(
+                                        context,
+                                        AppRoutes.internshipDetailScreen,
+                                        arguments: {
+                                          "internshipId": dashboardController
+                                              .categoryInternshipModel
+                                              .jobs![index]
+                                              .sId,
+                                        },
+                                      );
+                                    },
+                                    saveFunc: () async {
+                                      dashboardController.internshipSaveFunc(index);
+                                    },
+                                    // saveFunc: () {
+                                    //   internshipList![index].isSaved!
+                                    //       ? removeToSaved(
+                                    //           jobId: internshipList![index].sId!,
+                                    //         )
+                                    //       : addToSaved(
+                                    //           jobId: internshipList![index].sId!,
+                                    //         );
+                                    // },
+                                    isSaved:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .isSaved ??
+                                        false,
+                                    position: dashboardController
+                                        .categoryInternshipModel
+                                        .jobs![index]
+                                        .noOfPosition ??0,
+                                    postedDate: dashboardController
+                                        .categoryInternshipModel
+                                        .jobs![index]
+                                        .createdAt!,
+                                    role:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .roleType ??
+                                        "",
+                                    companyName:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .companyName ??
+                                        "",
+                                    internshipMode:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .internshipMode ??
+                                        "NA",
+                                    imageUrl:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .companyLogo ??
+                                        "",
+                                    description:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .aboutInternship ??
+                                        "",
+                                    duration:
+                                        dashboardController
+                                                .categoryInternshipModel
+                                                .jobs![index]
+                                                .internshipDuration!
+                                                .isNotEmpty &&
+                                            dashboardController
+                                                    .categoryInternshipModel
+                                                    .jobs![index]
+                                                    .internshipDuration !=
+                                                null
+                                        ? "${dashboardController.categoryInternshipModel.jobs![index].internshipDuration!} Months"
+                                        : "${dashboardController.categoryInternshipModel.jobs![index].days} Days",
+                                    stipendRupees:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .internshipStipend ??
+                                        "NA",
+                                    qualification: dashboardController
+                                        .categoryInternshipModel
+                                        .jobs![index]
+                                        .studentQualification!
+                                        .join(", "),
+                                    eligibility: dashboardController
+                                        .categoryInternshipModel
+                                        .jobs![index]
+                                        .requiredSkills!
+                                        .join(","),
+                                    skillList:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .requiredSkills ??
+                                        [],
+                                    internFees:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .fee ??
+                                        'NA',
+                                    location:
+                                        dashboardController
+                                            .categoryInternshipModel
+                                            .jobs![index]
+                                            .companyCity ??
+                                        "NA",
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      )
+                    )
                     : CustomEmptyWidget(),
               ),
           ),

@@ -8,6 +8,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profi
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_feedback_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
@@ -521,5 +522,97 @@ class InternshipPostController extends GetxController {
     }
   }
 
+  //  SEND COORDINATOR OTP
+
+  final _sendCoordinatorOtpLoading = false.obs;
+
+  bool get sendCoordinatorOtpLoading => _sendCoordinatorOtpLoading.value;
+
+  set sendCoordinatorOtpLoading(bool value) => _sendCoordinatorOtpLoading.value = value;
+
+  // Model
+  final _sendOtpModel = CoordinatorOtpModel().obs;
+
+  CoordinatorOtpModel get sendOtpModel => _sendOtpModel.value;
+
+  set sendOtpModel(CoordinatorOtpModel value) => _sendOtpModel.value = value;
+
+  Future<void> sendCoordinatorOtp({
+    required String mobileNumber,
+  }) async {
+    try {
+      sendCoordinatorOtpLoading = true;
+      sendOtpModel= await internshipPostProvider!.sendCoordinatorOtp(
+        mobileNumber: mobileNumber,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      sendCoordinatorOtpLoading = false;
+    }
+  }
+
+  //  VERIFY COORDINATOR OTP
+
+  final _verifyCoordinatorOtpLoading = false.obs;
+
+  bool get verifyCoordinatorOtpLoading => _verifyCoordinatorOtpLoading.value;
+
+  set verifyCoordinatorOtpLoading(bool value) => _verifyCoordinatorOtpLoading.value = value;
+
+   // Model
+  final _commonPostModel = CommonLoginOtpModel().obs;
+
+  CommonLoginOtpModel get commonPostModel => _commonPostModel.value;
+
+  set commonPostModel(CommonLoginOtpModel value) => _commonPostModel.value = value;
+
+  Future<void> verifyCoordinatorOtp({
+    required String mobileNumber,
+    required String otpNumber,
+  }) async {
+    try {
+      verifyCoordinatorOtpLoading = true;
+      commonPostModel= await internshipPostProvider!.verifyCoordinatorOtp(
+        mobileNumber: mobileNumber,
+        otpNumber: otpNumber,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      verifyCoordinatorOtpLoading = false;
+    }
+  }
+
+
+  //  GIVE FEEDBACK
+
+  final _giveFeedbackLoading = false.obs;
+
+  bool get giveFeedbackLoading => _giveFeedbackLoading.value;
+
+  set giveFeedbackLoading(bool value) => _giveFeedbackLoading.value = value;
+
+  // Model
+  final _feedbackModel = RecruiterFeedbackModel().obs;
+
+  RecruiterFeedbackModel get feedbackModel => _feedbackModel.value;
+
+  set feedbackModel(RecruiterFeedbackModel value) => _feedbackModel.value = value;
+
+  Future<void> giveRecruiterFeedback({
+    required Map<String, dynamic> reviewData
+  }) async {
+    try {
+      giveFeedbackLoading = true;
+      feedbackModel= await internshipPostProvider!.giveRecruiterFeedback(
+      reviewData: reviewData
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      giveFeedbackLoading = false;
+    }
+  }
 
 }

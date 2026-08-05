@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
@@ -267,6 +268,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       await ResumeFileUtils.handleShare(
         webViewController: webViewController!,
         fileName: "${firstName}_resume",
+        shareText: CommonUtils.resumeShareContent
       );
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -987,6 +989,22 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     }
   }
 
+  // Future<void> _shareBannerImage(String imageUrl) async {
+  //   try {
+  //     final response = await HttpClient().getUrl(Uri.parse(imageUrl));
+  //     final res = await response.close();
+  //
+  //     final bytes = await consolidateHttpClientResponseBytes(res);
+  //
+  //     final tempDir = await getTemporaryDirectory();
+  //     final file = File('${tempDir.path}/banner.png');
+  //     await file.writeAsBytes(bytes);
+  //
+  //     await Share.shareXFiles([XFile(file.path)]);
+  //   } catch (e) {
+  //     AppAlertUtils.showToast(message: "Share failed", isError: true);
+  //   }
+  // }
   Future<void> _shareBannerImage(String imageUrl) async {
     try {
       final response = await HttpClient().getUrl(Uri.parse(imageUrl));
@@ -994,13 +1012,17 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
 
       final bytes = await consolidateHttpClientResponseBytes(res);
 
-      final tempDir = await getTemporaryDirectory();
-      final file = File('${tempDir.path}/banner.png');
-      await file.writeAsBytes(bytes);
-
-      await Share.shareXFiles([XFile(file.path)]);
+      await ResumeFileUtils.shareImage(
+        bytes: bytes,
+        fileName: "ResDP",
+        subject: "My Professional Resume Display Picture",
+        shareText: CommonUtils.resDpShareContent,
+      );
     } catch (e) {
-      AppAlertUtils.showToast(message: "Share failed", isError: true);
+      AppAlertUtils.showToast(
+        message: "Share failed",
+        isError: true,
+      );
     }
   }
 

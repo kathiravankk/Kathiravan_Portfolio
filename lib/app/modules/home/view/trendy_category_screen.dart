@@ -42,7 +42,7 @@ class _TrendyCategoryScreenState extends State<TrendyCategoryScreen> {
             "Trendy Categories",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w600,
             ),
           ),

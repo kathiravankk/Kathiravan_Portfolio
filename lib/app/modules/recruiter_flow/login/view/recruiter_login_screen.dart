@@ -329,7 +329,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
 
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
-        if (loginController.commonPostModel.userType == "recruiter") {
+        if (loginController.commonPostModel.userType != "student") {
           AppAlertUtils.showToast(
             message:
                 loginController.commonPostModel.message ??
@@ -379,17 +379,41 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
         await LocalStorageService.saveRecruiterToken(
           recruiterToken: loginController.recruiterLoginModel.recToken ?? "",
         );
-        await LocalStorageService.saveRecruiterId(
-          recruiterId: loginController.recruiterLoginModel.recruiter!.id ?? "",
-        );
-        await LocalStorageService.saveRecruiterCreditId(
-          creditId:
-              loginController
-                  .recruiterLoginModel
-                  .recruiter!
-                  .recruiterCreditId ??
-              "",
-        );
+        final recruiter = loginController.recruiterLoginModel.recruiter;
+        // await LocalStorageService.saveRecruiterId(
+        //   recruiterId: loginController.recruiterLoginModel.recruiter!.id ?? "",
+        // );
+        // await LocalStorageService.saveRecruiterCreditId(
+        //   creditId:
+        //       loginController
+        //           .recruiterLoginModel
+        //           .recruiter!
+        //           .recruiterCreditId ??
+        //       "",
+        // );
+        if (recruiter?.recruiterInfo != null) {
+          // Coordinator Login
+
+          await LocalStorageService.saveRecruiterId(
+            recruiterId: recruiter?.coordinatorId ?? "",
+          );
+
+          await LocalStorageService.saveRecruiterCreditId(
+            creditId: recruiter?.recruiterCreditId ?? "",
+          );
+
+
+        } else {
+          // Recruiter Login (Old API)
+
+          await LocalStorageService.saveRecruiterId(
+            recruiterId: recruiter?.id ?? "",
+          );
+
+          await LocalStorageService.saveRecruiterCreditId(
+            creditId: recruiter?.recruiterCreditId ?? "",
+          );
+        }
         AppAlertUtils.showToast(
           message:
               loginController.recruiterLoginModel.message ??

@@ -13,6 +13,7 @@ class AppRoutes {
   static const stepUpdateScreen = '/stepUpdateScreen';
   static const chatResumeCreation = '/chatResumeCreation';
   static const chatResumeTemplateScreen = '/chatResumeTemplateScreen';
+  static const chatNewResumeCreationScreen = '/chatNewResumeCreationScreen';
 
   // HOME FLOW
   static const studentDashBoardScreen = '/dashBoardScreen';
@@ -40,9 +41,11 @@ class AppRoutes {
   static const privacyPolicyScreen = '/privacyPolicyScreen';
   static const termsAndConditionsScreen = '/termsAndConditionsScreen';
   static const referralCodeScreen = '/referralCodeScreen';
+  static const studentTransactionHistoryScreen = '/studentTransactionHistoryScreen';
+  static const studentCreditHistoryScreen = '/studentCreditHistoryScreen';
+  static const studentPurchaseHistoryScreen = '/studentPurchaseHistoryScreen';
 
   // INTERNSHIP FLOW
-
   static const internshipSyllabusScreen = '/internshipSyllabusScreen';
   static const syllabusViewScreen = '/syllabusViewScreen';
   static const mcqTestScreen = '/mcqTestScreen';
@@ -50,9 +53,7 @@ class AppRoutes {
   static const myCertificatesScreen = '/myCertificatesScreen';
 
 
-
   /// RECRUITER FLOW SCREENS
-
 
   static const choosePathScreen = "/choosePathScreen";
   static const recruiterRegisterScreen = "/recruiterRegisterScreen";
@@ -82,5 +83,6 @@ class AppRoutes {
   static const recruiterPaymentHistoryScreen = "/recruiterPaymentHistoryScreen";
   static const recruiterCreditHistoryScreen = "/recruiterCreditHistoryScreen";
   static const creditConsumptionScreen = "/creditConsumptionScreen";
+  static const recruiterSettingScreen = "/recruiterSettingScreen";
 
 }

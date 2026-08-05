@@ -1,15 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:intl/intl.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
-import 'package:internsharks/app/core/utils/app_styles.dart' show AppStyles;
+import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
+import 'package:intl/intl.dart';
 
 class RecruiterTransactionHistoryScreen extends StatefulWidget {
   const RecruiterTransactionHistoryScreen({super.key});
@@ -25,61 +26,38 @@ class _RecruiterTransactionHistoryScreenState
       Get.find<RecruiterHomeController>();
 
   String? recruiterId = "";
-  int? creditBalance = 0;
-  int page = 1;
+  int creditBalance = 0;
 
   @override
   void initState() {
     super.initState();
     creditBalance = Get.arguments["creditBalance"] ?? 0;
-    getTransactionData();
+    loadData();
   }
 
-  Future<void> getTransactionData() async {
-    page = 1;
-
+  Future<void> loadData() async {
     try {
       recruiterId = await LocalStorageService.getRecruiterId();
 
-      await homeController.getTransactionHistory(
-        recruiterId: recruiterId!,
-        page: page,
-        isLoadMore: false,
-      );
-
-      if (homeController.getResponseCode() != 200 &&
-          homeController.getResponseCode() != 201) {
-        AppFunctions.apiErrorHandling(
-          homeController.getResponseCode(),
-          "Something went wrong, try again later!",
-        );
-      }
-    } catch (err, stackTrace) {
-      debugPrint(err.toString());
-      debugPrint(stackTrace.toString());
-
+      await Future.wait([
+        homeController.getPaymentHistoryData(
+          page: 1,
+          limit: 5,
+          isLoadMore: false,
+        ),
+        homeController.getCreditHistory(
+          recruiterId: recruiterId!,
+          page: 1,
+          isLoadMore: false,
+        ),
+      ]);
+    } catch (e, s) {
+      debugPrint(e.toString());
+      debugPrint(s.toString());
       AppFunctions.apiErrorHandling(
         homeController.getResponseCode(),
-        "Something went wrong, try again later!",
+        "Something went wrong.",
       );
-    }
-  }
-  Future<void> _loadMore() async {
-    if (homeController.transactionHistoryLoadingMore ||
-        !homeController.transactionHistoryHasMore) {
-      return;
-    }
-
-    page++;
-
-    try {
-      await homeController.getTransactionHistory(
-        recruiterId: recruiterId!,
-        page: page,
-        isLoadMore: true,
-      );
-    } catch (_) {
-      page--;
     }
   }
 
@@ -89,25 +67,23 @@ class _RecruiterTransactionHistoryScreenState
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage(AssetImages.appBackgroundImg),
+
           fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          backgroundColor: AppColors.transparentColor,
-          automaticallyImplyLeading: false,
           leading: InkWell(
-            onTap: () => Get.back(),
-            child: Icon(
-              Icons.arrow_back,
-              color: AppColors.whiteColor,
-              size: 30,
-            ),
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(Icons.arrow_back, color: AppColors.whiteColor),
           ),
           title: Text(
-            "Credits History",
+            "My Transaction",
             style: AppStyles.customTextStyle(
               size: 18,
               color: AppColors.secondaryColor,
@@ -115,230 +91,188 @@ class _RecruiterTransactionHistoryScreenState
             ),
           ),
         ),
-        body: Obx(
-          () => homeController.transactionHistoryLoading
-              ? AppAlertUtils.customLoader()
-              : homeController.transactionHistoryList.isNotEmpty
-              ? RefreshIndicator(
-                  color: AppColors.primaryColor,
-                  backgroundColor: AppColors.appBgColor_2,
-                  onRefresh: getTransactionData,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                    child: Column(
-                      children: [
-                        _buildBalanceCard(creditBalance ?? 0),
-                        const SizedBox(height: 24),
-                        _buildSectionHeader(
-                          "Credits History",
-                          homeController.historyModel.pagination == null
-                              ? null
-                              : "${homeController.transactionHistoryList.length} of ${homeController.historyModel.pagination?.total ?? 0}",
-                        ),
-                        const SizedBox(height: 12),
-                        Expanded(
-                          child: ListView.separated(
-                            padding: EdgeInsets.zero,
-                            itemCount: homeController.transactionHistoryList.length + 1,
-                            separatorBuilder: (_, __) => const SizedBox(height: 10),
-                            itemBuilder: (context, index) {
 
-                              if (index ==
-                                  homeController.transactionHistoryList.length) {
-                                return Visibility(
-                                  visible: !(homeController.transactionHistoryList.length == homeController.historyModel.pagination?.total),
-                                    child: _buildLoadMoreFooter());
-                              }
-
-                              return _buildTransactionCard(
-                                homeController.transactionHistoryList[index],
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : _buildEmptyState(),
-        ),
+        body: Obx(() {
+          if (homeController.paymentHistoryLoading ||
+              homeController.transactionHistoryLoading) {
+            return AppAlertUtils.customLoader();
+          }
+          return RefreshIndicator(
+            onRefresh: loadData,
+            backgroundColor: AppColors.appBgColor_2,
+            color: AppColors.primaryColor,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  buildPurchaseHistoryCard(),
+                  const SizedBox(height: 18),
+                  buildTransactionHistoryCard(),
+                  const SizedBox(height: 18),
+                  buildConsumptionGuide(),
+                  const SizedBox(height: 20),
+                  buildPaymentCard(),
+                ],
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildLoadMoreFooter() {
-    if (!homeController.transactionHistoryHasMore) {
-      return const SizedBox.shrink();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Center(
-        child: homeController.transactionHistoryLoadingMore
-            ? const CupertinoActivityIndicator()
-            : InkWell(
-          onTap: _loadMore,
-          child: Text(
-            "Load More",
-            style: AppStyles.customTextStyle(
-              size: 14,
-              color: AppColors.primaryColor,
-              weight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 56,
-            color: AppColors.secondaryColor,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            "No transactions yet",
-            style: AppStyles.customTextStyle(
-              size: 15,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, String? trailing) {
-    return Row(
-      children: [
-        const Icon(
-          Icons.receipt_long_outlined,
-          size: 18,
-          color: AppColors.secondaryColor,
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            title,
-            style: AppStyles.customTextStyle(
-              size: 15,
-              color: AppColors.whiteColor,
-              weight: FontWeight.w700,
-            ),
-          ),
-        ),
-        if (trailing != null)
-          Text(
-            trailing,
-            style: AppStyles.customTextStyle(
-              size: 12,
-              color: Colors.white54,
-              weight: FontWeight.w500,
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildBalanceCard(int credit) {
-    // final balance = credit?.balance ?? 0;
-    // final totalUsed = credit?.totalUsed ?? 0;
-
+  Widget buildPaymentCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            AppColors.transContCred1,
-            AppColors.transContCred2,
-            AppColors.transContCred3,
-            AppColors.transContCred4,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primaryColor),
+        color: AppColors.recContainerColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.recBorderColor),
       ),
+      padding: EdgeInsets.all(10),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Image.asset(AssetImages.creditConsumeImg, height: 35, width: 35),
+          const SizedBox(width: 15),
           Expanded(
             child: Column(
-              spacing: 10,
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 5,
               children: [
                 Text(
-                  "Available Credits",
+                  "All payments are 100% secure.",
                   style: AppStyles.customTextStyle(
-                    size: 14,
+                    size: 12,
                     color: AppColors.whiteColor,
                     weight: FontWeight.w500,
                   ),
                 ),
                 Text(
-                  "$credit",
+                  "We do not store any payment details.",
                   style: AppStyles.customTextStyle(
-                    size: 30,
-                    color: AppColors.primaryColor,
-                    weight: FontWeight.w800,
-                  ),
-                ),
-                Text(
-                  "Use credits to unlock premium features and generate content.",
-                  style: AppStyles.customTextStyle(
-                    lineSpace: 1.5,
                     size: 12,
-                    color: AppColors.lightColorText,
-                    weight: FontWeight.w400,
+                    color: AppColors.lightText,
+                    weight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-          ),
-          Image.asset(
-            AssetImages.transactionCreditIcon,
-            height: 100,
-            width: 100,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTransactionCard(dynamic tx) {
+  Widget buildTransactionHistoryCard() {
+    final transactionList = homeController.transactionHistoryList;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.recContainerColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(.08)),
+      ),
+      child: Column(
+        children: [
+          _buildTransactionHeader(),
+          Divider(height: 1, color: Colors.white.withOpacity(.06)),
+          transactionList.isEmpty
+              ? _buildTransactionEmptyWidget()
+              : Column(
+                  children: transactionList
+                      .take(5)
+                      .map(_buildTransactionItem)
+                      .toList(),
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.green.withOpacity(.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.wallet_giftcard,
+              color: Colors.green,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              "Free Credits",
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: Colors.green,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.recruiterTransactionHistoryScreen,
+                arguments: {
+                  "creditBalance":
+                      ((homeController
+                              .profileModel
+                              .recruiterCreditId!
+                              .freeCredits ??
+                          0) +
+                      (homeController.profileModel.recruiterCreditId!.balance ??
+                          0)),
+                },
+              );
+            },
+            child: Row(
+              children: [
+                Text(
+                  "View All",
+                  style: AppStyles.customTextStyle(
+                    size: 12,
+                    color: Colors.white,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                const Icon(Icons.chevron_right, color: Colors.white, size: 18),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionItem(RecruiterTransactionData tx) {
     final isDebit = tx.type == "debit";
     final amountColor = isDebit
         ? AppColors.inCorrectText
         : AppColors.correctText;
-    final amountPrefix = isDebit ? "-" : "+";
-    final statusColor = _statusColor(tx.status);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.recContainerColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.07)),
-      ),
+    final prefix = isDebit ? "-" : "+";
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            width: 42,
+            height: 42,
             decoration: BoxDecoration(
-              color: _iconBgColor(tx.apiName).withOpacity(0.15),
+              color: _transactionIconColor(tx.apiName).withOpacity(.18),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              _iconFor(tx.apiName),
-              color: _iconBgColor(tx.apiName),
+              _transactionIcon(tx.apiName),
+              color: _transactionIconColor(tx.apiName),
               size: 20,
             ),
           ),
@@ -346,18 +280,20 @@ class _RecruiterTransactionHistoryScreenState
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
               children: [
                 Text(
-                  _formatApiName(tx.apiName),
+                  _transactionTitle(tx),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: AppColors.whiteColor,
+                    size: 13,
+                    color: Colors.white,
                     weight: FontWeight.w600,
                   ),
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  _formatDate(tx.createdAt),
+                  _formatTransactionDate(tx.createdAt),
                   style: AppStyles.customTextStyle(
                     size: 11,
                     color: Colors.white54,
@@ -371,48 +307,70 @@ class _RecruiterTransactionHistoryScreenState
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                "$amountPrefix${tx.credits ?? 0}",
+                "$prefix${tx.credits ?? 0}",
                 style: AppStyles.customTextStyle(
                   size: 15,
                   color: amountColor,
                   weight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               Text(
                 _capitalize(tx.status ?? ""),
                 style: AppStyles.customTextStyle(
                   size: 11,
-                  color: statusColor,
+                  color: amountColor,
                   weight: FontWeight.w600,
                 ),
               ),
             ],
+          ),
+          const SizedBox(width: 6),
+          const Icon(Icons.chevron_right, size: 18, color: Colors.white54),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionEmptyWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      child: Column(
+        children: [
+          Icon(Icons.receipt_long_outlined, color: Colors.white24, size: 48),
+          const SizedBox(height: 12),
+          Text(
+            "No transaction history",
+            style: AppStyles.customTextStyle(
+              size: 14,
+              color: Colors.white70,
+              weight: FontWeight.w600,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Color _statusColor(String? status) {
-    switch (status) {
-      case "success":
-        return AppColors.correctText;
-      case "failed":
-        return AppColors.inCorrectText;
-      case "pending":
-        return AppColors.secondaryColor;
-      default:
-        return AppColors.lightColorText;
+  String _transactionTitle(RecruiterTransactionData tx) {
+    if (tx.type == "credit") {
+      return "Credits Added";
     }
+    return _formatApiName(tx.apiName);
   }
 
-  IconData _iconFor(String? apiName) {
+  IconData _transactionIcon(String? apiName) {
     switch (apiName) {
-      case "generate-certificate":
-        return Icons.workspace_premium_outlined;
       case "generate-syllabus":
         return Icons.menu_book_outlined;
+      case "generate-certificate":
+        return Icons.workspace_premium_outlined;
+      case "resume-review":
+        return Icons.description_outlined;
+      case "resume-optimization":
+        return Icons.picture_as_pdf_outlined;
+      case "banner-generation":
+        return Icons.auto_fix_high;
       case "recruiter-jobpost":
         return Icons.work_outline;
       default:
@@ -420,45 +378,488 @@ class _RecruiterTransactionHistoryScreenState
     }
   }
 
-  Color _iconBgColor(String? apiName) {
+  Color _transactionIconColor(String? apiName) {
     switch (apiName) {
-      case "generate-certificate":
-        return const Color(0xFFB794F4);
       case "generate-syllabus":
-        return const Color(0xFF63B3ED);
+        return Colors.deepPurple;
+      case "generate-certificate":
+        return Colors.purpleAccent;
+      case "resume-review":
+        return Colors.blue;
+      case "resume-optimization":
+        return Colors.lightBlue;
+      case "banner-generation":
+        return Colors.orange;
       case "recruiter-jobpost":
-        return const Color(0xFFF6AD55);
+        return Colors.amber;
       default:
-        return AppColors.secondaryColor;
+        return AppColors.primaryColor;
     }
+  }
+
+  String _formatTransactionDate(DateTime? date) {
+    if (date == null) return "-";
+    return DateFormat("dd MMM yyyy, hh:mm a").format(date.toLocal());
   }
 
   String _formatApiName(String? apiName) {
     switch (apiName) {
-      case "generate-certificate":
-        return "Certificate Generation";
       case "generate-syllabus":
         return "Syllabus Generation";
+      case "generate-certificate":
+        return "Certificate Generation";
+      case "resume-review":
+        return "Resume Review";
+      case "resume-optimization":
+        return "Resume Optimization";
+      case "banner-generation":
+        return "Banner Generation";
       case "recruiter-jobpost":
         return "Job Post";
       default:
-        if (apiName == null || apiName.isEmpty) return "Credit Usage";
+        if (apiName == null || apiName.isEmpty) {
+          return "Credit Usage";
+        }
+
         return apiName
             .split("-")
             .map(
-              (w) => w.isEmpty ? w : "${w[0].toUpperCase()}${w.substring(1)}",
+              (e) => e.isEmpty ? e : "${e[0].toUpperCase()}${e.substring(1)}",
             )
             .join(" ");
     }
-  }
-
-  String _formatDate(DateTime? date) {
-    if (date == null) return "-";
-    return DateFormat("dd MMM yyyy, hh:mm a").format(date.toLocal());
   }
 
   String _capitalize(String value) {
     if (value.isEmpty) return value;
     return "${value[0].toUpperCase()}${value.substring(1)}";
   }
+
+  Widget buildPurchaseHistoryCard() {
+    final purchaseList = homeController.paymentHistoryList;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.recContainerColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(.08)),
+      ),
+      child: Column(
+        children: [
+          _buildPurchaseHeader(),
+          Divider(height: 1, color: Colors.white.withOpacity(.06)),
+          purchaseList.isEmpty
+              ? _buildPurchaseEmptyWidget()
+              : Column(
+                  children: [
+                    ...purchaseList.take(5).map(_buildPurchaseItem),
+                    Divider(height: 1, color: Colors.white.withOpacity(.06)),
+                    _buildPurchaseFooter(),
+                  ],
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPurchaseHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xff8B5CF6).withOpacity(.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.shopping_cart_outlined,
+              color: Color(0xff8B5CF6),
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              "Purchase History",
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: const Color(0xff8B5CF6),
+                weight: FontWeight.w700,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.recruiterPaymentHistoryScreen,
+              );
+            },
+            child: Row(
+              children: [
+                Text(
+                  "View All",
+                  style: AppStyles.customTextStyle(
+                    size: 12,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                const Icon(Icons.chevron_right, size: 18, color: Colors.white),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPurchaseItem(PaymentHisData item) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: _purchaseColor(item.planName).withOpacity(.18),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.shopping_bag,
+              color: _purchaseColor(item.planName),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.planName ?? "-",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppStyles.customTextStyle(
+                    size: 13,
+                    color: Colors.white,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatPurchaseDate(item.createdAt),
+                  style: AppStyles.customTextStyle(
+                    size: 11,
+                    color: Colors.white54,
+                    weight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                "₹${item.amount ?? 0}",
+                style: AppStyles.customTextStyle(
+                  size: 15,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                item.status ?? "",
+                style: AppStyles.customTextStyle(
+                  size: 10,
+                  color: AppColors.primaryColor,
+                  weight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 6),
+          const Icon(Icons.chevron_right, color: Colors.white54, size: 18),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPurchaseFooter() {
+    final totalSpent = homeController.paymentHistoryList
+        .where((e) => e.status == "SUCCESS")
+        .fold<double>(
+          0,
+          (sum, e) => sum + (double.tryParse(e.amount.toString()) ?? 0),
+        );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Row(
+        children: [
+          Text(
+            "Total Spent",
+            style: AppStyles.customTextStyle(
+              size: 14,
+              color: Colors.white,
+              weight: FontWeight.w600,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            "₹${totalSpent.toStringAsFixed(0)}",
+            style: AppStyles.customTextStyle(
+              size: 16,
+              color: const Color(0xff8B5CF6),
+              weight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPurchaseEmptyWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      child: Column(
+        children: [
+          Icon(Icons.shopping_bag_outlined, color: Colors.white24, size: 48),
+          const SizedBox(height: 12),
+          Text(
+            "No purchase history",
+            style: AppStyles.customTextStyle(
+              size: 14,
+              color: Colors.white70,
+              weight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _purchaseColor(String? plan) {
+    switch (plan) {
+      case "Best Value Plan":
+        return Colors.deepPurpleAccent;
+      case "Popular Plan":
+        return Colors.blueAccent;
+      case "Starter Plan":
+      case "Starter Pack":
+        return Colors.amber;
+      case "Enterprise Pack":
+        return Colors.teal;
+      default:
+        return AppColors.primaryColor;
+    }
+  }
+
+  String _formatPurchaseDate(String? date) {
+    if (date == null) return "-";
+    try {
+      return DateFormat(
+        "dd MMM yyyy, hh:mm a",
+      ).format(DateTime.parse(date).toLocal());
+    } catch (_) {
+      return "-";
+    }
+  }
+
+  Widget buildConsumptionGuide() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.recContainerColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(.08)),
+      ),
+      child: Column(
+        children: [
+          _buildGuideHeader(),
+          Divider(height: 1, color: Colors.white.withOpacity(.06)),
+          ...List.generate(guides.length, (index) {
+            final item = guides[index];
+            return Column(
+              children: [
+                _buildGuideItem(item),
+                if (index != guides.length - 1)
+                  Divider(height: 1, color: Colors.white.withOpacity(.06)),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuideHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.pinkColor.withOpacity(.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.speaker_notes_outlined,
+              color: AppColors.pinkColor,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              "Credit Consumption Guide",
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.pinkColor,
+                lineSpace: 1.2,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const Spacer(),
+          InkWell(
+            onTap: () {
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.creditConsumptionScreen,
+              );
+            },
+            child: Row(
+              spacing: 5,
+              children: [
+                Text(
+                  "View All",
+                  style: AppStyles.customTextStyle(
+                    size: 12,
+                    color: Colors.white,
+                    weight: FontWeight.w500,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_sharp,
+                  color: AppColors.whiteColor,
+                  size: 12,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuideItem(ConsumptionGuide item) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: item.color.withOpacity(.18),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(item.icon, color: item.color, size: 20),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    color: Colors.white,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  "Credits required per request",
+                  style: AppStyles.customTextStyle(
+                    size: 11,
+                    color: Colors.white54,
+                    weight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: item.color.withOpacity(.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              "${item.credit} Credits",
+              style: AppStyles.customTextStyle(
+                size: 12,
+                color: item.color,
+                weight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  final List<ConsumptionGuide> guides = [
+    ConsumptionGuide(
+      title: "Syllabus Generation",
+      credit: 100,
+      icon: Icons.menu_book_outlined,
+      color: const Color(0xff8B5CF6),
+    ),
+    ConsumptionGuide(
+      title: "Resume Review",
+      credit: 50,
+      icon: Icons.description_outlined,
+      color: const Color(0xff3B82F6),
+    ),
+    ConsumptionGuide(
+      title: "Resume Optimization",
+      credit: 30,
+      icon: Icons.auto_fix_high_outlined,
+      color: const Color(0xff06B6D4),
+    ),
+    ConsumptionGuide(
+      title: "Banner Generation",
+      credit: 25,
+      icon: Icons.image_outlined,
+      color: const Color(0xffF59E0B),
+    ),
+    ConsumptionGuide(
+      title: "Certificate Generation",
+      credit: 50,
+      icon: Icons.workspace_premium_outlined,
+      color: const Color(0xffEC4899),
+    ),
+  ];
+}
+
+class ConsumptionGuide {
+  final String title;
+  final int credit;
+  final IconData icon;
+  final Color color;
+
+  ConsumptionGuide({
+    required this.title,
+    required this.credit,
+    required this.icon,
+    required this.color,
+  });
 }

@@ -6,6 +6,7 @@ import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -243,6 +244,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     await ResumeFileUtils.handleShare(
       webViewController: webViewController!,
       fileName: "${firstName}_resume",
+        shareText: CommonUtils.resumeShareContent
     );
   }
 
@@ -290,11 +292,15 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                         );
                       },
                       creditCount:
-                          registerController
+                      (registerController
                               .creditDataModel
                               .creditData!
                               .balance ??
-                          0,
+                          0)+(registerController
+                          .creditDataModel
+                          .creditData!
+                          .freeCredits ??
+                          0) ,
                     ),
               const SizedBox(width: 10),
             ],
@@ -495,7 +501,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               /// Like
               IconButton(
@@ -570,42 +576,44 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                       ),
               ),
 
-              Container(height: 20, width: 1.5, color: AppColors.whiteColor),
+              Container(height: 25, width: 1.5, color: AppColors.whiteColor),
 
-              const SizedBox(width: 10),
+              //const SizedBox(width: 10),
 
               /// Refresh
               if (latestGeneratedTemplateIndex < templates.length - 1) ...[
-                SizedBox(
-                  height: 35,
-                  width: 35,
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(),
-                    elevation: 0,
-                    mini: true,
-                    backgroundColor: AppColors.primaryColor,
-                    onPressed: () async {
-                      await nextTemplate();
+                Row(
+                  children: [
+                    SizedBox(
+                      height: 35,
+                      width: 35,
+                      child: FloatingActionButton(
+                        shape: const CircleBorder(),
+                        elevation: 0,
+                        mini: true,
+                        backgroundColor: AppColors.primaryColor,
+                        onPressed: () async {
+                          await nextTemplate();
 
-                      _initWebView(templates[currentTemplateIndex]);
-                    },
-                    child: const Icon(
-                      Icons.refresh,
-                      color: AppColors.whiteColor,
-                      size: 30,
+                          _initWebView(templates[currentTemplateIndex]);
+                        },
+                        child: const Icon(
+                          Icons.refresh,
+                          color: AppColors.whiteColor,
+                          size: 30,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-
-                Image.asset(AssetImages.creditsIconNew, height: 25, width: 25),
-
-                Text(
-                  "25",
-                  style: AppStyles.customTextStyle(
-                    size: 16,
-                    color: AppColors.whiteColor,
-                    weight: FontWeight.w700,
-                  ),
+                    Image.asset(AssetImages.creditsIconNew, height: 25, width: 25),
+                    Text(
+                      "25",
+                      style: AppStyles.customTextStyle(
+                        size: 16,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ],
               // SizedBox(

@@ -198,6 +198,16 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                         );
                       },
                     ),
+                    CardWidgets.settingsTile(
+                      icon: Icons.settings_suggest_outlined,
+                      title: "Account Settings",
+                      onTap: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.recruiterSettingScreen,
+                        );
+                      },
+                    ),
 
                     const Spacer(),
 

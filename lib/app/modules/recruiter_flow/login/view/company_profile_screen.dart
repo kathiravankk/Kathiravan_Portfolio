@@ -847,13 +847,13 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
       return;
     }
 
-    if (_certificateFile == null) {
-      AppAlertUtils.showToast(
-        message: "Please upload your Incorporation Certificate",
-        isError: true,
-      );
-      return;
-    }
+    // if (_certificateFile == null) {
+    //   AppAlertUtils.showToast(
+    //     message: "Please upload your Incorporation Certificate",
+    //     isError: true,
+    //   );
+    //   return;
+    // }
     await recruiterRegisterFunction();
   }
 
@@ -882,7 +882,9 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
       "reccompanycontactno": contactNumberController.text.trim(),
       "reccompanyemail": companyEmailController.text.trim(),
       "reccompanywebsite": companyWebsiteController.text.trim(),
-      "reccompanydocumenttype": _certificateFile,
+      if(_certificateFile != null)
+        "reccompanydocumenttype": _certificateFile
+
     };
     try {
       await registerController.newRecruiterRegister(registerData: registerData);

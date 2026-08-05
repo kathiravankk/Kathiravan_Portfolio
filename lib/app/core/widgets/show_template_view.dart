@@ -16,8 +16,7 @@ class ShowTemplateView extends StatefulWidget {
   });
 
   @override
-  State<ShowTemplateView> createState() =>
-      _ShowTemplateViewState();
+  State<ShowTemplateView> createState() => _ShowTemplateViewState();
 }
 
 class _ShowTemplateViewState extends State<ShowTemplateView> {
@@ -33,16 +32,28 @@ class _ShowTemplateViewState extends State<ShowTemplateView> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (_) async {
-            final jsonData = jsonEncode(widget.resumeData.toJson());
-
-            await _controller.runJavaScript("renderResume($jsonData);");
-
+            await _updateWebViewData();
+            if (!mounted) return;
             setState(() => _isLoading = false);
           },
         ),
       );
 
     _loadHtml();
+  }
+
+  // Handle widget updates when parent updates `resumeData`
+  @override
+  void didUpdateWidget(covariant ShowTemplateView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.resumeData != widget.resumeData) {
+      _updateWebViewData();
+    }
+  }
+
+  Future<void> _updateWebViewData() async {
+    final jsonData = jsonEncode(widget.resumeData.toJson());
+    await _controller.runJavaScript("renderResume($jsonData);");
   }
 
   Future<void> _loadHtml() async {
@@ -58,7 +69,7 @@ class _ShowTemplateViewState extends State<ShowTemplateView> {
     return Stack(
       children: [
         WebViewWidget(controller: _controller),
-        if (_isLoading)  AppAlertUtils.customLoader(),
+        if (_isLoading) AppAlertUtils.customLoader(),
       ],
     );
   }
