@@ -161,6 +161,7 @@ class AppApiUrls {
   static String recruiterDeleteAccount = "${baseUrl}recruiter/delete";
   static String sendCoordinatorOtp = "${baseUrl}sendcoordinatorotp";
   static String verifyCoordinatorOtp = "${baseUrl}verifycoordinatorotp";
+  static String giveRecruiterReview = "${baseUrl}recruiterreview";
 
 
 }

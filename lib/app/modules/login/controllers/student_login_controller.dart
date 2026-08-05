@@ -140,6 +140,8 @@ class StudentLoginController extends GetxController {
   set createNewResumeModel(CreateNewChatResumeModel value) =>
       _createNewResumeModel.value = value;
 
+  Rx<CreateNewChatResumeModel> get createNewResumeModelRx => _createNewResumeModel;
+
   Future<void> createNewChatResume({
     required Map<String, dynamic> chatRequestData
   }) async {

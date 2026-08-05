@@ -99,10 +99,8 @@ class _ChatNewResumeCreationScreenState
     super.initState();
 
     // Automatically sync text controllers whenever GetX updates the resume model
-    ever(loginController.createNewResumeModel.obs, (_) {
-      _syncControllersFromCollectedData(
-        loginController.createNewResumeModel.collectedData,
-      );
+    ever(loginController.createNewResumeModelRx, (_) {
+      _syncControllersFromCollectedData(loginController.createNewResumeModel.collectedData);
     });
 
     createChatResume(reqData: {"action": "start_chat"}, isChatStarted: true);
@@ -211,34 +209,32 @@ class _ChatNewResumeCreationScreenState
     if (data == null) return;
 
     if (data.personalInfo != null) {
-      if (_nameCtrl.text.isEmpty) _nameCtrl.text = data.personalInfo!.name ?? "";
-      if (_emailCtrl.text.isEmpty) _emailCtrl.text = data.personalInfo!.email ?? "";
-      if (_mobileCtrl.text.isEmpty) _mobileCtrl.text = data.personalInfo!.phone ?? "";
-      if (_linkedinCtrl.text.isEmpty) _linkedinCtrl.text = data.personalInfo!.linkedIn ?? "";
-      if (_githubCtrl.text.isEmpty) _githubCtrl.text = data.personalInfo!.github ?? "";
+      _nameCtrl.text = data.personalInfo!.name ?? _nameCtrl.text;
+      _emailCtrl.text = data.personalInfo!.email ?? _emailCtrl.text;
+      _mobileCtrl.text = data.personalInfo!.phone ?? _mobileCtrl.text;
+      _linkedinCtrl.text = data.personalInfo!.linkedIn ?? _linkedinCtrl.text;
+      _githubCtrl.text = data.personalInfo!.github ?? _githubCtrl.text;
     }
 
-    if (_summaryCtrl.text.isEmpty) _summaryCtrl.text = data.profileSummary ?? "";
-    if (_skillsCtrl.text.isEmpty && data.skills != null) {
+    if (data.profileSummary != null && data.profileSummary!.isNotEmpty) {
+      _summaryCtrl.text = data.profileSummary!;
+    }
+    if (data.skills != null && data.skills!.isNotEmpty) {
       _skillsCtrl.text = data.skills!.join(", ");
     }
-    if (_languagesCtrl.text.isEmpty && data.languages != null) {
+    if (data.languages != null && data.languages!.isNotEmpty) {
       _languagesCtrl.text = data.languages!.join(", ");
     }
-    if (_hobbiesCtrl.text.isEmpty && data.hobbies != null) {
+    if (data.hobbies != null && data.hobbies!.isNotEmpty) {
       _hobbiesCtrl.text = data.hobbies!.join(", ");
     }
-    if (_interestsCtrl.text.isEmpty && data.areasOfInterest != null) {
+    if (data.areasOfInterest != null && data.areasOfInterest!.isNotEmpty) {
       _interestsCtrl.text = data.areasOfInterest!.join(", ");
     }
 
     if (data.education?.college != null && data.education!.college!.isNotEmpty) {
-      if (_degreeCtrl.text.isEmpty) {
-        _degreeCtrl.text = data.education!.college!.first.degree ?? "";
-      }
-      if (_institutionCtrl.text.isEmpty) {
-        _institutionCtrl.text = data.education!.college!.first.institution ?? "";
-      }
+      _degreeCtrl.text = data.education!.college!.first.degree ?? _degreeCtrl.text;
+      _institutionCtrl.text = data.education!.college!.first.institution ?? _institutionCtrl.text;
     }
   }
 
@@ -256,7 +252,7 @@ class _ChatNewResumeCreationScreenState
     }
 
     // Call Update Profile API on every section completion or DONE trigger
-    await registerNewStudent(isDone: completedSection == "DONE");
+    await updateCompleteSectionInfo(isDone: completedSection == "DONE", completedSection: completedSection);
   }
 
   // ==========================================================================
@@ -348,7 +344,7 @@ class _ChatNewResumeCreationScreenState
   // UPDATE PROFILE API & NAVIGATE TO TEMPLATES ON DONE
   // ==========================================================================
 
-  Future<void> registerNewStudent({
+  Future<void> updateCompleteSectionInfo({
     bool isDone = false,
     String? completedSection,
   }) async {
@@ -362,19 +358,22 @@ class _ChatNewResumeCreationScreenState
 
     final collegeList = collegeArray.isNotEmpty
         ? collegeArray
-        .map((c) => {
-      'degree': c.degree ?? '',
-      'department': c.department ?? '',
-      'institution': c.institution ?? '',
-      'start_year': c.startYear ?? '',
-      'end_year': c.endYear ?? '',
-    })
-        .toList()
+              .map(
+                (c) => {
+                  'degree': c.degree ?? '',
+                  'department': c.department ?? '',
+                  'institution': c.institution ?? '',
+                  'start_year': c.startYear ?? '',
+                  'end_year': c.endYear ?? '',
+                },
+              )
+              .toList()
         : [];
 
     final secondaryList = secondaryData != null ? [secondaryData.toJson()] : [];
-    final higherSecondaryList =
-    higherSecondaryData != null ? [higherSecondaryData.toJson()] : [];
+    final higherSecondaryList = higherSecondaryData != null
+        ? [higherSecondaryData.toJson()]
+        : [];
 
     final educationObject = {
       'school': {
@@ -399,10 +398,10 @@ class _ChatNewResumeCreationScreenState
           : collected?.profileSummary ?? "",
       "studprogramminglang": _skillsCtrl.text.trim().isNotEmpty
           ? _skillsCtrl.text
-          .split(",")
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList()
+                .split(",")
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList()
           : collected?.skills ?? [],
       "projects": jsonEncode(
         collected?.projects?.map((e) => e.toJson()).toList() ?? [],
@@ -423,18 +422,18 @@ class _ChatNewResumeCreationScreenState
       "volunteer_experience": jsonEncode(collected?.volunteerExperience ?? []),
       "languages_known": _languagesCtrl.text.trim().isNotEmpty
           ? jsonEncode(
-        _languagesCtrl.text.split(",").map((e) => e.trim()).toList(),
-      )
+              _languagesCtrl.text.split(",").map((e) => e.trim()).toList(),
+            )
           : jsonEncode(collected?.languages ?? []),
       "areas_of_interest": _interestsCtrl.text.trim().isNotEmpty
           ? jsonEncode(
-        _interestsCtrl.text.split(",").map((e) => e.trim()).toList(),
-      )
+              _interestsCtrl.text.split(",").map((e) => e.trim()).toList(),
+            )
           : jsonEncode(collected?.areasOfInterest ?? []),
       "hobbies": _hobbiesCtrl.text.trim().isNotEmpty
           ? jsonEncode(
-        _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList(),
-      )
+              _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList(),
+            )
           : jsonEncode(collected?.hobbies ?? []),
       "industrial_visits": jsonEncode(collected?.industrialVisits ?? []),
       "linkedIn": _linkedinCtrl.text.trim().isNotEmpty
@@ -455,14 +454,13 @@ class _ChatNewResumeCreationScreenState
           : (collegeArray.isNotEmpty ? collegeArray.first.degree ?? "" : ""),
       "studentcollegename": _institutionCtrl.text.trim().isNotEmpty
           ? _institutionCtrl.text.trim()
-          : (collegeArray.isNotEmpty ? collegeArray.first.institution ?? "" : ""),
+          : (collegeArray.isNotEmpty
+                ? collegeArray.first.institution ?? ""
+                : ""),
     };
 
     try {
-      if (completedSection == "mobile_otp_completed") {
-        // 2A. Initial Registration execution
-        await registerController.registerNewStudent(registerData: payload);
-      } else {
+
         // 2B. Build Chat Resume Payload with populated fields across all sections
         Map<String, dynamic> chatPayload = {
           "action": "send_message",
@@ -483,12 +481,20 @@ class _ChatNewResumeCreationScreenState
             },
             "refcode": "",
             "skills": payload["studprogramminglang"],
-            "internships": collected?.internships?.map((e) => e.toJson()).toList() ?? [],
-            "projects": collected?.projects?.map((e) => e.toJson()).toList() ?? [],
+            "internships":
+                collected?.internships?.map((e) => e.toJson()).toList() ?? [],
+            "projects":
+                collected?.projects?.map((e) => e.toJson()).toList() ?? [],
             "industrial_visits": collected?.industrialVisits ?? [],
             "education": educationObject,
-            "certifications": collected?.certifications?.map((e) => e.toJson()).toList() ?? [],
-            "paper_presentations": collected?.paperPresentations?.map((e) => e.toJson()).toList() ?? [],
+            "certifications":
+                collected?.certifications?.map((e) => e.toJson()).toList() ??
+                [],
+            "paper_presentations":
+                collected?.paperPresentations
+                    ?.map((e) => e.toJson())
+                    .toList() ??
+                [],
             "workshops": collected?.workshops ?? [],
             "publications": collected?.publications ?? [],
             "achievements": collected?.achievements ?? [],
@@ -510,78 +516,78 @@ class _ChatNewResumeCreationScreenState
               {
                 "institution1": payload["studentcollegename"],
                 "institution2": "",
-                "institution3": ""
-              }
+                "institution3": "",
+              },
             ],
             "degree": [
               {
                 "degree1": payload["studentdegree"],
                 "degree2": "",
-                "degree3": ""
-              }
-            ]
-          }
+                "degree3": "",
+              },
+            ],
+          },
         };
 
         // Call Chat Resume Sync API first
         await loginController.createNewChatResume(chatRequestData: chatPayload);
+        debugPrint("**********************");
+        debugPrint(payload["studemail"]);
+        debugPrint(payload["studmobileno"]);
 
-        // Call Profile Update API
-        await registerController.updateStudentProfileData(updateData: payload);
-      }
-
-      final int statusCode = registerController.getResponseCode();
+      final int statusCode = loginController.getResponseCode();
 
       if (statusCode == 200 || statusCode == 201) {
-        final prefs = await SharedPreferences.getInstance();
-
-        if (completedSection == "mobile_otp_completed" &&
-            registerController.studentRegisterModel.studentToken != null) {
-          await LocalStorageService.saveStudent(
-            token: registerController.studentRegisterModel.studentToken!,
-            student: registerController.studentRegisterModel.registerData!,
-          );
-          await prefs.setString(
-            LocalStorageService.studentNameKey,
-            registerController.studentRegisterModel.registerData!.studentName ??
-                "",
-          );
-          await prefs.setString(
-            LocalStorageService.tokenKey,
-            registerController.studentRegisterModel.studentToken ?? "",
+        print(completedSection.toString());
+        if(completedSection == "mobile_otp_completed"){
+          debugPrint("&&&&&&&&&&&&&&&");
+          await callRegisterApi(payload: payload);
+        }
+        // if (completedSection == "mobile_otp_completed" &&
+        //     registerController.studentRegisterModel.studentToken != null) {
+        // }
+        // Call Profile Update API
+        if ((payload["studemail"] != null && payload["studemail"] != "") &&
+            (payload["studmobileno"] != null && payload["studmobileno"] != "")) {
+          debugPrint("^^^^^^^^^^^");
+          await registerController.updateStudentProfileData(
+            updateData: payload,
           );
         }
 
         // Refresh Live Preview Model
-        loginController.createNewResumeModel.collectedData = ResumeCollectedData(
-          personalInfo: PersonalInfoModel(
-            name: payload["studname"],
-            email: payload["studemail"],
-            phone: payload["studmobileno"],
-            linkedIn: payload["linkedIn"],
-            github: payload["github"],
-            gender: "",
-            location: "",
-          ),
-          profileSummary: payload["profile_summary"],
-          skills: List<String>.from(payload["studprogramminglang"] ?? []),
-          hobbies: _hobbiesCtrl.text.trim().isNotEmpty
-              ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList()
-              : collected?.hobbies,
-          languages: _languagesCtrl.text.trim().isNotEmpty
-              ? _languagesCtrl.text.split(",").map((e) => e.trim()).toList()
-              : collected?.languages,
-          areasOfInterest: _interestsCtrl.text.trim().isNotEmpty
-              ? _interestsCtrl.text.split(",").map((e) => e.trim()).toList()
-              : collected?.areasOfInterest,
-          projects: collected?.projects,
-          internships: collected?.internships,
-          certifications: collected?.certifications,
-          education: collected?.education,
-        );
-
-        loginController.createNewResumeModel.obs.refresh();
-
+        loginController.createNewResumeModel.collectedData =
+            ResumeCollectedData(
+              personalInfo: PersonalInfoModel(
+                name: payload["studname"],
+                email: payload["studemail"],
+                phone: payload["studmobileno"],
+                linkedIn: payload["linkedIn"],
+                github: payload["github"],
+                gender: "",
+                location: "",
+              ),
+              profileSummary: payload["profile_summary"],
+              skills: List<String>.from(payload["studprogramminglang"] ?? []),
+              hobbies: _hobbiesCtrl.text.trim().isNotEmpty
+                  ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList()
+                  : collected?.hobbies,
+              languages: _languagesCtrl.text.trim().isNotEmpty
+                  ? _languagesCtrl.text.split(",").map((e) => e.trim()).toList()
+                  : collected?.languages,
+              areasOfInterest: _interestsCtrl.text.trim().isNotEmpty
+                  ? _interestsCtrl.text.split(",").map((e) => e.trim()).toList()
+                  : collected?.areasOfInterest,
+              projects: collected?.projects,
+              internships: collected?.internships,
+              certifications: collected?.certifications,
+              education: collected?.education,
+            );
+        debugPrint("%%%%%%%%%%%%%%%%");
+         loginController.createNewResumeModelRx.refresh();
+        debugPrint("REFRESH DONE — collectedData name: ${loginController.createNewResumeModel.collectedData?.personalInfo?.name}");
+        debugPrint("%%%%%%%%%%%%%%%%");
+        //await registerController.getStudentProfile(studentId: "");
         if (isDone && mounted) {
           await getStudentProfileData();
         }
@@ -597,7 +603,57 @@ class _ChatNewResumeCreationScreenState
         registerController.getResponseCode(),
         "Failed to save section update: $error",
       );
+      debugPrint("getStudentProfile(empty id) THREW: $error");
     }
+  }
+
+  Future<void> callRegisterApi({required Map<String, dynamic> payload})async{
+    try{
+      await registerController.registerNewStudent(registerData: payload);
+      if(registerController.getResponseCode() == 200 || registerController.getResponseCode() == 201){
+        final prefs = await SharedPreferences.getInstance();
+        await LocalStorageService.saveStudent(
+          token: registerController.studentRegisterModel.studentToken!,
+          student: registerController.studentRegisterModel.registerData!,
+        );
+        await prefs.setString(
+          LocalStorageService.studentNameKey,
+          registerController.studentRegisterModel.registerData!.studentName ?? "",
+        );
+        await prefs.setString(
+          LocalStorageService.tokenKey,
+          registerController.studentRegisterModel.studentToken ?? "",
+        );
+        if (!mounted) return;
+        await _showRegistrationSuccessDialog();
+      }
+      else{
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Failed to Register!. Please try again!",
+        );
+      }
+    }
+    catch( error){
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Failed to Register!. Please try again!");
+    }
+  }
+  Future<void> _showRegistrationSuccessDialog() async {
+    const int creditsAdded = 200;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => RegistrationSuccessDialog(
+        creditsAdded: creditsAdded,
+        onContinue: () async {
+          Get.back();
+          //await getStudentProfileData();
+        },
+      ),
+    );
   }
 
   Future<void> getStudentProfileData() async {
@@ -1059,20 +1115,37 @@ class _ChatNewResumeCreationScreenState
         );
       }
 
+      // Extract skills, languages, hobbies, interests dynamically from controllers if available
+      final skillsList = _skillsCtrl.text.trim().isNotEmpty
+          ? _skillsCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          : (collected.skills ?? []);
+
+      final languagesList = _languagesCtrl.text.trim().isNotEmpty
+          ? _languagesCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          : (collected.languages ?? []);
+
+      final hobbiesList = _hobbiesCtrl.text.trim().isNotEmpty
+          ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          : (collected.hobbies ?? []);
+
+      final interestsList = _interestsCtrl.text.trim().isNotEmpty
+          ? _interestsCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          : (collected.areasOfInterest ?? []);
+
       final resumeData = ExtractedResumeDataModel(
         personalInfo: PersonalInfoModel(
-          name: collected.personalInfo?.name ?? "",
+          name: _nameCtrl.text.trim().isNotEmpty ? _nameCtrl.text.trim() : (collected.personalInfo?.name ?? ""),
           gender: collected.personalInfo?.gender,
-          email: collected.personalInfo?.email ?? "",
-          phone: collected.personalInfo?.phone ?? "",
-          linkedIn: collected.personalInfo?.linkedIn,
-          github: collected.personalInfo?.github,
-          location: "",
+          email: _emailCtrl.text.trim().isNotEmpty ? _emailCtrl.text.trim() : (collected.personalInfo?.email ?? ""),
+          phone: _mobileCtrl.text.trim().isNotEmpty ? _mobileCtrl.text.trim() : (collected.personalInfo?.phone ?? ""),
+          linkedIn: _linkedinCtrl.text.trim().isNotEmpty ? _linkedinCtrl.text.trim() : collected.personalInfo?.linkedIn,
+          github: _githubCtrl.text.trim().isNotEmpty ? _githubCtrl.text.trim() : collected.personalInfo?.github,
+          location: collected.personalInfo?.location ?? "",
         ),
         internships: collected.internships ?? [],
-        hobbies: collected.hobbies,
-        areasOfInterest: collected.areasOfInterest,
-        languages: collected.languages,
+        hobbies: hobbiesList,
+        areasOfInterest: interestsList,
+        languages: languagesList,
         volunteerExperience: collected.volunteerExperience,
         leaderships: collected.leadership,
         achievements: collected.achievements,
@@ -1082,8 +1155,10 @@ class _ChatNewResumeCreationScreenState
         educationData: collected.education,
         industrialVisits: collected.industrialVisits,
         projects: collected.projects,
-        skills: collected.skills,
-        profileSummary: collected.profileSummary ?? "",
+        skills: skillsList,
+        profileSummary: _summaryCtrl.text.trim().isNotEmpty
+            ? _summaryCtrl.text.trim()
+            : (collected.profileSummary ?? ""),
         colleges: collected.education?.college,
         degree: const [],
         experience: const [],
@@ -1161,7 +1236,9 @@ class _ChatNewResumeCreationScreenState
     switch (key) {
       case "personal_info":
         final p = collected.personalInfo;
-        return (p != null && (p.name?.trim().isNotEmpty == true || p.email?.trim().isNotEmpty == true)) ||
+        return (p != null &&
+                (p.name?.trim().isNotEmpty == true ||
+                    p.email?.trim().isNotEmpty == true)) ||
             _completedSections.contains("personal_info_completed");
 
       case "profile_summary":
@@ -1177,11 +1254,13 @@ class _ChatNewResumeCreationScreenState
         return hasCollege || _completedSections.contains("education_completed");
 
       case "languages":
-        return (collected.languages != null && collected.languages!.isNotEmpty) ||
+        return (collected.languages != null &&
+                collected.languages!.isNotEmpty) ||
             _completedSections.contains("languages_completed");
 
       case "interests":
-        return (collected.areasOfInterest != null && collected.areasOfInterest!.isNotEmpty) ||
+        return (collected.areasOfInterest != null &&
+                collected.areasOfInterest!.isNotEmpty) ||
             _completedSections.contains("interests_completed");
 
       case "hobbies":
@@ -1233,8 +1312,12 @@ class _ChatNewResumeCreationScreenState
                   ),
                 ),
                 child: Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(dividerColor: Colors.transparent),
                   child: ExpansionTile(
+                    iconColor: AppColors.primaryColor,
+                    collapsedIconColor: AppColors.primaryColor,
                     leading: Container(
                       height: 38,
                       width: 38,
@@ -1292,6 +1375,7 @@ class _ChatNewResumeCreationScreenState
               controller: _emailCtrl,
               labelText: "Email Address",
               isNumberKeyboard: false,
+              isEnabled: false,
               isProfileFlow: true,
             ),
             const SizedBox(height: 10),
@@ -1299,6 +1383,7 @@ class _ChatNewResumeCreationScreenState
               controller: _mobileCtrl,
               labelText: "Mobile Number",
               isNumberKeyboard: true,
+              isEnabled: false,
               isProfileFlow: true,
             ),
             const SizedBox(height: 10),
@@ -1318,8 +1403,9 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Personal Info",
+              isLoading: registerController.updateProfileLoading,
               buttonFunction: () async {
-                await registerNewStudent();
+                await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Personal info updated!");
               },
             ),
@@ -1338,8 +1424,9 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Summary",
+              isLoading: registerController.updateProfileLoading,
               buttonFunction: () async {
-                await registerNewStudent();
+                await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Summary updated!");
               },
             ),
@@ -1358,8 +1445,9 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Skills",
+              isLoading: registerController.updateProfileLoading,
               buttonFunction: () async {
-                await registerNewStudent();
+                await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Skills updated!");
               },
             ),
@@ -1385,8 +1473,9 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Education",
+              isLoading: registerController.updateProfileLoading,
               buttonFunction: () async {
-                await registerNewStudent();
+                await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Education updated!");
               },
             ),
@@ -1405,8 +1494,9 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Languages",
+              isLoading: registerController.updateProfileLoading,
               buttonFunction: () async {
-                await registerNewStudent();
+                await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Languages updated!");
               },
             ),
@@ -1425,8 +1515,9 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Interests",
+              isLoading: registerController.updateProfileLoading,
               buttonFunction: () async {
-                await registerNewStudent();
+                await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Interests updated!");
               },
             ),
@@ -1445,8 +1536,9 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Hobbies",
+              isLoading: registerController.updateProfileLoading,
               buttonFunction: () async {
-                await registerNewStudent();
+                await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Hobbies updated!");
               },
             ),

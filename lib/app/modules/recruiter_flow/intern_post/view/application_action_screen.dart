@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/app_background_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
+import 'package:internsharks/app/core/widgets/feeback_dialog.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/recruiter_internship_widget.dart';
 import 'package:internsharks/app/core/widgets/syllabus_generation_dialog.dart';
@@ -244,7 +245,8 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                                 arguments: {
                                   "studentId": studentId,
                                   "jobId": jobId,
-                                  "syllabusStatus": studentData!.applicationStatus,
+                                  "syllabusStatus":
+                                      studentData!.applicationStatus,
                                 },
                               );
                             },
@@ -268,6 +270,72 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 10,),
+                  Visibility(
+                    visible: studentData!.syllabusStatus!,
+                    child: GestureDetector(
+                      onTap: (){
+                        showAddFeedbackDialog(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.transparentColor,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.disableBorderColor),
+                        ),
+                        padding: EdgeInsets.all(15),
+                        child: Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: AppColors.transparentColor,
+                                border: Border.all(
+                                  color: AppColors.secondaryColor,
+                                  width: 2,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(5),
+                              child: Icon(
+                                CupertinoIcons.chat_bubble_text,
+                                color: AppColors.whiteColor,
+                                size: 25,
+                              ),
+                            ),
+                            const SizedBox(width: 15,),
+                            Column(
+                              spacing: 10,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Feedback",
+                                  style: AppStyles.customTextStyle(
+                                    size: 16,
+                                    color: AppColors.whiteColor,
+                                    weight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  "Help us improve by sharing your feedback",
+                                  style: AppStyles.customTextStyle(
+                                    size: 12,
+                                    color: AppColors.contLightText2,
+                                    weight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              color: AppColors.whiteColor,
+                              size: 25,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -526,12 +594,69 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                             ],
                           ),
                         ),
-                  const SizedBox(height: 20,)
+                  const SizedBox(height: 20),
                 ],
               )
             : CustomEmptyWidget(),
       ),
     );
+  }
+
+  void showAddFeedbackDialog(BuildContext context) {
+    Get.dialog(
+      FeedbackDialog(
+        onSubmit:
+            ({
+          required int rating,
+          required String review,
+          required String feedbackType,
+          String? referenceLink,
+        }) async {
+          return await addFeedbackReview(
+            rating: rating,
+            review: review,
+            feedbackType: feedbackType,
+            referenceLink: referenceLink,
+          );
+        },
+      ),
+      barrierDismissible: true,
+    );
+  }
+
+  Future<bool> addFeedbackReview({
+    required int rating,
+    required String review,
+    required String feedbackType,
+    String? referenceLink,
+  }) async {
+    Map<String, dynamic> feedBackData = {
+      "jobId": jobId,
+      "studentId": studentId,
+      "review": review,
+      "rating": rating,
+      "feedbacktype": feedbackType,
+      if (referenceLink != null) "referenceLink": referenceLink,
+    };
+
+    await applicationController.giveRecruiterFeedback(reviewData: feedBackData);
+
+    final code = applicationController.getResponseCode();
+
+    if (code == 200 || code == 201) {
+      AppAlertUtils.showToast(
+        message:
+        applicationController.feedbackModel.message ??
+            "Feedback Submitted Successfully!",
+      );
+      return true;
+    } else {
+      AppFunctions.apiErrorHandling(
+        code,
+        applicationController.feedbackModel.message ?? "Please try again later!",
+      );
+      return false;
+    }
   }
 
   Future<void> _handleDownload() async {

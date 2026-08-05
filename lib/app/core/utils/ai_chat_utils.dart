@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
-import 'package:internsharks/app/core/widgets/custom_button_widget.dart' show CustomButtonWidget;
+import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart'
+    show CustomButtonWidget;
 import 'package:internsharks/app/data/models/account/chat_mcq_question_model.dart';
 import 'package:internsharks/app/data/models/account/chat_mcq_result_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -12,6 +14,7 @@ import 'package:internsharks/app/modules/login/view/chat_new_resume_creation_scr
 
 class LivePreviewSummaryCard extends StatelessWidget {
   final ExtractedResumeDataModel resumeData;
+
   const LivePreviewSummaryCard({super.key, required this.resumeData});
 
   @override
@@ -46,9 +49,14 @@ class LivePreviewSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           if ((resumeData.skills ?? []).isNotEmpty) ...[
-            Text("Skills",
-                style: AppStyles.customTextStyle(
-                    size: 14, weight: FontWeight.w700, color: Colors.black87)),
+            Text(
+              "Skills",
+              style: AppStyles.customTextStyle(
+                size: 14,
+                weight: FontWeight.w700,
+                color: Colors.black87,
+              ),
+            ),
             const SizedBox(height: 6),
             Wrap(
               spacing: 6,
@@ -111,8 +119,7 @@ class _KnowledgeCheckDialogState extends State<KnowledgeCheckDialog> {
     if (!_allAnswered || _submitting) return;
     setState(() => _submitting = true);
 
-    final answers =
-    List.generate(_questions.length, (i) => _answers[i] ?? "");
+    final answers = List.generate(_questions.length, (i) => _answers[i] ?? "");
     final result = await widget.onSubmit(answers);
 
     if (!mounted) return;
@@ -134,7 +141,8 @@ class _KnowledgeCheckDialogState extends State<KnowledgeCheckDialog> {
       return QuizReviewDialog(result: _result!);
     }
 
-    final String topicLabel = widget.quizModel.topicLabel ??
+    final String topicLabel =
+        widget.quizModel.topicLabel ??
         kQuizSectionLabel[widget.sectionCode] ??
         widget.sectionCode;
 
@@ -219,21 +227,21 @@ class _KnowledgeCheckDialogState extends State<KnowledgeCheckDialog> {
                       ),
                       child: _submitting
                           ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
                           : Text(
-                        "Submit Quiz  →  (${_answers.length}/${_questions.length})",
-                        style: AppStyles.customTextStyle(
-                          size: 14,
-                          weight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                              "Submit Quiz  →  (${_answers.length}/${_questions.length})",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                weight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                   if (!_allAnswered) ...[
@@ -307,8 +315,10 @@ class _KnowledgeCheckDialogState extends State<KnowledgeCheckDialog> {
               return GestureDetector(
                 onTap: () => setState(() => _answers[index] = entry.key),
                 child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? const Color(0xFF139E8C).withOpacity(0.25)
@@ -370,6 +380,7 @@ class _KnowledgeCheckDialogState extends State<KnowledgeCheckDialog> {
 
 class QuizReviewDialog extends StatelessWidget {
   final ChatMcqResultModel result;
+
   const QuizReviewDialog({super.key, required this.result});
 
   List<ValidationQuestion> get _allQuestions {
@@ -497,7 +508,8 @@ class QuizReviewDialog extends StatelessWidget {
     String? correctOptionKey;
 
     // Primary check: using top-level `correct_indices` from API
-    if (result.correctIndices != null && index < result.correctIndices!.length) {
+    if (result.correctIndices != null &&
+        index < result.correctIndices!.length) {
       correctOptionKey = result.correctIndices![index].trim().toUpperCase();
     }
 
@@ -511,7 +523,9 @@ class QuizReviewDialog extends StatelessWidget {
     // Fallback 2: match `q.correctAnswer` against full option values (e.g., "OpenWeatherMap")
     if (correctOptionKey == null || !options.containsKey(correctOptionKey)) {
       final matchEntry = options.entries.firstWhere(
-            (e) => e.value.trim().toLowerCase() == (q.correctAnswer ?? '').trim().toLowerCase(),
+        (e) =>
+            e.value.trim().toLowerCase() ==
+            (q.correctAnswer ?? '').trim().toLowerCase(),
         orElse: () => const MapEntry("", ""),
       );
       if (matchEntry.key.isNotEmpty) {
@@ -523,7 +537,9 @@ class QuizReviewDialog extends StatelessWidget {
     String? selectedOptionKey = q.selectAnswer ?? q.answer;
     if (selectedOptionKey != null && !options.containsKey(selectedOptionKey)) {
       final selectedMatch = options.entries.firstWhere(
-            (e) => e.value.trim().toLowerCase() == selectedOptionKey!.trim().toLowerCase(),
+        (e) =>
+            e.value.trim().toLowerCase() ==
+            selectedOptionKey!.trim().toLowerCase(),
         orElse: () => const MapEntry("", ""),
       );
       if (selectedMatch.key.isNotEmpty) {
@@ -531,7 +547,8 @@ class QuizReviewDialog extends StatelessWidget {
       }
     }
 
-    final bool isCorrect = selectedOptionKey != null && selectedOptionKey == correctOptionKey;
+    final bool isCorrect =
+        selectedOptionKey != null && selectedOptionKey == correctOptionKey;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -541,7 +558,9 @@ class QuizReviewDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border(
           left: BorderSide(
-            color: isCorrect ? const Color(0xFF19C37D) : const Color(0xFFE94F4F),
+            color: isCorrect
+                ? const Color(0xFF19C37D)
+                : const Color(0xFFE94F4F),
             width: 4,
           ),
         ),
@@ -612,7 +631,10 @@ class QuizReviewDialog extends StatelessWidget {
               }
 
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(10),
@@ -650,11 +672,17 @@ class QuizReviewDialog extends StatelessWidget {
                       ),
                     ),
                     if (isCorrectOption)
-                      const Icon(Icons.check_circle,
-                          size: 16, color: Color(0xFF19C37D)),
+                      const Icon(
+                        Icons.check_circle,
+                        size: 16,
+                        color: Color(0xFF19C37D),
+                      ),
                     if (isWrongSelected)
-                      const Icon(Icons.cancel,
-                          size: 16, color: Color(0xFFE94F4F)),
+                      const Icon(
+                        Icons.cancel,
+                        size: 16,
+                        color: Color(0xFFE94F4F),
+                      ),
                   ],
                 ),
               );
@@ -721,7 +749,7 @@ class RegistrationSuccessDialog extends StatelessWidget {
                   width: 60,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF6C445),
+                    color: AppColors.secondaryColor,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -731,7 +759,11 @@ class RegistrationSuccessDialog extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Text("🪙", style: TextStyle(fontSize: 30)),
+                  child: Image.asset(
+                    AssetImages.creditsIconNew,
+                    height: 30,
+                    width: 30,
+                  ),
                 ),
                 const SizedBox(height: 18),
                 Text(
@@ -748,7 +780,9 @@ class RegistrationSuccessDialog extends StatelessWidget {
                   onTap: onContinue,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF19C37D),
                       borderRadius: BorderRadius.circular(24),
@@ -789,7 +823,8 @@ class RegistrationSuccessDialog extends StatelessWidget {
     );
   }
 }
- class ResumeSectionMeta {
+
+class ResumeSectionMeta {
   final String key;
   final String title;
   final String subtitle;
@@ -797,5 +832,10 @@ class RegistrationSuccessDialog extends StatelessWidget {
   final Color color;
 
   const ResumeSectionMeta(
-      this.key, this.title, this.subtitle, this.icon, this.color);
+    this.key,
+    this.title,
+    this.subtitle,
+    this.icon,
+    this.color,
+  );
 }

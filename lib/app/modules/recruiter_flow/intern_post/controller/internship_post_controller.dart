@@ -8,6 +8,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profi
 import 'package:internsharks/app/data/models/recruiter_flow/internship_post_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/issued_certificate_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/new_internship_data_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_feedback_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_review_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/send_request_model.dart';
@@ -583,5 +584,35 @@ class InternshipPostController extends GetxController {
     }
   }
 
+
+  //  GIVE FEEDBACK
+
+  final _giveFeedbackLoading = false.obs;
+
+  bool get giveFeedbackLoading => _giveFeedbackLoading.value;
+
+  set giveFeedbackLoading(bool value) => _giveFeedbackLoading.value = value;
+
+  // Model
+  final _feedbackModel = RecruiterFeedbackModel().obs;
+
+  RecruiterFeedbackModel get feedbackModel => _feedbackModel.value;
+
+  set feedbackModel(RecruiterFeedbackModel value) => _feedbackModel.value = value;
+
+  Future<void> giveRecruiterFeedback({
+    required Map<String, dynamic> reviewData
+  }) async {
+    try {
+      giveFeedbackLoading = true;
+      feedbackModel= await internshipPostProvider!.giveRecruiterFeedback(
+      reviewData: reviewData
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      giveFeedbackLoading = false;
+    }
+  }
 
 }

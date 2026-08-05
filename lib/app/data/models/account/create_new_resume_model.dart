@@ -79,8 +79,8 @@ class ResumeCollectedData {
   List<CollegeData>? colleges2;
   List<CollegeData>? colleges3;
 
-  List<Institution>? institution;
-  List<Degree>? degree;
+  List<CollegeData>? institution;
+  List<CollegeData>? degree;
 
   ResumeCollectedData({
     this.profileSummary,
@@ -165,11 +165,11 @@ class ResumeCollectedData {
           .toList(),
 
       institution: (json["institution"] ?? [])
-          .map<Institution>((e) => Institution.fromJson(e))
+          .map<Institution>((e) => CollegeData.fromJson(e))
           .toList(),
 
       degree: (json["degree"] ?? [])
-          .map<Degree>((e) => Degree.fromJson(e))
+          .map<Degree>((e) => CollegeData.fromJson(e))
           .toList(),
     );
   }
