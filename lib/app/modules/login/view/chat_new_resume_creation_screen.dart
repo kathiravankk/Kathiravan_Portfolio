@@ -56,7 +56,7 @@ class ChatNewResumeCreationScreen extends StatefulWidget {
 class _ChatNewResumeCreationScreenState
     extends State<ChatNewResumeCreationScreen> {
   final StudentLoginController loginController =
-      Get.find<StudentLoginController>();
+  Get.find<StudentLoginController>();
   final RegisterController registerController = Get.find<RegisterController>();
 
   final TextEditingController chatTextController = TextEditingController();
@@ -155,8 +155,8 @@ class _ChatNewResumeCreationScreenState
         if (isChatStarted == true) {
           userId =
               loginController.createNewResumeModel.userId ??
-              reply?.personalInfo?.name ??
-              userId;
+                  reply?.personalInfo?.name ??
+                  userId;
           userId = loginController.createNewResumeModel.userId ?? userId;
         }
 
@@ -358,16 +358,16 @@ class _ChatNewResumeCreationScreenState
 
     final collegeList = collegeArray.isNotEmpty
         ? collegeArray
-              .map(
-                (c) => {
-                  'degree': c.degree ?? '',
-                  'department': c.department ?? '',
-                  'institution': c.institution ?? '',
-                  'start_year': c.startYear ?? '',
-                  'end_year': c.endYear ?? '',
-                },
-              )
-              .toList()
+        .map(
+          (c) => {
+        'degree': c.degree ?? '',
+        'department': c.department ?? '',
+        'institution': c.institution ?? '',
+        'start_year': c.startYear ?? '',
+        'end_year': c.endYear ?? '',
+      },
+    )
+        .toList()
         : [];
 
     final secondaryList = secondaryData != null ? [secondaryData.toJson()] : [];
@@ -398,10 +398,10 @@ class _ChatNewResumeCreationScreenState
           : collected?.profileSummary ?? "",
       "studprogramminglang": _skillsCtrl.text.trim().isNotEmpty
           ? _skillsCtrl.text
-                .split(",")
-                .map((e) => e.trim())
-                .where((e) => e.isNotEmpty)
-                .toList()
+          .split(",")
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList()
           : collected?.skills ?? [],
       "projects": jsonEncode(
         collected?.projects?.map((e) => e.toJson()).toList() ?? [],
@@ -422,18 +422,18 @@ class _ChatNewResumeCreationScreenState
       "volunteer_experience": jsonEncode(collected?.volunteerExperience ?? []),
       "languages_known": _languagesCtrl.text.trim().isNotEmpty
           ? jsonEncode(
-              _languagesCtrl.text.split(",").map((e) => e.trim()).toList(),
-            )
+        _languagesCtrl.text.split(",").map((e) => e.trim()).toList(),
+      )
           : jsonEncode(collected?.languages ?? []),
       "areas_of_interest": _interestsCtrl.text.trim().isNotEmpty
           ? jsonEncode(
-              _interestsCtrl.text.split(",").map((e) => e.trim()).toList(),
-            )
+        _interestsCtrl.text.split(",").map((e) => e.trim()).toList(),
+      )
           : jsonEncode(collected?.areasOfInterest ?? []),
       "hobbies": _hobbiesCtrl.text.trim().isNotEmpty
           ? jsonEncode(
-              _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList(),
-            )
+        _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList(),
+      )
           : jsonEncode(collected?.hobbies ?? []),
       "industrial_visits": jsonEncode(collected?.industrialVisits ?? []),
       "linkedIn": _linkedinCtrl.text.trim().isNotEmpty
@@ -455,85 +455,85 @@ class _ChatNewResumeCreationScreenState
       "studentcollegename": _institutionCtrl.text.trim().isNotEmpty
           ? _institutionCtrl.text.trim()
           : (collegeArray.isNotEmpty
-                ? collegeArray.first.institution ?? ""
-                : ""),
+          ? collegeArray.first.institution ?? ""
+          : ""),
     };
 
     try {
 
-        // 2B. Build Chat Resume Payload with populated fields across all sections
-        Map<String, dynamic> chatPayload = {
-          "action": "send_message",
-          "user_id": userId,
-          "message": "",
-          "collected_data": {
-            "profile_summary": payload["profile_summary"],
-            "personal_info": {
-              "name": payload["studname"],
-              "surname": "",
-              "email": payload["studemail"],
-              "phone": payload["studmobileno"],
-              "linkedIn": payload["linkedIn"],
-              "github": payload["github"],
-              "portfolio": payload["portfolio_website"],
-              "location": "",
-              "role": payload["studentdegree"],
-            },
-            "refcode": "",
-            "skills": payload["studprogramminglang"],
-            "internships":
-                collected?.internships?.map((e) => e.toJson()).toList() ?? [],
-            "projects":
-                collected?.projects?.map((e) => e.toJson()).toList() ?? [],
-            "industrial_visits": collected?.industrialVisits ?? [],
-            "education": educationObject,
-            "certifications":
-                collected?.certifications?.map((e) => e.toJson()).toList() ??
-                [],
-            "paper_presentations":
-                collected?.paperPresentations
-                    ?.map((e) => e.toJson())
-                    .toList() ??
-                [],
-            "workshops": collected?.workshops ?? [],
-            "publications": collected?.publications ?? [],
-            "achievements": collected?.achievements ?? [],
-            "leadership": collected?.leadership ?? [],
-            "volunteer_experience": collected?.volunteerExperience ?? [],
-            "languages": _languagesCtrl.text.trim().isNotEmpty
-                ? _languagesCtrl.text.split(",").map((e) => e.trim()).toList()
-                : collected?.languages ?? [],
-            "areas_of_interest": _interestsCtrl.text.trim().isNotEmpty
-                ? _interestsCtrl.text.split(",").map((e) => e.trim()).toList()
-                : collected?.areasOfInterest ?? [],
-            "hobbies": _hobbiesCtrl.text.trim().isNotEmpty
-                ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList()
-                : collected?.hobbies ?? [],
-            "colleges1": collegeList,
-            "colleges2": [],
-            "colleges3": [],
-            "institution": [
-              {
-                "institution1": payload["studentcollegename"],
-                "institution2": "",
-                "institution3": "",
-              },
-            ],
-            "degree": [
-              {
-                "degree1": payload["studentdegree"],
-                "degree2": "",
-                "degree3": "",
-              },
-            ],
+      // 2B. Build Chat Resume Payload with populated fields across all sections
+      Map<String, dynamic> chatPayload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": "",
+        "collected_data": {
+          "profile_summary": payload["profile_summary"],
+          "personal_info": {
+            "name": payload["studname"],
+            "surname": "",
+            "email": payload["studemail"],
+            "phone": payload["studmobileno"],
+            "linkedIn": payload["linkedIn"],
+            "github": payload["github"],
+            "portfolio": payload["portfolio_website"],
+            "location": "",
+            "role": payload["studentdegree"],
           },
-        };
+          "refcode": "",
+          "skills": payload["studprogramminglang"],
+          "internships":
+          collected?.internships?.map((e) => e.toJson()).toList() ?? [],
+          "projects":
+          collected?.projects?.map((e) => e.toJson()).toList() ?? [],
+          "industrial_visits": collected?.industrialVisits ?? [],
+          "education": educationObject,
+          "certifications":
+          collected?.certifications?.map((e) => e.toJson()).toList() ??
+              [],
+          "paper_presentations":
+          collected?.paperPresentations
+              ?.map((e) => e.toJson())
+              .toList() ??
+              [],
+          "workshops": collected?.workshops ?? [],
+          "publications": collected?.publications ?? [],
+          "achievements": collected?.achievements ?? [],
+          "leadership": collected?.leadership ?? [],
+          "volunteer_experience": collected?.volunteerExperience ?? [],
+          "languages": _languagesCtrl.text.trim().isNotEmpty
+              ? _languagesCtrl.text.split(",").map((e) => e.trim()).toList()
+              : collected?.languages ?? [],
+          "areas_of_interest": _interestsCtrl.text.trim().isNotEmpty
+              ? _interestsCtrl.text.split(",").map((e) => e.trim()).toList()
+              : collected?.areasOfInterest ?? [],
+          "hobbies": _hobbiesCtrl.text.trim().isNotEmpty
+              ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList()
+              : collected?.hobbies ?? [],
+          "colleges1": collegeList,
+          "colleges2": [],
+          "colleges3": [],
+          "institution": [
+            {
+              "institution1": payload["studentcollegename"],
+              "institution2": "",
+              "institution3": "",
+            },
+          ],
+          "degree": [
+            {
+              "degree1": payload["studentdegree"],
+              "degree2": "",
+              "degree3": "",
+            },
+          ],
+        },
+      };
 
-        // Call Chat Resume Sync API first
-        await loginController.createNewChatResume(chatRequestData: chatPayload);
-        debugPrint("**********************");
-        debugPrint(payload["studemail"]);
-        debugPrint(payload["studmobileno"]);
+      // Call Chat Resume Sync API first
+      await loginController.createNewChatResume(chatRequestData: chatPayload);
+      debugPrint("**********************");
+      debugPrint(payload["studemail"]);
+      debugPrint(payload["studmobileno"]);
 
       final int statusCode = loginController.getResponseCode();
 
@@ -584,7 +584,7 @@ class _ChatNewResumeCreationScreenState
               education: collected?.education,
             );
         debugPrint("%%%%%%%%%%%%%%%%");
-         loginController.createNewResumeModelRx.refresh();
+        loginController.createNewResumeModelRx.refresh();
         debugPrint("REFRESH DONE — collectedData name: ${loginController.createNewResumeModel.collectedData?.personalInfo?.name}");
         debugPrint("%%%%%%%%%%%%%%%%");
         //await registerController.getStudentProfile(studentId: "");
@@ -636,8 +636,8 @@ class _ChatNewResumeCreationScreenState
     }
     catch( error){
       AppFunctions.apiErrorHandling(
-        registerController.getResponseCode(),
-        "Failed to Register!. Please try again!");
+          registerController.getResponseCode(),
+          "Failed to Register!. Please try again!");
     }
   }
   Future<void> _showRegistrationSuccessDialog() async {
@@ -784,7 +784,7 @@ class _ChatNewResumeCreationScreenState
             onPressed: () => Get.back(),
           ),
           title: Obx(
-            () => Text(
+                () => Text(
               _titleForTab(currentTabIndex.value),
               style: AppStyles.customTextStyle(
                 size: 18,
@@ -795,18 +795,18 @@ class _ChatNewResumeCreationScreenState
           ),
         ),
         body: Obx(
-          () =>
-              (isInitialLoading && loginController.createNewResumeLoading) ||
-                  registerController.studentRegisterLoading
+              () =>
+          (isInitialLoading && loginController.createNewResumeLoading) ||
+              registerController.studentRegisterLoading
               ? AppAlertUtils.customLoader()
               : IndexedStack(
-                  index: currentTabIndex.value,
-                  children: [
-                    _buildChatBody(),
-                    _buildLivePreviewBody(),
-                    _buildSectionsBody(),
-                  ],
-                ),
+            index: currentTabIndex.value,
+            children: [
+              _buildChatBody(),
+              _buildLivePreviewBody(),
+              _buildSectionsBody(),
+            ],
+          ),
         ),
         bottomNavigationBar: _buildBottomNavigationBar(),
       ),
@@ -833,7 +833,7 @@ class _ChatNewResumeCreationScreenState
         children: [
           Expanded(
             child: Obx(
-              () => ListView.builder(
+                  () => ListView.builder(
                 controller: scrollController,
                 itemCount: messages.length,
                 itemBuilder: (context, i) => _buildChatBubble(messages[i]),
@@ -841,7 +841,7 @@ class _ChatNewResumeCreationScreenState
             ),
           ),
           Obx(
-            () => loginController.createNewResumeLoading
+                () => loginController.createNewResumeLoading
                 ? loadingContainer()
                 : const SizedBox.shrink(),
           ),
@@ -906,15 +906,15 @@ class _ChatNewResumeCreationScreenState
                     ),
                     borderRadius: isBot
                         ? const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                            bottomRight: Radius.circular(15),
-                          )
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomRight: Radius.circular(15),
+                    )
                         : const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                            bottomLeft: Radius.circular(15),
-                          ),
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                      bottomLeft: Radius.circular(15),
+                    ),
                   ),
                   child: Text(
                     msg.text,
@@ -1237,8 +1237,8 @@ class _ChatNewResumeCreationScreenState
       case "personal_info":
         final p = collected.personalInfo;
         return (p != null &&
-                (p.name?.trim().isNotEmpty == true ||
-                    p.email?.trim().isNotEmpty == true)) ||
+            (p.name?.trim().isNotEmpty == true ||
+                p.email?.trim().isNotEmpty == true)) ||
             _completedSections.contains("personal_info_completed");
 
       case "profile_summary":
@@ -1255,12 +1255,12 @@ class _ChatNewResumeCreationScreenState
 
       case "languages":
         return (collected.languages != null &&
-                collected.languages!.isNotEmpty) ||
+            collected.languages!.isNotEmpty) ||
             _completedSections.contains("languages_completed");
 
       case "interests":
         return (collected.areasOfInterest != null &&
-                collected.areasOfInterest!.isNotEmpty) ||
+            collected.areasOfInterest!.isNotEmpty) ||
             _completedSections.contains("interests_completed");
 
       case "hobbies":
@@ -1553,7 +1553,7 @@ class _ChatNewResumeCreationScreenState
 
   Widget _buildBottomNavigationBar() {
     return Obx(
-      () => Container(
+          () => Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         decoration: BoxDecoration(
           color: AppColors.chatGradient3,

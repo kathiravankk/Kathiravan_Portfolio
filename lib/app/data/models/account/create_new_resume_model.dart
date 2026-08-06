@@ -118,11 +118,11 @@ class ResumeCollectedData {
 
       skills: List<String>.from(json["skills"] ?? []),
 
-      internships: (json["internships"] ?? [])
+      internships: (json["internships"] as List? ?? [])
           .map<InternShipModel>((e) => InternShipModel.fromJson(e))
           .toList(),
 
-      projects: (json["projects"] ?? [])
+      projects: (json["projects"] as List? ?? [])
           .map<Project>((e) => Project.fromJson(e))
           .toList(),
 
@@ -132,11 +132,11 @@ class ResumeCollectedData {
           ? EducationModel.fromJson(json["education"])
           : null,
 
-      certifications: (json["certifications"] ?? [])
+      certifications: (json["certifications"] as List? ?? [])
           .map<Certification>((e) => Certification.fromJson(e))
           .toList(),
 
-      paperPresentations: (json["paper_presentations"] ?? [])
+      paperPresentations: (json["paper_presentations"] as List? ?? [])
           .map<PaperData>((e) => PaperData.fromJson(e))
           .toList(),
 
@@ -144,32 +144,30 @@ class ResumeCollectedData {
       publications: List.from(json["publications"] ?? []),
       achievements: List.from(json["achievements"] ?? []),
       leadership: List.from(json["leadership"] ?? []),
-      volunteerExperience:
-      List.from(json["volunteer_experience"] ?? []),
+      volunteerExperience: List.from(json["volunteer_experience"] ?? []),
 
       languages: List<String>.from(json["languages"] ?? []),
-      areasOfInterest:
-      List<String>.from(json["areas_of_interest"] ?? []),
+      areasOfInterest: List<String>.from(json["areas_of_interest"] ?? []),
       hobbies: List<String>.from(json["hobbies"] ?? []),
 
-      colleges1: (json["colleges1"] ?? [])
+      colleges1: (json["colleges1"] as List? ?? [])
           .map<CollegeData>((e) => CollegeData.fromJson(e))
           .toList(),
 
-      colleges2: (json["colleges2"] ?? [])
+      colleges2: (json["colleges2"] as List? ?? [])
           .map<CollegeData>((e) => CollegeData.fromJson(e))
           .toList(),
 
-      colleges3: (json["colleges3"] ?? [])
+      colleges3: (json["colleges3"] as List? ?? [])
           .map<CollegeData>((e) => CollegeData.fromJson(e))
           .toList(),
 
-      institution: (json["institution"] ?? [])
-          .map<Institution>((e) => CollegeData.fromJson(e))
+      institution: (json["institution"] as List? ?? [])
+          .map<CollegeData>((e) => CollegeData.fromJson(e))
           .toList(),
 
-      degree: (json["degree"] ?? [])
-          .map<Degree>((e) => CollegeData.fromJson(e))
+      degree: (json["degree"] as List? ?? [])
+          .map<CollegeData>((e) => CollegeData.fromJson(e))
           .toList(),
     );
   }
