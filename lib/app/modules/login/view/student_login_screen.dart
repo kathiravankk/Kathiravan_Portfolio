@@ -307,6 +307,13 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                 "OTP successfully sent to your Mobile Number!",
             isError: false,
           );
+          //Will hide for production
+          AppAlertUtils.showToast(
+            message:
+            loginController.commonPostModel.otpNumber ??
+                "Your OTP is ${loginController.commonPostModel.otpNumber ?? "0000"}",
+            isError: true,
+          );
         }
         else {
           AppAlertUtils.showAppAlert(

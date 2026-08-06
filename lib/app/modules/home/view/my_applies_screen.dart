@@ -19,15 +19,19 @@ class MyAppliesScreen extends StatefulWidget {
   const MyAppliesScreen({super.key, this.showBack = false});
 
   @override
-  State<MyAppliesScreen> createState() => _MyAppliesScreenState();
+  State<MyAppliesScreen> createState() => MyAppliesScreenState();
 }
 
-class _MyAppliesScreenState extends State<MyAppliesScreen> {
+class MyAppliesScreenState extends State<MyAppliesScreen> {
   final DashboardController dashboardController =
       Get.find<DashboardController>();
 
   List<ApplicationData>? appliedList = [];
   String? studentId = "";
+  
+  Future<void> refreshData()async{
+    await getInternshipData();
+  }
 
   @override
   void initState() {

@@ -43,6 +43,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   // ---- State ----
   File? _companyLogo;
   MultipartFile? companyLogoMultipartFile;
+  MultipartFile? certificateMultipartFile; // Add this line
 
   static const int maxLogoSizeBytes = 2 * 1024 * 1024; // 2 MB
   String? selectedIndustry;
@@ -247,8 +248,15 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
         return;
       }
 
+      // Convert the File to Dio's MultipartFile for binary upload
+      final docMultipart = await MultipartFile.fromFile(
+        pickedFile.path!,
+        filename: pickedFile.name,
+      );
+
       setState(() {
         _certificateFile = File(pickedFile.path!);
+        certificateMultipartFile = docMultipart; // Store the MultipartFile
         _certificateFileName = pickedFile.name;
         _certificateSizeInMB = sizeInBytes / (1024 * 1024);
       });
@@ -263,6 +271,7 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
   void _removeCertificateFile() {
     setState(() {
       _certificateFile = null;
+      certificateMultipartFile = null; // Add this line
       _certificateFileName = null;
       _certificateSizeInMB = null;
     });
@@ -878,13 +887,11 @@ class _CompanyProfileScreenState extends State<CompanyProfileScreen> {
       "reccompanydescription": companyDescriptionController.text.trim(),
       "reccompanyaddress": companyAddressController.text.trim(),
       "reccompanypincode": pinCodeController.text.trim(),
-      //"designation": designationController.text.trim(),
       "reccompanycontactno": contactNumberController.text.trim(),
       "reccompanyemail": companyEmailController.text.trim(),
       "reccompanywebsite": companyWebsiteController.text.trim(),
-      if(_certificateFile != null)
-        "reccompanydocumenttype": _certificateFile
-
+      if (certificateMultipartFile != null)
+        "reccompanydocument": certificateMultipartFile, // Passed in binary format
     };
     try {
       await registerController.newRecruiterRegister(registerData: registerData);

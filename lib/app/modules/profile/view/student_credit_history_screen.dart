@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
@@ -22,16 +23,37 @@ class _StudentCreditsHistoryScreenState
     extends State<StudentCreditsHistoryScreen> {
   final ProfileController profileController =
   Get.find<ProfileController>();
+  final RegisterController registerController = Get.find<RegisterController>();
 
   String? studentId = "";
   int? creditBalance = 0;
   int page = 1;
+  String? creditId = "";
 
   @override
   void initState() {
     super.initState();
-    creditBalance = Get.arguments["creditBalance"] ?? 0;
+    //creditBalance = Get.arguments["creditBalance"] ?? 0;
     getTransactionData();
+    getCreditData();
+  }
+
+  Future<void> getCreditData() async {
+    creditId = await LocalStorageService.getStudentCreditId();
+    await registerController.getCreditData(creditId: creditId!);
+    if (registerController.getResponseCode() == 200 ||
+        registerController.getResponseCode() == 201) {
+      if (mounted) {
+        creditBalance =
+        ((registerController.creditDataModel.creditData?.balance ?? 0) +
+            (registerController.creditDataModel.creditData?.freeCredits ?? 0));
+      }
+    } else {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later",
+      );
+    }
   }
 
   Future<void> getTransactionData() async {
@@ -115,7 +137,7 @@ class _StudentCreditsHistoryScreenState
           ),
         ),
         body: Obx(
-              () => profileController.creditHistoryLoading
+              () => profileController.creditHistoryLoading || registerController.creditDataLoading
               ? AppAlertUtils.customLoader()
               : profileController.creditHistoryList.isNotEmpty
               ? RefreshIndicator(
@@ -451,9 +473,20 @@ class _StudentCreditsHistoryScreenState
     }
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return "-";
-    return DateFormat("dd MMM yyyy, hh:mm a").format(date.toLocal());
+  // String _formatDate(DateTime? date) {
+  //   if (date == null) return "-";
+  //   return DateFormat("dd MMM yyyy, hh:mm a").format(date.toLocal());
+  // }
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty) return "-";
+
+    // Parse the ISO 8601 string into a DateTime object
+    DateTime? parsedDate = DateTime.tryParse(dateStr);
+
+    if (parsedDate == null) return "-";
+
+    // Convert to local time and format
+    return DateFormat("dd MMM yyyy, hh:mm a").format(parsedDate.toLocal());
   }
 
   String _capitalize(String value) {

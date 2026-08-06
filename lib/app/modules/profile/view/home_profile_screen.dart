@@ -32,17 +32,53 @@ class HomeProfileScreen extends StatefulWidget {
   const HomeProfileScreen({super.key});
 
   @override
-  State<HomeProfileScreen> createState() => _HomeProfileScreenState();
+  State<HomeProfileScreen> createState() => HomeProfileScreenState();
 }
 
-class _HomeProfileScreenState extends State<HomeProfileScreen> {
+class HomeProfileScreenState extends State<HomeProfileScreen> {
   final ProfileController profileController = Get.find<ProfileController>();
   final registerController = Get.find<RegisterController>();
+
+  Future<void> refreshData() async {
+    await getProfileData();
+    await getCreditData();
+  }
+
+  int? creditBalance = 0;
+  int page = 1;
+  String? creditId = "";
 
   @override
   void initState() {
     super.initState();
     getProfileData();
+    getCreditData();
+  }
+
+  Future<void> getCreditData() async {
+    try {
+      creditId = await LocalStorageService.getStudentCreditId();
+      await registerController.getCreditData(creditId: creditId!);
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        if (mounted) {
+          creditBalance =
+              ((registerController.creditDataModel.creditData?.balance ?? 0) +
+              (registerController.creditDataModel.creditData?.freeCredits ??
+                  0));
+        }
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Something went wrong!, Try again later",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later",
+      );
+    }
   }
 
   String? studentId;
@@ -62,6 +98,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       await getResumeData();
+      await getCreditData();
       isWaterMarkRemoved =
           profileController.profileDataModel.isWaterMarkRemoved ?? false;
     } else {
@@ -268,7 +305,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
       await ResumeFileUtils.handleShare(
         webViewController: webViewController!,
         fileName: "${firstName}_resume",
-        shareText: CommonUtils.resumeShareContent
+        shareText: CommonUtils.resumeShareContent,
       );
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -333,47 +370,58 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           fit: BoxFit.cover,
         ),
       ),
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        appBar: AppBar(
-          iconTheme: const IconThemeData(color: AppColors.whiteColor),
-          backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          // leading: IconButton(
-          //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          //   onPressed: () => Get.back(),
-          // ),
-          //automaticallyImplyLeading: false,
-          title: Text(
-            "My Profile",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
-            ),
-          ),
-          actions: [
-            ProfileWidgets.creditContainer(
-              creditCount:
-              ((registerController.creditDataModel.creditData?.balance ?? 0)+ (registerController.creditDataModel.creditData?.freeCredits ?? 0)),
-              viewFunc: () {
-                AppFunctions.navigateScreen(
-                  context,
-                  AppRoutes.buyCreditsScreen,
-                );
-              },
-            ),
-            const SizedBox(width: 20),
-          ],
-        ),
-        body: Obx(() {
-          return profileController.profileDataLoading
-              ? AppAlertUtils.customLoader()
-              : RefreshIndicator(
+      child: Obx(() {
+        return profileController.profileDataLoading ||
+                registerController.creditDataLoading
+            ? AppAlertUtils.customLoader()
+            : Scaffold(
+                backgroundColor: AppColors.transparentColor,
+                appBar: AppBar(
+                  iconTheme: const IconThemeData(color: AppColors.whiteColor),
+                  backgroundColor: AppColors.transparentColor,
+                  elevation: 0,
+                  // leading: IconButton(
+                  //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+                  //   onPressed: () => Get.back(),
+                  // ),
+                  //automaticallyImplyLeading: false,
+                  title: Text(
+                    "My Profile",
+                    style: AppStyles.customTextStyle(
+                      size: 18,
+                      color: AppColors.secondaryColor,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                  actions: [
+                    ProfileWidgets.creditContainer(
+                      creditCount: creditBalance,
+                          // ((registerController
+                          //         .creditDataModel
+                          //         .creditData
+                          //         ?.balance ??
+                          //     0) +
+                          // (registerController
+                          //         .creditDataModel
+                          //         .creditData
+                          //         ?.freeCredits ??
+                          //     0)),
+                      viewFunc: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.buyCreditsScreen,
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 20),
+                  ],
+                ),
+                body: RefreshIndicator(
                   color: AppColors.primaryColor,
                   backgroundColor: AppColors.appBgColor_2,
                   onRefresh: () async {
                     await getProfileData();
+                    await getCreditData();
                   },
                   child: CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -637,16 +685,16 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 150,)
+                              const SizedBox(height: 150),
                             ],
                           ),
                         ),
                       ),
                     ],
                   ),
-                );
-        }),
-      ),
+                ),
+              );
+      }),
     );
   }
 
@@ -1019,10 +1067,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         shareText: CommonUtils.resDpShareContent,
       );
     } catch (e) {
-      AppAlertUtils.showToast(
-        message: "Share failed",
-        isError: true,
-      );
+      AppAlertUtils.showToast(message: "Share failed", isError: true);
     }
   }
 

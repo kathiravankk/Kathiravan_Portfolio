@@ -218,14 +218,13 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                           icon: Icons.logout_sharp,
                           title: "Logout",
                           onTap: () {
-                            //showLogoutPopup(context);
                             AppAlertUtils.showAppAlert(
                               context: context,
                               content: "Are you sure you want to logout?",
                               confirmText: "Confirm",
                               title: "Logout",
                               onConfirm: () {
-                                AppFunctions.logOutFunc(context);
+                                AppFunctions.logOutFunc(context, isRecruiter: true);
                               },
                             );
                           },

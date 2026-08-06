@@ -378,6 +378,13 @@ class _RecruiterVerificationScreenState
           message: "OTP sent successfully",
           isError: false,
         );
+        //Will hide for production
+        AppAlertUtils.showToast(
+          message:
+          registerController.sendEmailOtpModel.otpNumber ??
+              "Your OTP is ${registerController.sendEmailOtpModel.otpNumber ?? "0000"}",
+          isError: true,
+        );
         startEmailTimer();
       } else {
         AppFunctions.apiErrorHandling(

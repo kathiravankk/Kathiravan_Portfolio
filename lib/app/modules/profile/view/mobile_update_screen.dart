@@ -204,6 +204,13 @@ class _MobileUpdateScreenState extends State<MobileUpdateScreen> {
             profileController.commonPostModel.message ??
             "OTP sent to your mobile number!",
       );
+      //Will hide for production
+      AppAlertUtils.showToast(
+        message:
+        profileController.commonPostModel.otpNumber ??
+            "Your OTP is ${profileController.commonPostModel.otpNumber ?? "0000"}",
+        isError: true,
+      );
     } else {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),

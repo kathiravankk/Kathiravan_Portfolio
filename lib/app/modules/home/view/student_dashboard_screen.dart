@@ -22,6 +22,22 @@ class StudentDashboardScreen extends StatefulWidget {
 class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  // 1. Declare GlobalKeys for each child screen state
+  final homeKey = GlobalKey<InternsHomeScreenState>();
+  final appliesKey = GlobalKey<MyAppliesScreenState>();
+  final internshipKey = GlobalKey<MyInternshipScreenState>();
+  final profileKey = GlobalKey<HomeProfileScreenState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 2. Trigger initial API fetch for the 1st tab after first frame builds
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshTab(0);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -45,20 +61,42 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           ),
         ),
         child: Scaffold(
-          key: _scaffoldKey,           // drawer lives HERE
+          key: _scaffoldKey, // drawer lives HERE
           drawer: InternHomeDrawer(),
           backgroundColor: AppColors.transparentColor,
           bottomNavigationBar: null,
           body: CustomNavBar(
+            onTabChanged: _refreshTab, // 3. Pass tab change callback
             screens: [
-              InternsHomeScreen(scaffoldKey: _scaffoldKey),  // pass key
-              const MyAppliesScreen(),
-              MyInternshipScreen(),
-              const HomeProfileScreen(),
+              InternsHomeScreen(
+                scaffoldKey: _scaffoldKey,
+                key: homeKey,
+              ),
+              MyAppliesScreen(key: appliesKey),
+              MyInternshipScreen(key: internshipKey),
+              HomeProfileScreen(key: profileKey),
             ],
           ),
         ),
       ),
     );
+  }
+
+  // 4. Tab refresh handler
+  void _refreshTab(int index) {
+    switch (index) {
+      case 0:
+        homeKey.currentState?.refreshData();
+        break;
+      case 1:
+        appliesKey.currentState?.refreshData();
+        break;
+      case 2:
+        internshipKey.currentState?.refreshData();
+        break;
+      case 3:
+        profileKey.currentState?.refreshData();
+        break;
+    }
   }
 }

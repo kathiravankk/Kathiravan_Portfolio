@@ -142,6 +142,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
     return GestureDetector(
       onTap: () {
         currentIndex.value = index;
+        widget.onTabChanged?.call(index);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),

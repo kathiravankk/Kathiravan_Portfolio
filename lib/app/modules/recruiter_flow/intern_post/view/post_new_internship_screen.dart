@@ -1902,6 +1902,13 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
               : "OTP sent successfully",
           isError: false,
         );
+        //Will hide for production
+        AppAlertUtils.showToast(
+          message:
+          postController.sendOtpModel.otpNumber ??
+              "Your OTP is ${postController.sendOtpModel.otpNumber ?? "0000"}",
+          isError: true,
+        );
       } else {
         AppFunctions.apiErrorHandling(
           postController.getResponseCode(),
