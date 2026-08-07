@@ -194,8 +194,8 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
   }
 
   bool get canAttendMockTest =>
-      isProjectSubmitted &&
-      !(internController.internStatusModel.isTestTaken ?? false);
+      (internController.internStatusModel.isTestTaken ?? false) ||
+          isProjectSubmitted;
 
   // ─────────────────────────────────────────
   // BUILD
@@ -760,6 +760,9 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
   // ─────────────────────────────────────────
 
   Widget _bottomActionSection() {
+    final bool isTestTaken =
+        internController.internStatusModel.isTestTaken ?? false;
+
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -773,34 +776,43 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
               Expanded(
                 child: GestureDetector(
                   onTap: canAttendMockTest
-                      ? () {}
+                      ? null
                       : () {
-                          AppAlertUtils.showToast(
-                            message: "Maximum attempts reached for this test!",
-                            isError: true,
-                          );
-                        },
+                    AppAlertUtils.showToast(
+                      message: "Please complete syllabus & Submit your project",
+                      isError: true,
+                    );
+                  },
                   child: CustomButtonWidget(
                     isLoading: internController.getMcqQuestionLoading,
                     buttonFunction: () async {
-                      AppAlertUtils.showAppAlert(
-                        context: context,
-                        title: "Mock Test Instructions",
-                        content:
-                            "This mock test contains 30 questions.\n\n"
-                            "Total test duration is 15 minutes.\n\n"
-                            "Please feel free to attend the test.\n"
-                            "Once the time is up, your answers will be automatically submitted.",
-                        cancelText: "Do it later",
-                        confirmText: "Attend Now",
-                        onConfirm: () async {
-                          await _generateMcqQuestions();
-                        },
-                      );
+                      if (isTestTaken) {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.studentTestResultScreen,
+                          arguments: {
+                            "studentId": studentId,
+                            "jobId": jobId,
+                          },
+                        );
+                      } else {
+                        AppAlertUtils.showAppAlert(
+                          context: context,
+                          title: "Mock Test Instructions",
+                          content:
+                          "This mock test contains 30 questions.\n\n"
+                              "Total test duration is 15 minutes.\n\n"
+                              "Please feel free to attend the test.\n"
+                              "Once the time is up, your answers will be automatically submitted.",
+                          cancelText: "Do it later",
+                          confirmText: "Attend Now",
+                          onConfirm: () async {
+                            await _generateMcqQuestions();
+                          },
+                        );
+                      }
                     },
-                    buttonText: internController.internStatusModel.isTestTaken!
-                        ? "Attended!"
-                        : "Attend Mock Test",
+                    buttonText: isTestTaken ? "View Result" : "Attend Mock Test",
                     disable: !canAttendMockTest,
                     height: 45,
                   ),
@@ -882,18 +894,279 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
   bool isEditingProject = false;
 
+  // Widget _projectSubmissionCard() {
+  //   final bool hasUrl = projectController.text.trim().isNotEmpty;
+  //
+  //   return StatefulBuilder(
+  //     builder: (context, setLocalState) {
+  //       final trimmed = projectController.text.trim();
+  //       final parsedUri = Uri.tryParse(trimmed);
+  //       final isValidUrl =
+  //           trimmed.isNotEmpty &&
+  //           parsedUri != null &&
+  //           (parsedUri.isScheme("http") || parsedUri.isScheme("https")) &&
+  //           parsedUri.host.isNotEmpty;
+  //
+  //       return Container(
+  //         padding: const EdgeInsets.all(15),
+  //         decoration: BoxDecoration(
+  //           color: AppColors.contColor2,
+  //           borderRadius: BorderRadius.circular(12),
+  //           border: Border.all(color: AppColors.contBorderColor2),
+  //         ),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             /// HEADER
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 Text(
+  //                   "Project Submission",
+  //                   style: AppStyles.customTextStyle(
+  //                     size: 14,
+  //                     color: AppColors.whiteColor,
+  //                     weight: FontWeight.w300,
+  //                   ),
+  //                 ),
+  //
+  //                 Row(
+  //                   children: [
+  //                     /// COPY ICON
+  //                     if (hasUrl)
+  //                       GestureDetector(
+  //                         onTap: () async {
+  //                           await Clipboard.setData(
+  //                             ClipboardData(
+  //                               text: projectController.text.trim(),
+  //                             ),
+  //                           );
+  //
+  //                           AppAlertUtils.showToast(
+  //                             message: "Project URL copied!",
+  //                             isError: false,
+  //                           );
+  //                         },
+  //                         child: Container(
+  //                           margin: const EdgeInsets.only(right: 8),
+  //                           padding: const EdgeInsets.all(6),
+  //                           decoration: BoxDecoration(
+  //                             color: AppColors.disableContColor,
+  //                             borderRadius: BorderRadius.circular(6),
+  //                             border: Border.all(
+  //                               color: AppColors.disableContBorder,
+  //                             ),
+  //                           ),
+  //                           child: const Icon(
+  //                             Icons.copy_rounded,
+  //                             size: 16,
+  //                             color: AppColors.whiteColor,
+  //                           ),
+  //                         ),
+  //                       ),
+  //
+  //                     /// EDIT ICON
+  //                     if (isProjectSubmitted)
+  //                       GestureDetector(
+  //                         onTap: () {
+  //                           setLocalState(() {
+  //                             isEditingProject = true;
+  //                             isProjectSubmitted = false;
+  //                           });
+  //                         },
+  //                         child: Container(
+  //                           margin: const EdgeInsets.only(right: 8),
+  //                           padding: const EdgeInsets.all(6),
+  //                           decoration: BoxDecoration(
+  //                             color: AppColors.disableContColor,
+  //                             borderRadius: BorderRadius.circular(6),
+  //                             border: Border.all(
+  //                               color: AppColors.disableContBorder,
+  //                             ),
+  //                           ),
+  //                           child: const Icon(
+  //                             Icons.edit_outlined,
+  //                             size: 16,
+  //                             color: AppColors.primaryColor,
+  //                           ),
+  //                         ),
+  //                       ),
+  //
+  //                     /// STATUS
+  //                     Container(
+  //                       decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(5),
+  //                         border: Border.all(
+  //                           color: AppColors.disableContBorder,
+  //                         ),
+  //                         color: AppColors.disableContColor,
+  //                       ),
+  //                       padding: const EdgeInsets.all(5),
+  //                       child: Text(
+  //                         isProjectSubmitted ? "Submitted!" : "Not Submitted!",
+  //                         style: AppStyles.customTextStyle(
+  //                           size: 10,
+  //                           color: isProjectSubmitted
+  //                               ? AppColors.primaryColor
+  //                               : AppColors.lightTextColor,
+  //                           weight: FontWeight.w300,
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //
+  //             const SizedBox(height: 15),
+  //
+  //             /// URL FIELD
+  //             CustomTextField(
+  //               maxLines: 2,
+  //               isNumberKeyboard: false,
+  //               prefixWidget: const Icon(
+  //                 Icons.assignment_outlined,
+  //                 color: AppColors.primaryColor,
+  //               ),
+  //               controller: projectController,
+  //
+  //               /// DISABLE AFTER SUBMIT
+  //               isEnabled:
+  //                   canSubmitProject &&
+  //                   (!isProjectSubmitted || isEditingProject),
+  //
+  //               hintText: "Paste your GitHub / Drive / Live URL here..",
+  //
+  //               onChanged: (value) {
+  //                 setLocalState(() {});
+  //               },
+  //
+  //               suffixWidget: hasUrl
+  //                   ? GestureDetector(
+  //                       onTap: () async {
+  //                         await Clipboard.setData(
+  //                           ClipboardData(text: projectController.text.trim()),
+  //                         );
+  //
+  //                         AppAlertUtils.showToast(
+  //                           message: "Copied successfully!",
+  //                           isError: false,
+  //                         );
+  //                       },
+  //                       child: Icon(
+  //                         Icons.copy,
+  //                         size: 20,
+  //                         color:
+  //                             canSubmitProject &&
+  //                                 (!isProjectSubmitted || isEditingProject)
+  //                             ? AppColors.primaryColor
+  //                             : AppColors.greyColor,
+  //                       ),
+  //                     )
+  //                   : null,
+  //             ),
+  //
+  //             const SizedBox(height: 8),
+  //
+  //             /// URL VALIDATION MESSAGE
+  //             // if (projectController.text.trim().isNotEmpty &&
+  //             //     !Uri.tryParse(projectController.text.trim())!.hasAbsolutePath)
+  //             //   Padding(
+  //             //     padding: const EdgeInsets.only(left: 5),
+  //             //     child: Text(
+  //             //       "Please enter a valid project URL",
+  //             //       style: AppStyles.customTextStyle(
+  //             //         size: 11,
+  //             //         color: AppColors.failTextColor,
+  //             //         weight: FontWeight.w400,
+  //             //       ),
+  //             //     ),
+  //             //   ),
+  //             if (trimmed.isNotEmpty && !isValidUrl)
+  //               Padding(
+  //                 padding: const EdgeInsets.only(left: 5),
+  //                 child: Text(
+  //                   "Please enter a valid project URL",
+  //                   style: AppStyles.customTextStyle(
+  //                     size: 11,
+  //                     color: AppColors.failTextColor,
+  //                     weight: FontWeight.w400,
+  //                   ),
+  //                 ),
+  //               ),
+  //
+  //             const SizedBox(height: 15),
+  //
+  //             /// SUBMIT BUTTON
+  //             CustomButtonWidget(
+  //               height: 35,
+  //               isLoading: internController.weeklyUpdateLoading,
+  //
+  //               buttonFunction: () async {
+  //                 final url = projectController.text.trim();
+  //
+  //                 /// EMPTY VALIDATION
+  //                 if (url.isEmpty) {
+  //                   AppAlertUtils.showToast(
+  //                     message: "Please enter project URL",
+  //                     isError: true,
+  //                   );
+  //                   return;
+  //                 }
+  //
+  //                 /// URL VALIDATION
+  //                 final uri = Uri.tryParse(url);
+  //
+  //                 if (uri == null ||
+  //                     !(uri.isScheme("http") || uri.isScheme("https"))) {
+  //                   AppAlertUtils.showToast(
+  //                     message: "Please enter valid URL",
+  //                     isError: true,
+  //                   );
+  //                   return;
+  //                 }
+  //
+  //                 await _submitProject();
+  //                 if (!mounted) return;
+  //
+  //                 /// AFTER SUCCESS
+  //                 if (internController.getResponseCode() == 200 ||
+  //                     internController.getResponseCode() == 201) {
+  //                   setLocalState(() {
+  //                     isProjectSubmitted = true;
+  //                     isEditingProject = false;
+  //                   });
+  //                 }
+  //               },
+  //
+  //               buttonText: isProjectSubmitted && !isEditingProject
+  //                   ? "Submitted!"
+  //                   : isEditingProject
+  //                   ? "Re-Submit URL"
+  //                   : "Submit URL",
+  //
+  //               disable:
+  //                   !canSubmitProject ||
+  //                   (isProjectSubmitted && !isEditingProject) ||
+  //                   (trimmed.isNotEmpty && !isValidUrl),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // ─────────────────────────────────────────
+  // ACTIONS
+  // ─────────────────────────────────────────
+
   Widget _projectSubmissionCard() {
     final bool hasUrl = projectController.text.trim().isNotEmpty;
 
     return StatefulBuilder(
       builder: (context, setLocalState) {
         final trimmed = projectController.text.trim();
-        final parsedUri = Uri.tryParse(trimmed);
-        final isValidUrl =
-            trimmed.isNotEmpty &&
-            parsedUri != null &&
-            (parsedUri.isScheme("http") || parsedUri.isScheme("https")) &&
-            parsedUri.host.isNotEmpty;
 
         return Container(
           padding: const EdgeInsets.all(15),
@@ -1020,7 +1293,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
                 /// DISABLE AFTER SUBMIT
                 isEnabled:
-                    canSubmitProject &&
+                canSubmitProject &&
                     (!isProjectSubmitted || isEditingProject),
 
                 hintText: "Paste your GitHub / Drive / Live URL here..",
@@ -1031,57 +1304,28 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
                 suffixWidget: hasUrl
                     ? GestureDetector(
-                        onTap: () async {
-                          await Clipboard.setData(
-                            ClipboardData(text: projectController.text.trim()),
-                          );
+                  onTap: () async {
+                    await Clipboard.setData(
+                      ClipboardData(text: projectController.text.trim()),
+                    );
 
-                          AppAlertUtils.showToast(
-                            message: "Copied successfully!",
-                            isError: false,
-                          );
-                        },
-                        child: Icon(
-                          Icons.copy,
-                          size: 20,
-                          color:
-                              canSubmitProject &&
-                                  (!isProjectSubmitted || isEditingProject)
-                              ? AppColors.primaryColor
-                              : AppColors.greyColor,
-                        ),
-                      )
+                    AppAlertUtils.showToast(
+                      message: "Copied successfully!",
+                      isError: false,
+                    );
+                  },
+                  child: Icon(
+                    Icons.copy,
+                    size: 20,
+                    color:
+                    canSubmitProject &&
+                        (!isProjectSubmitted || isEditingProject)
+                        ? AppColors.primaryColor
+                        : AppColors.greyColor,
+                  ),
+                )
                     : null,
               ),
-
-              const SizedBox(height: 8),
-
-              /// URL VALIDATION MESSAGE
-              // if (projectController.text.trim().isNotEmpty &&
-              //     !Uri.tryParse(projectController.text.trim())!.hasAbsolutePath)
-              //   Padding(
-              //     padding: const EdgeInsets.only(left: 5),
-              //     child: Text(
-              //       "Please enter a valid project URL",
-              //       style: AppStyles.customTextStyle(
-              //         size: 11,
-              //         color: AppColors.failTextColor,
-              //         weight: FontWeight.w400,
-              //       ),
-              //     ),
-              //   ),
-              if (trimmed.isNotEmpty && !isValidUrl)
-                Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: Text(
-                    "Please enter a valid project URL",
-                    style: AppStyles.customTextStyle(
-                      size: 11,
-                      color: AppColors.failTextColor,
-                      weight: FontWeight.w400,
-                    ),
-                  ),
-                ),
 
               const SizedBox(height: 15),
 
@@ -1093,22 +1337,10 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                 buttonFunction: () async {
                   final url = projectController.text.trim();
 
-                  /// EMPTY VALIDATION
+                  /// EMPTY VALIDATION ONLY
                   if (url.isEmpty) {
                     AppAlertUtils.showToast(
                       message: "Please enter project URL",
-                      isError: true,
-                    );
-                    return;
-                  }
-
-                  /// URL VALIDATION
-                  final uri = Uri.tryParse(url);
-
-                  if (uri == null ||
-                      !(uri.isScheme("http") || uri.isScheme("https"))) {
-                    AppAlertUtils.showToast(
-                      message: "Please enter valid URL",
                       isError: true,
                     );
                     return;
@@ -1133,10 +1365,10 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                     ? "Re-Submit URL"
                     : "Submit URL",
 
+                /// MODIFIED DISABLE LOGIC
                 disable:
-                    !canSubmitProject ||
-                    (isProjectSubmitted && !isEditingProject) ||
-                    (trimmed.isNotEmpty && !isValidUrl),
+                !canSubmitProject ||
+                    (isProjectSubmitted && !isEditingProject),
               ),
             ],
           ),
@@ -1144,10 +1376,6 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       },
     );
   }
-
-  // ─────────────────────────────────────────
-  // ACTIONS
-  // ─────────────────────────────────────────
 
   Future<void> _generateMcqQuestions() async {
     try {

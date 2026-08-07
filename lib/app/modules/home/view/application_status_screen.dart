@@ -254,27 +254,23 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                   : false,
                             ),
                             Visibility(
-                              visible: appliedData!.status != "Applied",
+                              visible: appliedData!.status == "View",
                               child: _buildStatusItem(
                                 iconWidget:
-                                    appliedData!.status == "Selected" ||
-                                        appliedData!.status == "Shortlisted" || appliedData!.status == "Completed"
+                                appliedData!.status == "View"
                                     ? Icon(
-                                        Icons.check_circle_sharp,
-                                        color: AppColors.sucTextColor,
-                                        size: 20,
-                                      )
+                                  Icons.access_time,
+                                  color: AppColors.selectedContColor,
+                                  size: 20,
+                                )
                                     : Icon(
-                                        Icons.close,
-                                        color: AppColors.failTextColor,
-                                        size: 20,
-                                      ),
-                                title: appliedData!.status!,
-                                showLine:
-                                    appliedData!.jobType == "Fee" ||
-                                        appliedData!.jobType == "fee"
-                                    ? true
-                                    : false,
+                                  Icons.close,
+                                  color: AppColors.whiteColor,
+                                  size: 20,
+                                ),
+                                title: appliedData!.status == "View" ? "Waiting for Recruiter action" : appliedData!.status!,
+                                showLine: (appliedData!.status == "Selected" ||
+                                    appliedData!.status == "Shortlisted"  || appliedData!.status == "Rejected") ? true : false,
                               ),
                             ),
                             Visibility(
@@ -360,18 +356,39 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                                     .similarList![index]
                                                     .companyName ??
                                                 "",
+                                            position: dashboardController
+                                                .similarInternshipModel
+                                                .similarList![index].noOfPosition ?? 0,
                                             isSaved:
                                                 dashboardController
                                                     .similarInternshipModel
                                                     .similarList![index]
                                                     .isSaved ??
                                                 false,
-                                            duration:
-                                                dashboardController
-                                                    .similarInternshipModel
-                                                    .similarList![index]
-                                                    .internshipDuration ??
-                                                "",
+                                            // duration:
+                                            //     dashboardController
+                                            //         .similarInternshipModel
+                                            //         .similarList![index]
+                                            //         .internshipDuration ??
+                                            //     "",
+                                              duration: dashboardController
+                                                  .similarInternshipModel
+                                                  .similarList![index].internshipDuration!.isNotEmpty &&
+                                                  dashboardController
+                                                      .similarInternshipModel
+                                                      .similarList![index].internshipDuration != null
+                                                  ? "${dashboardController
+                                                  .similarInternshipModel
+                                                  .similarList![index].internshipDuration!} Months"
+                                                  : "${dashboardController
+                                                  .similarInternshipModel
+                                                  .similarList![index].days} Days",
+                                            internFees: dashboardController
+                                                .similarInternshipModel
+                                                .similarList![index].internFees ?? "",
+                                            location: dashboardController
+                                                .similarInternshipModel
+                                                .similarList![index].companyCity ?? "",
                                             // saveFunc: () {
                                             //   similar.isSaved!
                                             //       ? removeToSaved(jobId: similar.sId!)

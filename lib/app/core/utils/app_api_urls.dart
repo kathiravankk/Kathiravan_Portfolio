@@ -111,6 +111,7 @@ class AppApiUrls {
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
   static String getAllCertificates = "${baseUrl}getcertificate";
+  static String getStudentMcqResult(String studentId, String jobId) => "${baseUrl}get/result?studentId=$studentId&jobId=$jobId";
 
   // INTERNSHIP PAYMENT
 

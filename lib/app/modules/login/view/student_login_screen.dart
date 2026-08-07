@@ -78,8 +78,6 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                 SizedBox(height: 10),
                 CustomTextField(
                   labelText: "Mobile Number",
-
-                  ///prefixText: "+91",
                   prefixWidget: Icon(
                     Icons.phone_outlined,
                     size: 20,
@@ -88,9 +86,6 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                   hintText: "Enter your mobile number",
                   controller: mobileController,
                   maxLength: 10,
-                  // onChanged: (val) {
-                  //   loginController.mobile.value = val;
-                  // },
                   onChanged: (val) {
                     loginController.mobile.value = val;
 
@@ -142,30 +137,30 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                             const SizedBox(),
                             loginController.canResend.value
                                 ? TextButton(
-                                    onPressed: () => sendOtpFunc(
-                                      mobileNumber: mobileController.text,
-                                    ),
-                                    child: Text(
-                                      "Resend OTP",
-                                      style: AppStyles.customTextStyle(
-                                        size: 16,
-                                        weight: FontWeight.w500,
-                                        color: AppColors.primaryColor,
-                                        isUnderlined: true,
-                                        underlineColor: AppColors.primaryColor,
-                                        fontFamily: "Roboto",
-                                      ),
-                                    ),
-                                  )
+                              onPressed: () => sendOtpFunc(
+                                mobileNumber: mobileController.text,
+                              ),
+                              child: Text(
+                                "Resend OTP",
+                                style: AppStyles.customTextStyle(
+                                  size: 16,
+                                  weight: FontWeight.w500,
+                                  color: AppColors.primaryColor,
+                                  isUnderlined: true,
+                                  underlineColor: AppColors.primaryColor,
+                                  fontFamily: "Roboto",
+                                ),
+                              ),
+                            )
                                 : Text(
-                                    "Resend OTP in ${loginController.seconds.value}s",
-                                    style: AppStyles.customTextStyle(
-                                      size: 16,
-                                      weight: FontWeight.w500,
-                                      color: AppColors.primaryColor,
-                                      fontFamily: "Roboto",
-                                    ),
-                                  ),
+                              "Resend OTP in ${loginController.seconds.value}s",
+                              style: AppStyles.customTextStyle(
+                                size: 16,
+                                weight: FontWeight.w500,
+                                color: AppColors.primaryColor,
+                                fontFamily: "Roboto",
+                              ),
+                            ),
                           ],
                         ),
 
@@ -175,14 +170,14 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                           buttonFunction: loginController.loginVerifyLoading
                               ? () {}
                               : () async {
-                                  FocusScope.of(context).unfocus();
-                                  await verifyOtpFunc();
-                                },
+                            FocusScope.of(context).unfocus();
+                            await verifyOtpFunc();
+                          },
                           buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
                           disable:
-                              loginController.loginVerifyLoading ||
+                          loginController.loginVerifyLoading ||
                               otpController.text.length != 4,
                         ),
                         const SizedBox(height: 10),
@@ -193,7 +188,7 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                       AppFunctions.validateIndianMobile(
                         loginController.mobile.value,
                       ) ==
-                      null;
+                          null;
 
                   // 📤 SEND OTP BUTTON (OTP NOT SENT)
                   return CustomButtonWidget(
@@ -241,43 +236,6 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
                     ),
                   ),
                 ),
-                // const SizedBox(height: 30),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Text(
-                //         "If you’re new to Internsharks, ",
-                //         style: AppStyles.customTextStyle(
-                //           size: 15,
-                //           weight: FontWeight.w300,
-                //           color: AppColors.whiteColor,
-                //         )
-                //     )
-                //   ],
-                // ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     TextButton(
-                //       onPressed: () {
-                //         AppFunctions.navigateScreen(
-                //           context,
-                //           AppRoutes.registerResumeUploadScreen,
-                //         );
-                //       },
-                //       child: Text(
-                //       "Register now",
-                //       style: AppStyles.customTextStyle(
-                //         size: 15,
-                //         weight: FontWeight.w300,
-                //         color: AppColors.secondaryColor,
-                //         isUnderlined: true,
-                //         underlineColor: AppColors.secondaryColor
-                //       ),
-                //     ),
-                //     )
-                //   ],
-                // ),
               ],
             ),
           ),
@@ -303,23 +261,15 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
         if (loginController.commonPostModel.userType == "student") {
           AppAlertUtils.showToast(
             message:
-                loginController.commonPostModel.message ??
+            loginController.commonPostModel.message ??
                 "OTP successfully sent to your Mobile Number!",
             isError: false,
           );
-          //Will hide for production
-          AppAlertUtils.showToast(
-            message:
-            loginController.commonPostModel.otpNumber ??
-                "Your OTP is ${loginController.commonPostModel.otpNumber ?? "0000"}",
-            isError: true,
-          );
-        }
-        else {
+        } else {
           AppAlertUtils.showAppAlert(
             context: context,
             content:
-                "Mobile Number already registered as Recruiter. Please use another Number.",
+            "Mobile Number already registered as Recruiter. Please use another Number.",
             confirmText: "OKAY",
             onConfirm: () {
               mobileController.text = "";
@@ -367,24 +317,29 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
         );
         LocalStorageService.saveStudentId(
           studentId:
-              loginController.studentRegisterModel.registerData!.id ?? "",
+          loginController.studentRegisterModel.registerData!.id ?? "",
         );
         LocalStorageService.saveCreditId(
           creditId:
-              loginController
-                  .studentRegisterModel
-                  .registerData!
-                  .studentCreditId ??
+          loginController
+              .studentRegisterModel
+              .registerData!
+              .studentCreditId ??
               "",
         );
         AppAlertUtils.showToast(
           message:
-              loginController.studentRegisterModel.message ??
+          loginController.studentRegisterModel.message ??
               "OTP verified & Logged in successfully!",
           isError: false,
         );
         final token = await LocalStorageService.getToken();
         debugPrint(token);
+
+        // Hide OTP field and reset form state before navigating
+        loginController.otpSent = false;
+        otpController.clear();
+
         Get.offAllNamed(AppRoutes.studentDashBoardScreen);
       } else {
         AppFunctions.apiErrorHandling(

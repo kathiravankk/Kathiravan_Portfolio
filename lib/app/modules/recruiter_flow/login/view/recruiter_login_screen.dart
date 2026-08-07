@@ -9,10 +9,8 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
-import 'package:internsharks/app/modules/login/controllers/student_login_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/controller/recruiter_login_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 
 class RecruiterLoginScreen extends StatefulWidget {
@@ -24,7 +22,7 @@ class RecruiterLoginScreen extends StatefulWidget {
 
 class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
   final RecruiterLoginController loginController =
-      Get.find<RecruiterLoginController>();
+  Get.find<RecruiterLoginController>();
 
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
@@ -88,8 +86,6 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                 SizedBox(height: 10),
                 CustomTextField(
                   labelText: "Mobile Number",
-
-                  ///prefixText: "+91",
                   prefixWidget: Icon(
                     Icons.phone_outlined,
                     size: 20,
@@ -98,9 +94,6 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                   hintText: "Enter your mobile number",
                   controller: mobileController,
                   maxLength: 10,
-                  // onChanged: (val) {
-                  //   loginController.mobile.value = val;
-                  // },
                   onChanged: (val) {
                     loginController.mobile.value = val;
 
@@ -152,30 +145,30 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                             const SizedBox(),
                             loginController.canResend.value
                                 ? TextButton(
-                                    onPressed: () => sendOtpFunc(
-                                      mobileNumber: mobileController.text,
-                                    ),
-                                    child: Text(
-                                      "Resend OTP",
-                                      style: AppStyles.customTextStyle(
-                                        size: 16,
-                                        weight: FontWeight.w500,
-                                        color: AppColors.primaryColor,
-                                        isUnderlined: true,
-                                        underlineColor: AppColors.primaryColor,
-                                        fontFamily: "Roboto",
-                                      ),
-                                    ),
-                                  )
+                              onPressed: () => sendOtpFunc(
+                                mobileNumber: mobileController.text,
+                              ),
+                              child: Text(
+                                "Resend OTP",
+                                style: AppStyles.customTextStyle(
+                                  size: 16,
+                                  weight: FontWeight.w500,
+                                  color: AppColors.primaryColor,
+                                  isUnderlined: true,
+                                  underlineColor: AppColors.primaryColor,
+                                  fontFamily: "Roboto",
+                                ),
+                              ),
+                            )
                                 : Text(
-                                    "Resend OTP in ${loginController.seconds.value}s",
-                                    style: AppStyles.customTextStyle(
-                                      size: 16,
-                                      weight: FontWeight.w500,
-                                      color: AppColors.primaryColor,
-                                      fontFamily: "Roboto",
-                                    ),
-                                  ),
+                              "Resend OTP in ${loginController.seconds.value}s",
+                              style: AppStyles.customTextStyle(
+                                size: 16,
+                                weight: FontWeight.w500,
+                                color: AppColors.primaryColor,
+                                fontFamily: "Roboto",
+                              ),
+                            ),
                           ],
                         ),
 
@@ -185,14 +178,14 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                           buttonFunction: loginController.loginVerifyLoading
                               ? () {}
                               : () async {
-                                  FocusScope.of(context).unfocus();
-                                  await verifyOtpFunc();
-                                },
+                            FocusScope.of(context).unfocus();
+                            await verifyOtpFunc();
+                          },
                           buttonText: loginController.loginVerifyLoading
                               ? "Verifying..."
                               : "Verify & Continue",
                           disable:
-                              loginController.loginVerifyLoading ||
+                          loginController.loginVerifyLoading ||
                               otpController.text.length != 4,
                         ),
                         const SizedBox(height: 10),
@@ -203,7 +196,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                       AppFunctions.validateIndianMobile(
                         loginController.mobile.value,
                       ) ==
-                      null;
+                          null;
 
                   // 📤 SEND OTP BUTTON (OTP NOT SENT)
                   return CustomButtonWidget(
@@ -262,7 +255,6 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                               AppFunctions.navigateScreen(
                                 context,
                                 AppRoutes.recruiterRegisterScreen,
-                                //AppRoutes.companyProfileScreen,
                               );
                             },
                         ),
@@ -270,43 +262,6 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                     ),
                   ),
                 ),
-                // const SizedBox(height: 30),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Text(
-                //         "If you’re new to Internsharks, ",
-                //         style: AppStyles.customTextStyle(
-                //           size: 15,
-                //           weight: FontWeight.w300,
-                //           color: AppColors.whiteColor,
-                //         )
-                //     )
-                //   ],
-                // ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     TextButton(
-                //       onPressed: () {
-                //         AppFunctions.navigateScreen(
-                //           context,
-                //           AppRoutes.registerResumeUploadScreen,
-                //         );
-                //       },
-                //       child: Text(
-                //       "Register now",
-                //       style: AppStyles.customTextStyle(
-                //         size: 15,
-                //         weight: FontWeight.w300,
-                //         color: AppColors.secondaryColor,
-                //         isUnderlined: true,
-                //         underlineColor: AppColors.secondaryColor
-                //       ),
-                //     ),
-                //     )
-                //   ],
-                // ),
               ],
             ),
           ),
@@ -332,7 +287,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
         if (loginController.commonPostModel.userType != "student") {
           AppAlertUtils.showToast(
             message:
-                loginController.commonPostModel.message ??
+            loginController.commonPostModel.message ??
                 "OTP successfully sent to your Mobile Number!",
             isError: false,
           );
@@ -340,7 +295,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
           AppAlertUtils.showAppAlert(
             context: context,
             content:
-                "Mobile Number already registered as Student. Please use another Number.",
+            "Mobile Number already registered as Student. Please use another Number.",
             confirmText: "OKAY",
             onConfirm: () {
               mobileController.text = "";
@@ -380,20 +335,9 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
           recruiterToken: loginController.recruiterLoginModel.recToken ?? "",
         );
         final recruiter = loginController.recruiterLoginModel.recruiter;
-        // await LocalStorageService.saveRecruiterId(
-        //   recruiterId: loginController.recruiterLoginModel.recruiter!.id ?? "",
-        // );
-        // await LocalStorageService.saveRecruiterCreditId(
-        //   creditId:
-        //       loginController
-        //           .recruiterLoginModel
-        //           .recruiter!
-        //           .recruiterCreditId ??
-        //       "",
-        // );
+
         if (recruiter?.recruiterInfo != null) {
           // Coordinator Login
-
           await LocalStorageService.saveRecruiterId(
             recruiterId: recruiter?.coordinatorId ?? "",
           );
@@ -401,11 +345,8 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
           await LocalStorageService.saveRecruiterCreditId(
             creditId: recruiter?.recruiterCreditId ?? "",
           );
-
-
         } else {
           // Recruiter Login (Old API)
-
           await LocalStorageService.saveRecruiterId(
             recruiterId: recruiter?.id ?? "",
           );
@@ -416,12 +357,17 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
         }
         AppAlertUtils.showToast(
           message:
-              loginController.recruiterLoginModel.message ??
+          loginController.recruiterLoginModel.message ??
               "OTP verified & Logged in successfully!",
           isError: false,
         );
         final token = await LocalStorageService.getRecruiterToken();
         debugPrint(token);
+
+        // Hide OTP field and reset form state before navigating
+        loginController.otpSent = false;
+        otpController.clear();
+
         Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
       } else {
         AppFunctions.apiErrorHandling(

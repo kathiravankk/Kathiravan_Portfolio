@@ -51,6 +51,7 @@ class AppRoutes {
   static const mcqTestScreen = '/mcqTestScreen';
   static const mcqResultReviewScreen = '/mcqResultReviewScreen';
   static const myCertificatesScreen = '/myCertificatesScreen';
+  static const studentTestResultScreen = '/studentTestResultScreen';
 
 
   /// RECRUITER FLOW SCREENS

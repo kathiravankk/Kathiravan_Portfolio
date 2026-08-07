@@ -204,12 +204,12 @@ class _EmailUpdateScreenState extends State<EmailUpdateScreen> {
             "OTP sent to your Email!",
       );
       //Will hide for production
-      AppAlertUtils.showToast(
-        message:
-        profileController.commonPostModel.otpNumber ??
-            "Your OTP is ${profileController.commonPostModel.otpNumber ?? "0000"}",
-        isError: true,
-      );
+      // AppAlertUtils.showToast(
+      //   message:
+      //   profileController.commonPostModel.otpNumber ??
+      //       "Your OTP is ${profileController.commonPostModel.otpNumber ?? "0000"}",
+      //   isError: true,
+      // );
     } else {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),

@@ -43,14 +43,11 @@
            MOBILE RESPONSIVE (≤ 768px)
         ════════════════════════════════════════ */
         @media (max-width: 768px) {
-
-            /* Remove the fixed A4 background padding */
             .resume-v10-page-bg {
                 padding: 0 !important;
                 background-color: #fff !important;
             }
 
-            /* The main container: drop the fixed 210mm width */
             .resume-container {
                 width: 100% !important;
                 min-height: unset !important;
@@ -59,7 +56,6 @@
                 margin: 0 !important;
             }
 
-            /* Header typography */
             #fullName {
                 font-size: 26px !important;
             }
@@ -68,13 +64,11 @@
                 font-size: 15px !important;
             }
 
-            /* Contact row → vertical stack */
             #contactInfo {
                 flex-direction: column !important;
                 gap: 8px !important;
             }
 
-            /* Bootstrap grid: force both columns to full width */
             .main-col,
             .sidebar-col {
                 width: 100% !important;
@@ -84,7 +78,6 @@
                 padding-left: 0 !important;
             }
 
-            /* Replace left border with top border separator */
             .sidebar-col {
                 border-left: none !important;
                 border-top: 1px solid #eee;
@@ -170,56 +163,44 @@
         <!-- Header -->
         <div class="avoid-break">
             <header class="mb-4">
-                <h1 id="fullName"
-                    style="font-family: 'Roboto Condensed', sans-serif; font-weight: 700; font-size: 40px; margin: 0;">
-                    YOUR NAME
-                </h1>
-                <h4 id="jobTitle"
-                    style="color: #3897f0; font-weight: 400; font-size: 18px; margin-top: 4px;">
-                    Student
-                </h4>
+                <h1 id="fullName" style="font-family: 'Roboto Condensed', sans-serif; font-weight: 700; font-size: 40px; margin: 0;"></h1>
+                <h4 id="jobTitle" style="color: #3897f0; font-weight: 400; font-size: 18px; margin-top: 4px; display: none;"></h4>
 
-                <div id="contactInfo" class="d-flex flex-wrap gap-3 mt-3"
-                     style="font-size: 12px; color: #666;">
-                    <a href="mailto:your.email@example.com" style="color: inherit; text-decoration: none;">
+                <div id="contactInfo" class="d-flex flex-wrap gap-3 mt-3" style="font-size: 12px; color: #666;">
+                    <a id="emailContainer" href="#" style="color: inherit; text-decoration: none; display: none;">
                         <i class="fas fa-envelope" style="color: #3897f0;"></i>
-                        <span id="email">your.email@example.com</span>
+                        <span id="email"></span>
                     </a>
-                    <span>
+                    <span id="phoneContainer" style="display: none;">
                         <i class="fas fa-phone-alt" style="color: #3897f0;"></i>
-                        <span id="phone">+1 234 567 8900</span>
+                        <span id="phone"></span>
                     </span>
-                    <span>
+                    <span id="locationContainer" style="display: none;">
                         <i class="fas fa-map-marker-alt" style="color: #3897f0;"></i>
-                        <span id="location">City, Country</span>
+                        <span id="location"></span>
                     </span>
-                    <a id="linkedinLink" href="#" target="_blank" rel="noreferrer"
-                       style="color: inherit; text-decoration: none;">
+                    <a id="linkedinLink" href="#" target="_blank" rel="noreferrer" style="color: inherit; text-decoration: none; display: none;">
                         <i class="fab fa-linkedin" style="color: #3897f0;"></i> LinkedIn
                     </a>
-                    <a id="githubLink" href="#" target="_blank" rel="noreferrer"
-                       style="color: inherit; text-decoration: none;">
+                    <a id="githubLink" href="#" target="_blank" rel="noreferrer" style="color: inherit; text-decoration: none; display: none;">
                         <i class="fab fa-github" style="color: #3897f0;"></i> GitHub
                     </a>
                 </div>
             </header>
         </div>
 
-        <!-- NOTE: using explicit classes instead of col-8/col-4 so media queries can override -->
         <div class="row g-0">
             <!-- Main column (left) -->
             <div class="main-col col-8 pe-4">
 
                 <!-- SUMMARY -->
-                <section id="summarySection" class="avoid-break mb-4">
+                <section id="summarySection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">SUMMARY</h6>
-                    <p id="profileSummary" style="font-size: 13px; line-height: 1.6;">
-                        Experienced professional with a strong background in technology and innovation.
-                    </p>
+                    <p id="profileSummary" style="font-size: 13px; line-height: 1.6; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- PROJECTS -->
-                <section id="projectsSection" class="avoid-break mb-4">
+                <section id="projectsSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">PROJECTS</h6>
                     <div id="projectsList"></div>
                 </section>
@@ -237,7 +218,7 @@
                 </section>
 
                 <!-- EDUCATION -->
-                <section id="educationSection" class="avoid-break mb-4">
+                <section id="educationSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">EDUCATION</h6>
                     <div id="educationList"></div>
                 </section>
@@ -253,11 +234,9 @@
             <div class="sidebar-col col-4">
 
                 <!-- SKILLS -->
-                <section id="skillsSection" class="avoid-break mb-4">
+                <section id="skillsSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">SKILLS</h6>
-                    <p id="skillsList" style="font-size: 12px; line-height: 1.8;">
-                        JavaScript, React, Node.js
-                    </p>
+                    <p id="skillsList" style="font-size: 12px; line-height: 1.8; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- CERTIFICATIONS -->
@@ -269,19 +248,19 @@
                 <!-- LANGUAGES -->
                 <section id="languagesSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">LANGUAGES</h6>
-                    <p id="languagesList" style="font-size: 12px;"></p>
+                    <p id="languagesList" style="font-size: 12px; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- AREAS OF INTEREST -->
                 <section id="interestsSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">AREAS OF INTEREST</h6>
-                    <p id="interestsList" style="font-size: 12px;"></p>
+                    <p id="interestsList" style="font-size: 12px; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- HOBBIES -->
                 <section id="hobbiesSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">HOBBIES</h6>
-                    <p id="hobbiesList" style="font-size: 12px;"></p>
+                    <p id="hobbiesList" style="font-size: 12px; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- LEADERSHIP -->
@@ -305,35 +284,108 @@
 <script>
     function renderResume(data) {
         console.log('Received data:', data);
+        if (!data) return;
 
-        // Personal Info
+        // Personal Info Header
         if (data.personal_info) {
             const pi = data.personal_info;
-            if (pi.name)    document.getElementById('fullName').textContent  = pi.name;
-            if (pi.email)   document.getElementById('email').textContent     = pi.email;
-            if (pi.phone)   document.getElementById('phone').textContent     = pi.phone;
-            if (pi.address) document.getElementById('location').textContent  = pi.address;
-            if (pi.role)    document.getElementById('jobTitle').textContent  = pi.role;
-            if (pi.linkedIn) document.getElementById('linkedinLink').href    = pi.linkedIn;
-            if (pi.github)   document.getElementById('githubLink').href      = pi.github;
+
+            // Name
+            const fullNameEl = document.getElementById('fullName');
+            fullNameEl.textContent = pi.name || '';
+
+            // Job Title
+            const jobTitleEl = document.getElementById('jobTitle');
+            if (pi.role && pi.role.trim() !== '') {
+                jobTitleEl.textContent = pi.role;
+                jobTitleEl.style.display = 'block';
+            } else {
+                jobTitleEl.textContent = '';
+                jobTitleEl.style.display = 'none';
+            }
+
+            // Email
+            const emailContainer = document.getElementById('emailContainer');
+            if (pi.email && pi.email.trim() !== '') {
+                document.getElementById('email').textContent = pi.email;
+                emailContainer.href = 'mailto:' + pi.email;
+                emailContainer.style.display = 'inline-block';
+            } else {
+                emailContainer.style.display = 'none';
+            }
+
+            // Phone
+            const phoneContainer = document.getElementById('phoneContainer');
+            if (pi.phone && pi.phone.trim() !== '') {
+                document.getElementById('phone').textContent = pi.phone;
+                phoneContainer.style.display = 'inline-block';
+            } else {
+                phoneContainer.style.display = 'none';
+            }
+
+            // Location / Address
+            const locationContainer = document.getElementById('locationContainer');
+            if (pi.address && pi.address.trim() !== '') {
+                document.getElementById('location').textContent = pi.address;
+                locationContainer.style.display = 'inline-block';
+            } else {
+                locationContainer.style.display = 'none';
+            }
+
+            // LinkedIn
+            const linkedinLink = document.getElementById('linkedinLink');
+            if (pi.linkedIn && pi.linkedIn.trim() !== '') {
+                linkedinLink.href = pi.linkedIn;
+                linkedinLink.style.display = 'inline-block';
+            } else {
+                linkedinLink.style.display = 'none';
+            }
+
+            // GitHub
+            const githubLink = document.getElementById('githubLink');
+            if (pi.github && pi.github.trim() !== '') {
+                githubLink.href = pi.github;
+                githubLink.style.display = 'inline-block';
+            } else {
+                githubLink.style.display = 'none';
+            }
+        } else {
+            document.getElementById('fullName').textContent = '';
+            document.getElementById('jobTitle').style.display = 'none';
+            document.getElementById('emailContainer').style.display = 'none';
+            document.getElementById('phoneContainer').style.display = 'none';
+            document.getElementById('locationContainer').style.display = 'none';
+            document.getElementById('linkedinLink').style.display = 'none';
+            document.getElementById('githubLink').style.display = 'none';
         }
 
         // Profile Summary
-        if (data.profile_summary) {
-            document.getElementById('profileSummary').textContent = data.profile_summary;
-        } else if (data.updatedProfileSummary && data.updatedProfileSummary.length > 0) {
-            document.getElementById('profileSummary').textContent = data.updatedProfileSummary.join(' ');
+        const summarySection = document.getElementById('summarySection');
+        const summaryText = data.profile_summary || (data.updatedProfileSummary && data.updatedProfileSummary.length > 0 ? data.updatedProfileSummary.join(' ') : '');
+        if (summaryText && summaryText.trim() !== '') {
+            document.getElementById('profileSummary').textContent = summaryText;
+            summarySection.style.display = 'block';
+        } else {
+            document.getElementById('profileSummary').textContent = '';
+            summarySection.style.display = 'none';
         }
 
         // Skills
-        if (data.skills && data.skills.length > 0) {
+        const skillsSection = document.getElementById('skillsSection');
+        if (data.skills && Array.isArray(data.skills) && data.skills.length > 0) {
             document.getElementById('skillsList').textContent = data.skills.join(', ');
+            skillsSection.style.display = 'block';
+        } else {
+            document.getElementById('skillsList').textContent = '';
+            skillsSection.style.display = 'none';
         }
 
         // Projects
-        if (data.projects && data.projects.length > 0) {
-            const projList = document.getElementById('projectsList');
-            projList.innerHTML = '';
+        const projectsSection = document.getElementById('projectsSection');
+        const projList = document.getElementById('projectsList');
+        projList.innerHTML = '';
+        if (data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
+            projectsSection.style.display = 'block';
             data.projects.forEach(proj => {
                 const projDiv = document.createElement('div');
                 projDiv.className = 'mb-3 avoid-break';
@@ -352,15 +404,19 @@
                 `;
                 projList.appendChild(projDiv);
             });
-        } else if (data.updatedProjects && data.updatedProjects.length > 0) {
-            document.getElementById('projectsList').innerHTML = '<p style="font-size: 12px;">' + data.updatedProjects.join('. ') + '</p>';
+        } else if (data.updatedProjects && Array.isArray(data.updatedProjects) && data.updatedProjects.length > 0) {
+            projectsSection.style.display = 'block';
+            projList.innerHTML = '<p style="font-size: 12px;">' + data.updatedProjects.join('. ') + '</p>';
+        } else {
+            projectsSection.style.display = 'none';
         }
 
         // Internships
-        if (data.internships && data.internships.length > 0) {
-            document.getElementById('internshipsSection').style.display = 'block';
-            const internList = document.getElementById('internshipsList');
-            internList.innerHTML = '';
+        const internshipsSection = document.getElementById('internshipsSection');
+        const internList = document.getElementById('internshipsList');
+        internList.innerHTML = '';
+        if (data.internships && Array.isArray(data.internships) && data.internships.length > 0) {
+            internshipsSection.style.display = 'block';
             data.internships.forEach(intern => {
                 const internDiv = document.createElement('div');
                 internDiv.className = 'mb-3 avoid-break';
@@ -368,7 +424,7 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <strong style="font-size: 15px; display: block;">${intern.role || intern.position || 'Intern'}</strong>
-                            <div style="font-size: 13px; color: #3897f0;">${intern.company || intern.organization || 'Company'}</div>
+                            <div style="font-size: 13px; color: #3897f0;">${intern.company || intern.organization || ''}</div>
                         </div>
                         <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${formatDateRange(intern.start_date, intern.end_date)}</span>
                     </div>
@@ -384,13 +440,16 @@
                 `;
                 internList.appendChild(internDiv);
             });
+        } else {
+            internshipsSection.style.display = 'none';
         }
 
         // Trainings
-        if (data.trainings && data.trainings.length > 0) {
-            document.getElementById('trainingsSection').style.display = 'block';
-            const trainList = document.getElementById('trainingsList');
-            trainList.innerHTML = '';
+        const trainingsSection = document.getElementById('trainingsSection');
+        const trainList = document.getElementById('trainingsList');
+        trainList.innerHTML = '';
+        if (data.trainings && Array.isArray(data.trainings) && data.trainings.length > 0) {
+            trainingsSection.style.display = 'block';
             data.trainings.forEach(train => {
                 const trainDiv = document.createElement('div');
                 trainDiv.className = 'mb-3 avoid-break';
@@ -406,85 +465,101 @@
                 `;
                 trainList.appendChild(trainDiv);
             });
+        } else {
+            trainingsSection.style.display = 'none';
         }
 
         // Education
+        const eduSection = document.getElementById('educationSection');
         const eduList = document.getElementById('educationList');
         eduList.innerHTML = '';
-        const colleges = data.colleges || data.institution || data.degree || [];
-        if (colleges.length > 0) {
-            colleges.forEach(college => {
-                const eduDiv = document.createElement('div');
-                eduDiv.className = 'mb-3 avoid-break';
-                eduDiv.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div style="font-size: 15px; font-weight: 600;">${college.degree || college.course || 'Degree'}</div>
-                            <div style="font-size: 13px; color: #3897f0;">${college.institution || college.college_name || 'Institution'}</div>
-                        </div>
-                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${formatDateRange(college.start_date, college.end_date) || college.year || ''}</span>
-                    </div>
-                    ${college.percentage || college.cgpa || college.gpa ? `
-                        <div style="font-size: 12px; color: #666; margin-top: 2px;">
-                            ${college.percentage ? `Percentage: ${college.percentage}` : ''}
-                            ${college.cgpa ? `CGPA: ${college.cgpa}` : ''}
-                            ${college.gpa ? `GPA: ${college.gpa}` : ''}
-                        </div>
-                    ` : ''}
-                `;
-                eduList.appendChild(eduDiv);
-            });
-        }
 
-        if (data.higher_secondary) {
-            const hs = data.higher_secondary;
-            const hsDiv = document.createElement('div');
-            hsDiv.className = 'mt-3 avoid-break';
-            hsDiv.innerHTML = `
-                <div class="mb-2 avoid-break">
+        const hasContent = (obj) => {
+            return obj && typeof obj === 'object' && Object.values(obj).some(val => val && val.toString().trim() !== '');
+        };
+
+        const colleges = Array.isArray(data.colleges)
+            ? data.colleges.filter(c => hasContent(c))
+            : (hasContent(data.colleges) ? [data.colleges] : []);
+
+        const hasColleges = colleges.length > 0;
+        const hasHS = hasContent(data.higher_secondary);
+        const hasSec = hasContent(data.secondary);
+
+        if (hasColleges || hasHS || hasSec) {
+            eduSection.style.display = 'block';
+
+            if (hasColleges) {
+                colleges.forEach(college => {
+                    const eduDiv = document.createElement('div');
+                    eduDiv.className = 'mb-3 avoid-break';
+                    eduDiv.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size: 15px; font-weight: 600;">${college.degree || college.course || ''}</div>
+                                <div style="font-size: 13px; color: #3897f0;">${college.institution || college.college_name || ''}</div>
+                            </div>
+                            <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${formatDateRange(college.start_date, college.end_date) || college.year || ''}</span>
+                        </div>
+                        ${college.percentage || college.cgpa || college.gpa ? `
+                            <div style="font-size: 12px; color: #666; margin-top: 2px;">
+                                ${college.percentage ? `Percentage: ${college.percentage}` : ''}
+                                ${college.cgpa ? `CGPA: ${college.cgpa}` : ''}
+                                ${college.gpa ? `GPA: ${college.gpa}` : ''}
+                            </div>
+                        ` : ''}
+                    `;
+                    eduList.appendChild(eduDiv);
+                });
+            }
+
+            if (hasHS) {
+                const hs = data.higher_secondary;
+                const hsDiv = document.createElement('div');
+                hsDiv.className = 'mb-2 avoid-break';
+                hsDiv.innerHTML = `
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div style="font-size: 14px; font-weight: 600;">Higher Secondary ${hs.board ? `(${hs.board})` : ''}</div>
-                            <div style="font-size: 13px; color: #666;">${hs.institution || 'School'}</div>
+                            <div style="font-size: 14px; font-weight: 600;">${hs.institution || 'Higher Secondary'} ${hs.board ? `(${hs.board})` : ''}</div>
                         </div>
                         <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${hs.year || ''}</span>
                     </div>
                     ${hs.percentage ? `<div style="font-size: 12px; color: #666; margin-top: 2px;">Percentage: ${hs.percentage}</div>` : ''}
-                </div>
-            `;
-            eduList.appendChild(hsDiv);
-        }
+                `;
+                eduList.appendChild(hsDiv);
+            }
 
-        if (data.secondary) {
-            const sec = data.secondary;
-            const secDiv = document.createElement('div');
-            secDiv.className = 'mt-3 avoid-break';
-            secDiv.innerHTML = `
-                <div class="mb-2 avoid-break">
+            if (hasSec) {
+                const sec = data.secondary;
+                const secDiv = document.createElement('div');
+                secDiv.className = 'mb-2 avoid-break';
+                secDiv.innerHTML = `
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div style="font-size: 14px; font-weight: 600;">Secondary ${sec.board ? `(${sec.board})` : ''}</div>
-                            <div style="font-size: 13px; color: #666;">${sec.institution || 'School'}</div>
+                            <div style="font-size: 14px; font-weight: 600;">${sec.institution || 'Secondary'} ${sec.board ? `(${sec.board})` : ''}</div>
                         </div>
                         <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${sec.year || ''}</span>
                     </div>
                     ${sec.percentage ? `<div style="font-size: 12px; color: #666; margin-top: 2px;">Percentage: ${sec.percentage}</div>` : ''}
-                </div>
-            `;
-            eduList.appendChild(secDiv);
+                `;
+                eduList.appendChild(secDiv);
+            }
+        } else {
+            eduSection.style.display = 'none';
         }
 
         // Certifications
-        if (data.certifications && data.certifications.length > 0) {
-            document.getElementById('certificationsSection').style.display = 'block';
-            const certList = document.getElementById('certificationsList');
-            certList.innerHTML = '';
+        const certificationsSection = document.getElementById('certificationsSection');
+        const certList = document.getElementById('certificationsList');
+        certList.innerHTML = '';
+        if (data.certifications && Array.isArray(data.certifications) && data.certifications.length > 0) {
+            certificationsSection.style.display = 'block';
             data.certifications.forEach(cert => {
                 const certDiv = document.createElement('div');
                 certDiv.className = 'mb-2 avoid-break';
                 certDiv.style.fontSize = '12px';
                 certDiv.innerHTML = `
-                    <div style="font-weight: 600; color: #3897f0;">${cert.name || cert.title || 'Certification'}</div>
+                    <div style="font-weight: 600; color: #3897f0;">${cert.name || cert.title || ''}</div>
                     <div class="d-flex justify-content-between">
                         <span style="font-size: 11px; color: #777;">${cert.issuing_organization || cert.provider || ''}</span>
                         <span style="font-size: 11px; color: #777;">${cert.year || cert.date || ''}</span>
@@ -492,69 +567,102 @@
                 `;
                 certList.appendChild(certDiv);
             });
+        } else {
+            certificationsSection.style.display = 'none';
         }
 
         // Achievements
-        if (data.achievements && data.achievements.length > 0) {
-            document.getElementById('achievementsSection').style.display = 'block';
-            const achList = document.getElementById('achievementsList');
-            achList.innerHTML = '';
+        const achievementsSection = document.getElementById('achievementsSection');
+        const achList = document.getElementById('achievementsList');
+        achList.innerHTML = '';
+        if (data.achievements && Array.isArray(data.achievements) && data.achievements.length > 0) {
+            achievementsSection.style.display = 'block';
             data.achievements.forEach(ach => {
                 const li = document.createElement('li');
                 li.className = 'mb-1 avoid-break';
                 li.textContent = typeof ach === 'string' ? ach : (ach.description || ach.title || '');
                 achList.appendChild(li);
             });
+        } else {
+            achievementsSection.style.display = 'none';
         }
 
         // Leadership
-        if (data.leadership && data.leadership.length > 0) {
-            document.getElementById('leadershipSection').style.display = 'block';
-            const leadList = document.getElementById('leadershipList');
-            leadList.innerHTML = '';
+        const leadershipSection = document.getElementById('leadershipSection');
+        const leadList = document.getElementById('leadershipList');
+        leadList.innerHTML = '';
+        if (data.leadership && Array.isArray(data.leadership) && data.leadership.length > 0) {
+            leadershipSection.style.display = 'block';
             data.leadership.forEach(lead => {
                 const li = document.createElement('li');
                 li.className = 'mb-1 avoid-break';
                 li.textContent = typeof lead === 'string' ? lead : (lead.description || lead.title || lead.position || '');
                 leadList.appendChild(li);
             });
+        } else {
+            leadershipSection.style.display = 'none';
         }
 
         // Volunteer Experience
-        if (data.volunteer_experience && data.volunteer_experience.length > 0) {
-            document.getElementById('volunteerSection').style.display = 'block';
-            const volList = document.getElementById('volunteerList');
-            volList.innerHTML = '';
+        const volunteerSection = document.getElementById('volunteerSection');
+        const volList = document.getElementById('volunteerList');
+        volList.innerHTML = '';
+        if (data.volunteer_experience && Array.isArray(data.volunteer_experience) && data.volunteer_experience.length > 0) {
+            volunteerSection.style.display = 'block';
             data.volunteer_experience.forEach(vol => {
                 const li = document.createElement('li');
                 li.className = 'mb-1 avoid-break';
                 li.textContent = typeof vol === 'string' ? vol : (vol.description || vol.role || '');
                 volList.appendChild(li);
             });
+        } else {
+            volunteerSection.style.display = 'none';
         }
 
         // Languages
-        if (data.languages && data.languages.length > 0) {
-            document.getElementById('languagesSection').style.display = 'block';
+        const languagesSection = document.getElementById('languagesSection');
+        if (data.languages && Array.isArray(data.languages) && data.languages.length > 0) {
             const langText = data.languages.map(lang => {
                 if (typeof lang === 'string') return lang;
                 return lang.name ? `${lang.name}${lang.proficiency ? ` (${lang.proficiency})` : ''}` : '';
             }).filter(Boolean).join(', ');
-            document.getElementById('languagesList').textContent = langText;
+
+            if (langText.trim() !== '') {
+                document.getElementById('languagesList').textContent = langText;
+                languagesSection.style.display = 'block';
+            } else {
+                languagesSection.style.display = 'none';
+            }
+        } else {
+            languagesSection.style.display = 'none';
         }
 
         // Areas of Interest
-        if (data.areas_of_interest && data.areas_of_interest.length > 0) {
-            document.getElementById('interestsSection').style.display = 'block';
+        const interestsSection = document.getElementById('interestsSection');
+        if (data.areas_of_interest && Array.isArray(data.areas_of_interest) && data.areas_of_interest.length > 0) {
             const interests = data.areas_of_interest.map(i => typeof i === 'string' ? i : i.name || i.title).filter(Boolean);
-            document.getElementById('interestsList').textContent = interests.join(', ');
+            if (interests.length > 0) {
+                document.getElementById('interestsList').textContent = interests.join(', ');
+                interestsSection.style.display = 'block';
+            } else {
+                interestsSection.style.display = 'none';
+            }
+        } else {
+            interestsSection.style.display = 'none';
         }
 
         // Hobbies
-        if (data.hobbies && data.hobbies.length > 0) {
-            document.getElementById('hobbiesSection').style.display = 'block';
+        const hobbiesSection = document.getElementById('hobbiesSection');
+        if (data.hobbies && Array.isArray(data.hobbies) && data.hobbies.length > 0) {
             const hobbies = data.hobbies.map(h => typeof h === 'string' ? h : h.name || h.title).filter(Boolean);
-            document.getElementById('hobbiesList').textContent = hobbies.join(', ');
+            if (hobbies.length > 0) {
+                document.getElementById('hobbiesList').textContent = hobbies.join(', ');
+                hobbiesSection.style.display = 'block';
+            } else {
+                hobbiesSection.style.display = 'none';
+            }
+        } else {
+            hobbiesSection.style.display = 'none';
         }
     }
 
@@ -566,7 +674,7 @@
             return date;
         };
         const start = formatDate(startDate);
-        const end   = formatDate(endDate) || 'Present';
+        const end = formatDate(endDate) || 'Present';
         if (!start && !end) return '';
         if (!start) return end;
         if (!end || end === 'Present') return `${start} - Present`;
