@@ -11,6 +11,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/full_pdf_viewer_screen.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
@@ -835,14 +836,21 @@ class _RegisterResumeReportScreenState
 
   Future<void> updateSkipProfileFunc() async {
     final studentId = await LocalStorageService.getStudentId();
-    registerController.extractedResumeModel.templateNumber = "1";
-    registerController.extractedResumeModel.studentId = studentId!;
-    debugPrint(
-      registerController.extractedResumeModel.profileSummary.toString(),
-    );
+
+    final extractedData = registerController.resumeAnalyzeModel.extractedData!;
+    extractedData.templateNumber = "1";
+    extractedData.studentId = studentId!;
+
+    // Convert ExtractedResumeDataModel -> NewStudentProfileModel
+    final NewStudentProfileModel newProfileData =
+    extractedData.toNewStudentProfileModel(studentId: studentId);
+
+    debugPrint(newProfileData.profileSummary.toString());
+
     await registerController.updateResumeProfileData(
-      updateData: registerController.resumeAnalyzeModel.extractedData!,
+      updateData: newProfileData,
     );
+
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       AppAlertUtils.showToast(
@@ -858,9 +866,8 @@ class _RegisterResumeReportScreenState
       }
     } else {
       AppAlertUtils.showToast(
-        message:
-            registerController.updateProfileModel.message ??
-            "Something went wrong!,Please try again later!",
+        message: registerController.updateProfileModel.message ??
+            "Something went wrong!, Please try again later!",
         isError: true,
       );
     }

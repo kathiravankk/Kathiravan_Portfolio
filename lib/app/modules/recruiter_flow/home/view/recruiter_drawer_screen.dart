@@ -76,15 +76,15 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                           onTap: () {
                             CommonUtils.showProfileImageViewer(
                               context,
-                              homeController.profileModel.recCompanyLogo ?? "",
-                              homeController.profileModel.recCompanyName ?? "",
+                              homeController.profileModel.recruiterData!.recCompanyLogo ?? "",
+                              homeController.profileModel.recruiterData!.recCompanyName ?? "",
                             );
                           },
                           child: CircleAvatar(
                             radius: 28,
                             backgroundColor: AppColors.contColor2,
                             backgroundImage: NetworkImage(
-                              homeController.profileModel.recCompanyLogo ?? "",
+                              homeController.profileModel.recruiterData!.recCompanyLogo ?? "",
                             ),
                           ),
                         ),
@@ -94,7 +94,7 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                homeController.profileModel.recName ?? "",
+                                homeController.profileModel.recruiterData!.recName ?? "",
                                 style: AppStyles.customTextStyle(
                                   size: 16,
                                   weight: FontWeight.w700,
@@ -103,7 +103,7 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                               ),
 
                               Text(
-                                homeController.profileModel.recEmail ?? "",
+                                homeController.profileModel.recruiterData!.recEmail ?? "",
                                 style: AppStyles.customTextStyle(
                                   size: 14,
                                   color: AppColors.greyColor,
@@ -145,11 +145,11 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                           AppRoutes.recruiterCreditPlanScreen,
                           arguments: {
                             "creditBalance": homeController
-                                .profileModel
+                                .profileModel.recruiterData!
                                 .recruiterCreditId!
                                 .balance,
                             "creditId": homeController
-                                .profileModel
+                                .profileModel.recruiterData!
                                 .recruiterCreditId!
                                 .id,
                           },
@@ -185,12 +185,12 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                           AppRoutes.recruiterCreditHistoryScreen,
                           arguments: {
                             "creditBalance": ((homeController
-                                .profileModel
+                                .profileModel.recruiterData!
                                 .recruiterCreditId!
                                 .freeCredits ??
                                 0) +
                                 (homeController
-                                    .profileModel
+                                    .profileModel.recruiterData!
                                     .recruiterCreditId!
                                     .balance ??
                                     0))

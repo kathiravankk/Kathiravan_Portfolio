@@ -435,9 +435,14 @@ class WorkExperienceCard extends StatelessWidget {
           ? const BodyText("—")
           : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 10,
+        mainAxisSize: MainAxisSize.min,
         children: experiences
-            .map((exp) => WorkExpItem(exp: exp))
+            .map(
+              (exp) => Padding(
+            padding: const EdgeInsets.only(bottom: 10.0),
+            child: WorkExpItem(exp: exp),
+          ),
+        )
             .toList(),
       ),
     );
@@ -451,44 +456,55 @@ class WorkExpItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("******************");
+    debugPrint(exp.role!);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 2,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                exp.role ?? "—",
-                style: AppStyles.customTextStyle(
-                  size: 13,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w700,
-                ),
-              ),
-            ),
-            Text(
-              formatDateRange(exp.duration, exp.duration),
-              style: AppStyles.customTextStyle(
-                size: 10,
-                color: AppColors.secondaryColor,
-                weight: FontWeight.w500,
-              ),
-            ),
-          ],
+        // Role / Title
+        Text(
+          exp.role ?? "___",
+          softWrap: true,
+          style: AppStyles.customTextStyle(
+            size: 13,
+            color: AppColors.whiteColor,
+            weight: FontWeight.w700,
+            lineSpace: 1.3,
+          ),
         ),
+        const SizedBox(height: 2),
+
+        // Date Range
+        if ((exp.duration ?? "").isNotEmpty)
+          Text(
+            formatDateRange(exp.duration, null),
+            style: AppStyles.customTextStyle(
+              size: 10,
+              color: AppColors.secondaryColor,
+              weight: FontWeight.w500,
+              lineSpace: 1.3
+            ),
+          ),
+        const SizedBox(height: 5),
+
+        // Company Name
         Text(
           exp.company ?? "—",
+          softWrap: true,
           style: AppStyles.customTextStyle(
             size: 12,
-            color: AppColors.secondaryColor,
+            color: AppColors.primaryColor,
             weight: FontWeight.w500,
           ),
         ),
+        const SizedBox(height: 4),
+
+        // Description
         if ((exp.description ?? "").isNotEmpty)
           Text(
             exp.description!,
+            softWrap: true,
             style: AppStyles.customTextStyle(
               size: 11,
               color: AppColors.greyTextColor,

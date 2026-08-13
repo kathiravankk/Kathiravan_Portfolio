@@ -1,4 +1,18 @@
 class RecruiterProfileModel {
+  bool? success;
+  RecruiterProfileData? recruiterData;
+
+  RecruiterProfileModel({this.recruiterData, this.success});
+
+  RecruiterProfileModel.fromJson(Map<String, dynamic> json) {
+    success = json["success"] ?? false;
+    recruiterData = json['data'] != null
+        ? RecruiterProfileData.fromJson(json['data'])
+        : null;
+  }
+}
+
+class RecruiterProfileData {
   String? id;
   String? recName;
   String? recGender;
@@ -27,7 +41,7 @@ class RecruiterProfileModel {
   String? referCode;
   int? vId;
 
-  RecruiterProfileModel({
+  RecruiterProfileData({
     this.id,
     this.recName,
     this.recGender,
@@ -57,7 +71,7 @@ class RecruiterProfileModel {
     this.referCode,
   });
 
-  RecruiterProfileModel.fromJson(Map<String, dynamic> json) {
+  RecruiterProfileData.fromJson(Map<String, dynamic> json) {
     id = json['_id'] ?? "";
     recName = json['recname'] ?? "";
     referCode = json['referralCode'] ?? "";

@@ -384,7 +384,7 @@ class _RecruiterCreditsPlanScreenState
                                             ),
                                           ),
                                           Text(
-                                            "${((homeController.profileModel.recruiterCreditId!.freeCredits ?? 0) + (homeController.profileModel.recruiterCreditId!.balance ?? 0))} Credits",
+                                            "${((homeController.profileModel.recruiterData!.recruiterCreditId!.freeCredits ?? 0) + (homeController.profileModel.recruiterData!.recruiterCreditId!.balance ?? 0))} Credits",
                                             style: AppStyles.customTextStyle(
                                               size: 16,
                                               weight: FontWeight.w800,

@@ -209,12 +209,12 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
 
   void _prefillCompanyInfo() {
     companyNameController.text =
-        homeController.profileModel.recCompanyName ?? "";
+        homeController.profileModel.recruiterData!.recCompanyName ?? "";
     companyWebsiteController.text =
-        homeController.profileModel.recCompanyWebsite ?? "";
+        homeController.profileModel.recruiterData!.recCompanyWebsite ?? "";
     aboutCompanyController.text =
-        homeController.profileModel.recCompanyDescription ?? "";
-    _existingLogoUrl = homeController.profileModel.recCompanyLogo ?? "";
+        homeController.profileModel.recruiterData!.recCompanyDescription ?? "";
+    _existingLogoUrl = homeController.profileModel.recruiterData!.recCompanyLogo ?? "";
   }
 
   void _prefillEditData() {

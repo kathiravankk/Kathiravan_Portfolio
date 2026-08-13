@@ -4,11 +4,13 @@ import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/credit_data_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_extracted_data_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/update_chat_profile_model.dart';
 import 'package:internsharks/app/data/providers/register_provider.dart';
 import 'package:internsharks/app/data/repositories/resume_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -351,11 +353,11 @@ class RegisterController extends GetxController {
 
   //Model
 
-  final _studentProfileModel = StudentProfileModel().obs;
+  final _studentProfileModel = NewStudentProfileModel().obs;
 
-  StudentProfileModel get studentProfileModel => _studentProfileModel.value;
+  NewStudentProfileModel get studentProfileModel => _studentProfileModel.value;
 
-  set studentProfileModel(StudentProfileModel value) =>
+  set studentProfileModel(NewStudentProfileModel value) =>
       _studentProfileModel.value = value;
 
   Future<void> getStudentProfile({required String studentId}) async {
@@ -369,7 +371,7 @@ class RegisterController extends GetxController {
           resumeFile: studentProfileModel.studentResume ?? "",
         );
         await LocalStorageService.saveCreditId(
-          creditId: studentProfileModel.studentCreditId!.cId ?? ""
+          creditId: studentProfileModel.studentCreditId!.id ?? ""
         );
       }
       studentDetailsLoading = false;
@@ -480,6 +482,40 @@ class RegisterController extends GetxController {
     }
   }
 
+  // UPDATE NEW CHAT RESUME DATA
+
+  // Loading
+
+  final _updateChatProfileLoading = false.obs;
+
+  bool get updateChatProfileLoading => _updateChatProfileLoading.value;
+
+  set updateChatProfileLoading(bool value) => _updateChatProfileLoading.value = value;
+
+  //Model
+
+  final _updateChatProfileModel = UpdateChatProfileModel().obs;
+
+  UpdateChatProfileModel get updateChatProfileModel => _updateChatProfileModel.value;
+
+  set updateChatProfileModel(UpdateChatProfileModel value) =>
+      _updateChatProfileModel.value = value;
+
+  Future<void> updateChatStudentProfileData({
+    required Map<String, dynamic> updateData,
+  }) async {
+    try {
+      updateChatProfileLoading = true;
+      updateChatProfileModel = await registerProvider!.putChatStudentProfileData(
+        updateData: updateData,
+      );
+      updateChatProfileLoading = false;
+    } catch (err) {
+      updateChatProfileLoading = false;
+      rethrow;
+    }
+  }
+
   // RESUME & PROFILE UPDATE
 
   // Loading
@@ -492,7 +528,7 @@ class RegisterController extends GetxController {
       _updateResumeTemplateLoading.value = value;
 
   Future<void> updateResumeProfileData({
-    required ExtractedResumeDataModel? updateData,
+    required NewStudentProfileModel? updateData,
   }) async {
     try {
       updateResumeTemplateLoading = true;

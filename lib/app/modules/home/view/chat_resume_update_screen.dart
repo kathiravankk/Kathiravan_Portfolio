@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/show_template_view.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_template_model.dart';
@@ -198,20 +199,20 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
     final higherSecondaryObject = {
       "institution":
-      profileData.education?.school?.higherSecondary.institution ?? "",
-      "board": profileData.education?.school?.higherSecondary.board ?? "",
+      profileData.education?.school?.higherSecondary!.institution ?? "",
+      "board": profileData.education?.school?.higherSecondary!.board ?? "",
       "percentage":
-      profileData.education?.school?.higherSecondary.percentage ?? "",
+      profileData.education?.school?.higherSecondary!.percentage ?? "",
       "year_of_passing":
-      profileData.education?.school?.higherSecondary.yearOfPassing ?? "",
+      profileData.education?.school?.higherSecondary!.yearOfPassing ?? "",
     };
 
     final secondaryObject = {
-      "institution": profileData.education?.school?.secondary.institution ?? "",
-      "board": profileData.education?.school?.secondary.board ?? "",
-      "percentage": profileData.education?.school?.secondary.percentage ?? "",
+      "institution": profileData.education?.school?.secondary!.institution ?? "",
+      "board": profileData.education?.school?.secondary!.board ?? "",
+      "percentage": profileData.education?.school?.secondary!.percentage ?? "",
       "year_of_passing":
-      profileData.education?.school?.secondary.yearOfPassing ?? "",
+      profileData.education?.school?.secondary!.yearOfPassing ?? "",
     };
 
     final educationObject = {
@@ -243,13 +244,13 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "studcollegeendyear": collegeArray.isNotEmpty
           ? collegeArray.first["end_year"] ?? ""
           : "",
-      "studcollegelocation": "",
+      //"studcollegelocation": "",
       "studhighschollname": higherSecondaryObject["institution"],
       "studhighschoolpercentage": higherSecondaryObject["percentage"],
       "studhighschoollocation": "",
       "studentsecondaryschoolname": secondaryObject["institution"],
       "studentsecondaryschoolpercentage": secondaryObject["percentage"],
-      "studsecondaryschoollocation": "",
+      //"studsecondaryschoollocation": "",
       "college": jsonEncode(collegeArray),
       "higher_secondary": jsonEncode([higherSecondaryObject]),
       "secondary": jsonEncode([secondaryObject]),
@@ -302,46 +303,46 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     await registerController.getStudentProfile(studentId: studentId!);
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      StudentProfileModel studentData = registerController.studentProfileModel;
+      NewStudentProfileModel studentData = registerController.studentProfileModel;
       AppFunctions.navigateScreen(
         context,
         AppRoutes.chatResumeTemplateScreen,
         arguments: {
-          "resumeData": ExtractedResumeDataModel(
-            personalInfo: PersonalInfoModel(
-              name: studentData.studentName!,
-              gender: studentData.studentGender,
-              email: studentData.studEmail!,
-              phone: studentData.studMobileNo!,
-              linkedIn: studentData.linkedIn,
-              github: studentData.github,
-              location: "",
-            ),
-            internships: studentData.internships!,
-            hobbies: studentData.hobbies,
-            areasOfInterest: studentData.areasOfInterest,
-            languages: studentData.languagesKnown,
-            volunteerExperience: studentData.volunteerExperience,
-            leaderships: studentData.leadership,
-            achievements: studentData.achievements,
-            publications: studentData.publications,
-            workShops: studentData.workshops,
-            paperPresentations: studentData.paperPresentations,
-            educationData: studentData.education,
-            industrialVisits: studentData.industrialVisits,
-            projects: studentData.projects,
-            skills: studentData.studProgrammingLang,
-            profileSummary: studentData.profileSummary!.replaceAll('"', ''),
-            colleges: studentData.college,
-            degree: [],
-            experience: studentData.experience,
-            trainings: [],
-            studentId: studentData.id,
-            higherSecondary: studentData.education!.school!.higherSecondary,
-            institution: [],
-            parents: [],
-            secondary: studentData.education!.school!.secondary,
-          ),
+          // "resumeData": ExtractedResumeDataModel(
+          //   personalInfo: PersonalInfoModel(
+          //     name: studentData.studentName!,
+          //     gender: studentData.studentGender,
+          //     email: studentData.studEmail!,
+          //     phone: studentData.studMobileNo!,
+          //     linkedIn: studentData.linkedIn,
+          //     github: studentData.github,
+          //     location: "",
+          //   ),
+          //   internships: studentData.internships!,
+          //   hobbies: studentData.hobbies,
+          //   areasOfInterest: studentData.areasOfInterest,
+          //   languages: studentData.languagesKnown,
+          //   volunteerExperience: studentData.volunteerExperience,
+          //   leaderships: studentData.leadership,
+          //   achievements: studentData.achievements,
+          //   publications: studentData.publications,
+          //   workShops: studentData.workshops,
+          //   paperPresentations: studentData.paperPresentations,
+          //   educationData: studentData.education,
+          //   industrialVisits: studentData.industrialVisits,
+          //   projects: studentData.projects,
+          //   skills: studentData.studProgrammingLang,
+          //   profileSummary: studentData.profileSummary!.replaceAll('"', ''),
+          //   colleges: studentData.college,
+          //   degree: [],
+          //   experience: studentData.experience,
+          //   trainings: [],
+          //   studentId: studentData.id,
+          //   higherSecondary: studentData.education!.school!.higherSecondary,
+          //   institution: [],
+          //   parents: [],
+          //   secondary: studentData.education!.school!.secondary,
+          // ),
           "templateId": templateId,
           "isRegisterFlow": false,
         },
@@ -371,54 +372,65 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
   // ================= DYNAMIC LIVE PREVIEW MODEL BUILDER =================
 
-  ExtractedResumeDataModel buildLivePreviewResumeData() {
+  NewStudentProfileModel buildLivePreviewResumeData() {
     final profile = profileController.profileDataModel;
     final ReplyData? collected =
         dashboardController.updateChatResumeModel.aiResponse?.collectedData;
 
     final personalInfo = collected?.personalInfo;
     final education = collected?.education;
-    debugPrint(personalInfo?.name ?? "NAme is not available!");
+    debugPrint(personalInfo?.name ?? "Name is not available!");
 
-    return ExtractedResumeDataModel(
-      personalInfo: PersonalInfoModel(
-        name: personalInfo?.name ?? profile.studentName ?? "",
-        gender: personalInfo?.gender ?? profile.studentGender,
-        email: personalInfo?.email ?? profile.studEmail ?? "",
-        phone: personalInfo?.phone ?? profile.studMobileNo ?? "",
-        linkedIn: personalInfo?.linkedIn ?? profile.linkedIn,
-        github: personalInfo?.github ?? profile.github,
-        location: personalInfo?.location ?? profile.collegeLocation ?? "",
-      ),
-      internships: collected?.internships ?? profile.internships ?? [],
-      hobbies: collected?.hobbies ?? profile.hobbies,
+    return NewStudentProfileModel(
+      id: profile.id,
+
+      // Personal Information (Flattened top-level fields)
+      studentName: personalInfo?.name ?? profile.studentName ?? "",
+      studentGender: personalInfo?.gender ?? profile.studentGender,
+      studEmail: personalInfo?.email ?? profile.studEmail ?? "",
+      studMobileNo: personalInfo?.phone ?? profile.studMobileNo ?? "",
+      github: personalInfo?.github ?? profile.github,
+      linkedIn: personalInfo?.linkedIn ?? profile.linkedIn,
+      location: personalInfo?.location ?? profile.location,
+      collegeLocation: profile.collegeLocation ?? "",
+      collegeName: profile.collegeName,
+      profileSummary: collected?.profileSummary ?? profile.profileSummary ?? "",
+
+      // Skills, Languages & Interests
+      studProgrammingLang: collected?.skills ?? profile.studProgrammingLang,
       areasOfInterest: collected?.areasOfInterest ?? profile.areasOfInterest,
-      languages: collected?.languages ?? profile.languagesKnown,
+      hobbies: collected?.hobbies ?? profile.hobbies,
+      languagesKnown: collected?.languages ?? profile.languagesKnown,
+
+      // Work, Projects & Activities
+      internships: collected?.internships ?? profile.internships ?? [],
+      projects: collected?.projects ?? profile.projects,
+      industrialVisits: collected?.industrialVisits ?? profile.industrialVisits,
+      experience: collected?.experience ?? profile.experience,
       volunteerExperience:
       collected?.volunteerExperience ?? profile.volunteerExperience,
-      leaderships: collected?.leadership ?? profile.leadership,
+      leadership: collected?.leadership ?? profile.leadership,
+
+      // Achievements & Academics
       achievements: collected?.achievements ?? profile.achievements,
       publications: collected?.publications ?? profile.publications,
-      workShops: collected?.workshops ?? profile.workshops,
+      workshops: collected?.workshops ?? profile.workshops,
       paperPresentations:
       collected?.paperPresentations ?? profile.paperPresentations,
-      educationData: education ?? profile.education,
-      industrialVisits: collected?.industrialVisits ?? profile.industrialVisits,
-      projects: collected?.projects ?? profile.projects,
-      skills: collected?.skills ?? profile.studProgrammingLang,
-      profileSummary: collected?.profileSummary ?? profile.profileSummary ?? "",
-      colleges: education?.college ?? profile.education?.college,
-      degree: const [],
-      experience: collected?.experience ?? profile.experience,
-      trainings: const [],
-      studentId: profile.id,
-      higherSecondary:
-      education?.school?.higherSecondary ??
-          profile.education?.school?.higherSecondary,
-      institution: const [],
-      parents: const [],
-      secondary:
-      education?.school?.secondary ?? profile.education?.school?.secondary,
+
+      // Education & Schooling
+      education: education ?? profile.education,
+      college: education?.college ?? profile.college,
+      higherSecondary: education?.school?.higherSecondary != null
+          ? [education!.school!.higherSecondary!]
+          : profile.higherSecondary,
+      secondary: education?.school?.secondary != null
+          ? [education!.school!.secondary!]
+          : profile.secondary,
+
+      // Defaults / Retained Profile Data
+      trainings: profile.trainings ?? [],
+      parents: profile.parents ?? [],
     );
   }
 
@@ -901,7 +913,7 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 }
 class ShowLivePreviewWidget extends StatelessWidget {
   final ResumeTemplateModel templateData;
-  final ExtractedResumeDataModel resumeData;
+  final NewStudentProfileModel resumeData;
 
   const ShowLivePreviewWidget({
     super.key,

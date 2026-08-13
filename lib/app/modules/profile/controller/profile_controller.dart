@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_credit_history_model.dart';
 import 'package:internsharks/app/data/models/account/student_purchase_history_model.dart';
@@ -77,11 +78,11 @@ class ProfileController extends GetxController {
 
   // Model
 
-  final _profileDataModel = ProfileDataModel().obs;
+  final _profileDataModel = NewStudentProfileModel().obs;
 
-  ProfileDataModel get profileDataModel => _profileDataModel.value;
+  NewStudentProfileModel get profileDataModel => _profileDataModel.value;
 
-  set profileDataModel(ProfileDataModel value) =>
+  set profileDataModel(NewStudentProfileModel value) =>
       _profileDataModel.value = value;
 
   Future<void> getProfileData({required String studentId}) async {
@@ -96,7 +97,7 @@ class ProfileController extends GetxController {
           isVerified: profileDataModel.isVerified ?? false,
         );
         LocalStorageService.saveCreditId(
-          creditId: profileDataModel.studentCreditId!.cId ?? ""
+          creditId: profileDataModel.studentCreditId!.id ?? ""
         );
       }
     } catch (err) {

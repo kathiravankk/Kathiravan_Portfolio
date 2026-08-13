@@ -1,8 +1,10 @@
 class PersonalInfoModel {
   String name;
+  String? sureName;
   dynamic gender;
   String email;
   String phone;
+  String? role;
   String location;
   dynamic linkedIn;
   dynamic github;
@@ -14,7 +16,9 @@ class PersonalInfoModel {
     required this.phone,
     required this.linkedIn,
     required this.github,
-    required this.location
+    required this.location,
+    this.sureName,
+    this.role,
   });
 
   factory PersonalInfoModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +30,8 @@ class PersonalInfoModel {
       linkedIn: json['linkedIn']??"",
       github: json['github']??"",
       location: json['location']??"",
+      sureName: json['surname']??"",
+      role: json['role']??"",
     );
   }
 
@@ -38,6 +44,8 @@ class PersonalInfoModel {
       "linkedIn": linkedIn ?? "",
       "github": github ?? "",
       "location": location,
+      "surname": sureName,
+      "role": role,
     };
   }
 }

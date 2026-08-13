@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
+import 'package:internsharks/app/modules/home/view/similar_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/student_buy_credit_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/home/view/privacy_policy_screen.dart';
@@ -300,6 +301,10 @@ class AppPages {
     appPage(
       name: AppRoutes.studentPurchaseHistoryScreen,
       page: () => StudentPurchaseHistoryScreen(),
+    ),
+    appPage(
+      name: AppRoutes.similarInternshipScreen,
+      page: () => SimilarInternshipScreen(),
     ),
 
     /// RECRUITER FLOW SCREENS

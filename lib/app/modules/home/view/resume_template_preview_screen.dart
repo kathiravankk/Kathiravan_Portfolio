@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
+import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ResumeTemplatePreviewScreen extends StatefulWidget {
@@ -25,14 +29,41 @@ class _ResumeTemplatePreviewScreenState
   late WebViewController _controller;
   bool isLoading = true;
   late int templateId;
-  late ExtractedResumeDataModel resumeData;
+  NewStudentProfileModel? resumeData;
+  final profileController = Get.find<ProfileController>();
 
   @override
   void initState() {
     super.initState();
     templateId = Get.arguments["templateId"] ?? 1;
-    resumeData = Get.arguments["resumeData"];
-    _initWebview();
+    getStudentProfileData();
+    //resumeData = Get.arguments["resumeData"];
+  }
+
+  String? studentId = "";
+
+  Future<void> getStudentProfileData() async {
+    try {
+      studentId = await LocalStorageService.getStudentId();
+      await profileController.getProfileData(studentId: studentId!);
+      if (profileController.getResponseCode() == 200 ||
+          profileController.getResponseCode() == 201) {
+        resumeData = profileController.profileDataModel;
+        _initWebview();
+      } else {
+        AppFunctions.apiErrorHandling(
+          profileController.getResponseCode(),
+          profileController.profileDataModel.message ??
+              "Failed to get profile details!",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        profileController.getResponseCode(),
+        profileController.profileDataModel.message ??
+            "Failed to get profile details!",
+      );
+    }
   }
 
   void _initWebview() {
@@ -43,7 +74,7 @@ class _ResumeTemplatePreviewScreenState
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (_) async {
-            final jsonData = jsonEncode(resumeData.toJson());
+            final jsonData = jsonEncode(resumeData!.toJson());
             await _controller.runJavaScript("renderResume($jsonData);");
             setState(() => isLoading = false);
           },
@@ -91,9 +122,7 @@ class _ResumeTemplatePreviewScreenState
 
   // ─── Show editable filename dialog ──────────────────────────────────────────
   Future<String?> _askFileName() async {
-    final firstName = (resumeData.personalInfo?.name ?? 'resume')
-        .split(' ')
-        .first;
+    final firstName = (resumeData!.studentName ?? 'resume').split(' ').first;
     final defaultName = "${firstName}_resume";
     final controller = TextEditingController(text: defaultName);
 
@@ -265,18 +294,17 @@ class _ResumeTemplatePreviewScreenState
   Future<void> _handleShare() async {
     setState(() => isLoading = true);
     try {
-      final firstName = (resumeData.personalInfo?.name ?? 'resume')
-          .split(' ')
-          .first;
+      final firstName = (resumeData!.studentName ?? 'resume').split(' ').first;
       await ResumeFileUtils.handleShare(
         webViewController: _controller,
         fileName: "${firstName}_resume",
-          shareText: CommonUtils.resumeShareContent
+        shareText: CommonUtils.resumeShareContent,
       );
     } finally {
       if (mounted) setState(() => isLoading = false);
     }
   }
+
   // Future<void> _handleShare() async {
   //   setState(() => isLoading = true);
   //
@@ -336,27 +364,31 @@ class _ResumeTemplatePreviewScreenState
             ),
           ),
         ),
-        body: Stack(
-          children: [
-            WebViewWidget(controller: _controller),
-            if (isLoading)
-              Container(
-                color: Colors.black45,
-                child:  Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                     AppAlertUtils.customLoader(),
-                      SizedBox(height: 12),
-                      Text(
-                        "Processing...",
-                        style: TextStyle(color: Colors.white70),
+        body: Obx(
+          () => profileController.profileDataLoading
+              ? AppAlertUtils.customLoader()
+              : Stack(
+                  children: [
+                    WebViewWidget(controller: _controller),
+                    if (isLoading)
+                      Container(
+                        color: Colors.black45,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AppAlertUtils.customLoader(),
+                              SizedBox(height: 12),
+                              Text(
+                                "Processing...",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
-              ),
-          ],
         ),
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,

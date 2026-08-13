@@ -1,5 +1,6 @@
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 
@@ -56,20 +57,20 @@ class ResumeCollectedData {
   String? refCode;
 
   List<String>? skills;
-  List<InternShipModel>? internships;
-  List<Project>? projects;
-  List<dynamic>? industrialVisits;
+  List<NewInternshipData>? internships;
+  List<NewProjectData>? projects;
+  List<NewIndustrialVisit>? industrialVisits;
 
-  EducationModel? education;
+  NewEducationData? education;
 
   List<Certification>? certifications;
-  List<PaperData>? paperPresentations;
+  List<NewPaperPresentation>? paperPresentations;
 
-  List<dynamic>? workshops;
-  List<dynamic>? publications;
-  List<dynamic>? achievements;
-  List<dynamic>? leadership;
-  List<dynamic>? volunteerExperience;
+  List<String>? workshops;
+  List<String>? publications;
+  List<String>? achievements;
+  List<String>? leadership;
+  List<String>? volunteerExperience;
 
   List<String>? languages;
   List<String>? areasOfInterest;
@@ -119,17 +120,21 @@ class ResumeCollectedData {
       skills: List<String>.from(json["skills"] ?? []),
 
       internships: (json["internships"] as List? ?? [])
-          .map<InternShipModel>((e) => InternShipModel.fromJson(e))
+          .map<NewInternshipData>((e) => NewInternshipData.fromJson(e))
           .toList(),
 
       projects: (json["projects"] as List? ?? [])
-          .map<Project>((e) => Project.fromJson(e))
+          .map<NewProjectData>((e) => NewProjectData.fromJson(e))
           .toList(),
 
-      industrialVisits: List.from(json["industrial_visits"] ?? []),
+      //industrialVisits: List.from(json["industrial_visits"] ?? []),
+      industrialVisits:
+      (json['industrial_visits'] as List?)
+          ?.map((e) => NewIndustrialVisit.fromJson(e))
+          .toList(),
 
       education: json["education"] != null
-          ? EducationModel.fromJson(json["education"])
+          ? NewEducationData.fromJson(json["education"])
           : null,
 
       certifications: (json["certifications"] as List? ?? [])
@@ -137,7 +142,7 @@ class ResumeCollectedData {
           .toList(),
 
       paperPresentations: (json["paper_presentations"] as List? ?? [])
-          .map<PaperData>((e) => PaperData.fromJson(e))
+          .map<NewPaperPresentation>((e) => NewPaperPresentation.fromJson(e))
           .toList(),
 
       workshops: List.from(json["workshops"] ?? []),

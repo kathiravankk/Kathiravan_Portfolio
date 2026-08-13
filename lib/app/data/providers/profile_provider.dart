@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_credit_history_model.dart';
 import 'package:internsharks/app/data/models/account/student_purchase_history_model.dart';
 import 'package:internsharks/app/data/models/home/banner_generation_model.dart';
@@ -27,7 +28,7 @@ class ProfileProvider {
 
   // GET PROFILE DATA
 
-  Future<ProfileDataModel> fetchProfileData({required String studentId}) async {
+  Future<NewStudentProfileModel> fetchProfileData({required String studentId}) async {
     Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
       client!.interceptors.add(
@@ -39,10 +40,10 @@ class ProfileProvider {
         data: {"studentId": studentId},
       );
       responseStatus = response.statusCode!;
-      return ProfileDataModel.fromJson(response.data);
+      return NewStudentProfileModel.fromJson(response.data);
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
-      return ProfileDataModel.fromJson(err.response!.data);
+      return NewStudentProfileModel.fromJson(err.response!.data);
     }
   }
 

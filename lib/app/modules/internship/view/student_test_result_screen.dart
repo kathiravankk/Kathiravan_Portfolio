@@ -199,7 +199,7 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
               ),
               Text(
                 profileController.profileDataModel
-                    .collegeName ??
+                    .education!.college!.first.degree ??
                     "College",
                 style: AppStyles.customTextStyle(
                   size: 12,

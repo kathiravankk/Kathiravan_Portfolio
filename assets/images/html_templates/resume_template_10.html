@@ -443,177 +443,409 @@
 </div>
 
 <script>
-    function formatDateRange(startDate, endDate) {
-        if (!startDate && !endDate) return "";
-        return `${startDate || ""} - ${endDate || "Present"}`;
+    function renderResume(data) {
+        console.log('Received data:', data);
+        if (!data) return;
+
+        // ── Exact field names from NewStudentProfileModel.toJson() ─────────
+        const name     = data.studname     || '';
+        const email    = data.studemail    || '';
+        const phone    = data.studmobileno || '';
+        const location = data.location    || '';
+        const role     = data.role         || '';
+        const linkedin = data.linkedIn     || '';
+        const github   = data.github       || '';
+        const summary  = data.profile_summary || '';
+
+        // Skills: studprogramminglang (List<String>)
+        const rawSkills = data.studprogramminglang || [];
+        const skills = flattenSkills(rawSkills);
+
+        // Education: data.college (flat list) OR data.education.college (nested)
+        const eduCollege = (data.education && Array.isArray(data.education.college)
+                            ? data.education.college : null)
+                           || (Array.isArray(data.college) ? data.college : []);
+        const schoolObj = (data.education && data.education.school) || null;
+        // higher_secondary and secondary are Lists in the model
+        const hsRaw  = (schoolObj && schoolObj.higher_secondary) || data.higher_secondary;
+        const secRaw = (schoolObj && schoolObj.secondary)        || data.secondary;
+        const hsArr  = Array.isArray(hsRaw)  ? hsRaw  : (hsRaw  ? [hsRaw]  : []);
+        const secArr = Array.isArray(secRaw) ? secRaw : (secRaw ? [secRaw] : []);
+
+        // Certifications: studentcertificate (List<StudentCertificate>)
+        const certs = data.studentcertificate || [];
+        // Languages: languages_known (List<String>)
+        const langs = data.languages_known || [];
+        // Areas of interest: areas_of_interest (List<String>)
+        const aoi   = data.areas_of_interest || [];
+        // Hobbies: hobbies (List<String>)
+        const hobArr = data.hobbies || [];
+
+        // ── Helpers ────────────────────────────────────────────────────────
+        function isNonEmpty(obj) {
+            if (!obj || typeof obj !== 'object') return false;
+            return Object.entries(obj).some(([k,v]) =>
+                k !== '_id' && k !== 'id' && v != null && String(v).trim() !== '');
+        }
+        function flattenSkills(arr) {
+            const r = [];
+            (arr || []).forEach(s => {
+                if (typeof s === 'string') {
+                    const t = s.trim();
+                    if (t.startsWith('[')) {
+                        try { JSON.parse(t).forEach(x => x && r.push(String(x).trim())); return; }
+                        catch(e) {}
+                    }
+                    const c = t.replace(/^\["|"\]$/g,'').replace(/^"|"$/g,'').trim();
+                    if (c) r.push(c);
+                } else if (s) r.push(String(s));
+            });
+            return r;
+        }
+        function isItemVerified(t) {
+            if (!t) return false;
+            if (data.isVerified) return true;
+            const list = (data.verified_items || []).map(v => String(v).toLowerCase().trim());
+            const tl = String(t).toLowerCase().trim();
+            return list.includes(tl) || list.some(v => v && (tl.includes(v) || v.includes(tl)));
+        }
+        function badge(t) {
+            if (!isItemVerified(t)) return '';
+            return `<i class="fas fa-check-circle" style="color:#3897f0;margin-left:4px;font-size:11px;"></i>`;
+        }
+        function setText(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val || '';
+        }
+        // Show/hide a section - works for both style.display and class="hidden"
+        function showSection(id, show) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (show) {
+                el.classList.remove('hidden');
+                el.style.display = '';
+            } else {
+                el.style.display = 'none';
+            }
+        }
+        function setLink(id, url, text) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (url) {
+                el.href = url;
+                if (text && el.tagName === 'A') el.textContent = text;
+                showSection(id, true);
+            } else {
+                el.style.display = 'none';
+            }
+        }
+        function formatDateRange(s, e) {
+            if (!s && !e) return '';
+            return s ? `${s} - ${e || 'Present'}` : (e || '');
+        }
+
+        // ── PERSONAL INFO ─────────────────────────────────────────────────
+        setText('fullName', name); setText('name', name);
+        ['jobTitle','role'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.textContent = role; el.style.display = role ? '' : 'none'; }
+        });
+        setText('email', email);
+        ['emailLink','emailContact'].forEach(id => setLink(id, email ? 'mailto:'+email : null));
+        setText('phone', phone);
+        const phoneLink = document.getElementById('phoneLink');
+        if (phoneLink) phoneLink.href = phone ? 'tel:'+phone : '#';
+        ['phoneRow','phoneItem','phoneContainer'].forEach(id => showSection(id, !!phone));
+        setText('location', location);
+        ['locationRow','locationItem','locationContainer'].forEach(id => showSection(id, !!location));
+
+        // LinkedIn
+        ['linkedinLink','linkedinContact','linkedin'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (linkedin) { el.href = linkedin; if (el.tagName === 'A') el.textContent = linkedin; }
+        });
+        setText('linkedIn', linkedin);
+        ['linkedinContact','linkedinLink','linkedinRow','linkedinItem'].forEach(id => showSection(id, !!linkedin));
+
+        // GitHub
+        ['githubLink','githubContact','github'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (github) { el.href = github; if (el.tagName === 'A') el.textContent = github; }
+        });
+        ['githubContact','githubLink','githubRow','githubItem'].forEach(id => showSection(id, !!github));
+
+        // ── PROFILE SUMMARY ───────────────────────────────────────────────
+        ['profileSummary','summaryText','aboutText'].forEach(id => setText(id, summary));
+        ['summarySection','aboutSection'].forEach(id => showSection(id, !!summary));
+
+        // ── SKILLS ───────────────────────────────────────────────────────
+        const skillsSection = document.getElementById('skillsSection');
+        ['skillsList','skillsContainer','skillsGrid','skills'].forEach(cid => {
+            const el = document.getElementById(cid);
+            if (!el) return;
+            el.innerHTML = '';
+            skills.forEach(s => {
+                if (el.tagName === 'UL' || el.tagName === 'OL') {
+                    el.innerHTML += `<li>${s}${badge(s)}</li>`;
+                } else {
+                    const sp = document.createElement('span');
+                    sp.className = 'skill-tag skill-badge tag';
+                    sp.innerHTML = s + badge(s);
+                    el.appendChild(sp);
+                }
+            });
+        });
+        if (skillsSection) showSection('skillsSection', skills.length > 0);
+
+        // ── EDUCATION ─────────────────────────────────────────────────────
+        const eduListEl = document.getElementById('educationList') || document.getElementById('education');
+        if (eduListEl) {
+            eduListEl.innerHTML = '';
+            let hasEdu = false;
+            eduCollege.forEach(col => {
+                if (!isNonEmpty(col)) return;
+                hasEdu = true;
+                const deg = [col.degree, col.department].filter(Boolean).join(' - ');
+                const dur = [col.start_year || col.startYear, col.end_year || col.endYear].filter(Boolean).join(' - ');
+                eduListEl.innerHTML += `
+                    <div class="education-item mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size:15px;font-weight:600;">${deg || 'Degree'}</div>
+                                <div style="font-size:13px;color:#3897f0;">${col.institution || ''}</div>
+                            </div>
+                            <span style="font-size:12px;color:#666;white-space:nowrap;margin-left:8px;">${dur}</span>
+                        </div>
+                        ${col.cgpa ? `<div style="font-size:12px;color:#666;margin-top:2px;">CGPA: ${col.cgpa}</div>` : ''}
+                    </div>`;
+            });
+            hsArr.forEach(hs => {
+                if (!isNonEmpty(hs)) return;
+                hasEdu = true;
+                eduListEl.innerHTML += `
+                    <div class="education-item mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size:14px;font-weight:600;">Higher Secondary${hs.board ? ' ('+hs.board+')' : ''}</div>
+                                <div style="font-size:13px;color:#666;">${hs.institution || ''}</div>
+                            </div>
+                            <span style="font-size:12px;color:#666;white-space:nowrap;margin-left:8px;">${hs.year_of_passing || ''}</span>
+                        </div>
+                        ${hs.percentage ? `<div style="font-size:12px;color:#666;">Percentage: ${hs.percentage}</div>` : ''}
+                    </div>`;
+            });
+            secArr.forEach(sec => {
+                if (!isNonEmpty(sec)) return;
+                hasEdu = true;
+                eduListEl.innerHTML += `
+                    <div class="education-item mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size:14px;font-weight:600;">Secondary${sec.board ? ' ('+sec.board+')' : ''}</div>
+                                <div style="font-size:13px;color:#666;">${sec.institution || ''}</div>
+                            </div>
+                            <span style="font-size:12px;color:#666;white-space:nowrap;margin-left:8px;">${sec.year_of_passing || ''}</span>
+                        </div>
+                        ${sec.percentage ? `<div style="font-size:12px;color:#666;">Percentage: ${sec.percentage}</div>` : ''}
+                    </div>`;
+            });
+            showSection('educationSection', hasEdu);
+        }
+
+        // ── INTERNSHIPS ───────────────────────────────────────────────────
+        const internships = data.internships || [];
+        const internList = document.getElementById('internshipsList');
+        if (internList) {
+            internList.innerHTML = '';
+            internships.forEach(intern => {
+                const r = intern.role || 'Intern';
+                const desc = intern.description || '';
+                internList.innerHTML += `
+                    <div class="internship-item mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size:15px;font-weight:600;">${r}${badge(r)}</div>
+                                <div style="font-size:13px;color:#3897f0;">${intern.company || ''}</div>
+                            </div>
+                            <span style="font-size:12px;color:#666;white-space:nowrap;margin-left:8px;">${intern.duration || ''}</span>
+                        </div>
+                        ${desc ? `<div style="font-size:12px;margin-top:5px;">${desc}</div>` : ''}
+                    </div>`;
+            });
+            showSection('internshipsSection', internships.length > 0);
+        }
+
+        // ── PROJECTS ──────────────────────────────────────────────────────
+        const projects = data.projects || [];
+        const projList = document.getElementById('projectsList') || document.getElementById('projects');
+        if (projList) {
+            projList.innerHTML = '';
+            projects.forEach(proj => {
+                const t = proj.title || 'Project';
+                const descArr = Array.isArray(proj.description) ? proj.description : (proj.description ? [proj.description] : []);
+                projList.innerHTML += `
+                    <div class="project-item mb-3">
+                        <div style="font-size:15px;font-weight:600;">${t}${badge(t)}</div>
+                        ${descArr.length > 0 ? `<div style="font-size:12px;margin-top:5px;">${descArr.join(' ')}</div>` : ''}
+                    </div>`;
+            });
+            showSection('projectsSection', projects.length > 0);
+        }
+
+        // ── TRAININGS ─────────────────────────────────────────────────────
+        const trainings = Array.isArray(data.trainings) ? data.trainings : [];
+        const trainList = document.getElementById('trainingsList');
+        if (trainList) {
+            trainList.innerHTML = '';
+            trainings.forEach(train => {
+                const t = train.title || train.course_name || 'Training';
+                trainList.innerHTML += `
+                    <div class="training-item mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size:15px;font-weight:600;">${t}</div>
+                                <div style="font-size:13px;color:#3897f0;">${train.organization || train.provider || ''}</div>
+                            </div>
+                            <span style="font-size:12px;color:#666;white-space:nowrap;margin-left:8px;">${train.year || train.duration || ''}</span>
+                        </div>
+                        ${train.description ? `<div style="font-size:12px;margin-top:5px;">${train.description}</div>` : ''}
+                    </div>`;
+            });
+            showSection('trainingsSection', trainings.length > 0);
+        }
+
+        // ── PAPER PRESENTATIONS ───────────────────────────────────────────
+        const presentations = data.paper_presentations || [];
+        const presList = document.getElementById('presentationsList') || document.getElementById('speakingList');
+        if (presList) {
+            presList.innerHTML = '';
+            presentations.forEach(pres => {
+                const t = pres.title || 'Presentation';
+                presList.innerHTML += `
+                    <div class="presentation-item mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size:15px;font-weight:600;">${t}${badge(t)}</div>
+                                ${pres.event ? `<div style="font-size:13px;color:#3897f0;">${pres.event}</div>` : ''}
+                            </div>
+                            <span style="font-size:12px;color:#666;white-space:nowrap;margin-left:8px;">${pres.year || ''}</span>
+                        </div>
+                        ${pres.description ? `<div style="font-size:12px;margin-top:5px;">${pres.description}</div>` : ''}
+                    </div>`;
+            });
+            const presSection = document.getElementById('presentationsSection') || document.getElementById('speakingSection');
+            if (presSection) showSection(presSection.id, presentations.length > 0);
+        }
+
+        // ── INDUSTRIAL VISITS ─────────────────────────────────────────────
+        const visits = data.industrial_visits || [];
+        const visitList = document.getElementById('visitsList');
+        if (visitList) {
+            visitList.innerHTML = '';
+            visits.forEach(visit => {
+                visitList.innerHTML += `
+                    <div class="visit-item mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div style="font-size:15px;font-weight:600;">${visit.company || 'Visit'}</div>
+                                ${visit.location ? `<div style="font-size:13px;color:#666;">${visit.location}</div>` : ''}
+                            </div>
+                            <span style="font-size:12px;color:#666;white-space:nowrap;margin-left:8px;">${visit.date || ''}</span>
+                        </div>
+                    </div>`;
+            });
+            showSection('visitsSection', visits.length > 0);
+        }
+
+        // ── CERTIFICATIONS ────────────────────────────────────────────────
+        const certListEl = document.getElementById('certificationsList') || document.getElementById('certifications');
+        if (certListEl) {
+            certListEl.innerHTML = '';
+            certs.forEach(cert => {
+                const n = cert.name || '';
+                certListEl.innerHTML += `
+                    <div class="cert-item mb-2">
+                        <div style="font-weight:600;color:#3897f0;">${n}${badge(n)}</div>
+                        <div class="d-flex justify-content-between">
+                            <span style="font-size:11px;color:#777;">${cert.issuer || ''}</span>
+                            <span style="font-size:11px;color:#777;">${cert.date || ''}</span>
+                        </div>
+                    </div>`;
+            });
+            showSection('certificationsSection', certs.length > 0);
+        }
+
+        // ── PLAIN LIST SECTIONS ───────────────────────────────────────────
+        renderPlainList(data.achievements,        'achievementsSection',  'achievementsList');
+        renderPlainList(data.publications,        'publicationsSection',  'publicationsList');
+        renderPlainList(data.workshops,           'workshopsSection',     'workshopsList');
+        renderPlainList(data.leadership,          'leadershipSection',    'leadershipList');
+        renderPlainList(data.volunteer_experience,'volunteerSection',     'volunteerList');
+
+        // ── LANGUAGES ─────────────────────────────────────────────────────
+        renderStringList('languagesSection', langs, ['languagesList','languagesText','languages','languagesContainer']);
+
+        // ── AREAS OF INTEREST ─────────────────────────────────────────────
+        renderStringList('interestsSection', aoi, ['interestsList','interestsText','interests','interestsContainer']);
+
+        // ── HOBBIES ───────────────────────────────────────────────────────
+        renderStringList('hobbiesSection', hobArr, ['hobbiesList','hobbiesText','hobbies','hobbiesContainer']);
     }
 
-    function createTags(items, containerId) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
-
-        (items || []).forEach(item => {
-            container.innerHTML += `<span class="tag">${item}</span>`;
+    // Renders a list of strings into a section - handles both div (text) and ul (li) containers
+    function renderStringList(sectionId, items, containerIds) {
+        containerIds.forEach(cid => {
+            const el = document.getElementById(cid);
+            if (!el) return;
+            if (el.tagName === 'UL' || el.tagName === 'OL') {
+                el.innerHTML = items.map(v => `<li>${v}</li>`).join('');
+            } else if (el.classList.contains('tag-container') || el.classList.contains('tags-container')) {
+                el.innerHTML = '';
+                items.forEach(v => {
+                    const sp = document.createElement('span');
+                    sp.className = 'tag skill-badge';
+                    sp.textContent = v;
+                    el.appendChild(sp);
+                });
+            } else {
+                el.textContent = items.join(', ');
+            }
         });
+        showSection(sectionId, items.length > 0);
     }
 
-    function renderResume(apiResponse) {
-        const data = apiResponse.extracted_data || apiResponse;
-        const personal = data.personal_info || {};
-
-        // ================= PERSONAL =================
-        document.getElementById("name").innerText =
-            personal.name || personal.full_name || "";
-
-        document.getElementById("role").innerText =
-            personal.role || personal.job_title || "Student";
-
-        document.getElementById("email").innerText =
-            personal.email || "";
-
-        document.getElementById("phone").innerText =
-            personal.phone || personal.phone_number || "";
-
-        document.getElementById("location").innerText =
-            personal.address || personal.location || "India";
-
-        document.getElementById("linkedin").href =
-            personal.linkedIn || personal.linkedin || "#";
-
-        document.getElementById("github").href =
-            personal.github || "#";
-
-        // ================= SUMMARY =================
-        document.getElementById("profileSummary").innerText =
-            data.profile_summary ||
-            (data.updatedProfileSummary || []).join(" ");
-
-        // ================= EXPERIENCE =================
-        const expDiv = document.getElementById("experience");
-        expDiv.innerHTML = "";
-
-        (data.experience || []).forEach(exp => {
-            const descriptions = Array.isArray(exp.description)
-                ? exp.description
-                : [exp.description || ""];
-
-            expDiv.innerHTML += `
-                <div class="experience-item">
-                    <div class="experience-header">
-                        <strong>${exp.role || exp.position || exp.title || ""}</strong>
-                    </div>
-                    <div class="experience-meta">
-                        ${exp.company || exp.organization || ""}
-                        ${formatDateRange(exp.start_date, exp.end_date)}
-                    </div>
-                    <ul>
-                        ${descriptions
-                            .filter(Boolean)
-                            .map(d => `<li>${d}</li>`)
-                            .join("")}
-                    </ul>
-                </div>
-            `;
+    function renderPlainList(items, sectionId, listId) {
+        const section = document.getElementById(sectionId);
+        const list = document.getElementById(listId);
+        if (!list) return;
+        list.innerHTML = '';
+        const arr = Array.isArray(items) ? items : [];
+        arr.forEach(item => {
+            const el = document.createElement(list.tagName === 'UL' || list.tagName === 'OL' ? 'li' : 'div');
+            el.className = 'mb-1';
+            el.textContent = typeof item === 'string' ? item : (item.description || item.title || item.name || '');
+            list.appendChild(el);
         });
-
-        // ================= PROJECTS =================
-        const projDiv = document.getElementById("projects");
-        projDiv.innerHTML = "";
-
-        (data.projects || []).forEach(project => {
-            const desc = Array.isArray(project.description)
-                ? project.description
-                : [project.description || ""];
-
-            projDiv.innerHTML += `
-                <div class="experience-item">
-                    <div class="experience-header">
-                        <strong>${project.title || project.project_name || ""}</strong>
-                    </div>
-                    ${
-                        project.technologies
-                            ? `<div class="experience-meta">${Array.isArray(project.technologies)
-                                ? project.technologies.join(", ")
-                                : project.technologies}</div>`
-                            : ""
-                    }
-                    <ul>
-                        ${desc.filter(Boolean).map(d => `<li>${d}</li>`).join("")}
-                    </ul>
-                </div>
-            `;
-        });
-
-        // ================= ACHIEVEMENTS =================
-        const achievementDiv = document.getElementById("achievements");
-        achievementDiv.innerHTML = "";
-
-        (data.achievements || []).forEach(item => {
-            achievementDiv.innerHTML += `<li>${item}</li>`;
-        });
-
-        // ================= SKILLS =================
-        createTags(data.skills, "skills");
-
-        // ================= LANGUAGES =================
-        createTags(data.languages, "languages");
-
-        // ================= INTERESTS =================
-        createTags(
-            data.areas_of_interest ||
-            data.interests,
-            "interests"
-        );
-
-        // ================= HOBBIES =================
-        createTags(data.hobbies, "hobbies");
-
-        // ================= EDUCATION =================
-        const eduDiv = document.getElementById("education");
-        eduDiv.innerHTML = "";
-
-        (data.college || []).forEach(edu => {
-            eduDiv.innerHTML += `
-                <div class="education-item">
-                    <div class="education-degree">
-                        ${edu.degree || edu.course || ""}
-                    </div>
-                    <div class="education-institution">
-                        ${edu.institution || edu.college_name || ""}
-                    </div>
-                    <div class="education-date">
-                        ${formatDateRange(edu.start_date, edu.end_date)}
-                    </div>
-                    ${
-                        edu.cgpa
-                            ? `<div class="education-percentage">CGPA: ${edu.cgpa}</div>`
-                            : ""
-                    }
-                    ${
-                        edu.percentage
-                            ? `<div class="education-percentage">Percentage: ${edu.percentage}</div>`
-                            : ""
-                    }
-                </div>
-            `;
-        });
-
-        // ================= CERTIFICATIONS =================
-        const certDiv = document.getElementById("certifications");
-        certDiv.innerHTML = "";
-
-        (data.certifications || []).forEach(cert => {
-            certDiv.innerHTML += `
-                <div class="cert-item">
-                    <div class="cert-name">${cert.name || cert.title || ""}</div>
-                    <div class="cert-issuer">${cert.issuing_organization || cert.provider || ""}</div>
-                    <div class="cert-date">${cert.year || cert.date || ""}</div>
-                </div>
-            `;
-        });
+        if (section) showSection(sectionId, arr.length > 0);
     }
 
-    renderResume(RESUME_DATA);
+    function showSection(id, show) {
+        const el = typeof id === 'string' ? document.getElementById(id) : id;
+        if (!el) return;
+        if (show) {
+            el.classList.remove('hidden');
+            el.style.display = '';
+        } else {
+            el.style.display = 'none';
+        }
+    }
+
+    function formatDateRange(s, e) {
+        if (!s && !e) return '';
+        return s ? `${s} - ${e || 'Present'}` : (e || '');
+    }
 </script>
 </body>
 </html>

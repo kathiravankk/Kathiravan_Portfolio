@@ -17,9 +17,10 @@ import 'package:internsharks/app/data/models/account/chat_mcq_question_model.dar
 import 'package:internsharks/app/data/models/account/chat_mcq_result_model.dart';
 import 'package:internsharks/app/data/models/account/create_new_resume_model.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/education_model.dart'
+    hide School;
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
-import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/student_login_controller.dart';
@@ -56,7 +57,7 @@ class ChatNewResumeCreationScreen extends StatefulWidget {
 class _ChatNewResumeCreationScreenState
     extends State<ChatNewResumeCreationScreen> {
   final StudentLoginController loginController =
-  Get.find<StudentLoginController>();
+      Get.find<StudentLoginController>();
   final RegisterController registerController = Get.find<RegisterController>();
 
   final TextEditingController chatTextController = TextEditingController();
@@ -74,12 +75,15 @@ class _ChatNewResumeCreationScreenState
   // Set of completed sections received from chat backend
   final Set<String> _completedSections = {};
   final Set<String> _handledCompletionSignatures = {};
+  final Set<String> _verifiedItems = {};
 
   bool _quizDialogOpen = false;
   bool isInitialLoading = true;
+  bool _isChatCompleted = false;
 
   // Section Form Field Controllers (Reused from Profile Edit Screen)
   final _nameCtrl = TextEditingController();
+  final _surnameCtrl = TextEditingController(); // ADDED
   final _emailCtrl = TextEditingController();
   final _mobileCtrl = TextEditingController();
   final _linkedinCtrl = TextEditingController();
@@ -90,9 +94,21 @@ class _ChatNewResumeCreationScreenState
   final _hobbiesCtrl = TextEditingController();
   final _interestsCtrl = TextEditingController();
 
-  // College Controllers
   final _degreeCtrl = TextEditingController();
   final _institutionCtrl = TextEditingController();
+
+  final _higherInstCtrl = TextEditingController();
+  final _higherBoardCtrl = TextEditingController();
+  final _higherPercCtrl = TextEditingController();
+  final _higherYearCtrl = TextEditingController();
+
+  final _secInstCtrl = TextEditingController();
+  final _secBoardCtrl = TextEditingController();
+  final _secPercCtrl = TextEditingController();
+  final _secYearCtrl = TextEditingController();
+
+  final _workshopsCtrl = TextEditingController();
+  final _achievementsCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -100,7 +116,9 @@ class _ChatNewResumeCreationScreenState
 
     // Automatically sync text controllers whenever GetX updates the resume model
     ever(loginController.createNewResumeModelRx, (_) {
-      _syncControllersFromCollectedData(loginController.createNewResumeModel.collectedData);
+      _syncControllersFromCollectedData(
+        loginController.createNewResumeModel.collectedData,
+      );
     });
 
     createChatResume(reqData: {"action": "start_chat"}, isChatStarted: true);
@@ -112,6 +130,7 @@ class _ChatNewResumeCreationScreenState
     scrollController.dispose();
     chatFocusNode.dispose();
     _nameCtrl.dispose();
+    _surnameCtrl.dispose(); // ADDED
     _emailCtrl.dispose();
     _mobileCtrl.dispose();
     _linkedinCtrl.dispose();
@@ -124,6 +143,38 @@ class _ChatNewResumeCreationScreenState
     _degreeCtrl.dispose();
     _institutionCtrl.dispose();
     super.dispose();
+  }
+
+  String _capitalizeName(String text) {
+    if (text.trim().isEmpty) return "";
+    return text
+        .trim()
+        .split(RegExp(r'\s+'))
+        .map((word) {
+          if (word.isEmpty) return "";
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(" ");
+  }
+
+  // Combines name and surname: "Kathir" + "Kannan" -> "Kathir Kannan"
+  String _getCombinedFullName() {
+    final firstName = _capitalizeName(_nameCtrl.text);
+    final surname = _capitalizeName(_surnameCtrl.text);
+
+    return [firstName, surname].where((s) => s.isNotEmpty).join(" ");
+  }
+
+  void _logApi({required String title, dynamic data}) {
+    try {
+      final String prettyJson = const JsonEncoder.withIndent('  ').convert(data);
+      debugPrint('\n==================================================');
+      debugPrint('➡️ API LOG: $title');
+      debugPrint(prettyJson, wrapWidth: 1024);
+      debugPrint('==================================================\n');
+    } catch (e) {
+      debugPrint('\n➡️ API LOG: $title => $data\n');
+    }
   }
 
   // ==========================================================================
@@ -145,8 +196,19 @@ class _ChatNewResumeCreationScreenState
       FocusScope.of(context).unfocus();
     }
 
+    // ── Snapshot current collectedData before API call ──
+    // If the API errors out, we restore this so the Live Preview isn't wiped.
+    final ResumeCollectedData? previousCollectedData =
+        loginController.createNewResumeModel.collectedData;
+
     try {
+      _logApi(title: "createChatResume REQUEST", data: reqData);
       await loginController.createNewChatResume(chatRequestData: reqData);
+      _logApi(
+        title:
+            "createChatResume RESPONSE [Status: ${loginController.getResponseCode()}]",
+        data: loginController.createNewResumeModel.toJson(),
+      );
 
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
@@ -155,8 +217,8 @@ class _ChatNewResumeCreationScreenState
         if (isChatStarted == true) {
           userId =
               loginController.createNewResumeModel.userId ??
-                  reply?.personalInfo?.name ??
-                  userId;
+              reply?.personalInfo?.name ??
+              userId;
           userId = loginController.createNewResumeModel.userId ?? userId;
         }
 
@@ -173,25 +235,151 @@ class _ChatNewResumeCreationScreenState
         // Sync controllers with newly collected data
         _syncControllersFromCollectedData(reply);
 
+        // ── After start_chat, merge existing profile data into collectedData ──
+        // The chat API's collected_data may not include data already saved to the
+        // profile (paper_presentations, internships, projects, college, etc.).
+        // We fetch the profile API and merge those into collectedData so the
+        // Live Preview shows all existing sections immediately.
+        if (isChatStarted == true) {
+          // Fetch latest profile if we don't have it yet
+          final storedId = await LocalStorageService.getStudentId() ?? '';
+          if (storedId.isNotEmpty &&
+              registerController.studentProfileModel.studentName == null) {
+            await registerController.getStudentProfile(studentId: storedId);
+          }
+
+          final profileModel = registerController.studentProfileModel;
+          final current = loginController.createNewResumeModel.collectedData;
+
+          // Build a merged ResumeCollectedData that prefers chat API data where
+          // available, but fills in blanks from the profile API.
+          loginController.createNewResumeModel.collectedData = ResumeCollectedData(
+            personalInfo: current?.personalInfo ??
+                (profileModel.studentName != null
+                    ? PersonalInfoModel(
+                        name: profileModel.studentName ?? '',
+                        sureName: '',
+                        role: profileModel.role,
+                        email: profileModel.studEmail ?? '',
+                        phone: profileModel.studMobileNo ?? '',
+                        linkedIn: profileModel.linkedIn,
+                        github: profileModel.github,
+                        gender: profileModel.studentGender ?? '',
+                        location: profileModel.location ?? '',
+                      )
+                    : null),
+            profileSummary:
+                (current?.profileSummary?.isNotEmpty == true)
+                    ? current!.profileSummary
+                    : profileModel.profileSummary,
+            skills: (current?.skills?.isNotEmpty == true)
+                ? current!.skills
+                : profileModel.studProgrammingLang,
+            // Backend-owned list fields — prefer chat, fallback to profile API
+            paperPresentations: (current?.paperPresentations?.isNotEmpty == true)
+                ? current!.paperPresentations
+                : profileModel.paperPresentations,
+            projects: (current?.projects?.isNotEmpty == true)
+                ? current!.projects
+                : profileModel.projects,
+            internships: (current?.internships?.isNotEmpty == true)
+                ? current!.internships
+                : profileModel.internships,
+            industrialVisits: (current?.industrialVisits?.isNotEmpty == true)
+                ? current!.industrialVisits
+                : profileModel.industrialVisits,
+            certifications: current?.certifications,
+            education: current?.education ?? profileModel.education,
+            colleges1: current?.colleges1 ??
+                (profileModel.college is List<dynamic>
+                    ? (profileModel.college as List<dynamic>)
+                        .whereType<Map<String, dynamic>>()
+                        .map((e) => CollegeData.fromJson(e))
+                        .toList()
+                    : null),
+            workshops: (current?.workshops?.isNotEmpty == true)
+                ? current!.workshops
+                : profileModel.workshops,
+            publications: (current?.publications?.isNotEmpty == true)
+                ? current!.publications
+                : profileModel.publications,
+            achievements: (current?.achievements?.isNotEmpty == true)
+                ? current!.achievements
+                : profileModel.achievements,
+            leadership: (current?.leadership?.isNotEmpty == true)
+                ? current!.leadership
+                : profileModel.leadership,
+            volunteerExperience:
+                (current?.volunteerExperience?.isNotEmpty == true)
+                    ? current!.volunteerExperience
+                    : profileModel.volunteerExperience,
+            languages: (current?.languages?.isNotEmpty == true)
+                ? current!.languages
+                : profileModel.languagesKnown,
+            hobbies: (current?.hobbies?.isNotEmpty == true)
+                ? current!.hobbies
+                : profileModel.hobbies,
+            areasOfInterest: (current?.areasOfInterest?.isNotEmpty == true)
+                ? current!.areasOfInterest
+                : profileModel.areasOfInterest,
+          );
+          loginController.createNewResumeModelRx.refresh();
+        }
+
         final String? completedSection =
             loginController.createNewResumeModel.completedSection;
 
-        if (completedSection != null && completedSection.isNotEmpty) {
+        final String? nextField =
+            loginController.createNewResumeModel.nextField;
+
+        if ((completedSection == "DONE" ||
+            completedSection == "achievements_completed" ||
+            nextField == "DONE") && !_isChatCompleted) {
+          _isChatCompleted = true;
+          messages.add(
+            ChatMessage(
+              text:
+                  "🎉 Your resume is complete! You are being redirected to further steps...",
+              isBot: true,
+            ),
+          );
+          if (mounted) setState(() {});
+          Future.delayed(const Duration(seconds: 3), () async {
+            if (mounted) {
+              await getStudentProfileData();
+            }
+          });
+        } else if (completedSection != null && completedSection.isNotEmpty) {
           _completedSections.add(completedSection);
           await _handleCompletedSection(completedSection);
         }
       } else {
-        AppFunctions.apiErrorHandling(
-          loginController.getResponseCode(),
-          loginController.createNewResumeModel.message ??
-              "Something went wrong!, try again later!",
+        // ── Restore previous collectedData on API error ──
+        if (previousCollectedData != null) {
+          loginController.createNewResumeModel.collectedData =
+              previousCollectedData;
+          loginController.createNewResumeModelRx.refresh();
+        }
+        final errorMsg = loginController.createNewResumeModel.message;
+        messages.add(
+          ChatMessage(
+            text: errorMsg ?? "Something went wrong! Please try again.",
+            isBot: true,
+          ),
         );
       }
     } catch (error) {
-      AppFunctions.apiErrorHandling(
-        loginController.getResponseCode(),
-        loginController.createNewResumeModel.message ??
-            "Something went wrong!, try again later!",
+      // ── Restore previous collectedData on exception ──
+      if (previousCollectedData != null) {
+        loginController.createNewResumeModel.collectedData =
+            previousCollectedData;
+        loginController.createNewResumeModelRx.refresh();
+      }
+      messages.add(
+        ChatMessage(
+          text: "Something went wrong! Please try again.",
+          isBot: true,
+        ),
       );
     } finally {
       if (isInitialLoading) {
@@ -209,9 +397,26 @@ class _ChatNewResumeCreationScreenState
     if (data == null) return;
 
     if (data.personalInfo != null) {
-      _nameCtrl.text = data.personalInfo!.name ?? _nameCtrl.text;
-      _emailCtrl.text = data.personalInfo!.email ?? _emailCtrl.text;
-      _mobileCtrl.text = data.personalInfo!.phone ?? _mobileCtrl.text;
+      String fullName = data.personalInfo!.name;
+      String surname = data.personalInfo!.sureName ?? "";
+
+      // If name coming from backend already includes surname, assign full name cleanly
+      if (surname.isNotEmpty && fullName.endsWith(surname)) {
+        _nameCtrl.text = fullName.substring(0, fullName.length - surname.length).trim();
+        _surnameCtrl.text = surname;
+      } else {
+        _nameCtrl.text = fullName;
+        _surnameCtrl.text = surname;
+      }
+
+      _emailCtrl.text = data.personalInfo!.email.isNotEmpty
+          ? data.personalInfo!.email
+          : _emailCtrl.text;
+
+      _mobileCtrl.text = data.personalInfo!.phone.isNotEmpty
+          ? data.personalInfo!.phone
+          : _mobileCtrl.text;
+
       _linkedinCtrl.text = data.personalInfo!.linkedIn ?? _linkedinCtrl.text;
       _githubCtrl.text = data.personalInfo!.github ?? _githubCtrl.text;
     }
@@ -231,10 +436,33 @@ class _ChatNewResumeCreationScreenState
     if (data.areasOfInterest != null && data.areasOfInterest!.isNotEmpty) {
       _interestsCtrl.text = data.areasOfInterest!.join(", ");
     }
+    if (data.workshops != null && data.workshops!.isNotEmpty) {
+      _workshopsCtrl.text = data.workshops!.join(", ");
+    }
+    if (data.achievements != null && data.achievements!.isNotEmpty) {
+      _achievementsCtrl.text = data.achievements!.join(", ");
+    }
 
-    if (data.education?.college != null && data.education!.college!.isNotEmpty) {
-      _degreeCtrl.text = data.education!.college!.first.degree ?? _degreeCtrl.text;
-      _institutionCtrl.text = data.education!.college!.first.institution ?? _institutionCtrl.text;
+    final higherSec = data.education?.school?.higherSecondary;
+    if (higherSec != null) {
+      _higherInstCtrl.text = higherSec.institution ?? _higherInstCtrl.text;
+      _higherBoardCtrl.text = higherSec.board?.toString() ?? _higherBoardCtrl.text;
+      _higherPercCtrl.text = higherSec.percentage ?? _higherPercCtrl.text;
+      _higherYearCtrl.text = higherSec.yearOfPassing ?? _higherYearCtrl.text;
+    }
+
+    final sec = data.education?.school?.secondary;
+    if (sec != null) {
+      _secInstCtrl.text = sec.institution ?? _secInstCtrl.text;
+      _secBoardCtrl.text = sec.board?.toString() ?? _secBoardCtrl.text;
+      _secPercCtrl.text = sec.percentage ?? _secPercCtrl.text;
+      _secYearCtrl.text = sec.yearOfPassing ?? _secYearCtrl.text;
+    }
+
+    final colleges = data.education?.college;
+    if (colleges != null && colleges.isNotEmpty) {
+      _degreeCtrl.text = colleges.first.degree ?? _degreeCtrl.text;
+      _institutionCtrl.text = colleges.first.institution ?? _institutionCtrl.text;
     }
   }
 
@@ -252,7 +480,10 @@ class _ChatNewResumeCreationScreenState
     }
 
     // Call Update Profile API on every section completion or DONE trigger
-    await updateCompleteSectionInfo(isDone: completedSection == "DONE", completedSection: completedSection);
+    await updateCompleteSectionInfo(
+      isDone: completedSection == "DONE",
+      completedSection: completedSection,
+    );
   }
 
   // ==========================================================================
@@ -269,7 +500,13 @@ class _ChatNewResumeCreationScreenState
     };
 
     try {
+      _logApi(title: "_startKnowledgeCheck REQUEST", data: quizData);
       await loginController.getChatMcqQuestion(chatRequestData: quizData);
+      _logApi(
+        title:
+            "_startKnowledgeCheck RESPONSE [Status: ${loginController.getResponseCode()}]",
+        data: loginController.chatMcqQuestionModel.toJson(),
+      );
 
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
@@ -294,6 +531,89 @@ class _ChatNewResumeCreationScreenState
           ),
         );
         _quizDialogOpen = false;
+
+        // Process quiz result after dialog closes
+        final ChatMcqResultModel result = loginController.chatMcqResultModel;
+        if (result.score != null) {
+          final int score = result.score!;
+          final int total = result.total ?? 0;
+
+          // 1. Post AI chat message with score
+          messages.add(
+            ChatMessage(
+              text: "🎯 Quiz done! Score: $score/$total.",
+              isBot: true,
+            ),
+          );
+          scrollToBottom();
+
+          // 2. Track verified items if quiz passed
+          final bool isVerified =
+              result.verified == true || (total > 0 && score / total >= 0.5);
+
+          if (isVerified) {
+            if (result.questions != null && result.questions!.isNotEmpty) {
+              for (final qv in result.questions!) {
+                if ((qv.verified == true || isVerified) &&
+                    qv.skill != null &&
+                    qv.skill!.trim().isNotEmpty) {
+                  _verifiedItems.add(qv.skill!.trim().toLowerCase());
+                  _verifiedItems.add(qv.skill!.trim());
+                }
+              }
+            }
+
+            final collected =
+                loginController.createNewResumeModel.collectedData;
+            if (collected != null) {
+              if (section == "skill" && collected.skills != null) {
+                for (final s in collected.skills!) {
+                  if (s.trim().isNotEmpty) {
+                    _verifiedItems.add(s.trim().toLowerCase());
+                    _verifiedItems.add(s.trim());
+                  }
+                }
+              } else if (section == "certification" &&
+                  collected.certifications != null) {
+                for (final c in collected.certifications!) {
+                  if ((c.name ?? "").trim().isNotEmpty) {
+                    _verifiedItems.add(c.name!.trim().toLowerCase());
+                    _verifiedItems.add(c.name!.trim());
+                  }
+                }
+              } else if (section == "project" && collected.projects != null) {
+                for (final p in collected.projects!) {
+                  if ((p.title ?? "").trim().isNotEmpty) {
+                    _verifiedItems.add(p.title!.trim().toLowerCase());
+                    _verifiedItems.add(p.title!.trim());
+                  }
+                }
+              } else if (section == "internship" &&
+                  collected.internships != null) {
+                for (final i in collected.internships!) {
+                  if ((i.role ?? "").trim().isNotEmpty) {
+                    _verifiedItems.add(i.role!.trim().toLowerCase());
+                    _verifiedItems.add(i.role!.trim());
+                  }
+                  if ((i.company ?? "").trim().isNotEmpty) {
+                    _verifiedItems.add(i.company!.trim().toLowerCase());
+                    _verifiedItems.add(i.company!.trim());
+                  }
+                }
+              } else if (section == "paperpresentation" &&
+                  collected.paperPresentations != null) {
+                for (final pp in collected.paperPresentations!) {
+                  if ((pp.title ?? "").trim().isNotEmpty) {
+                    _verifiedItems.add(pp.title!.trim().toLowerCase());
+                    _verifiedItems.add(pp.title!.trim());
+                  }
+                }
+              }
+            }
+          }
+
+          setState(() {});
+        }
       } else {
         AppFunctions.apiErrorHandling(
           loginController.getResponseCode(),
@@ -319,7 +639,13 @@ class _ChatNewResumeCreationScreenState
     };
 
     try {
+      _logApi(title: "_submitKnowledgeCheck REQUEST", data: resultData);
       await loginController.getChatMcqResult(chatRequestData: resultData);
+      _logApi(
+        title:
+            "_submitKnowledgeCheck RESPONSE [Status: ${loginController.getResponseCode()}]",
+        data: loginController.chatMcqResultModel.toJson(),
+      );
 
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
@@ -344,6 +670,24 @@ class _ChatNewResumeCreationScreenState
   // UPDATE PROFILE API & NAVIGATE TO TEMPLATES ON DONE
   // ==========================================================================
 
+  dynamic sanitizePayload(dynamic data) {
+    if (data is Map<String, dynamic>) {
+      final Map<String, dynamic> cleanedMap = {};
+      data.forEach((key, value) {
+        // Omit empty or null _id fields entirely
+        if (key == '_id' &&
+            (value == null || value.toString().trim().isEmpty)) {
+          return;
+        }
+        cleanedMap[key] = sanitizePayload(value);
+      });
+      return cleanedMap;
+    } else if (data is List) {
+      return data.map((item) => sanitizePayload(item)).toList();
+    }
+    return data;
+  }
+
   Future<void> updateCompleteSectionInfo({
     bool isDone = false,
     String? completedSection,
@@ -351,244 +695,378 @@ class _ChatNewResumeCreationScreenState
     final reply = loginController.createNewResumeModel.collectedData;
     final ResumeCollectedData? collected = reply;
 
-    // 1. Build Flat Payload for Register/Update APIs
+    final String resolvedRole = (collected?.personalInfo?.role != null &&
+            collected!.personalInfo!.role!.trim().isNotEmpty)
+        ? collected.personalInfo!.role!
+        : (loginController.createNewResumeModel.collectedData?.personalInfo?.role ?? "");
+
+    final String combinedName = _getCombinedFullName();
+    final String formattedSurname = _capitalizeName(_surnameCtrl.text);
+
+    final String resolvedName = combinedName.isNotEmpty
+        ? combinedName
+        : (collected?.personalInfo?.name ?? "");
+    final String resolvedSurname = formattedSurname.isNotEmpty
+        ? formattedSurname
+        : (collected?.personalInfo?.sureName ?? "");
+    final String resolvedEmail = _emailCtrl.text.trim().isNotEmpty
+        ? _emailCtrl.text.trim()
+        : (collected?.personalInfo?.email ?? "");
+    final String resolvedPhone = _mobileCtrl.text.trim().isNotEmpty
+        ? _mobileCtrl.text.trim()
+        : (collected?.personalInfo?.phone ?? "");
+    final String resolvedSummary = _summaryCtrl.text.trim().isNotEmpty
+        ? _summaryCtrl.text.trim()
+        : (collected?.profileSummary ?? "");
+    final String resolvedLinkedIn = _linkedinCtrl.text.trim().isNotEmpty
+        ? _linkedinCtrl.text.trim()
+        : (collected?.personalInfo?.linkedIn ?? "");
+    final String resolvedGitHub = _githubCtrl.text.trim().isNotEmpty
+        ? _githubCtrl.text.trim()
+        : (collected?.personalInfo?.github ?? "");
+    final String resolvedLocation = collected?.personalInfo?.location ?? "";
+
     final collegeArray = collected?.education?.college ?? [];
     final secondaryData = collected?.education?.school?.secondary;
     final higherSecondaryData = collected?.education?.school?.higherSecondary;
 
     final collegeList = collegeArray.isNotEmpty
         ? collegeArray
-        .map(
-          (c) => {
-        'degree': c.degree ?? '',
-        'department': c.department ?? '',
-        'institution': c.institution ?? '',
-        'start_year': c.startYear ?? '',
-        'end_year': c.endYear ?? '',
-      },
-    )
-        .toList()
+              .map(
+                (c) => {
+                  'degree': c.degree ?? '',
+                  'department': c.department ?? '',
+                  'institution': c.institution ?? '',
+                  'start_year': c.startYear ?? '',
+                  'end_year': c.endYear ?? '',
+                },
+              )
+              .toList()
         : [];
 
-    final secondaryList = secondaryData != null ? [secondaryData.toJson()] : [];
-    final higherSecondaryList = higherSecondaryData != null
-        ? [higherSecondaryData.toJson()]
-        : [];
+    final higherSecMap = {
+      'institution': _higherInstCtrl.text.trim().isNotEmpty
+          ? _higherInstCtrl.text.trim()
+          : (higherSecondaryData?.institution ?? ''),
+      'board': _higherBoardCtrl.text.trim().isNotEmpty
+          ? _higherBoardCtrl.text.trim()
+          : (higherSecondaryData?.board?.toString() ?? ''),
+      'percentage': _higherPercCtrl.text.trim().isNotEmpty
+          ? _higherPercCtrl.text.trim()
+          : (higherSecondaryData?.percentage ?? ''),
+      'year_of_passing': _higherYearCtrl.text.trim().isNotEmpty
+          ? _higherYearCtrl.text.trim()
+          : (higherSecondaryData?.yearOfPassing ?? ''),
+    };
+
+    final secondaryMap = {
+      'institution': _secInstCtrl.text.trim().isNotEmpty
+          ? _secInstCtrl.text.trim()
+          : (secondaryData?.institution ?? ''),
+      'board': _secBoardCtrl.text.trim().isNotEmpty
+          ? _secBoardCtrl.text.trim()
+          : (secondaryData?.board?.toString() ?? ''),
+      'percentage': _secPercCtrl.text.trim().isNotEmpty
+          ? _secPercCtrl.text.trim()
+          : (secondaryData?.percentage ?? ''),
+      'year_of_passing': _secYearCtrl.text.trim().isNotEmpty
+          ? _secYearCtrl.text.trim()
+          : (secondaryData?.yearOfPassing ?? ''),
+    };
+
+    final secondaryList = (secondaryMap['institution'] as String).isNotEmpty ||
+            (secondaryMap['board'] as String).isNotEmpty
+        ? [secondaryMap]
+        : (secondaryData != null ? [secondaryData.toJson()] : []);
+    final higherSecondaryList = (higherSecMap['institution'] as String).isNotEmpty ||
+            (higherSecMap['board'] as String).isNotEmpty
+        ? [higherSecMap]
+        : (higherSecondaryData != null ? [higherSecondaryData.toJson()] : []);
 
     final educationObject = {
       'school': {
-        'higher_secondary': higherSecondaryData?.toJson() ?? {},
-        'secondary': secondaryData?.toJson() ?? {},
+        'higher_secondary': higherSecMap,
+        'secondary': secondaryMap,
       },
       'college': collegeList,
     };
 
-    Map<String, dynamic> payload = {
-      "studname": _nameCtrl.text.trim().isNotEmpty
-          ? _nameCtrl.text.trim()
-          : collected?.personalInfo?.name ?? "",
-      "studemail": _emailCtrl.text.trim().isNotEmpty
-          ? _emailCtrl.text.trim()
-          : collected?.personalInfo?.email ?? "",
-      "studmobileno": _mobileCtrl.text.trim().isNotEmpty
-          ? _mobileCtrl.text.trim()
-          : collected?.personalInfo?.phone ?? "",
-      "profile_summary": _summaryCtrl.text.trim().isNotEmpty
-          ? _summaryCtrl.text.trim()
-          : collected?.profileSummary ?? "",
-      "studprogramminglang": _skillsCtrl.text.trim().isNotEmpty
-          ? _skillsCtrl.text
-          .split(",")
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList()
-          : collected?.skills ?? [],
-      "projects": jsonEncode(
-        collected?.projects?.map((e) => e.toJson()).toList() ?? [],
-      ),
-      "paper_presentations": jsonEncode(
-        collected?.paperPresentations?.map((e) => e.toJson()).toList() ?? [],
-      ),
-      "internships": jsonEncode(
-        collected?.internships?.map((e) => e.toJson()).toList() ?? [],
-      ),
-      "studentcertificate": jsonEncode(
-        collected?.certifications?.map((e) => e.toJson()).toList() ?? [],
-      ),
-      "workshops": jsonEncode(collected?.workshops ?? []),
-      "publications": jsonEncode(collected?.publications ?? []),
-      "achievements": jsonEncode(collected?.achievements ?? []),
-      "leadership": jsonEncode(collected?.leadership ?? []),
-      "volunteer_experience": jsonEncode(collected?.volunteerExperience ?? []),
-      "languages_known": _languagesCtrl.text.trim().isNotEmpty
-          ? jsonEncode(
-        _languagesCtrl.text.split(",").map((e) => e.trim()).toList(),
-      )
-          : jsonEncode(collected?.languages ?? []),
-      "areas_of_interest": _interestsCtrl.text.trim().isNotEmpty
-          ? jsonEncode(
-        _interestsCtrl.text.split(",").map((e) => e.trim()).toList(),
-      )
-          : jsonEncode(collected?.areasOfInterest ?? []),
-      "hobbies": _hobbiesCtrl.text.trim().isNotEmpty
-          ? jsonEncode(
-        _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList(),
-      )
-          : jsonEncode(collected?.hobbies ?? []),
-      "industrial_visits": jsonEncode(collected?.industrialVisits ?? []),
-      "linkedIn": _linkedinCtrl.text.trim().isNotEmpty
-          ? _linkedinCtrl.text.trim()
-          : collected?.personalInfo?.linkedIn ?? "",
-      "github": _githubCtrl.text.trim().isNotEmpty
-          ? _githubCtrl.text.trim()
-          : collected?.personalInfo?.github ?? "",
-      "portfolio_website": _githubCtrl.text.trim().isNotEmpty
-          ? _githubCtrl.text.trim()
-          : collected?.personalInfo?.github ?? "",
-      "secondary": jsonEncode(secondaryList),
-      "higher_secondary": jsonEncode(higherSecondaryList),
-      "college": jsonEncode(collegeList),
-      "education": jsonEncode(educationObject),
-      "studentdegree": _degreeCtrl.text.trim().isNotEmpty
-          ? _degreeCtrl.text.trim()
-          : (collegeArray.isNotEmpty ? collegeArray.first.degree ?? "" : ""),
-      "studentcollegename": _institutionCtrl.text.trim().isNotEmpty
-          ? _institutionCtrl.text.trim()
-          : (collegeArray.isNotEmpty
-          ? collegeArray.first.institution ?? ""
-          : ""),
+    final sanitizedSecondary = sanitizePayload(secondaryList);
+    final sanitizedHigherSecondary = sanitizePayload(higherSecondaryList);
+    final sanitizedEducation = sanitizePayload(educationObject);
+    final sanitizedCollege = sanitizePayload(collegeList);
+
+    final rawSkills = _skillsCtrl.text.trim().isNotEmpty
+        ? _skillsCtrl.text
+              .split(",")
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList()
+        : (collected?.skills ?? []);
+
+    final rawLanguages = _languagesCtrl.text.trim().isNotEmpty
+        ? _languagesCtrl.text
+              .split(",")
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList()
+        : (collected?.languages ?? []);
+
+    final rawInterests = _interestsCtrl.text.trim().isNotEmpty
+        ? _interestsCtrl.text
+              .split(",")
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList()
+        : (collected?.areasOfInterest ?? []);
+
+    final rawHobbies = _hobbiesCtrl.text.trim().isNotEmpty
+        ? _hobbiesCtrl.text
+              .split(",")
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList()
+        : (collected?.hobbies ?? []);
+
+    final rawWorkshops = _workshopsCtrl.text.trim().isNotEmpty
+        ? _workshopsCtrl.text
+              .split(",")
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList()
+        : (collected?.workshops ?? []);
+
+    final rawAchievements = _achievementsCtrl.text.trim().isNotEmpty
+        ? _achievementsCtrl.text
+              .split(",")
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList()
+        : (collected?.achievements ?? []);
+
+    final rawProjects = sanitizePayload(
+      collected?.projects?.map((e) => e.toJson()).toList() ?? [],
+    );
+    final rawInternships = sanitizePayload(
+      collected?.internships?.map((e) => e.toJson()).toList() ?? [],
+    );
+    final rawPaperPresentations = sanitizePayload(
+      collected?.paperPresentations?.map((e) => e.toJson()).toList() ?? [],
+    );
+    final rawCertifications = sanitizePayload(
+      collected?.certifications?.map((e) => e.toJson()).toList() ?? [],
+    );
+    final rawIndustrialVisits = sanitizePayload(
+      collected?.industrialVisits?.map((e) => e.toJson()).toList() ?? [],
+    );
+    final rawPublications = collected?.publications ?? [];
+    final rawLeadership = collected?.leadership ?? [];
+    final rawVolunteerExperience = collected?.volunteerExperience ?? [];
+
+    final resolvedDegree = _degreeCtrl.text.trim().isNotEmpty
+        ? _degreeCtrl.text.trim()
+        : (collegeArray.isNotEmpty ? collegeArray.first.degree ?? "" : "");
+
+    final resolvedCollegeName = _institutionCtrl.text.trim().isNotEmpty
+        ? _institutionCtrl.text.trim()
+        : (collegeArray.isNotEmpty
+              ? collegeArray.first.institution ?? ""
+              : "");
+
+    // 1. Build Payload for Profile Update API (jsonEncode for array/object fields to support FormData)
+    Map<String, dynamic> apiPayload = {
+      "studname": resolvedName,
+      "surname": resolvedSurname,
+      "role": resolvedRole,
+      "studemail": resolvedEmail,
+      "studmobileno": resolvedPhone,
+      "profile_summary": resolvedSummary,
+      "location": resolvedLocation,
+      "refcode": "",
+      "linkedIn": resolvedLinkedIn,
+      "github": resolvedGitHub,
+      "portfolio_website": resolvedGitHub,
+
+      "studprogramminglang": jsonEncode(rawSkills),
+      "languages_known": jsonEncode(rawLanguages),
+      "areas_of_interest": jsonEncode(rawInterests),
+      "hobbies": jsonEncode(rawHobbies),
+
+      "projects": jsonEncode(rawProjects),
+      "internships": jsonEncode(rawInternships),
+      "paper_presentations": jsonEncode(rawPaperPresentations),
+      "studentcertificate": jsonEncode(rawCertifications),
+      "industrial_visits": jsonEncode(rawIndustrialVisits),
+      "workshops": jsonEncode(rawWorkshops),
+      "publications": jsonEncode(rawPublications),
+      "achievements": jsonEncode(rawAchievements),
+      "leadership": jsonEncode(rawLeadership),
+      "volunteer_experience": jsonEncode(rawVolunteerExperience),
+
+      "secondary": jsonEncode(sanitizedSecondary),
+      "higher_secondary": jsonEncode(sanitizedHigherSecondary),
+      "college": jsonEncode(sanitizedCollege),
+      "education": jsonEncode(sanitizedEducation),
+      "colleges1": jsonEncode(sanitizedCollege),
+      "colleges2": jsonEncode([]),
+      "colleges3": jsonEncode([]),
+      "studentdegree": resolvedDegree,
+      "studentcollegename": resolvedCollegeName,
+      "institution": jsonEncode([
+        {
+          "institution1": resolvedCollegeName,
+          "institution2": "",
+          "institution3": "",
+        },
+      ]),
+      "degree": jsonEncode([
+        {
+          "degree1": resolvedDegree,
+          "degree2": "",
+          "degree3": "",
+        },
+      ]),
     };
 
     try {
-
-      // 2B. Build Chat Resume Payload with populated fields across all sections
+      // 2. Build Chat Resume Payload (native Dart maps/lists for JSON body)
       Map<String, dynamic> chatPayload = {
         "action": "send_message",
         "user_id": userId,
         "message": "",
         "collected_data": {
-          "profile_summary": payload["profile_summary"],
+          "profile_summary": resolvedSummary,
           "personal_info": {
-            "name": payload["studname"],
-            "surname": "",
-            "email": payload["studemail"],
-            "phone": payload["studmobileno"],
-            "linkedIn": payload["linkedIn"],
-            "github": payload["github"],
-            "portfolio": payload["portfolio_website"],
-            "location": "",
-            "role": payload["studentdegree"],
+            "name": resolvedName,
+            "surname": resolvedSurname,
+            "email": resolvedEmail,
+            "phone": resolvedPhone,
+            "linkedIn": resolvedLinkedIn,
+            "github": resolvedGitHub,
+            "portfolio": resolvedGitHub,
+            "location": resolvedLocation,
+            "role": resolvedRole,
           },
           "refcode": "",
-          "skills": payload["studprogramminglang"],
-          "internships":
-          collected?.internships?.map((e) => e.toJson()).toList() ?? [],
-          "projects":
-          collected?.projects?.map((e) => e.toJson()).toList() ?? [],
-          "industrial_visits": collected?.industrialVisits ?? [],
-          "education": educationObject,
-          "certifications":
-          collected?.certifications?.map((e) => e.toJson()).toList() ??
-              [],
-          "paper_presentations":
-          collected?.paperPresentations
-              ?.map((e) => e.toJson())
-              .toList() ??
-              [],
-          "workshops": collected?.workshops ?? [],
-          "publications": collected?.publications ?? [],
-          "achievements": collected?.achievements ?? [],
-          "leadership": collected?.leadership ?? [],
-          "volunteer_experience": collected?.volunteerExperience ?? [],
-          "languages": _languagesCtrl.text.trim().isNotEmpty
-              ? _languagesCtrl.text.split(",").map((e) => e.trim()).toList()
-              : collected?.languages ?? [],
-          "areas_of_interest": _interestsCtrl.text.trim().isNotEmpty
-              ? _interestsCtrl.text.split(",").map((e) => e.trim()).toList()
-              : collected?.areasOfInterest ?? [],
-          "hobbies": _hobbiesCtrl.text.trim().isNotEmpty
-              ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList()
-              : collected?.hobbies ?? [],
-          "colleges1": collegeList,
+          "skills": rawSkills,
+          "internships": rawInternships,
+          "projects": rawProjects,
+          "industrial_visits": rawIndustrialVisits,
+          "education": sanitizedEducation,
+          "certifications": rawCertifications,
+          "paper_presentations": rawPaperPresentations,
+          "workshops": rawWorkshops,
+          "publications": rawPublications,
+          "achievements": rawAchievements,
+          "leadership": rawLeadership,
+          "volunteer_experience": rawVolunteerExperience,
+          "languages": rawLanguages,
+          "areas_of_interest": rawInterests,
+          "hobbies": rawHobbies,
+          "colleges1": sanitizedCollege,
           "colleges2": [],
           "colleges3": [],
           "institution": [
             {
-              "institution1": payload["studentcollegename"],
+              "institution1": resolvedCollegeName,
               "institution2": "",
               "institution3": "",
             },
           ],
           "degree": [
-            {
-              "degree1": payload["studentdegree"],
-              "degree2": "",
-              "degree3": "",
-            },
+            {"degree1": resolvedDegree, "degree2": "", "degree3": ""},
           ],
         },
       };
 
       // Call Chat Resume Sync API first
+      _logApi(title: "updateCompleteSectionInfo -> createNewChatResume REQUEST", data: chatPayload);
       await loginController.createNewChatResume(chatRequestData: chatPayload);
-      debugPrint("**********************");
-      debugPrint(payload["studemail"]);
-      debugPrint(payload["studmobileno"]);
+      _logApi(
+        title: "updateCompleteSectionInfo -> createNewChatResume RESPONSE [Status: ${loginController.getResponseCode()}]",
+        data: loginController.createNewResumeModel.toJson(),
+      );
 
       final int statusCode = loginController.getResponseCode();
 
       if (statusCode == 200 || statusCode == 201) {
-        print(completedSection.toString());
-        if(completedSection == "mobile_otp_completed"){
+        debugPrint("%%%%%%%%%%%%%%%%%%%");
+        debugPrint(completedSection.toString());
+        if (completedSection == "mobile_otp_completed") {
           debugPrint("&&&&&&&&&&&&&&&");
-          await callRegisterApi(payload: payload);
+          await callRegisterApi(payload: apiPayload);
         }
-        // if (completedSection == "mobile_otp_completed" &&
-        //     registerController.studentRegisterModel.studentToken != null) {
-        // }
+
         // Call Profile Update API
-        if ((payload["studemail"] != null && payload["studemail"] != "") &&
-            (payload["studmobileno"] != null && payload["studmobileno"] != "")) {
-          debugPrint("^^^^^^^^^^^");
-          await registerController.updateStudentProfileData(
-            updateData: payload,
+        if ((apiPayload["studemail"] != null && apiPayload["studemail"] != "") &&
+            (apiPayload["studmobileno"] != null &&
+                apiPayload["studmobileno"] != "")) {
+          _logApi(title: "updateStudentProfileData (apiPayload) REQUEST", data: apiPayload);
+          await registerController.updateChatStudentProfileData(
+            updateData: apiPayload,
+          );
+          _logApi(
+            title: "updateStudentProfileData (apiPayload) RESPONSE [Status: ${registerController.getResponseCode()}]",
+            data: {
+              "message": registerController.updateChatProfileModel.message,
+              "student": registerController.updateChatProfileModel.profileUpdateData?.toJson(),
+            },
           );
         }
 
-        // Refresh Live Preview Model
+        // Refresh Live Preview Model — use FRESH data from API response as base,
+        // then overlay local controller edits on top
+        final freshCollected =
+            loginController.createNewResumeModel.collectedData;
+
         loginController.createNewResumeModel.collectedData =
             ResumeCollectedData(
               personalInfo: PersonalInfoModel(
-                name: payload["studname"],
-                email: payload["studemail"],
-                phone: payload["studmobileno"],
-                linkedIn: payload["linkedIn"],
-                github: payload["github"],
+                name: resolvedName,
+                sureName: resolvedSurname,
+                role: resolvedRole,
+                email: resolvedEmail,
+                phone: resolvedPhone,
+                linkedIn: resolvedLinkedIn,
+                github: resolvedGitHub,
                 gender: "",
-                location: "",
+                location: resolvedLocation,
               ),
-              profileSummary: payload["profile_summary"],
-              skills: List<String>.from(payload["studprogramminglang"] ?? []),
+              profileSummary: resolvedSummary,
+              skills: rawSkills,
               hobbies: _hobbiesCtrl.text.trim().isNotEmpty
                   ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).toList()
-                  : collected?.hobbies,
+                  : (freshCollected?.hobbies ?? collected?.hobbies),
               languages: _languagesCtrl.text.trim().isNotEmpty
                   ? _languagesCtrl.text.split(",").map((e) => e.trim()).toList()
-                  : collected?.languages,
+                  : (freshCollected?.languages ?? collected?.languages),
               areasOfInterest: _interestsCtrl.text.trim().isNotEmpty
                   ? _interestsCtrl.text.split(",").map((e) => e.trim()).toList()
-                  : collected?.areasOfInterest,
-              projects: collected?.projects,
-              internships: collected?.internships,
-              certifications: collected?.certifications,
-              education: collected?.education,
+                  : (freshCollected?.areasOfInterest ?? collected?.areasOfInterest),
+              // Use fresh API data for projects, internships, certs, education,
+              // paper presentations — these come from the backend, not local controllers
+              projects: freshCollected?.projects ?? collected?.projects,
+              internships: freshCollected?.internships ?? collected?.internships,
+              certifications: freshCollected?.certifications ?? collected?.certifications,
+              education: freshCollected?.education ?? collected?.education,
+              paperPresentations: freshCollected?.paperPresentations ?? collected?.paperPresentations,
+              industrialVisits: freshCollected?.industrialVisits ?? collected?.industrialVisits,
+              workshops: freshCollected?.workshops ?? collected?.workshops,
+              publications: freshCollected?.publications ?? collected?.publications,
+              achievements: freshCollected?.achievements ?? collected?.achievements,
+              leadership: freshCollected?.leadership ?? collected?.leadership,
+              volunteerExperience: freshCollected?.volunteerExperience ?? collected?.volunteerExperience,
+              colleges1: freshCollected?.colleges1 ?? collected?.colleges1,
             );
         debugPrint("%%%%%%%%%%%%%%%%");
         loginController.createNewResumeModelRx.refresh();
-        debugPrint("REFRESH DONE — collectedData name: ${loginController.createNewResumeModel.collectedData?.personalInfo?.name}");
+        debugPrint(
+          "REFRESH DONE — collectedData name: ${loginController.createNewResumeModel.collectedData?.personalInfo?.name}",
+        );
         debugPrint("%%%%%%%%%%%%%%%%");
         //await registerController.getStudentProfile(studentId: "");
         if (isDone && mounted) {
+          debugPrint("^^^^^^^^^^^^^^^^^^^^^^^^^");
           await getStudentProfileData();
         }
       } else {
@@ -607,10 +1085,20 @@ class _ChatNewResumeCreationScreenState
     }
   }
 
-  Future<void> callRegisterApi({required Map<String, dynamic> payload})async{
-    try{
+  Future<void> callRegisterApi({required Map<String, dynamic> payload}) async {
+    try {
+      _logApi(title: "callRegisterApi REQUEST", data: payload);
       await registerController.registerNewStudent(registerData: payload);
-      if(registerController.getResponseCode() == 200 || registerController.getResponseCode() == 201){
+      _logApi(
+        title: "callRegisterApi RESPONSE [Status: ${registerController.getResponseCode()}]",
+        data: {
+          "message": registerController.studentRegisterModel.message,
+          "studentToken": registerController.studentRegisterModel.studentToken,
+          "registerData": registerController.studentRegisterModel.registerData?.toJson(),
+        },
+      );
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
         final prefs = await SharedPreferences.getInstance();
         await LocalStorageService.saveStudent(
           token: registerController.studentRegisterModel.studentToken!,
@@ -618,7 +1106,8 @@ class _ChatNewResumeCreationScreenState
         );
         await prefs.setString(
           LocalStorageService.studentNameKey,
-          registerController.studentRegisterModel.registerData!.studentName ?? "",
+          registerController.studentRegisterModel.registerData!.studentName ??
+              "",
         );
         await prefs.setString(
           LocalStorageService.tokenKey,
@@ -626,20 +1115,20 @@ class _ChatNewResumeCreationScreenState
         );
         if (!mounted) return;
         await _showRegistrationSuccessDialog();
-      }
-      else{
+      } else {
         AppFunctions.apiErrorHandling(
           registerController.getResponseCode(),
           "Failed to Register!. Please try again!",
         );
       }
-    }
-    catch( error){
+    } catch (error) {
       AppFunctions.apiErrorHandling(
-          registerController.getResponseCode(),
-          "Failed to Register!. Please try again!");
+        registerController.getResponseCode(),
+        "Failed to Register!. Please try again!",
+      );
     }
   }
+
   Future<void> _showRegistrationSuccessDialog() async {
     const int creditsAdded = 200;
 
@@ -661,50 +1150,19 @@ class _ChatNewResumeCreationScreenState
         registerController.studentRegisterModel.registerData?.id ?? "";
     if (studentId.isEmpty) return;
 
+    _logApi(title: "getStudentProfileData REQUEST", data: {"studentId": studentId});
     await registerController.getStudentProfile(studentId: studentId);
+    _logApi(
+      title: "getStudentProfileData RESPONSE [Status: ${registerController.getResponseCode()}]",
+      data: registerController.studentProfileModel.toJson(),
+    );
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      StudentProfileModel data = registerController.studentProfileModel;
       if (!mounted) return;
       AppFunctions.navigateScreen(
         context,
         AppRoutes.chatResumeTemplateScreen,
         arguments: {
-          "resumeData": ExtractedResumeDataModel(
-            personalInfo: PersonalInfoModel(
-              name: data.studentName ?? "",
-              gender: data.studentGender,
-              email: data.studEmail ?? "",
-              phone: data.studMobileNo ?? "",
-              linkedIn: data.linkedIn,
-              github: data.github,
-              location: "",
-            ),
-            internships: data.internships ?? [],
-            hobbies: data.hobbies,
-            areasOfInterest: data.areasOfInterest,
-            languages: data.languagesKnown,
-            volunteerExperience: data.volunteerExperience,
-            leaderships: data.leadership,
-            achievements: data.achievements,
-            publications: data.publications,
-            workShops: data.workshops,
-            paperPresentations: data.paperPresentations,
-            educationData: data.education,
-            industrialVisits: data.industrialVisits,
-            projects: data.projects,
-            skills: data.studProgrammingLang,
-            profileSummary: (data.profileSummary ?? "").replaceAll('"', ''),
-            colleges: data.college,
-            degree: const [],
-            experience: data.experience,
-            trainings: const [],
-            studentId: data.id,
-            higherSecondary: data.education?.school?.higherSecondary,
-            institution: const [],
-            parents: const [],
-            secondary: data.education?.school?.secondary,
-          ),
           "templateId": 1,
           "isRegisterFlow": true,
         },
@@ -784,7 +1242,7 @@ class _ChatNewResumeCreationScreenState
             onPressed: () => Get.back(),
           ),
           title: Obx(
-                () => Text(
+            () => Text(
               _titleForTab(currentTabIndex.value),
               style: AppStyles.customTextStyle(
                 size: 18,
@@ -795,18 +1253,18 @@ class _ChatNewResumeCreationScreenState
           ),
         ),
         body: Obx(
-              () =>
-          (isInitialLoading && loginController.createNewResumeLoading) ||
-              registerController.studentRegisterLoading
+          () =>
+              (isInitialLoading && loginController.createNewResumeLoading) ||
+                  registerController.studentRegisterLoading
               ? AppAlertUtils.customLoader()
               : IndexedStack(
-            index: currentTabIndex.value,
-            children: [
-              _buildChatBody(),
-              _buildLivePreviewBody(),
-              _buildSectionsBody(),
-            ],
-          ),
+                  index: currentTabIndex.value,
+                  children: [
+                    _buildChatBody(),
+                    _buildLivePreviewBody(),
+                    _buildSectionsBody(),
+                  ],
+                ),
         ),
         bottomNavigationBar: _buildBottomNavigationBar(),
       ),
@@ -833,7 +1291,7 @@ class _ChatNewResumeCreationScreenState
         children: [
           Expanded(
             child: Obx(
-                  () => ListView.builder(
+              () => ListView.builder(
                 controller: scrollController,
                 itemCount: messages.length,
                 itemBuilder: (context, i) => _buildChatBubble(messages[i]),
@@ -841,7 +1299,7 @@ class _ChatNewResumeCreationScreenState
             ),
           ),
           Obx(
-                () => loginController.createNewResumeLoading
+            () => loginController.createNewResumeLoading
                 ? loadingContainer()
                 : const SizedBox.shrink(),
           ),
@@ -858,6 +1316,9 @@ class _ChatNewResumeCreationScreenState
 
   Widget _buildChatBubble(ChatMessage msg) {
     bool isBot = msg.isBot;
+    bool isQuizMessage = isBot && msg.text.contains("Quiz done!");
+    bool isSuccessMessage = isBot && msg.text.contains("🎉 Your resume is complete!");
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -897,31 +1358,53 @@ class _ChatNewResumeCreationScreenState
               ],
               Flexible(
                 child: Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: isBot
-                          ? [AppColors.chatGradient3, AppColors.chatGradient3]
-                          : [AppColors.chatGradient1, AppColors.chatGradient2],
-                    ),
+                    gradient: isSuccessMessage
+                        ? const LinearGradient(
+                            colors: [Color(0xFF0F5257), Color(0xFF0B6623)],
+                          )
+                        : isQuizMessage
+                            ? const LinearGradient(
+                                colors: [Color(0xFF0D3B3F), Color(0xFF0F4C47)],
+                              )
+                            : LinearGradient(
+                                colors: isBot
+                                    ? [AppColors.chatGradient3, AppColors.chatGradient3]
+                                    : [AppColors.chatGradient1, AppColors.chatGradient2],
+                              ),
                     borderRadius: isBot
                         ? const BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15),
-                      bottomRight: Radius.circular(15),
-                    )
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                            bottomRight: Radius.circular(15),
+                          )
                         : const BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15),
-                      bottomLeft: Radius.circular(15),
-                    ),
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                            bottomLeft: Radius.circular(15),
+                          ),
+                    border: isSuccessMessage
+                        ? Border.all(
+                            color: const Color(0xFF25D366),
+                            width: 1.5,
+                          )
+                        : isQuizMessage
+                            ? Border.all(
+                                color: const Color(0xFF19C37D).withOpacity(0.6),
+                                width: 1,
+                              )
+                            : null,
                   ),
                   child: Text(
                     msg.text,
                     style: AppStyles.customTextStyle(
                       lineSpace: 1.2,
                       size: 14,
-                      weight: FontWeight.w400,
+                      weight: isQuizMessage ? FontWeight.w600 : FontWeight.w400,
                       color: AppColors.whiteColor,
                     ),
                   ),
@@ -968,39 +1451,70 @@ class _ChatNewResumeCreationScreenState
   }
 
   Widget _buildInputArea() {
+    if (_isChatCompleted) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.chatGradient3.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: const Color(0xFF25D366).withOpacity(0.5)),
+        ),
+        child: Text(
+          "Resume build completed! Redirecting...",
+          textAlign: TextAlign.center,
+          style: AppStyles.customTextStyle(
+            size: 13,
+            weight: FontWeight.w600,
+            color: const Color(0xFF25D366),
+          ),
+        ),
+      );
+    }
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.end, // Keeps send button aligned to bottom as box expands
       children: [
         Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(
-              color: AppColors.chatGradient3,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: TextField(
-              controller: chatTextController,
-              focusNode: chatFocusNode,
-              style: AppStyles.customTextStyle(
-                size: 14,
-                weight: FontWeight.w400,
-                color: AppColors.whiteColor,
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeInOut,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+              decoration: BoxDecoration(
+                color: AppColors.chatGradient3,
+                borderRadius: BorderRadius.circular(20),
               ),
-              cursorColor: AppColors.primaryColor,
-              decoration: InputDecoration(
-                hintText: 'Type here...',
-                hintStyle: AppStyles.customTextStyle(
-                  color: AppColors.chatTextColor,
-                  size: 12,
+              child: TextField(
+                controller: chatTextController,
+                focusNode: chatFocusNode,
+                minLines: 1, // Starts at 1 line
+                maxLines: 5, // Expands up to 5 lines dynamically
+                keyboardType: TextInputType.multiline,
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  weight: FontWeight.w400,
+                  color: AppColors.whiteColor,
                 ),
-                border: InputBorder.none,
+                cursorColor: AppColors.primaryColor,
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero, // Allows Container padding to govern layout
+                  hintText: 'Type here...',
+                  hintStyle: AppStyles.customTextStyle(
+                    color: AppColors.chatTextColor,
+                    size: 12,
+                  ),
+                  border: InputBorder.none,
+                ),
+                onSubmitted: (value) async {
+                  if (selectedOptions.isNotEmpty) {
+                    await sendSelectedOptions();
+                  } else {
+                    await sendTypedMessage();
+                  }
+                },
               ),
-              onSubmitted: (value) async {
-                if (selectedOptions.isNotEmpty) {
-                  await sendSelectedOptions();
-                } else {
-                  await sendTypedMessage();
-                }
-              },
             ),
           ),
         ),
@@ -1012,8 +1526,8 @@ class _ChatNewResumeCreationScreenState
             ),
             padding: const EdgeInsets.all(10),
             alignment: Alignment.center,
-            child: const Icon(
-              Icons.send_rounded,
+            child:  Icon(
+              CupertinoIcons.location,
               color: AppColors.whiteColor,
               size: 22,
             ),
@@ -1117,57 +1631,108 @@ class _ChatNewResumeCreationScreenState
 
       // Extract skills, languages, hobbies, interests dynamically from controllers if available
       final skillsList = _skillsCtrl.text.trim().isNotEmpty
-          ? _skillsCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          ? _skillsCtrl.text
+                .split(",")
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList()
           : (collected.skills ?? []);
 
       final languagesList = _languagesCtrl.text.trim().isNotEmpty
-          ? _languagesCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          ? _languagesCtrl.text
+                .split(",")
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList()
           : (collected.languages ?? []);
 
       final hobbiesList = _hobbiesCtrl.text.trim().isNotEmpty
-          ? _hobbiesCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          ? _hobbiesCtrl.text
+                .split(",")
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList()
           : (collected.hobbies ?? []);
 
       final interestsList = _interestsCtrl.text.trim().isNotEmpty
-          ? _interestsCtrl.text.split(",").map((e) => e.trim()).where((e) => e.isNotEmpty).toList()
+          ? _interestsCtrl.text
+                .split(",")
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList()
           : (collected.areasOfInterest ?? []);
+      debugPrint("*****************");
+      debugPrint(collected.personalInfo?.name);
 
-      final resumeData = ExtractedResumeDataModel(
-        personalInfo: PersonalInfoModel(
-          name: _nameCtrl.text.trim().isNotEmpty ? _nameCtrl.text.trim() : (collected.personalInfo?.name ?? ""),
-          gender: collected.personalInfo?.gender,
-          email: _emailCtrl.text.trim().isNotEmpty ? _emailCtrl.text.trim() : (collected.personalInfo?.email ?? ""),
-          phone: _mobileCtrl.text.trim().isNotEmpty ? _mobileCtrl.text.trim() : (collected.personalInfo?.phone ?? ""),
-          linkedIn: _linkedinCtrl.text.trim().isNotEmpty ? _linkedinCtrl.text.trim() : collected.personalInfo?.linkedIn,
-          github: _githubCtrl.text.trim().isNotEmpty ? _githubCtrl.text.trim() : collected.personalInfo?.github,
-          location: collected.personalInfo?.location ?? "",
-        ),
-        internships: collected.internships ?? [],
-        hobbies: hobbiesList,
-        areasOfInterest: interestsList,
-        languages: languagesList,
-        volunteerExperience: collected.volunteerExperience,
-        leaderships: collected.leadership,
-        achievements: collected.achievements,
-        publications: collected.publications,
-        workShops: collected.workshops,
-        paperPresentations: collected.paperPresentations,
-        educationData: collected.education,
-        industrialVisits: collected.industrialVisits,
-        projects: collected.projects,
-        skills: skillsList,
+      final resumeData = NewStudentProfileModel(
+        // Personal Details (Flattened)
+        // studentName: _nameCtrl.text.trim().isNotEmpty
+        //     ? _nameCtrl.text.trim()
+        //     : (collected.personalInfo?.name ?? ""),
+        studentName: collected.personalInfo?.name,
+        studentGender: collected.personalInfo?.gender ?? "",
+        studEmail: _emailCtrl.text.trim().isNotEmpty
+            ? _emailCtrl.text.trim()
+            : (collected.personalInfo?.email ?? ""),
+        role: collected.personalInfo?.role,
+        studMobileNo: _mobileCtrl.text.trim().isNotEmpty
+            ? _mobileCtrl.text.trim()
+            : (collected.personalInfo?.phone ?? ""),
+        linkedIn: _linkedinCtrl.text.trim().isNotEmpty
+            ? _linkedinCtrl.text.trim()
+            : collected.personalInfo?.linkedIn,
+        github: _githubCtrl.text.trim().isNotEmpty
+            ? _githubCtrl.text.trim()
+            : collected.personalInfo?.github,
+        location: collected.personalInfo?.location ?? "",
         profileSummary: _summaryCtrl.text.trim().isNotEmpty
             ? _summaryCtrl.text.trim()
             : (collected.profileSummary ?? ""),
-        colleges: collected.education?.college,
-        degree: const [],
+
+        // Lists & Collections
+        studProgrammingLang: skillsList,
+        languagesKnown: languagesList,
+        hobbies: hobbiesList,
+        areasOfInterest: interestsList,
+        internships: collected.internships ?? [],
+        projects: collected.projects ?? [],
+        industrialVisits: collected.industrialVisits ?? [],
+        volunteerExperience: collected.volunteerExperience ?? [],
+        leadership: collected.leadership ?? [],
+        achievements: collected.achievements ?? [],
+        publications: collected.publications ?? [],
+        workshops: collected.workshops ?? [],
+        paperPresentations: collected.paperPresentations ?? [],
+
+        // Education & Schooling
+        education: collected.education,
+        college: (collected.education?.college != null && collected.education!.college!.isNotEmpty)
+            ? collected.education!.college!
+            : (collected.colleges1 != null && collected.colleges1!.isNotEmpty)
+                ? collected.colleges1!
+                : [],
+        higherSecondary: collected.education?.school?.higherSecondary != null
+            ? [collected.education!.school!.higherSecondary!]
+            : [],
+        secondary: collected.education?.school?.secondary != null
+            ? [collected.education!.school!.secondary!]
+            : [],
+
+        studentCertificate: collected.certifications != null
+            ? collected.certifications!
+                .map((c) => StudentCertificate(
+                      name: c.name,
+                      issuer: c.issuer,
+                      date: c.date?.toString(),
+                    ))
+                .toList()
+            : [],
+        verifiedItems: _verifiedItems.toList(),
+
+        // Empty Defaults
         experience: const [],
         trainings: const [],
-        studentId: null,
-        higherSecondary: collected.education?.school?.higherSecondary,
-        institution: const [],
         parents: const [],
-        secondary: collected.education?.school?.secondary,
       );
 
       return ShowTemplateView(
@@ -1202,74 +1767,100 @@ class _ChatNewResumeCreationScreenState
       Color(0xFFF6A509),
     ),
     ResumeSectionMeta(
+      "higher_secondary",
+      "Higher Secondary",
+      "12th Grade Details",
+      Icons.school_outlined,
+      Color(0xFFE67E22),
+    ),
+    ResumeSectionMeta(
+      "secondary",
+      "Secondary",
+      "10th Grade Details",
+      Icons.school_outlined,
+      Color(0xFFD35400),
+    ),
+    ResumeSectionMeta(
       "education",
-      "Education",
-      "Your education details",
+      "College",
+      "Degree & College Details",
       Icons.school,
       Color(0xFF162447),
     ),
     ResumeSectionMeta(
+      "internships",
+      "Internships",
+      "Work Experience",
+      Icons.work,
+      Color(0xFF8E44AD),
+    ),
+    ResumeSectionMeta(
+      "projects",
+      "Projects",
+      "Academic & Personal Projects",
+      Icons.rocket_launch,
+      Color(0xFFE74C3C),
+    ),
+    ResumeSectionMeta(
+      "certifications",
+      "Certifications",
+      "Courses & Certifications",
+      Icons.card_membership,
+      Color(0xFF27AE60),
+    ),
+    ResumeSectionMeta(
+      "paper_presentations",
+      "Paper Presentations",
+      "Conference Papers & Events",
+      Icons.article,
+      Color(0xFF2980B9),
+    ),
+    ResumeSectionMeta(
+      "industrial_visits",
+      "Industrial Visits",
+      "Exposure & Company Visits",
+      Icons.factory,
+      Color(0xFF16A085),
+    ),
+    ResumeSectionMeta(
+      "workshops",
+      "Workshops",
+      "Workshops Attended",
+      Icons.build,
+      Color(0xFFF39C12),
+    ),
+    ResumeSectionMeta(
+      "achievements",
+      "Achievements",
+      "Awards & Honors",
+      Icons.emoji_events,
+      Color(0xFFF1C40F),
+    ),
+    ResumeSectionMeta(
       "languages",
       "Languages",
-      "Languages you know",
+      "Languages Known",
       Icons.language,
       Color(0xFF1F9D6C),
     ),
     ResumeSectionMeta(
       "interests",
-      "Interests",
-      "Your areas of interest",
+      "Areas of Interest",
+      "Domain Interests",
       Icons.favorite,
       Color(0xFFE0457B),
     ),
     ResumeSectionMeta(
       "hobbies",
       "Hobbies",
-      "Your hobbies",
+      "Your Interests & Hobbies",
       Icons.sports_esports,
       Color(0xFF7A4FE0),
     ),
   ];
 
   bool _isSectionEditable(String key, ResumeCollectedData? collected) {
-    if (collected == null) return false;
-    switch (key) {
-      case "personal_info":
-        final p = collected.personalInfo;
-        return (p != null &&
-            (p.name?.trim().isNotEmpty == true ||
-                p.email?.trim().isNotEmpty == true)) ||
-            _completedSections.contains("personal_info_completed");
-
-      case "profile_summary":
-        return (collected.profileSummary?.trim().isNotEmpty == true) ||
-            _completedSections.contains("profile_summary_completed");
-
-      case "skills":
-        return (collected.skills != null && collected.skills!.isNotEmpty) ||
-            _completedSections.contains("skills_completed");
-
-      case "education":
-        final hasCollege = collected.education?.college?.isNotEmpty == true;
-        return hasCollege || _completedSections.contains("education_completed");
-
-      case "languages":
-        return (collected.languages != null &&
-            collected.languages!.isNotEmpty) ||
-            _completedSections.contains("languages_completed");
-
-      case "interests":
-        return (collected.areasOfInterest != null &&
-            collected.areasOfInterest!.isNotEmpty) ||
-            _completedSections.contains("interests_completed");
-
-      case "hobbies":
-        return (collected.hobbies != null && collected.hobbies!.isNotEmpty) ||
-            _completedSections.contains("hobbies_completed");
-
-      default:
-        return false;
-    }
+    return true; // Always display all sections for complete user accessibility
   }
 
   Widget _buildSectionsBody() {
@@ -1403,7 +1994,7 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Personal Info",
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateChatProfileLoading,
               buttonFunction: () async {
                 await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Personal info updated!");
@@ -1424,7 +2015,7 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Summary",
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateChatProfileLoading,
               buttonFunction: () async {
                 await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Summary updated!");
@@ -1445,7 +2036,7 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Skills",
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateChatProfileLoading,
               buttonFunction: () async {
                 await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Skills updated!");
@@ -1473,7 +2064,7 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Education",
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateChatProfileLoading,
               buttonFunction: () async {
                 await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Education updated!");
@@ -1494,7 +2085,7 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Languages",
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateChatProfileLoading,
               buttonFunction: () async {
                 await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Languages updated!");
@@ -1515,7 +2106,7 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Interests",
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateChatProfileLoading,
               buttonFunction: () async {
                 await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Interests updated!");
@@ -1536,10 +2127,202 @@ class _ChatNewResumeCreationScreenState
             const SizedBox(height: 16),
             CustomButtonWidget(
               buttonText: "Update Hobbies",
-              isLoading: registerController.updateProfileLoading,
+              isLoading: registerController.updateChatProfileLoading,
               buttonFunction: () async {
                 await updateCompleteSectionInfo();
                 AppAlertUtils.showToast(message: "Hobbies updated!");
+              },
+            ),
+          ],
+        );
+      case "higher_secondary":
+        return Column(
+          children: [
+            CustomTextField(
+              controller: _higherInstCtrl,
+              labelText: "Institution / School Name",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              controller: _higherBoardCtrl,
+              labelText: "Board (e.g. State, CBSE)",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              controller: _higherPercCtrl,
+              labelText: "Percentage / Marks",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              controller: _higherYearCtrl,
+              labelText: "Year of Passing",
+              isNumberKeyboard: true,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 16),
+            CustomButtonWidget(
+              buttonText: "Update Higher Secondary",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                final collected = loginController.createNewResumeModel.collectedData;
+                final existingSchool = collected?.education?.school;
+                final updatedHigher = HigherSecondary(
+                  institution: _higherInstCtrl.text.trim(),
+                  board: _higherBoardCtrl.text.trim(),
+                  percentage: _higherPercCtrl.text.trim(),
+                  yearOfPassing: _higherYearCtrl.text.trim(),
+                );
+                collected?.education = NewEducationData(
+                  school: School(
+                    higherSecondary: updatedHigher,
+                    secondary: existingSchool?.secondary ?? Secondary(),
+                  ),
+                  college: collected.education?.college,
+                );
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Higher Secondary updated!");
+              },
+            ),
+          ],
+        );
+      case "secondary":
+        return Column(
+          children: [
+            CustomTextField(
+              controller: _secInstCtrl,
+              labelText: "Institution / School Name",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              controller: _secBoardCtrl,
+              labelText: "Board (e.g. State, CBSE)",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              controller: _secPercCtrl,
+              labelText: "Percentage / Marks",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              controller: _secYearCtrl,
+              labelText: "Year of Passing",
+              isNumberKeyboard: true,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 16),
+            CustomButtonWidget(
+              buttonText: "Update Secondary",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                final collected = loginController.createNewResumeModel.collectedData;
+                final existingSchool = collected?.education?.school;
+                final updatedSec = Secondary(
+                  institution: _secInstCtrl.text.trim(),
+                  board: _secBoardCtrl.text.trim(),
+                  percentage: _secPercCtrl.text.trim(),
+                  yearOfPassing: _secYearCtrl.text.trim(),
+                );
+                collected?.education = NewEducationData(
+                  school: School(
+                    higherSecondary: existingSchool?.higherSecondary ?? HigherSecondary(),
+                    secondary: updatedSec,
+                  ),
+                  college: collected.education?.college,
+                );
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Secondary updated!");
+              },
+            ),
+          ],
+        );
+      case "workshops":
+        return Column(
+          children: [
+            CustomTextField(
+              controller: _workshopsCtrl,
+              labelText: "Workshops Attended (comma separated)",
+              hintText: "e.g., AI Workshop, Cloud Seminar",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 16),
+            CustomButtonWidget(
+              buttonText: "Update Workshops",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                final collected = loginController.createNewResumeModel.collectedData;
+                collected?.workshops = _workshopsCtrl.text
+                    .split(",")
+                    .map((e) => e.trim())
+                    .where((e) => e.isNotEmpty)
+                    .toList();
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Workshops updated!");
+              },
+            ),
+          ],
+        );
+      case "achievements":
+        return Column(
+          children: [
+            CustomTextField(
+              controller: _achievementsCtrl,
+              labelText: "Achievements (comma separated)",
+              hintText: "e.g., Hackathon 1st Place, Best Paper Award",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 16),
+            CustomButtonWidget(
+              buttonText: "Update Achievements",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                final collected = loginController.createNewResumeModel.collectedData;
+                collected?.achievements = _achievementsCtrl.text
+                    .split(",")
+                    .map((e) => e.trim())
+                    .where((e) => e.isNotEmpty)
+                    .toList();
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Achievements updated!");
+              },
+            ),
+          ],
+        );
+      case "internships":
+      case "projects":
+      case "certifications":
+      case "paper_presentations":
+      case "industrial_visits":
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Section details are collected dynamically in the chat or live preview.",
+              style: AppStyles.customTextStyle(
+                size: 13,
+                color: AppColors.chatTextColor,
+              ),
+            ),
+            const SizedBox(height: 10),
+            CustomButtonWidget(
+              buttonText: "Save & Refresh Section",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Section data synced!");
               },
             ),
           ],
@@ -1553,7 +2336,7 @@ class _ChatNewResumeCreationScreenState
 
   Widget _buildBottomNavigationBar() {
     return Obx(
-          () => Container(
+      () => Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         decoration: BoxDecoration(
           color: AppColors.chatGradient3,
@@ -1570,7 +2353,7 @@ class _ChatNewResumeCreationScreenState
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildNavItem(
               index: 0,
@@ -1613,7 +2396,7 @@ class _ChatNewResumeCreationScreenState
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primaryColor.withOpacity(0.2)

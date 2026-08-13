@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/chat_mcq_question_model.dart';
 import 'package:internsharks/app/data/models/account/chat_mcq_result_model.dart';
@@ -80,13 +81,16 @@ class StudentLoginProvider {
   Future<CreateNewChatResumeModel> makeNewChatResume({
     required Map<String, dynamic> chatRequestData,
   }) async {
+    //Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
+
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
       );
       Response response = await client!
-          .post(AppApiUrls.createNewChatResume, data: chatRequestData)
-          .timeout(const Duration(seconds: 60));
+          .post(AppApiUrls.createNewChatResume,
+          //options: Options(headers: header),
+          data: chatRequestData);
       responseStatus = response.statusCode!;
       return CreateNewChatResumeModel.fromJson(response.data);
     } on DioException catch (error) {

@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -29,7 +30,7 @@ class ChatResumeTemplateScreen extends StatefulWidget {
 }
 
 class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
-  ExtractedResumeDataModel? resumeData;
+  NewStudentProfileModel? profileData;
   bool? isRegisterFlow;
 
   final RegisterController registerController = Get.find<RegisterController>();
@@ -67,9 +68,11 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   void initState() {
     super.initState();
 
-    resumeData = Get.arguments["resumeData"];
-    templateId = Get.arguments["templateId"];
-    isRegisterFlow = Get.arguments["isRegisterFlow"] ?? true;
+    if (Get.arguments != null && Get.arguments["resumeData"] is NewStudentProfileModel) {
+      profileData = Get.arguments["resumeData"];
+    }
+    templateId = Get.arguments?["templateId"];
+    isRegisterFlow = Get.arguments?["isRegisterFlow"] ?? true;
 
     /// FIRST set correct template
     setInitialTemplate();
@@ -82,20 +85,30 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     getProfileData();
   }
 
+  void _renderWebView() async {
+    if (webViewController == null) return;
+    final activeProfile = profileData ?? registerController.studentProfileModel;
+    if (activeProfile.studentName != null || activeProfile.studEmail != null) {
+      final jsonData = jsonEncode(activeProfile.toJson());
+      final safeJson = jsonEncode(jsonData);
+
+      await webViewController!.runJavaScript(
+        "renderResume(JSON.parse($safeJson));",
+      );
+
+      if (mounted) {
+        setState(() => isWebLoaded = true);
+      }
+    }
+  }
+
   void _initWebView(ResumeTemplateModel template) async {
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (_) async {
-            final jsonData = jsonEncode(resumeData!.toJson());
-            final safeJson = jsonEncode(jsonData);
-
-            await webViewController!.runJavaScript(
-              "renderResume(JSON.parse($safeJson));",
-            );
-
-            isWebLoaded = true;
+            _renderWebView();
           },
         ),
       );
@@ -143,18 +156,23 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   }
 
   Future<void> getProfileData() async {
-    studentId = (await LocalStorageService.getStudentId())!;
-    await registerController.getStudentProfile(studentId: studentId);
-    if (registerController.getResponseCode() == 200 ||
-        registerController.getResponseCode() == 201) {
-      creditIdString =
-          registerController.studentProfileModel.studentCreditId!.cId ?? "";
-      await getCreditData(creditId: creditIdString);
-    } else {
-      AppFunctions.apiErrorHandling(
-        registerController.getResponseCode(),
-        "Something went wrong!, try again later!",
-      );
+    studentId = (await LocalStorageService.getStudentId()) ?? "";
+    if (studentId.isNotEmpty) {
+      await registerController.getStudentProfile(studentId: studentId);
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        profileData = registerController.studentProfileModel;
+        if (profileData?.studentCreditId != null) {
+          creditIdString = profileData?.studentCreditId?.id ?? "";
+          await getCreditData(creditId: creditIdString);
+        }
+        _renderWebView();
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Something went wrong!, try again later!",
+        );
+      }
     }
   }
 
@@ -224,7 +242,8 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   Future<void> _handleDownload() async {
     if (webViewController == null || !isWebLoaded) return;
 
-    final firstName = (resumeData?.personalInfo?.name ?? 'resume')
+    final activeProfile = profileData ?? registerController.studentProfileModel;
+    final firstName = (activeProfile.studentName ?? 'resume')
         .split(' ')
         .first;
     await ResumeFileUtils.handleDownload(
@@ -237,14 +256,15 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   Future<void> _handleShare() async {
     if (webViewController == null || !isWebLoaded) return;
 
-    final firstName = (resumeData?.personalInfo?.name ?? 'resume')
+    final activeProfile = profileData ?? registerController.studentProfileModel;
+    final firstName = (activeProfile.studentName ?? 'resume')
         .split(' ')
         .first;
 
     await ResumeFileUtils.handleShare(
       webViewController: webViewController!,
       fileName: "${firstName}_resume",
-        shareText: CommonUtils.resumeShareContent
+      shareText: CommonUtils.resumeShareContent,
     );
   }
 
@@ -338,12 +358,14 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                                     : ResumeThumbnailCard(
                                         template: template,
                                         onTap: () {
+                                          final activeProfile = profileData ??
+                                              registerController.studentProfileModel;
                                           AppFunctions.navigateScreen(
                                             context,
                                             AppRoutes.resumeTemplateViewScreen,
                                             arguments: {
                                               "templateData": template,
-                                              "resumeData": resumeData,
+                                              "resumeData": activeProfile,
                                               "isChatFlow": true,
                                             },
                                           );
@@ -543,12 +565,14 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
               /// Preview
               IconButton(
                 onPressed: () {
+                  final activeProfile = profileData ??
+                      registerController.studentProfileModel;
                   AppFunctions.navigateScreen(
                     context,
                     AppRoutes.resumeTemplateViewScreen,
                     arguments: {
                       "templateData": template,
-                      "resumeData": resumeData,
+                      "resumeData": activeProfile,
                       "isChatFlow": true,
                     },
                   );
@@ -686,27 +710,16 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
   Future<void> updateResumeFunc() async {
     debugPrint("PREVIEW TEMPLATE INDEX => $currentTemplateIndex");
 
-    debugPrint(
-      "LATEST GENERATED TEMPLATE INDEX => "
-      "$latestGeneratedTemplateIndex",
-    );
-
     final studentId = await LocalStorageService.getStudentId();
+    final activeProfile = profileData ?? registerController.studentProfileModel;
 
-    /// ALWAYS SAVE LATEST GENERATED TEMPLATE
-    final selectedTemplate = templates[latestGeneratedTemplateIndex];
+    activeProfile.templateNumber = templates[currentTemplateIndex].id.toString();
 
-    resumeData!.templateNumber = templates[currentTemplateIndex].id.toString();
     debugPrint(
-      "FINAL templateNumber => "
-      "${resumeData!.templateNumber}",
+      "FINAL templateNumber => ${activeProfile.templateNumber}",
     );
 
-    debugPrint("UPDATED TEMPLATE => ${templates[currentTemplateIndex].id}");
-
-    resumeData!.studentId = studentId;
-
-    await registerController.updateResumeProfileData(updateData: resumeData);
+    await registerController.updateResumeProfileData(updateData: activeProfile);
 
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
@@ -716,7 +729,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
       );
 
       await registerController.getStudentProfile(
-        studentId: resumeData!.studentId ?? "",
+        studentId: studentId ?? "",
       );
 
       if (isRegisterFlow!) {
@@ -738,7 +751,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     } else {
       AppAlertUtils.showToast(
         message:
-            registerController.updateProfileModel.message ??
+        registerController.updateProfileModel.message ??
             "Something went wrong!",
         isError: true,
       );

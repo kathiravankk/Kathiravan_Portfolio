@@ -170,8 +170,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         .map<String>((e) => e.toString())
         .toList();
 
-    if (p.collegeData?.isNotEmpty == true) {
-      final c = p.collegeData!.first;
+    if (p.college?.isNotEmpty == true) {
+      final c = p.college!.first;
       _collegeData = {
         'degree': c.degree ?? '',
         'department': c.department ?? '',
@@ -349,7 +349,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       pickedFile: _pickedImage,
                       name: _nameCtrl.text,
                       collegeName:
-                          profileController.profileDataModel.collegeName ?? '',
+                          profileController.profileDataModel.collegeLocation ?? '',
                       onTap: _showImageSourceSheet,
                     ),
                     const SizedBox(height: 20),

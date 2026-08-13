@@ -1,5 +1,6 @@
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
@@ -27,23 +28,23 @@ class ReplyData {
   PersonalInfoModel? personalInfo;
   String? profileSummary;
   List<String>? skills;
-  List<Project>? projects;
+  List<NewProjectData>? projects;
   List<ExperienceData>? experience;
-  List<InternShipModel>? internships;
-  List<dynamic>? industrialVisits;
-  EducationModel? education;
+  List<NewInternshipData>? internships;
+  List<NewIndustrialVisit>? industrialVisits;
+  NewEducationData? education;
   List<Certification>? certifications;
-  List<PaperData>? paperPresentations;
-  List<dynamic>? workshops;
-  List<dynamic>? publications;
+  List<NewPaperPresentation>? paperPresentations;
+  List<String>? workshops;
+  List<String>? publications;
   List<dynamic>? parents;
-  List<dynamic>? achievements;
+  List<String>? achievements;
   List<dynamic>? toolsAndTechnologies;
-  List<dynamic>? leadership;
-  List<dynamic>? volunteerExperience;
+  List<String>? leadership;
+  List<String>? volunteerExperience;
   List<String>? languages;
-  List<dynamic>? areasOfInterest;
-  List<dynamic>? hobbies;
+  List<String>? areasOfInterest;
+  List<String>? hobbies;
   SchoolEducation? higherSecondary;
   SchoolEducation? secondary;
   List<CollegeData>? colleges;
@@ -104,12 +105,12 @@ class ReplyData {
         : <String>[];
 
     if (json['projects'] != null) {
-      projects = <Project>[];
+      projects = <NewProjectData>[];
       json['projects'].forEach((e) {
-        projects!.add(Project.fromJson(e));
+        projects!.add(NewProjectData.fromJson(e));
       });
     } else {
-      projects = <Project>[];
+      projects = <NewProjectData>[];
     }
 
     if (json['experience'] != null) {
@@ -122,12 +123,15 @@ class ReplyData {
     }
 
     internships = (json['internships'] ?? [])
-        .map<InternShipModel>((e) => InternShipModel.fromJson(e))
+        .map<NewInternshipData>((e) => NewInternshipData.fromJson(e))
         .toList();
-    industrialVisits = json['industrial_visits'] ?? [];
+    //industrialVisits = json['industrial_visits'] ?? [];
+    industrialVisits = (json['industrial_visits'] as List?)
+        ?.map((e) => NewIndustrialVisit.fromJson(e))
+        .toList();
     toolsAndTechnologies = json['tools_and_technologies'] ?? [];
     education = json['education'] != null
-        ? EducationModel.fromJson(json['education'])
+        ? NewEducationData.fromJson(json['education'])
         : null;
 
     if (json['certifications'] != null) {
@@ -140,28 +144,49 @@ class ReplyData {
     }
 
     if (json['paper_presentations'] != null) {
-      paperPresentations = <PaperData>[];
+      paperPresentations = <NewPaperPresentation>[];
       json['paper_presentations'].forEach((e) {
-        paperPresentations!.add(PaperData.fromJson(e));
+        paperPresentations!.add(NewPaperPresentation.fromJson(e));
       });
     } else {
-      paperPresentations = <PaperData>[];
+      paperPresentations = <NewPaperPresentation>[];
     }
 
     //paperPresentations = json['paper_presentations'] ?? [];
-    workshops = json['workshops'] ?? [];
-    publications = json['publications'] ?? [];
+    workshops = json['workshops'] != null
+        ? List<String>.from(json['workshops'])
+        : <String>[];
+    //workshops = json['workshops'] ?? [];
+    //publications = json['publications'] ?? [];
+    publications = json['publications'] != null
+        ? List<String>.from(json['publications'])
+        : <String>[];
     parents = json['parents'] ?? [];
-    achievements = json['achievements'] ?? [];
-    leadership = json['leadership'] ?? [];
-    volunteerExperience = json['volunteer_experience'] ?? [];
+    //achievements = json['achievements'] ?? [];
+    publications = json['publications'] != null
+        ? List<String>.from(json['publications'])
+        : <String>[];
+    //leadership = json['leadership'] ?? [];
+    leadership = json['leadership'] != null
+        ? List<String>.from(json['leadership'])
+        : <String>[];
+    //volunteerExperience = json['volunteer_experience'] ?? [];
+    volunteerExperience = json['volunteer_experience'] != null
+        ? List<String>.from(json['volunteer_experience'])
+        : <String>[];
 
     languages = json['languages'] != null
         ? List<String>.from(json['languages'])
         : <String>[];
 
-    areasOfInterest = json['areas_of_interest'] ?? [];
-    hobbies = json['hobbies'] ?? [];
+    //areasOfInterest = json['areas_of_interest'] ?? [];
+    areasOfInterest = json['areas_of_interest'] != null
+        ? List<String>.from(json['areas_of_interest'])
+        : <String>[];
+    //hobbies = json['hobbies'] ?? [];
+    hobbies = json['hobbies'] != null
+        ? List<String>.from(json['hobbies'])
+        : <String>[];
 
     higherSecondary = json['higher_secondary'] != null
         ? SchoolEducation.fromJson(json['higher_secondary'])

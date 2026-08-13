@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/show_template_view.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_template_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -15,7 +16,7 @@ import 'package:internsharks/app/routes/app_pages.dart';
 
 class ResumeTemplateViewScreen extends StatefulWidget {
   final ResumeTemplateModel? templateData;
-  final ExtractedResumeDataModel? resumeData;
+  final NewStudentProfileModel? resumeData;
   final bool? isChatFlow;
 
   const ResumeTemplateViewScreen({
@@ -32,7 +33,7 @@ class ResumeTemplateViewScreen extends StatefulWidget {
 
 class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   ResumeTemplateModel? templateData;
-  ExtractedResumeDataModel? resumeData;
+  NewStudentProfileModel? resumeData;
   bool? isChatFlow;
 
   final RegisterController registerController = Get.find<RegisterController>();
@@ -44,6 +45,30 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
     templateData = widget.templateData ?? Get.arguments?["templateData"];
     resumeData = widget.resumeData ?? Get.arguments?["resumeData"];
     isChatFlow = widget.isChatFlow ?? Get.arguments?["isChatFlow"] ?? false;
+
+    if (resumeData == null &&
+        registerController.studentProfileModel.studentName != null) {
+      resumeData = registerController.studentProfileModel;
+    }
+
+    if (resumeData == null) {
+      _fetchProfileIfNeeded();
+    }
+  }
+
+  Future<void> _fetchProfileIfNeeded() async {
+    final studentId = await LocalStorageService.getStudentId();
+    if (studentId != null && studentId.isNotEmpty) {
+      await registerController.getStudentProfile(studentId: studentId);
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        if (mounted) {
+          setState(() {
+            resumeData = registerController.studentProfileModel;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -64,7 +89,12 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
   @override
   Widget build(BuildContext context) {
     if (templateData == null || resumeData == null) {
-      return const SizedBox();
+      return Scaffold(
+        backgroundColor: AppColors.appBgColor,
+        body: Center(
+          child: AppAlertUtils.customLoader(),
+        ),
+      );
     }
 
     return Obx(
@@ -122,7 +152,7 @@ class _ResumeTemplateViewScreenState extends State<ResumeTemplateViewScreen> {
     final studentId = await LocalStorageService.getStudentId();
 
     resumeData!.templateNumber = templateData!.id.toString();
-    resumeData!.studentId = studentId;
+    resumeData!.studentId = studentId as List<dynamic>?;
 
     await registerController.updateResumeProfileData(updateData: resumeData);
     if (registerController.getResponseCode() == 200 ||

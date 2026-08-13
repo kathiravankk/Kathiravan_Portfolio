@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
@@ -192,9 +193,9 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
       "industrial_visits": jsonEncode(reply?.industrialVisits ?? []),
       "linkedIn": reply?.personalInfo!.linkedIn ?? "XXXXX",
       "github": reply?.personalInfo!.github,
-      "secondary": jsonEncode([reply?.education!.school?.secondary.toJson()]),
+      "secondary": jsonEncode([reply?.education!.school?.secondary!.toJson()]),
       "higher_secondary": jsonEncode([
-        reply?.education!.school?.higherSecondary.toJson(),
+        reply?.education!.school?.higherSecondary!.toJson(),
       ]),
       "college": jsonEncode(reply?.education!.college ?? []),
       "studentdegree":
@@ -248,49 +249,49 @@ class _ChatResumeCreationScreenState extends State<ChatResumeCreationScreen> {
     );
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
-      StudentProfileModel? data = registerController.studentProfileModel;
-      AppFunctions.navigateScreen(
-        context,
-        AppRoutes.chatResumeTemplateScreen,
-        arguments: {
-          "resumeData": ExtractedResumeDataModel(
-            personalInfo: PersonalInfoModel(
-              name: data.studentName!,
-              gender: data.studentGender,
-              email: data.studEmail!,
-              phone: data.studMobileNo!,
-              linkedIn: data.linkedIn,
-              github: data.github,
-              location: "",
-            ),
-            internships: data.internships!,
-            hobbies: data.hobbies,
-            areasOfInterest: data.areasOfInterest,
-            languages: data.languagesKnown,
-            volunteerExperience: data.volunteerExperience,
-            leaderships: data.leadership,
-            achievements: data.achievements,
-            publications: data.publications,
-            workShops: data.workshops,
-            paperPresentations: data.paperPresentations,
-            certifications: data.studentCertificate,
-            educationData: data.education,
-            industrialVisits: data.industrialVisits,
-            projects: data.projects,
-            skills: data.studProgrammingLang,
-            profileSummary: data.profileSummary,
-            colleges: data.college,
-            //degree: data.,
-            experience: data.experience,
-            trainings: data.trainings,
-            studentId: data.id,
-            higherSecondary: data.education!.school!.higherSecondary,
-            //institution: [],
-            //parents: [],
-            secondary: data.education!.school!.secondary,
-          ),
-        },
-      );
+      NewStudentProfileModel? data = registerController.studentProfileModel;
+      // AppFunctions.navigateScreen(
+      //   context,
+      //   AppRoutes.chatResumeTemplateScreen,
+      //   arguments: {
+      //     "resumeData": ExtractedResumeDataModel(
+      //       personalInfo: PersonalInfoModel(
+      //         name: data.studentName!,
+      //         gender: data.studentGender,
+      //         email: data.studEmail!,
+      //         phone: data.studMobileNo!,
+      //         linkedIn: data.linkedIn,
+      //         github: data.github,
+      //         location: "",
+      //       ),
+      //       internships: data.internships!,
+      //       hobbies: data.hobbies,
+      //       areasOfInterest: data.areasOfInterest,
+      //       languages: data.languagesKnown,
+      //       volunteerExperience: data.volunteerExperience,
+      //       leaderships: data.leadership,
+      //       achievements: data.achievements,
+      //       publications: data.publications,
+      //       workShops: data.workshops,
+      //       paperPresentations: data.paperPresentations,
+      //       certifications: data.studentCertificate,
+      //       educationData: data.education,
+      //       industrialVisits: data.industrialVisits,
+      //       projects: data.projects,
+      //       skills: data.studProgrammingLang,
+      //       profileSummary: data.profileSummary,
+      //       colleges: data.college,
+      //       //degree: data.,
+      //       experience: data.experience,
+      //       trainings: data.trainings,
+      //       studentId: data.id,
+      //       higherSecondary: data.education!.school!.higherSecondary,
+      //       //institution: [],
+      //       //parents: [],
+      //       secondary: data.education!.school!.secondary,
+      //     ),
+      //   },
+      // );
     }
   }
 

@@ -44,6 +44,7 @@ class AppRoutes {
   static const studentTransactionHistoryScreen = '/studentTransactionHistoryScreen';
   static const studentCreditHistoryScreen = '/studentCreditHistoryScreen';
   static const studentPurchaseHistoryScreen = '/studentPurchaseHistoryScreen';
+  static const similarInternshipScreen = '/similarInternshipScreen';
 
   // INTERNSHIP FLOW
   static const internshipSyllabusScreen = '/internshipSyllabusScreen';
