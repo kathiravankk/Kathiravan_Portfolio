@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume</title>
+
+    <!-- External CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
@@ -43,14 +45,11 @@
            MOBILE RESPONSIVE (≤ 768px)
         ════════════════════════════════════════ */
         @media (max-width: 768px) {
-
-            /* Remove the fixed A4 background padding */
             .resume-v10-page-bg {
                 padding: 0 !important;
                 background-color: #fff !important;
             }
 
-            /* The main container: drop the fixed 210mm width */
             .resume-container {
                 width: 100% !important;
                 min-height: unset !important;
@@ -59,7 +58,6 @@
                 margin: 0 !important;
             }
 
-            /* Header typography */
             #fullName {
                 font-size: 26px !important;
             }
@@ -68,13 +66,11 @@
                 font-size: 15px !important;
             }
 
-            /* Contact row → vertical stack */
             #contactInfo {
                 flex-direction: column !important;
                 gap: 8px !important;
             }
 
-            /* Bootstrap grid: force both columns to full width */
             .main-col,
             .sidebar-col {
                 width: 100% !important;
@@ -84,7 +80,6 @@
                 padding-left: 0 !important;
             }
 
-            /* Replace left border with top border separator */
             .sidebar-col {
                 border-left: none !important;
                 border-top: 1px solid #eee;
@@ -164,62 +159,54 @@
 <body>
 
 <div class="resume-v10-page-bg py-5" style="background-color: #f8f9fa;">
-    <div class="resume-container shadow-lg avoid-break"
-         style="background: #fff; width: 210mm; min-height: 297mm; margin: auto; color: #333; padding: 45px; position: relative;">
+    <div class="resume-container shadow-lg"
+         style="background: #fff; width: 210mm; min-height: auto; margin: auto; color: #333; padding: 45px; position: relative;">
 
         <!-- Header -->
         <div class="avoid-break">
             <header class="mb-4">
                 <h1 id="fullName"
-                    style="font-family: 'Roboto Condensed', sans-serif; font-weight: 700; font-size: 40px; margin: 0;">
-                    YOUR NAME
-                </h1>
+                    style="font-family: 'Roboto Condensed', sans-serif; font-weight: 700; font-size: 40px; margin: 0;"></h1>
                 <h4 id="jobTitle"
-                    style="color: #3897f0; font-weight: 400; font-size: 18px; margin-top: 4px;">
-                    Student
-                </h4>
+                    style="color: #3897f0; font-weight: 400; font-size: 18px; margin-top: 4px; display: none;"></h4>
 
-                <div id="contactInfo" class="d-flex flex-wrap gap-3 mt-3"
-                     style="font-size: 12px; color: #666;">
-                    <a href="mailto:your.email@example.com" style="color: inherit; text-decoration: none;">
+                <div id="contactInfo" class="d-flex flex-wrap gap-3 mt-3" style="font-size: 12px; color: #666;">
+                    <a id="emailContainer" href="#" style="color: inherit; text-decoration: none; display: none;">
                         <i class="fas fa-envelope" style="color: #3897f0;"></i>
-                        <span id="email">your.email@example.com</span>
+                        <span id="email"></span>
                     </a>
-                    <span>
+                    <span id="phoneContainer" style="display: none;">
                         <i class="fas fa-phone-alt" style="color: #3897f0;"></i>
-                        <span id="phone">+1 234 567 8900</span>
+                        <span id="phone"></span>
                     </span>
-                    <span>
+                    <span id="locationContainer" style="display: none;">
                         <i class="fas fa-map-marker-alt" style="color: #3897f0;"></i>
-                        <span id="location">City, Country</span>
+                        <span id="location"></span>
                     </span>
                     <a id="linkedinLink" href="#" target="_blank" rel="noreferrer"
-                       style="color: inherit; text-decoration: none;">
+                       style="color: inherit; text-decoration: none; display: none;">
                         <i class="fab fa-linkedin" style="color: #3897f0;"></i> LinkedIn
                     </a>
                     <a id="githubLink" href="#" target="_blank" rel="noreferrer"
-                       style="color: inherit; text-decoration: none;">
+                       style="color: inherit; text-decoration: none; display: none;">
                         <i class="fab fa-github" style="color: #3897f0;"></i> GitHub
                     </a>
                 </div>
             </header>
         </div>
 
-        <!-- NOTE: using explicit classes instead of col-8/col-4 so media queries can override -->
         <div class="row g-0">
             <!-- Main column (left) -->
             <div class="main-col col-8 pe-4">
 
                 <!-- SUMMARY -->
-                <section id="summarySection" class="avoid-break mb-4">
+                <section id="summarySection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">SUMMARY</h6>
-                    <p id="profileSummary" style="font-size: 13px; line-height: 1.6;">
-                        Experienced professional with a strong background in technology and innovation.
-                    </p>
+                    <p id="profileSummary" style="font-size: 13px; line-height: 1.6; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- PROJECTS -->
-                <section id="projectsSection" class="avoid-break mb-4">
+                <section id="projectsSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">PROJECTS</h6>
                     <div id="projectsList"></div>
                 </section>
@@ -230,6 +217,12 @@
                     <div id="internshipsList"></div>
                 </section>
 
+                <!-- INDUSTRIAL VISITS -->
+                <section id="visitsSection" class="avoid-break mb-4" style="display: none;">
+                    <h6 class="section-header">INDUSTRIAL VISITS</h6>
+                    <div id="visitsList"></div>
+                </section>
+
                 <!-- TRAININGS -->
                 <section id="trainingsSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">TRAINING</h6>
@@ -237,9 +230,15 @@
                 </section>
 
                 <!-- EDUCATION -->
-                <section id="educationSection" class="avoid-break mb-4">
+                <section id="educationSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">EDUCATION</h6>
                     <div id="educationList"></div>
+                </section>
+
+                <!-- PAPER PRESENTATIONS -->
+                <section id="presentationsSection" class="avoid-break mb-4" style="display: none;">
+                    <h6 class="section-header">PAPER PRESENTATIONS</h6>
+                    <div id="presentationsList"></div>
                 </section>
 
                 <!-- ACHIEVEMENTS -->
@@ -247,17 +246,27 @@
                     <h6 class="section-header">ACHIEVEMENTS</h6>
                     <ul id="achievementsList" style="font-size: 12px; padding-left: 15px; margin-bottom: 0;"></ul>
                 </section>
+
+                <!-- PUBLICATIONS -->
+                <section id="publicationsSection" class="avoid-break mb-4" style="display: none;">
+                    <h6 class="section-header">PUBLICATIONS</h6>
+                    <ul id="publicationsList" style="font-size: 12px; padding-left: 15px; margin-bottom: 0;"></ul>
+                </section>
+
+                <!-- WORKSHOPS -->
+                <section id="workshopsSection" class="avoid-break mb-4" style="display: none;">
+                    <h6 class="section-header">WORKSHOPS</h6>
+                    <ul id="workshopsList" style="font-size: 12px; padding-left: 15px; margin-bottom: 0;"></ul>
+                </section>
             </div>
 
             <!-- Sidebar column (right) -->
             <div class="sidebar-col col-4">
 
                 <!-- SKILLS -->
-                <section id="skillsSection" class="avoid-break mb-4">
+                <section id="skillsSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">SKILLS</h6>
-                    <p id="skillsList" style="font-size: 12px; line-height: 1.8;">
-                        JavaScript, React, Node.js
-                    </p>
+                    <p id="skillsList" style="font-size: 12px; line-height: 1.8; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- CERTIFICATIONS -->
@@ -269,19 +278,19 @@
                 <!-- LANGUAGES -->
                 <section id="languagesSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">LANGUAGES</h6>
-                    <p id="languagesList" style="font-size: 12px;"></p>
+                    <p id="languagesList" style="font-size: 12px; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- AREAS OF INTEREST -->
                 <section id="interestsSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">AREAS OF INTEREST</h6>
-                    <p id="interestsList" style="font-size: 12px;"></p>
+                    <p id="interestsList" style="font-size: 12px; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- HOBBIES -->
                 <section id="hobbiesSection" class="avoid-break mb-4" style="display: none;">
                     <h6 class="section-header">HOBBIES</h6>
-                    <p id="hobbiesList" style="font-size: 12px;"></p>
+                    <p id="hobbiesList" style="font-size: 12px; margin-bottom: 0;"></p>
                 </section>
 
                 <!-- LEADERSHIP -->
@@ -305,92 +314,228 @@
 <script>
     function renderResume(data) {
         console.log('Received data:', data);
+        if (!data) return;
 
-        // Personal Info
-        if (data.personal_info) {
-            const pi = data.personal_info;
-            if (pi.name)    document.getElementById('fullName').textContent  = pi.name;
-            if (pi.email)   document.getElementById('email').textContent     = pi.email;
-            if (pi.phone)   document.getElementById('phone').textContent     = pi.phone;
-            if (pi.address) document.getElementById('location').textContent  = pi.address;
-            if (pi.role)    document.getElementById('jobTitle').textContent  = pi.role;
-            if (pi.linkedIn) document.getElementById('linkedinLink').href    = pi.linkedIn;
-            if (pi.github)   document.getElementById('githubLink').href      = pi.github;
+        function isItemVerified(itemTitle) {
+            if (!itemTitle) return false;
+            if (data.isVerified) return true;
+            const verifiedList = (data.verified_items || []).map(v => String(v).toLowerCase().trim());
+            const titleLower = String(itemTitle).toLowerCase().trim();
+            if (verifiedList.includes(titleLower)) return true;
+            return verifiedList.some(v => v.length > 0 && (titleLower.includes(v) || v.includes(titleLower)));
         }
 
-        // Profile Summary
-        if (data.profile_summary) {
-            document.getElementById('profileSummary').textContent = data.profile_summary;
-        } else if (data.updatedProfileSummary && data.updatedProfileSummary.length > 0) {
-            document.getElementById('profileSummary').textContent = data.updatedProfileSummary.join(' ');
+        function getVerifiedBadgeHtml(isVerified, marginStyle) {
+            if (!isVerified) return '';
+            const style = marginStyle || 'margin-left: 4px; font-size: 11px;';
+            return `<i class="fas fa-check-circle" style="color: #3897f0; ${style}"></i>`;
         }
 
-        // Skills
-        if (data.skills && data.skills.length > 0) {
-            document.getElementById('skillsList').textContent = data.skills.join(', ');
+        // ── Header / Personal Info ──────────────────────────────────────
+        const fullNameEl = document.getElementById('fullName');
+        fullNameEl.textContent = data.studname || '';
+
+
+
+const jobTitleEl = document.getElementById('jobTitle');
+
+// Check top-level data.role as well as nested personalInfo.role / personal_info.role
+const role = data.role
+          || (data.personalInfo && data.personalInfo.role)
+          || (data.personal_info && data.personal_info.role)
+          || '';
+
+if (role && role.trim() !== '') {
+    jobTitleEl.textContent = role;
+    jobTitleEl.style.display = 'block';
+} else {
+    jobTitleEl.textContent = '';
+    jobTitleEl.style.display = 'none';
+}
+        const emailContainer = document.getElementById('emailContainer');
+        if (data.studemail && data.studemail.trim() !== '') {
+            document.getElementById('email').textContent = data.studemail;
+            emailContainer.href = 'mailto:' + data.studemail;
+            emailContainer.style.display = 'inline-block';
+        } else {
+            emailContainer.style.display = 'none';
         }
 
-        // Projects
-        if (data.projects && data.projects.length > 0) {
-            const projList = document.getElementById('projectsList');
-            projList.innerHTML = '';
+        const phoneContainer = document.getElementById('phoneContainer');
+        if (data.studmobileno && data.studmobileno.trim() !== '') {
+            document.getElementById('phone').textContent = data.studmobileno;
+            phoneContainer.style.display = 'inline-block';
+        } else {
+            phoneContainer.style.display = 'none';
+        }
+
+        const locationContainer = document.getElementById('locationContainer');
+        if (data.location && data.location.trim() !== '') {
+            document.getElementById('location').textContent = data.location;
+            locationContainer.style.display = 'inline-block';
+        } else {
+            locationContainer.style.display = 'none';
+        }
+
+        const linkedinLink = document.getElementById('linkedinLink');
+        if (data.linkedIn && data.linkedIn.trim() !== '') {
+            linkedinLink.href = data.linkedIn;
+            linkedinLink.style.display = 'inline-block';
+        } else {
+            linkedinLink.style.display = 'none';
+        }
+
+        const githubLink = document.getElementById('githubLink');
+        if (data.github && data.github.trim() !== '') {
+            githubLink.href = data.github;
+            githubLink.style.display = 'inline-block';
+        } else {
+            githubLink.style.display = 'none';
+        }
+
+        // ── Profile Summary ─────────────────────────────────────────────
+        const summarySection = document.getElementById('summarySection');
+        const summaryText = data.profile_summary || '';
+        if (summaryText.trim() !== '') {
+            document.getElementById('profileSummary').textContent = summaryText;
+            summarySection.style.display = 'block';
+        } else {
+            summarySection.style.display = 'none';
+        }
+
+        // ── Skills (studprogramminglang) ────────────────────────────────
+        const skillsSection = document.getElementById('skillsSection');
+        const skillsListEl = document.getElementById('skillsList');
+        if (data.studprogramminglang && Array.isArray(data.studprogramminglang) && data.studprogramminglang.length > 0) {
+            // Flatten: each element may be a plain string or a stringified JSON array like '["Flutter"]'
+            const flatSkills = [];
+            data.studprogramminglang.forEach(skill => {
+                if (typeof skill === 'string') {
+                    const trimmed = skill.trim();
+                    // Try to parse stringified JSON arrays like '["Flutter","Dart"]'
+                    if (trimmed.startsWith('[')) {
+                        try {
+                            const parsed = JSON.parse(trimmed);
+                            if (Array.isArray(parsed)) {
+                                parsed.forEach(s => { if (s && String(s).trim()) flatSkills.push(String(s).trim()); });
+                                return;
+                            }
+                        } catch(e) { /* not valid JSON, fall through */ }
+                    }
+                    // Strip any remaining brackets/quotes
+                    const cleaned = trimmed.replace(/^\["|"\]$/g, '').replace(/^"|"$/g, '').trim();
+                    if (cleaned) flatSkills.push(cleaned);
+                } else if (skill) {
+                    flatSkills.push(String(skill));
+                }
+            });
+
+            if (flatSkills.length > 0) {
+                skillsListEl.innerHTML = flatSkills.map(skill => {
+                    const verified = isItemVerified(skill);
+                    if (verified) {
+                        return `<span>${skill} <i class="fas fa-check-circle" style="color: #3897f0; font-size: 11px;"></i></span>`;
+                    }
+                    return `<span>${skill}</span>`;
+                }).join(', ');
+                skillsSection.style.display = 'block';
+            } else {
+                skillsSection.style.display = 'none';
+            }
+        } else {
+            skillsSection.style.display = 'none';
+        }
+
+        // ── Projects ─────────────────────────────────────────────────────
+        const projectsSection = document.getElementById('projectsSection');
+        const projList = document.getElementById('projectsList');
+        projList.innerHTML = '';
+        if (data.projects && Array.isArray(data.projects) && data.projects.length > 0) {
+            projectsSection.style.display = 'block';
             data.projects.forEach(proj => {
                 const projDiv = document.createElement('div');
                 projDiv.className = 'mb-3 avoid-break';
+                const title = proj.title || 'Project';
+                const verified = proj.isVerified || proj.verified || isItemVerified(title);
+                const badge = getVerifiedBadgeHtml(verified);
+                const descItems = Array.isArray(proj.description) ? proj.description : (proj.description ? [proj.description] : []);
                 projDiv.innerHTML = `
-                    <strong style="font-size: 15px;">${proj.title || proj.project_name || 'Project'}</strong>
-                    ${proj.technologies ? `<div style="font-size: 11px; color: #666; margin-top: 2px;">Technologies: ${Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}</div>` : ''}
-                    ${proj.description ? `
+                    <strong style="font-size: 15px;">${title}${badge}</strong>
+                    ${descItems.length > 0 ? `
                         <div style="font-size: 12px; margin-top: 5px;">
                             <ul style="padding-left: 15px; margin-top: 5px; margin-bottom: 0;">
-                                ${Array.isArray(proj.description)
-                                    ? proj.description.map(d => `<li class="mb-1">${d}</li>`).join('')
-                                    : `<li class="mb-1">${proj.description}</li>`}
+                                ${descItems.map(d => `<li class="mb-1">${d}</li>`).join('')}
                             </ul>
                         </div>
                     ` : ''}
                 `;
                 projList.appendChild(projDiv);
             });
-        } else if (data.updatedProjects && data.updatedProjects.length > 0) {
-            document.getElementById('projectsList').innerHTML = '<p style="font-size: 12px;">' + data.updatedProjects.join('. ') + '</p>';
+        } else {
+            projectsSection.style.display = 'none';
         }
 
-        // Internships
-        if (data.internships && data.internships.length > 0) {
-            document.getElementById('internshipsSection').style.display = 'block';
-            const internList = document.getElementById('internshipsList');
-            internList.innerHTML = '';
+        // ── Internships ─────────────────────────────────────────────────
+        const internshipsSection = document.getElementById('internshipsSection');
+        const internList = document.getElementById('internshipsList');
+        internList.innerHTML = '';
+        if (data.internships && Array.isArray(data.internships) && data.internships.length > 0) {
+            internshipsSection.style.display = 'block';
             data.internships.forEach(intern => {
                 const internDiv = document.createElement('div');
                 internDiv.className = 'mb-3 avoid-break';
+                const role = intern.role || 'Intern';
+                const company = intern.company || '';
+                const verified = intern.isVerified || intern.verified || isItemVerified(role) || isItemVerified(company);
+                const badge = getVerifiedBadgeHtml(verified);
                 internDiv.innerHTML = `
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <strong style="font-size: 15px; display: block;">${intern.role || intern.position || 'Intern'}</strong>
-                            <div style="font-size: 13px; color: #3897f0;">${intern.company || intern.organization || 'Company'}</div>
+                            <strong style="font-size: 15px; display: block;">${role}${badge}</strong>
+                            <div style="font-size: 13px; color: #3897f0;">${company}</div>
                         </div>
-                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${formatDateRange(intern.start_date, intern.end_date)}</span>
+                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${intern.duration || ''}</span>
                     </div>
                     ${intern.description ? `
                         <div style="font-size: 12px; margin-top: 5px;">
-                            <ul style="padding-left: 15px; margin-bottom: 0;">
-                                ${Array.isArray(intern.description)
-                                    ? intern.description.map(d => `<li class="mb-1">${d}</li>`).join('')
-                                    : `<li class="mb-1">${intern.description}</li>`}
-                            </ul>
+                            <p style="margin-bottom: 0;">${intern.description}</p>
                         </div>
                     ` : ''}
                 `;
                 internList.appendChild(internDiv);
             });
+        } else {
+            internshipsSection.style.display = 'none';
         }
 
-        // Trainings
-        if (data.trainings && data.trainings.length > 0) {
-            document.getElementById('trainingsSection').style.display = 'block';
-            const trainList = document.getElementById('trainingsList');
-            trainList.innerHTML = '';
+        // ── Industrial Visits ───────────────────────────────────────────
+        const visitsSection = document.getElementById('visitsSection');
+        const visitList = document.getElementById('visitsList');
+        visitList.innerHTML = '';
+        if (data.industrial_visits && Array.isArray(data.industrial_visits) && data.industrial_visits.length > 0) {
+            visitsSection.style.display = 'block';
+            data.industrial_visits.forEach(visit => {
+                const visitDiv = document.createElement('div');
+                visitDiv.className = 'mb-3 avoid-break';
+                visitDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <strong style="font-size: 14px;">${visit.company || 'Company'}</strong>
+                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${visit.date || ''}</span>
+                    </div>
+                    ${visit.location ? `<div style="font-size: 12px; color: #777;">${visit.location}</div>` : ''}
+                `;
+                visitList.appendChild(visitDiv);
+            });
+        } else {
+            visitsSection.style.display = 'none';
+        }
+
+        // ── Trainings ───────────────────────────────────────────────────
+        const trainingsSection = document.getElementById('trainingsSection');
+        const trainList = document.getElementById('trainingsList');
+        trainList.innerHTML = '';
+        if (data.trainings && Array.isArray(data.trainings) && data.trainings.length > 0) {
+            trainingsSection.style.display = 'block';
             data.trainings.forEach(train => {
                 const trainDiv = document.createElement('div');
                 trainDiv.className = 'mb-3 avoid-break';
@@ -400,178 +545,214 @@
                             <strong style="font-size: 15px; display: block;">${train.title || train.course_name || 'Training'}</strong>
                             <div style="font-size: 13px; color: #3897f0;">${train.organization || train.provider || ''}</div>
                         </div>
-                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${train.year || formatDateRange(train.start_date, train.end_date)}</span>
+                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${train.year || train.duration || ''}</span>
                     </div>
                     ${train.description ? `<div style="font-size: 12px; margin-top: 5px;">${train.description}</div>` : ''}
                 `;
                 trainList.appendChild(trainDiv);
             });
+        } else {
+            trainingsSection.style.display = 'none';
         }
 
-        // Education
-        const eduList = document.getElementById('educationList');
-        eduList.innerHTML = '';
-        const colleges = data.colleges || data.institution || data.degree || [];
-        if (colleges.length > 0) {
-            colleges.forEach(college => {
-                const eduDiv = document.createElement('div');
-                eduDiv.className = 'mb-3 avoid-break';
-                eduDiv.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div style="font-size: 15px; font-weight: 600;">${college.degree || college.course || 'Degree'}</div>
-                            <div style="font-size: 13px; color: #3897f0;">${college.institution || college.college_name || 'Institution'}</div>
-                        </div>
-                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${formatDateRange(college.start_date, college.end_date) || college.year || ''}</span>
+       // ── Education ───────────────────────────────────────────────────
+const eduSection = document.getElementById('educationSection');
+const eduList = document.getElementById('educationList');
+eduList.innerHTML = '';
+let hasEducation = false;
+
+// Helper to check if an object has at least one non-empty value (excluding _id)
+const isNonEmptyObject = (obj) => {
+    if (!obj || typeof obj !== 'object') return false;
+    return Object.entries(obj).some(([key, val]) => {
+        if (key === '_id' || key === 'id') return false; // skip mongo IDs
+        return val !== null && val !== undefined && val.toString().trim() !== '';
+    });
+};
+
+// College entries
+const collegeEntries = (data.education && data.education.college) || data.college || [];
+if (Array.isArray(collegeEntries) && collegeEntries.length > 0) {
+    collegeEntries.forEach(college => {
+        if (!isNonEmptyObject(college)) return;
+        hasEducation = true;
+        const degreeLine = [college.degree, college.department].filter(Boolean).join(' - ');
+        const duration = [college.start_year || college.startYear, college.end_year || college.endYear].filter(Boolean).join(' - ');
+        const eduDiv = document.createElement('div');
+        eduDiv.className = 'mb-3 avoid-break';
+        eduDiv.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div style="font-size: 15px; font-weight: 600;">${degreeLine || 'Degree'}</div>
+                    <div style="font-size: 13px; color: #3897f0;">${college.institution || ''}</div>
+                </div>
+                <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${duration}</span>
+            </div>
+            ${college.cgpa ? `<div style="font-size: 12px; color: #666; margin-top: 2px;">CGPA: ${college.cgpa}</div>` : ''}
+        `;
+        eduList.appendChild(eduDiv);
+    });
+}
+
+const schoolObj = (data.education && data.education.school) || null;
+
+// Higher Secondary
+const hsRaw = (schoolObj && schoolObj.higher_secondary) || data.higher_secondary;
+const higherSecondaryEntries = Array.isArray(hsRaw) ? hsRaw : (hsRaw ? [hsRaw] : []);
+
+higherSecondaryEntries.forEach(hs => {
+    // Skip if null, undefined, or empty object (ignoring _id)
+    if (!isNonEmptyObject(hs)) return;
+
+    hasEducation = true;
+    const hsDiv = document.createElement('div');
+    hsDiv.className = 'mb-2 avoid-break';
+    hsDiv.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <div style="font-size: 14px; font-weight: 600;">Higher Secondary ${hs.board ? `(${hs.board})` : ''}</div>
+                <div style="font-size: 13px; color: #666;">${hs.institution || ''}</div>
+            </div>
+            <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${hs.year_of_passing || ''}</span>
+        </div>
+        ${hs.percentage ? `<div style="font-size: 12px; color: #666; margin-top: 2px;">Percentage: ${hs.percentage}</div>` : ''}
+    `;
+    eduList.appendChild(hsDiv);
+});
+
+// Secondary
+const secRaw = (schoolObj && schoolObj.secondary) || data.secondary;
+const secondaryEntries = Array.isArray(secRaw) ? secRaw : (secRaw ? [secRaw] : []);
+
+secondaryEntries.forEach(sec => {
+    // Skip if null, undefined, or empty object (ignoring _id)
+    if (!isNonEmptyObject(sec)) return;
+
+    hasEducation = true;
+    const secDiv = document.createElement('div');
+    secDiv.className = 'mb-2 avoid-break';
+    secDiv.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <div style="font-size: 14px; font-weight: 600;">Secondary ${sec.board ? `(${sec.board})` : ''}</div>
+                <div style="font-size: 13px; color: #666;">${sec.institution || ''}</div>
+            </div>
+            <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${sec.year_of_passing || ''}</span>
+        </div>
+        ${sec.percentage ? `<div style="font-size: 12px; color: #666; margin-top: 2px;">Percentage: ${sec.percentage}</div>` : ''}
+    `;
+    eduList.appendChild(secDiv);
+});
+
+// Hide section entirely if no valid education entries exist
+eduSection.style.display = hasEducation ? 'block' : 'none';
+        // ── Paper Presentations ─────────────────────────────────────────
+        const presentationsSection = document.getElementById('presentationsSection');
+        const presList = document.getElementById('presentationsList');
+        presList.innerHTML = '';
+        if (data.paper_presentations && Array.isArray(data.paper_presentations) && data.paper_presentations.length > 0) {
+            presentationsSection.style.display = 'block';
+            data.paper_presentations.forEach(pres => {
+                const presDiv = document.createElement('div');
+                presDiv.className = 'mb-3 avoid-break';
+                presDiv.style.fontSize = '12px';
+                const title = pres.title || 'Presentation';
+                const verified = pres.isVerified || pres.verified || isItemVerified(title);
+                const badge = getVerifiedBadgeHtml(verified);
+                presDiv.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <strong style="font-size: 14px;">${title}${badge}</strong>
+                        <span style="color: #666;">${pres.year || ''}</span>
                     </div>
-                    ${college.percentage || college.cgpa || college.gpa ? `
-                        <div style="font-size: 12px; color: #666; margin-top: 2px;">
-                            ${college.percentage ? `Percentage: ${college.percentage}` : ''}
-                            ${college.cgpa ? `CGPA: ${college.cgpa}` : ''}
-                            ${college.gpa ? `GPA: ${college.gpa}` : ''}
-                        </div>
-                    ` : ''}
+                    ${pres.event ? `<div style="color: #3897f0; margin: 2px 0;">${pres.event}</div>` : ''}
+                    ${pres.description ? `<p style="color: #6c757d; margin: 5px 0 0 0;">${pres.description}</p>` : ''}
                 `;
-                eduList.appendChild(eduDiv);
+                presList.appendChild(presDiv);
             });
+        } else {
+            presentationsSection.style.display = 'none';
         }
 
-        if (data.higher_secondary) {
-            const hs = data.higher_secondary;
-            const hsDiv = document.createElement('div');
-            hsDiv.className = 'mt-3 avoid-break';
-            hsDiv.innerHTML = `
-                <div class="mb-2 avoid-break">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div style="font-size: 14px; font-weight: 600;">Higher Secondary ${hs.board ? `(${hs.board})` : ''}</div>
-                            <div style="font-size: 13px; color: #666;">${hs.institution || 'School'}</div>
-                        </div>
-                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${hs.year || ''}</span>
-                    </div>
-                    ${hs.percentage ? `<div style="font-size: 12px; color: #666; margin-top: 2px;">Percentage: ${hs.percentage}</div>` : ''}
-                </div>
-            `;
-            eduList.appendChild(hsDiv);
-        }
+        // ── Plain Array Sections ────────────────────────────────────────
+        renderPlainList(data.achievements, 'achievementsSection', 'achievementsList');
+        renderPlainList(data.publications, 'publicationsSection', 'publicationsList');
+        renderPlainList(data.workshops, 'workshopsSection', 'workshopsList');
+        renderPlainList(data.leadership, 'leadershipSection', 'leadershipList');
+        renderPlainList(data.volunteer_experience, 'volunteerSection', 'volunteerList');
 
-        if (data.secondary) {
-            const sec = data.secondary;
-            const secDiv = document.createElement('div');
-            secDiv.className = 'mt-3 avoid-break';
-            secDiv.innerHTML = `
-                <div class="mb-2 avoid-break">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div style="font-size: 14px; font-weight: 600;">Secondary ${sec.board ? `(${sec.board})` : ''}</div>
-                            <div style="font-size: 13px; color: #666;">${sec.institution || 'School'}</div>
-                        </div>
-                        <span style="font-size: 12px; color: #666; white-space: nowrap; margin-left: 8px;">${sec.year || ''}</span>
-                    </div>
-                    ${sec.percentage ? `<div style="font-size: 12px; color: #666; margin-top: 2px;">Percentage: ${sec.percentage}</div>` : ''}
-                </div>
-            `;
-            eduList.appendChild(secDiv);
-        }
-
-        // Certifications
-        if (data.certifications && data.certifications.length > 0) {
-            document.getElementById('certificationsSection').style.display = 'block';
-            const certList = document.getElementById('certificationsList');
-            certList.innerHTML = '';
-            data.certifications.forEach(cert => {
+        // ── Certifications ──────────────────────────────────────────────
+        const certificationsSection = document.getElementById('certificationsSection');
+        const certList = document.getElementById('certificationsList');
+        certList.innerHTML = '';
+        const certs = data.studentcertificate || data.certifications || [];
+        if (certs && Array.isArray(certs) && certs.length > 0) {
+            certificationsSection.style.display = 'block';
+            certs.forEach(cert => {
                 const certDiv = document.createElement('div');
                 certDiv.className = 'mb-2 avoid-break';
                 certDiv.style.fontSize = '12px';
+                const certName = cert.name || cert.title || '';
+                const verified = cert.isVerified || cert.verified || isItemVerified(certName);
+                const badge = getVerifiedBadgeHtml(verified, 'margin-right: 4px; font-size: 11px;');
                 certDiv.innerHTML = `
-                    <div style="font-weight: 600; color: #3897f0;">${cert.name || cert.title || 'Certification'}</div>
+                    <div style="font-weight: 600; color: #3897f0;">${badge}${certName}</div>
                     <div class="d-flex justify-content-between">
-                        <span style="font-size: 11px; color: #777;">${cert.issuing_organization || cert.provider || ''}</span>
-                        <span style="font-size: 11px; color: #777;">${cert.year || cert.date || ''}</span>
+                        <span style="font-size: 11px; color: #777;">${cert.issuer || ''}</span>
+                        <span style="font-size: 11px; color: #777;">${cert.date || ''}</span>
                     </div>
                 `;
                 certList.appendChild(certDiv);
             });
+        } else {
+            certificationsSection.style.display = 'none';
         }
 
-        // Achievements
-        if (data.achievements && data.achievements.length > 0) {
-            document.getElementById('achievementsSection').style.display = 'block';
-            const achList = document.getElementById('achievementsList');
-            achList.innerHTML = '';
-            data.achievements.forEach(ach => {
-                const li = document.createElement('li');
-                li.className = 'mb-1 avoid-break';
-                li.textContent = typeof ach === 'string' ? ach : (ach.description || ach.title || '');
-                achList.appendChild(li);
-            });
+        // ── Languages ───────────────────────────────────────────────────
+        const languagesSection = document.getElementById('languagesSection');
+        if (data.languages_known && Array.isArray(data.languages_known) && data.languages_known.length > 0) {
+            document.getElementById('languagesList').textContent = data.languages_known.join(', ');
+            languagesSection.style.display = 'block';
+        } else {
+            languagesSection.style.display = 'none';
         }
 
-        // Leadership
-        if (data.leadership && data.leadership.length > 0) {
-            document.getElementById('leadershipSection').style.display = 'block';
-            const leadList = document.getElementById('leadershipList');
-            leadList.innerHTML = '';
-            data.leadership.forEach(lead => {
-                const li = document.createElement('li');
-                li.className = 'mb-1 avoid-break';
-                li.textContent = typeof lead === 'string' ? lead : (lead.description || lead.title || lead.position || '');
-                leadList.appendChild(li);
-            });
+        // ── Areas of Interest ───────────────────────────────────────────
+        const interestsSection = document.getElementById('interestsSection');
+        if (data.areas_of_interest && Array.isArray(data.areas_of_interest) && data.areas_of_interest.length > 0) {
+            document.getElementById('interestsList').textContent = data.areas_of_interest.join(', ');
+            interestsSection.style.display = 'block';
+        } else {
+            interestsSection.style.display = 'none';
         }
 
-        // Volunteer Experience
-        if (data.volunteer_experience && data.volunteer_experience.length > 0) {
-            document.getElementById('volunteerSection').style.display = 'block';
-            const volList = document.getElementById('volunteerList');
-            volList.innerHTML = '';
-            data.volunteer_experience.forEach(vol => {
-                const li = document.createElement('li');
-                li.className = 'mb-1 avoid-break';
-                li.textContent = typeof vol === 'string' ? vol : (vol.description || vol.role || '');
-                volList.appendChild(li);
-            });
-        }
-
-        // Languages
-        if (data.languages && data.languages.length > 0) {
-            document.getElementById('languagesSection').style.display = 'block';
-            const langText = data.languages.map(lang => {
-                if (typeof lang === 'string') return lang;
-                return lang.name ? `${lang.name}${lang.proficiency ? ` (${lang.proficiency})` : ''}` : '';
-            }).filter(Boolean).join(', ');
-            document.getElementById('languagesList').textContent = langText;
-        }
-
-        // Areas of Interest
-        if (data.areas_of_interest && data.areas_of_interest.length > 0) {
-            document.getElementById('interestsSection').style.display = 'block';
-            const interests = data.areas_of_interest.map(i => typeof i === 'string' ? i : i.name || i.title).filter(Boolean);
-            document.getElementById('interestsList').textContent = interests.join(', ');
-        }
-
-        // Hobbies
-        if (data.hobbies && data.hobbies.length > 0) {
-            document.getElementById('hobbiesSection').style.display = 'block';
-            const hobbies = data.hobbies.map(h => typeof h === 'string' ? h : h.name || h.title).filter(Boolean);
-            document.getElementById('hobbiesList').textContent = hobbies.join(', ');
+        // ── Hobbies ─────────────────────────────────────────────────────
+        const hobbiesSection = document.getElementById('hobbiesSection');
+        if (data.hobbies && Array.isArray(data.hobbies) && data.hobbies.length > 0) {
+            document.getElementById('hobbiesList').textContent = data.hobbies.join(', ');
+            hobbiesSection.style.display = 'block';
+        } else {
+            hobbiesSection.style.display = 'none';
         }
     }
 
-    function formatDateRange(startDate, endDate) {
-        if (!startDate && !endDate) return '';
-        const formatDate = (date) => {
-            if (!date) return '';
-            if (date.toLowerCase() === 'present' || date.toLowerCase() === 'current') return 'Present';
-            return date;
-        };
-        const start = formatDate(startDate);
-        const end   = formatDate(endDate) || 'Present';
-        if (!start && !end) return '';
-        if (!start) return end;
-        if (!end || end === 'Present') return `${start} - Present`;
-        return `${start} - ${end}`;
+    // Helper for plain string/object list fields
+    function renderPlainList(items, sectionId, listId) {
+        const section = document.getElementById(sectionId);
+        const list = document.getElementById(listId);
+        list.innerHTML = '';
+        if (items && Array.isArray(items) && items.length > 0) {
+            section.style.display = 'block';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'mb-1 avoid-break';
+                li.textContent = typeof item === 'string' ? item : (item.description || item.title || '');
+                list.appendChild(li);
+            });
+        } else {
+            section.style.display = 'none';
+        }
     }
+
 </script>
 </body>
 </html>

@@ -175,6 +175,7 @@ class _KnowledgeCheckDialogState extends State<KnowledgeCheckDialog> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5,
                       children: [
                         Text(
                           "KNOWLEDGE CHECK",
@@ -299,70 +300,70 @@ class _KnowledgeCheckDialogState extends State<KnowledgeCheckDialog> {
             style: AppStyles.customTextStyle(
               size: 14,
               weight: FontWeight.w600,
+              lineSpace: 1.4,
               color: Colors.white,
             ),
           ),
           const SizedBox(height: 10),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 3.2,
+          Column(
             children: options.entries.map((entry) {
               final isSelected = selected == entry.key;
-              return GestureDetector(
-                onTap: () => setState(() => _answers[index] = entry.key),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? const Color(0xFF139E8C).withOpacity(0.25)
-                        : const Color(0xFF1C2B3D),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isSelected
-                          ? const Color(0xFF3FD1BC)
-                          : Colors.transparent,
-                      width: 1.4,
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GestureDetector(
+                  onTap: () => setState(() => _answers[index] = entry.key),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 20,
-                        width: 20,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2A3B52),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          entry.key,
-                          style: AppStyles.customTextStyle(
-                            size: 11,
-                            weight: FontWeight.w700,
-                            color: const Color(0xFF9FD8FF),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFF139E8C).withOpacity(0.25)
+                          : const Color(0xFF1C2B3D),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFF3FD1BC)
+                            : Colors.transparent,
+                        width: 1.4,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 20,
+                          width: 20,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2A3B52),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Text(
+                            entry.key,
+                            style: AppStyles.customTextStyle(
+                              size: 11,
+                              weight: FontWeight.w700,
+                              color: const Color(0xFF9FD8FF),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          entry.value,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppStyles.customTextStyle(
-                            size: 12,
-                            weight: FontWeight.w500,
-                            color: Colors.white,
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            entry.value,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppStyles.customTextStyle(
+                              size: 12,
+                              weight: FontWeight.w500,
+                              color: Colors.white,
+                              lineSpace: 1.3
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -431,6 +432,7 @@ class QuizReviewDialog extends StatelessWidget {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 5,
                       children: [
                         Text(
                           "QUIZ REVIEW",
@@ -507,24 +509,21 @@ class QuizReviewDialog extends StatelessWidget {
     // 1. Determine correct option key ("A", "B", "C", or "D")
     String? correctOptionKey;
 
-    // Primary check: using top-level `correct_indices` from API
     if (result.correctIndices != null &&
         index < result.correctIndices!.length) {
       correctOptionKey = result.correctIndices![index].trim().toUpperCase();
     }
 
-    // Fallback 1: match `q.correctAnswer` against option keys ("A", "B", etc.)
     if (correctOptionKey == null || !options.containsKey(correctOptionKey)) {
       if (q.correctAnswer != null && options.containsKey(q.correctAnswer)) {
         correctOptionKey = q.correctAnswer;
       }
     }
 
-    // Fallback 2: match `q.correctAnswer` against full option values (e.g., "OpenWeatherMap")
     if (correctOptionKey == null || !options.containsKey(correctOptionKey)) {
       final matchEntry = options.entries.firstWhere(
-        (e) =>
-            e.value.trim().toLowerCase() ==
+            (e) =>
+        e.value.trim().toLowerCase() ==
             (q.correctAnswer ?? '').trim().toLowerCase(),
         orElse: () => const MapEntry("", ""),
       );
@@ -537,8 +536,8 @@ class QuizReviewDialog extends StatelessWidget {
     String? selectedOptionKey = q.selectAnswer ?? q.answer;
     if (selectedOptionKey != null && !options.containsKey(selectedOptionKey)) {
       final selectedMatch = options.entries.firstWhere(
-        (e) =>
-            e.value.trim().toLowerCase() ==
+            (e) =>
+        e.value.trim().toLowerCase() ==
             selectedOptionKey!.trim().toLowerCase(),
         orElse: () => const MapEntry("", ""),
       );
@@ -605,16 +604,11 @@ class QuizReviewDialog extends StatelessWidget {
               size: 14,
               weight: FontWeight.w600,
               color: Colors.white,
+              lineSpace: 1.3
             ),
           ),
           const SizedBox(height: 10),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 3.2,
+          Column(
             children: options.entries.map((entry) {
               final bool isCorrectOption = entry.key == correctOptionKey;
               final bool isWrongSelected =
@@ -630,60 +624,65 @@ class QuizReviewDialog extends StatelessWidget {
                 bgColor = const Color(0xFFE94F4F).withOpacity(0.12);
               }
 
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: borderColor, width: 1.4),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 20,
-                      width: 20,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2A3B52),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Text(
-                        entry.key,
-                        style: AppStyles.customTextStyle(
-                          size: 11,
-                          weight: FontWeight.w700,
-                          color: const Color(0xFF9FD8FF),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: borderColor, width: 1.4),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 20,
+                        width: 20,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A3B52),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          entry.key,
+                          style: AppStyles.customTextStyle(
+                            size: 11,
+                            weight: FontWeight.w700,
+                            color: const Color(0xFF9FD8FF),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        entry.value,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppStyles.customTextStyle(
-                          size: 12,
-                          weight: FontWeight.w500,
-                          color: Colors.white,
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          entry.value,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            weight: FontWeight.w500,
+                            color: Colors.white,
+                            lineSpace: 1.3
+                          ),
                         ),
                       ),
-                    ),
-                    if (isCorrectOption)
-                      const Icon(
-                        Icons.check_circle,
-                        size: 16,
-                        color: Color(0xFF19C37D),
-                      ),
-                    if (isWrongSelected)
-                      const Icon(
-                        Icons.cancel,
-                        size: 16,
-                        color: Color(0xFFE94F4F),
-                      ),
-                  ],
+                      if (isCorrectOption)
+                        const Icon(
+                          Icons.check_circle,
+                          size: 16,
+                          color: Color(0xFF19C37D),
+                        ),
+                      if (isWrongSelected)
+                        const Icon(
+                          Icons.cancel,
+                          size: 16,
+                          color: Color(0xFFE94F4F),
+                        ),
+                    ],
+                  ),
                 ),
               );
             }).toList(),

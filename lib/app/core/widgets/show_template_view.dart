@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class ShowTemplateView extends StatefulWidget {
   final String htmlAssetPath;
-  final ExtractedResumeDataModel resumeData;
+  final NewStudentProfileModel resumeData;
 
   const ShowTemplateView({
     super.key,

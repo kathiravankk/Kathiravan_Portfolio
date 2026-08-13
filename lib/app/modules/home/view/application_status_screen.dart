@@ -209,7 +209,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                             weight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 10,),
+                        const SizedBox(height: 10),
                         Column(
                           children: [
                             _buildStatusItem(
@@ -254,11 +254,43 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                   : false,
                             ),
                             Visibility(
-                              visible: appliedData!.status != "Applied",
+                              visible: appliedData!.status == "View",
+                              child: _buildStatusItem(
+                                iconWidget: appliedData!.status == "View"
+                                    ? Icon(
+                                        Icons.access_time,
+                                        color: AppColors.selectedContColor,
+                                        size: 20,
+                                      )
+                                    : Icon(
+                                        Icons.close,
+                                        color: AppColors.whiteColor,
+                                        size: 20,
+                                      ),
+                                title: appliedData!.status == "View"
+                                    ? "Waiting for Recruiter action"
+                                    : appliedData!.status!,
+                                showLine:
+                                    (appliedData!.status == "Selected" ||
+                                        appliedData!.status == "Shortlisted" ||
+                                        appliedData!.status == "Rejected")
+                                    ? true
+                                    : false,
+                              ),
+                            ),
+                            Visibility(
+                              visible:
+                                  (appliedData!.jobType == "Fee" ||
+                                      appliedData!.jobType == "fee") &&
+                                  (appliedData!.status == "Selected" ||
+                                      appliedData!.status == "Shortlisted"),
+
                               child: _buildStatusItem(
                                 iconWidget:
-                                    appliedData!.status == "Selected" ||
-                                        appliedData!.status == "Shortlisted" || appliedData!.status == "Completed"
+                                    internController
+                                            .paymentStatusModel
+                                            .status ==
+                                        "completed"
                                     ? Icon(
                                         Icons.check_circle_sharp,
                                         color: AppColors.sucTextColor,
@@ -269,37 +301,12 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                         color: AppColors.failTextColor,
                                         size: 20,
                                       ),
-                                title: appliedData!.status!,
-                                showLine:
-                                    appliedData!.jobType == "Fee" ||
-                                        appliedData!.jobType == "fee"
-                                    ? true
-                                    : false,
-                              ),
-                            ),
-                            Visibility(
-                              visible:
-                              (appliedData!.jobType == "Fee" ||
-                                  appliedData!.jobType == "fee") &&
-                                  (appliedData!.status == "Selected" ||
-                                      appliedData!.status == "Shortlisted"),
-
-                              child: _buildStatusItem(
-                                iconWidget:
-                                internController.paymentStatusModel.status == "completed"
-                                    ? Icon(
-                                  Icons.check_circle_sharp,
-                                  color: AppColors.sucTextColor,
-                                  size: 20,
-                                )
-                                    : Icon(
-                                  Icons.close,
-                                  color: AppColors.failTextColor,
-                                  size: 20,
-                                ),
 
                                 title:
-                                internController.paymentStatusModel.status == "completed"
+                                    internController
+                                            .paymentStatusModel
+                                            .status ==
+                                        "completed"
                                     ? "Payment Completed"
                                     : "Payment Pending",
 
@@ -308,7 +315,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                             ),
                             SizedBox(height: 10),
                             if ((appliedData!.jobType == "Fee" ||
-                                appliedData!.jobType == "fee") &&
+                                    appliedData!.jobType == "fee") &&
                                 (appliedData!.status == "Selected" ||
                                     appliedData!.status == "Shortlisted"))
                               _buildPaymentSection(),
@@ -316,13 +323,34 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                         ),
 
                         const SizedBox(height: 10),
-                        Text(
-                          'Similar Internship',
-                          style: AppStyles.customTextStyle(
-                            size: 16,
-                            color: AppColors.whiteColor,
-                            weight: FontWeight.w700,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Similar Internship',
+                              style: AppStyles.customTextStyle(
+                                size: 16,
+                                color: AppColors.whiteColor,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.similarInternshipScreen,
+                                );
+                              },
+                              child: Text(
+                                'View All',
+                                style: AppStyles.customTextStyle(
+                                  size: 12,
+                                  color: AppColors.secondaryColor,
+                                  weight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
                         dashboardController.similarInternshipLoading
@@ -360,17 +388,48 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                                     .similarList![index]
                                                     .companyName ??
                                                 "",
+                                            position:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .noOfPosition ??
+                                                0,
                                             isSaved:
                                                 dashboardController
                                                     .similarInternshipModel
                                                     .similarList![index]
                                                     .isSaved ??
                                                 false,
+                                            // duration:
+                                            //     dashboardController
+                                            //         .similarInternshipModel
+                                            //         .similarList![index]
+                                            //         .internshipDuration ??
+                                            //     "",
                                             duration:
+                                                dashboardController
+                                                        .similarInternshipModel
+                                                        .similarList![index]
+                                                        .internshipDuration!
+                                                        .isNotEmpty &&
+                                                    dashboardController
+                                                            .similarInternshipModel
+                                                            .similarList![index]
+                                                            .internshipDuration !=
+                                                        null
+                                                ? "${dashboardController.similarInternshipModel.similarList![index].internshipDuration!} Months"
+                                                : "${dashboardController.similarInternshipModel.similarList![index].days} Days",
+                                            internFees:
                                                 dashboardController
                                                     .similarInternshipModel
                                                     .similarList![index]
-                                                    .internshipDuration ??
+                                                    .internFees ??
+                                                "",
+                                            location:
+                                                dashboardController
+                                                    .similarInternshipModel
+                                                    .similarList![index]
+                                                    .companyCity ??
                                                 "",
                                             // saveFunc: () {
                                             //   similar.isSaved!
@@ -378,14 +437,14 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                             //       : addToSaved(jobId: similar.sId!);
                                             // },
                                             saveFunc: () async {
-                                              dashboardController.similarSaveFunc(
-                                                index,
-                                              );
+                                              dashboardController
+                                                  .similarSaveFunc(index);
                                             },
                                             viewFunc: () {
                                               AppFunctions.navigateScreen(
                                                 context,
-                                                AppRoutes.internshipDetailScreen,
+                                                AppRoutes
+                                                    .internshipDetailScreen,
                                                 arguments: {
                                                   "internshipId":
                                                       dashboardController
@@ -401,12 +460,11 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                                                     .similarList![index]
                                                     .eligibilityCriteria ??
                                                 "",
-                                            qualification:
-                                                dashboardController
-                                                    .similarInternshipModel
-                                                    .similarList![index]
-                                                    .studentQualification!
-                                                    .join(", "),
+                                            qualification: dashboardController
+                                                .similarInternshipModel
+                                                .similarList![index]
+                                                .studentQualification!
+                                                .join(", "),
                                             stipendRupees:
                                                 dashboardController
                                                     .similarInternshipModel
@@ -489,7 +547,9 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
   }) {
     try {
       final session = CFSessionBuilder()
-          .setEnvironment(CFEnvironment.PRODUCTION)  // need to make PRODUCTION for live
+          .setEnvironment(
+            CFEnvironment.PRODUCTION,
+          ) // need to make PRODUCTION for live
           .setOrderId(orderId)
           .setPaymentSessionId(paymentSessionId)
           .build();
@@ -625,7 +685,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
               height: 35,
               buttonFunction: isPending
                   ? () async {
-                AppAlertUtils.showPaymentRequiredDialog(
+                      AppAlertUtils.showPaymentRequiredDialog(
                         context: context,
                         courseName: appliedData!.jobData!.roleType!,
                         amount: internController.paymentStatusModel.feeAmount

@@ -44,6 +44,7 @@ class AppRoutes {
   static const studentTransactionHistoryScreen = '/studentTransactionHistoryScreen';
   static const studentCreditHistoryScreen = '/studentCreditHistoryScreen';
   static const studentPurchaseHistoryScreen = '/studentPurchaseHistoryScreen';
+  static const similarInternshipScreen = '/similarInternshipScreen';
 
   // INTERNSHIP FLOW
   static const internshipSyllabusScreen = '/internshipSyllabusScreen';
@@ -51,6 +52,7 @@ class AppRoutes {
   static const mcqTestScreen = '/mcqTestScreen';
   static const mcqResultReviewScreen = '/mcqResultReviewScreen';
   static const myCertificatesScreen = '/myCertificatesScreen';
+  static const studentTestResultScreen = '/studentTestResultScreen';
 
 
   /// RECRUITER FLOW SCREENS

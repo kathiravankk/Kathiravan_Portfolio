@@ -144,6 +144,26 @@ class LocalStorageService {
     await prefs.clear();
   }
 
+  /// Clear ONLY student session keys
+  static Future<void> clearStudent() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(tokenKey);
+    await prefs.remove(_studentKey);
+    await prefs.remove(_studentIdKey);
+    await prefs.remove(studentNameKey);
+    await prefs.remove(_isVerifiedKey);
+    await prefs.remove(studentCreditId);
+    // Keep global app preferences like fcmTokenKey or waterMarkKey intact if needed
+  }
+
+  /// Clear ONLY recruiter session keys
+  static Future<void> clearRecruiter() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(recruiterTokenKey);
+    await prefs.remove(_recruiterIdKey);
+    await prefs.remove(recruiterCreditId);
+  }
+
   // RECRUITER FLOW
 
   /// Save recruiter token

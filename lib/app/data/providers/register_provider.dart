@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
@@ -6,11 +8,13 @@ import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/account/create_resume_model.dart';
 import 'package:internsharks/app/data/models/account/credit_data_model.dart';
 import 'package:internsharks/app/data/models/account/kyc_update_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/profile_update_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/models/account/resume_extracted_data_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/student_register_model.dart';
+import 'package:internsharks/app/data/models/account/update_chat_profile_model.dart';
 
 class RegisterProvider {
   final Dio? client;
@@ -179,56 +183,54 @@ class RegisterProvider {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
       );
-      // Convert Map to FormData
+
       final formData = FormData();
 
-      registerData.forEach((k, v) {
-        debugPrint('$k : ${v.toString()}');
-      });
-      // registerData.forEach((key, value) {
-      //   if (key == "studprogramminglang" && value is List) {
-      //     for (var skill in value) {
-      //       formData.fields.add(
-      //         MapEntry("studprogramminglang", skill.toString()),
-      //       );
-      //     }
-      //   } else {
-      //     formData.fields.add(
-      //       MapEntry(key, value.toString()),
-      //     );
-      //   }
-      // });
+      // Debug original payload
       registerData.forEach((key, value) {
-        if (key == "studprogramminglang" && value is List) {
-          for (var skill in value) {
-            formData.fields.add(
-              MapEntry("studprogramminglang", skill.toString()),
-            );
-          }
+        debugPrint("PAYLOAD => $key : $value");
+      });
+
+      // Convert payload to FormData
+      registerData.forEach((key, value) {
+        if (value == null) {
+          formData.fields.add(MapEntry(key, ""));
         } else if (value is MultipartFile) {
           formData.files.add(MapEntry(key, value));
+        } else if (value is List || value is Map) {
+          formData.fields.add(MapEntry(key, jsonEncode(value)));
         } else {
           formData.fields.add(MapEntry(key, value.toString()));
         }
       });
 
-      Response response = await client!
+      // Debug ACTUAL FormData
+      debugPrint("========== FORM DATA ==========");
+
+      for (final field in formData.fields) {
+        debugPrint("${field.key} : ${field.value}");
+      }
+
+      debugPrint("===============================");
+
+      final response = await client!
           .post(
             AppApiUrls.newStudentRegister,
             data: formData,
-            options: Options(contentType: 'multipart/form-data'),
-            // options: Options(
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //   },
-            // ),
+            options: Options(contentType: "multipart/form-data"),
           )
           .timeout(const Duration(seconds: 60));
 
-      responseStatus = response.statusCode!;
+      responseStatus = response.statusCode ?? 0;
+
       return StudentRegisterModel.fromJson(response.data);
     } on DioException catch (error) {
       responseStatus = error.response?.statusCode ?? 0;
+
+      debugPrint("STATUS CODE: ${error.response?.statusCode}");
+
+      debugPrint("ERROR RESPONSE: ${error.response?.data}");
+
       return StudentRegisterModel.fromJson(error.response?.data);
     }
   }
@@ -248,11 +250,11 @@ class RegisterProvider {
       );
       responseStatus = response.statusCode!;
       if (responseStatus == 200 || responseStatus == 201) {
-        return StudentProfileModel.fromJson(response.data);
+        return NewStudentProfileModel.fromJson(response.data);
       }
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
-      return StudentProfileModel.fromJson(err.response!.data);
+      return NewStudentProfileModel.fromJson(err.response!.data);
     }
   }
 
@@ -314,7 +316,7 @@ class RegisterProvider {
     }
   }
 
-  // STUDENT REGISTER
+  // UPDATE STUDENT REGISTER
 
   Future<ProfileUpdateModel> putUpdateProfile({
     required Map<String, dynamic> updateData,
@@ -347,10 +349,33 @@ class RegisterProvider {
     }
   }
 
+  Future putChatStudentProfileData({
+    required Map<String, dynamic> updateData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.put(
+        AppApiUrls.updateChatProfile,
+        data: updateData,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      if (responseStatus == 200 || responseStatus == 201) {
+        return UpdateChatProfileModel.fromJson(response.data);
+      }
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return UpdateChatProfileModel.fromJson(err.response!.data);
+    }
+  }
+
   // RESUME UPDATE
 
   Future<ProfileUpdateModel> putUpdateResume({
-    required ExtractedResumeDataModel? updateData,
+    required NewStudentProfileModel? updateData,
   }) async {
     try {
       Map<String, dynamic> header = await AppApiHeader.formDataHeader();
@@ -479,7 +504,10 @@ class RegisterProvider {
         LogInterceptor(responseBody: true, requestBody: true),
       );
       Response response = await client!
-          .get(AppApiUrls.getCreditData(creditId), options: Options(headers: header))
+          .get(
+            AppApiUrls.getCreditData(creditId),
+            options: Options(headers: header),
+          )
           .timeout(const Duration(seconds: 60));
 
       responseStatus = response.statusCode!;

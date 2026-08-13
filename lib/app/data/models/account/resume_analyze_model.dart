@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/student_profile_model.dart';
+import 'package:internsharks/app/data/models/account/student_profile_model.dart' hide Secondary;
 
 class ResumeAnalysisModel {
   bool? success;
@@ -480,5 +481,106 @@ class Training {
       "year": year ?? "",
       "description": description ?? [],
     };
+  }
+}
+
+extension ExtractedResumeDataMapper on ExtractedResumeDataModel {
+  NewStudentProfileModel toNewStudentProfileModel({String? studentId}) {
+    return NewStudentProfileModel(
+      id: studentId ?? this.studentId,
+      templateNumber: templateNumber ?? "1",
+      message: message,
+
+      // Personal details (flattened)
+      studentName: personalInfo?.name ?? "",
+      studentGender: personalInfo?.gender ?? "",
+      studEmail: personalInfo?.email ?? "",
+      studMobileNo: personalInfo?.phone ?? "",
+      github: personalInfo?.github ?? "",
+      linkedIn: personalInfo?.linkedIn ?? "",
+      location: personalInfo?.location ?? "",
+      profileSummary: profileSummary ?? "",
+
+      // Skills & Lists
+      studProgrammingLang: skills ?? [],
+      areasOfInterest: areasOfInterest?.map((e) => e.toString()).toList() ?? [],
+      hobbies: hobbies?.map((e) => e.toString()).toList() ?? [],
+      languagesKnown: languages?.map((e) => e.toString()).toList() ?? [],
+      volunteerExperience: volunteerExperience?.map((e) => e.toString()).toList() ?? [],
+      leadership: leaderships?.map((e) => e.toString()).toList() ?? [],
+      achievements: achievements?.map((e) => e.toString()).toList() ?? [],
+      publications: publications?.map((e) => e.toString()).toList() ?? [],
+      workshops: workShops?.map((e) => e.toString()).toList() ?? [],
+
+      // Custom Model Lists
+      projects: projects?.map((p) => NewProjectData(
+        title: p.title,
+        description: p.description,
+      )).toList() ?? [],
+
+      internships: internships?.map((i) => NewInternshipData(
+        company: i.company,
+        role: i.role,
+        duration: i.duration,
+        description: i.description,
+      )).toList() ?? [],
+
+      studentCertificate: certifications?.map((c) => StudentCertificate(
+        name: c.name,
+        issuer: c.issuer,
+        date: c.date,
+      )).toList() ?? [],
+
+      industrialVisits: industrialVisits?.map((e) {
+        if (e is Map<String, dynamic>) {
+          return NewIndustrialVisit.fromJson(e);
+        }
+        return NewIndustrialVisit(
+          company: e.company,
+          location: e.location,
+          date: e.date,
+        );
+      }).toList() ?? [],
+
+      paperPresentations: paperPresentations?.map((e) {
+        if (e is Map<String, dynamic>) {
+          return NewPaperPresentation.fromJson(e);
+        }
+        return NewPaperPresentation(
+          title: e.title,
+          event: e.event,
+          year: e.year,
+          description: e.description,
+        );
+      }).toList() ?? [],
+
+      // Education
+      higherSecondary: higherSecondary != null
+          ? [
+        HigherSecondary(
+          institution: higherSecondary?.institution,
+          board: higherSecondary?.board,
+          percentage: higherSecondary?.percentage,
+          yearOfPassing: higherSecondary?.yearOfPassing,
+        )
+      ]
+          : [],
+
+      secondary: secondary != null
+          ? [
+        Secondary(
+          institution: secondary?.institution,
+          board: secondary?.board,
+          percentage: secondary?.percentage,
+          yearOfPassing: secondary?.yearOfPassing,
+        )
+      ]
+          : [],
+
+      college: colleges ?? [],
+      experience: experience ?? [],
+      trainings: trainings ?? [],
+      parents: parents ?? [],
+    );
   }
 }

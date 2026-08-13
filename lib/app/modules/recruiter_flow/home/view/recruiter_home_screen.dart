@@ -111,12 +111,12 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                           radius: 25,
                           backgroundColor: AppColors.whiteColor,
                           backgroundImage: NetworkImage(
-                            homeController.profileModel.recCompanyLogo ?? "",
+                            homeController.profileModel.recruiterData!.recCompanyLogo ?? "",
                           ),
                         ),
                       ),
                       Text(
-                        homeController.profileModel.recName ?? "",
+                        homeController.profileModel.recruiterData!.recName ?? "",
                         style: AppStyles.customTextStyle(
                           size: 21,
                           weight: FontWeight.w700,
@@ -127,12 +127,12 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                       ProfileWidgets.creditContainer(
                         creditCount:
                             ((homeController
-                                    .profileModel
+                                    .profileModel.recruiterData!
                                     .recruiterCreditId!
                                     .freeCredits ??
                                 0) +
                             (homeController
-                                    .profileModel
+                                    .profileModel.recruiterData!
                                     .recruiterCreditId!
                                     .balance ??
                                 0)),
@@ -142,25 +142,25 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                             AppRoutes.recruiterCreditPlanScreen,
                             arguments: {
                               "creditBalance": homeController
-                                  .profileModel
+                                  .profileModel.recruiterData!
                                   .recruiterCreditId!
                                   .balance,
                               "creditId": homeController
-                                  .profileModel
+                                  .profileModel.recruiterData!
                                   .recruiterCreditId!
                                   .id,
                             },
                           );
                         },
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.notifications_active_outlined,
-                          color: AppColors.secondaryColor,
-                          size: 30,
-                        ),
-                      ),
+                      // IconButton(
+                      //   onPressed: () {},
+                      //   icon: Icon(
+                      //     Icons.notifications_active_outlined,
+                      //     color: AppColors.secondaryColor,
+                      //     size: 30,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

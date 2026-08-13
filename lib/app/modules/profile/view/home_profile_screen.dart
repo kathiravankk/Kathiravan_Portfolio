@@ -15,6 +15,7 @@ import 'package:internsharks/app/core/widgets/ai_loading_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
@@ -32,24 +33,60 @@ class HomeProfileScreen extends StatefulWidget {
   const HomeProfileScreen({super.key});
 
   @override
-  State<HomeProfileScreen> createState() => _HomeProfileScreenState();
+  State<HomeProfileScreen> createState() => HomeProfileScreenState();
 }
 
-class _HomeProfileScreenState extends State<HomeProfileScreen> {
+class HomeProfileScreenState extends State<HomeProfileScreen> {
   final ProfileController profileController = Get.find<ProfileController>();
   final registerController = Get.find<RegisterController>();
+
+  Future<void> refreshData() async {
+    await getProfileData();
+    await getCreditData();
+  }
+
+  int? creditBalance = 0;
+  int page = 1;
+  String? creditId = "";
 
   @override
   void initState() {
     super.initState();
     getProfileData();
+    getCreditData();
+  }
+
+  Future<void> getCreditData() async {
+    try {
+      creditId = await LocalStorageService.getStudentCreditId();
+      await registerController.getCreditData(creditId: creditId!);
+      if (registerController.getResponseCode() == 200 ||
+          registerController.getResponseCode() == 201) {
+        if (mounted) {
+          creditBalance =
+              ((registerController.creditDataModel.creditData?.balance ?? 0) +
+              (registerController.creditDataModel.creditData?.freeCredits ??
+                  0));
+        }
+      } else {
+        AppFunctions.apiErrorHandling(
+          registerController.getResponseCode(),
+          "Something went wrong!, Try again later",
+        );
+      }
+    } catch (error) {
+      AppFunctions.apiErrorHandling(
+        registerController.getResponseCode(),
+        "Something went wrong!, Try again later",
+      );
+    }
   }
 
   String? studentId;
   int? templateNumber;
   bool isLiked = false;
   bool isDisliked = false;
-  ExtractedResumeDataModel? resumeData;
+  NewStudentProfileModel? resumeData;
   WebViewController? webViewController;
   bool isLoading = true;
   bool waterMarkValue = false;
@@ -61,7 +98,9 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     await profileController.getProfileData(studentId: studentId ?? "");
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
+      resumeData = profileController.profileDataModel;
       await getResumeData();
+      await getCreditData();
       isWaterMarkRemoved =
           profileController.profileDataModel.isWaterMarkRemoved ?? false;
     } else {
@@ -244,9 +283,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (webViewController == null) return;
     setState(() => isLoading = true);
     try {
-      final firstName = (resumeData?.personalInfo?.name ?? 'resume')
-          .split(' ')
-          .first;
+      final firstName = (resumeData?.studentName ?? 'resume').split(' ').first;
 
       await ResumeFileUtils.handleDownload(
         webViewController: webViewController!,
@@ -262,13 +299,11 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
     if (webViewController == null) return;
     setState(() => isLoading = true);
     try {
-      final firstName = (resumeData?.personalInfo?.name ?? 'resume')
-          .split(' ')
-          .first;
+      final firstName = (resumeData?.studentName ?? 'resume').split(' ').first;
       await ResumeFileUtils.handleShare(
         webViewController: webViewController!,
         fileName: "${firstName}_resume",
-        shareText: CommonUtils.resumeShareContent
+        shareText: CommonUtils.resumeShareContent,
       );
     } finally {
       if (mounted) setState(() => isLoading = false);
@@ -276,45 +311,6 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
   }
 
   Future<void> getResumeData() async {
-    resumeData = ExtractedResumeDataModel(
-      personalInfo: PersonalInfoModel(
-        name: profileController.profileDataModel.studentName ?? '',
-        gender: profileController.profileDataModel.studentGender,
-        email: profileController.profileDataModel.studEmail!,
-        phone: profileController.profileDataModel.studMobileNo!,
-        linkedIn: profileController.profileDataModel.linkedIn,
-        github: profileController.profileDataModel.github,
-        location: "",
-      ),
-      internships: profileController.profileDataModel.internships!,
-      hobbies: profileController.profileDataModel.hobbies,
-      areasOfInterest: profileController.profileDataModel.areasOfInterest,
-      languages: profileController.profileDataModel.languagesKnown,
-      volunteerExperience:
-          profileController.profileDataModel.volunteerExperience,
-      leaderships: profileController.profileDataModel.leadership,
-      achievements: profileController.profileDataModel.achievements,
-      publications: profileController.profileDataModel.publications,
-      workShops: profileController.profileDataModel.workshops,
-      paperPresentations: profileController.profileDataModel.paperPresentations,
-      certifications: profileController.profileDataModel.studentCertificate,
-      educationData: profileController.profileDataModel.education,
-      industrialVisits: profileController.profileDataModel.industrialVisits,
-      projects: profileController.profileDataModel.projects!,
-      skills: profileController.profileDataModel.studProgrammingLang,
-      profileSummary: profileController.profileDataModel.profileSummary,
-      colleges: profileController.profileDataModel.collegeData!,
-      degree: [],
-      experience: profileController.profileDataModel.experience,
-      trainings: [],
-      studentId: profileController.profileDataModel.id,
-      higherSecondary:
-          profileController.profileDataModel.education!.school!.higherSecondary,
-      institution: [],
-      parents: [],
-      secondary:
-          profileController.profileDataModel.education!.school!.secondary,
-    );
     templateNumber = int.parse(
       profileController.profileDataModel.templateNumber!.isEmpty
           ? "1"
@@ -333,47 +329,58 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
           fit: BoxFit.cover,
         ),
       ),
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        appBar: AppBar(
-          iconTheme: const IconThemeData(color: AppColors.whiteColor),
-          backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          // leading: IconButton(
-          //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-          //   onPressed: () => Get.back(),
-          // ),
-          //automaticallyImplyLeading: false,
-          title: Text(
-            "My Profile",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
-            ),
-          ),
-          actions: [
-            ProfileWidgets.creditContainer(
-              creditCount:
-              ((registerController.creditDataModel.creditData?.balance ?? 0)+ (registerController.creditDataModel.creditData?.freeCredits ?? 0)),
-              viewFunc: () {
-                AppFunctions.navigateScreen(
-                  context,
-                  AppRoutes.buyCreditsScreen,
-                );
-              },
-            ),
-            const SizedBox(width: 20),
-          ],
-        ),
-        body: Obx(() {
-          return profileController.profileDataLoading
-              ? AppAlertUtils.customLoader()
-              : RefreshIndicator(
+      child: Obx(() {
+        return profileController.profileDataLoading ||
+                registerController.creditDataLoading
+            ? AppAlertUtils.customLoader()
+            : Scaffold(
+                backgroundColor: AppColors.transparentColor,
+                appBar: AppBar(
+                  iconTheme: const IconThemeData(color: AppColors.whiteColor),
+                  backgroundColor: AppColors.transparentColor,
+                  elevation: 0,
+                  // leading: IconButton(
+                  //   icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+                  //   onPressed: () => Get.back(),
+                  // ),
+                  //automaticallyImplyLeading: false,
+                  title: Text(
+                    "My Profile",
+                    style: AppStyles.customTextStyle(
+                      size: 18,
+                      color: AppColors.secondaryColor,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                  actions: [
+                    ProfileWidgets.creditContainer(
+                      creditCount: creditBalance,
+                      // ((registerController
+                      //         .creditDataModel
+                      //         .creditData
+                      //         ?.balance ??
+                      //     0) +
+                      // (registerController
+                      //         .creditDataModel
+                      //         .creditData
+                      //         ?.freeCredits ??
+                      //     0)),
+                      viewFunc: () {
+                        AppFunctions.navigateScreen(
+                          context,
+                          AppRoutes.buyCreditsScreen,
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 20),
+                  ],
+                ),
+                body: RefreshIndicator(
                   color: AppColors.primaryColor,
                   backgroundColor: AppColors.appBgColor_2,
                   onRefresh: () async {
                     await getProfileData();
+                    await getCreditData();
                   },
                   child: CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -494,110 +501,110 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                                 : "1",
                                           ),
                                           //"templateId": 1,
-                                          "resumeData":
-                                              ExtractedResumeDataModel(
-                                                personalInfo: PersonalInfoModel(
-                                                  name:
-                                                      profileController
-                                                          .profileDataModel
-                                                          .studentName ??
-                                                      '',
-                                                  gender: profileController
-                                                      .profileDataModel
-                                                      .studentGender,
-                                                  email: profileController
-                                                      .profileDataModel
-                                                      .studEmail!,
-                                                  phone: profileController
-                                                      .profileDataModel
-                                                      .studMobileNo!,
-                                                  linkedIn: profileController
-                                                      .profileDataModel
-                                                      .linkedIn,
-                                                  github: profileController
-                                                      .profileDataModel
-                                                      .github,
-                                                  location: "",
-                                                ),
-                                                internships: profileController
-                                                    .profileDataModel
-                                                    .internships!,
-                                                hobbies: profileController
-                                                    .profileDataModel
-                                                    .hobbies,
-                                                areasOfInterest:
-                                                    profileController
-                                                        .profileDataModel
-                                                        .areasOfInterest,
-                                                languages: profileController
-                                                    .profileDataModel
-                                                    .languagesKnown,
-                                                volunteerExperience:
-                                                    profileController
-                                                        .profileDataModel
-                                                        .volunteerExperience,
-                                                leaderships: profileController
-                                                    .profileDataModel
-                                                    .leadership,
-                                                achievements: profileController
-                                                    .profileDataModel
-                                                    .achievements,
-                                                publications: profileController
-                                                    .profileDataModel
-                                                    .publications,
-                                                workShops: profileController
-                                                    .profileDataModel
-                                                    .workshops,
-                                                paperPresentations:
-                                                    profileController
-                                                        .profileDataModel
-                                                        .paperPresentations,
-                                                certifications:
-                                                    profileController
-                                                        .profileDataModel
-                                                        .studentCertificate,
-                                                educationData: profileController
-                                                    .profileDataModel
-                                                    .education,
-                                                industrialVisits:
-                                                    profileController
-                                                        .profileDataModel
-                                                        .industrialVisits,
-                                                projects: profileController
-                                                    .profileDataModel
-                                                    .projects!,
-                                                skills: profileController
-                                                    .profileDataModel
-                                                    .studProgrammingLang,
-                                                profileSummary:
-                                                    profileController
-                                                        .profileDataModel
-                                                        .profileSummary!,
-                                                colleges: profileController
-                                                    .profileDataModel
-                                                    .collegeData!,
-                                                degree: [],
-                                                experience: profileController
-                                                    .profileDataModel
-                                                    .experience,
-                                                trainings: [],
-                                                studentId: profileController
-                                                    .profileDataModel
-                                                    .id,
-                                                higherSecondary:
-                                                    profileController
-                                                        .profileDataModel
-                                                        .education!
-                                                        .school!
-                                                        .higherSecondary,
-                                                institution: [],
-                                                parents: [],
-                                                secondary: profileController
-                                                    .profileDataModel
-                                                    .education!
-                                                    .school!
-                                                    .secondary,
-                                              ),
+                                          // "resumeData":
+                                          //     ExtractedResumeDataModel(
+                                          //       personalInfo: PersonalInfoModel(
+                                          //         name:
+                                          //             profileController
+                                          //                 .profileDataModel
+                                          //                 .studentName ??
+                                          //             '',
+                                          //         gender: profileController
+                                          //             .profileDataModel
+                                          //             .studentGender,
+                                          //         email: profileController
+                                          //             .profileDataModel
+                                          //             .studEmail!,
+                                          //         phone: profileController
+                                          //             .profileDataModel
+                                          //             .studMobileNo!,
+                                          //         linkedIn: profileController
+                                          //             .profileDataModel
+                                          //             .linkedIn,
+                                          //         github: profileController
+                                          //             .profileDataModel
+                                          //             .github,
+                                          //         location: "",
+                                          //       ),
+                                          //       internships: profileController
+                                          //           .profileDataModel
+                                          //           .internships!,
+                                          //       hobbies: profileController
+                                          //           .profileDataModel
+                                          //           .hobbies,
+                                          //       areasOfInterest:
+                                          //           profileController
+                                          //               .profileDataModel
+                                          //               .areasOfInterest,
+                                          //       languages: profileController
+                                          //           .profileDataModel
+                                          //           .languagesKnown,
+                                          //       volunteerExperience:
+                                          //           profileController
+                                          //               .profileDataModel
+                                          //               .volunteerExperience,
+                                          //       leaderships: profileController
+                                          //           .profileDataModel
+                                          //           .leadership,
+                                          //       achievements: profileController
+                                          //           .profileDataModel
+                                          //           .achievements,
+                                          //       publications: profileController
+                                          //           .profileDataModel
+                                          //           .publications,
+                                          //       workShops: profileController
+                                          //           .profileDataModel
+                                          //           .workshops,
+                                          //       paperPresentations:
+                                          //           profileController
+                                          //               .profileDataModel
+                                          //               .paperPresentations,
+                                          //       certifications:
+                                          //           profileController
+                                          //               .profileDataModel
+                                          //               .studentCertificate,
+                                          //       educationData: profileController
+                                          //           .profileDataModel
+                                          //           .education,
+                                          //       industrialVisits:
+                                          //           profileController
+                                          //               .profileDataModel
+                                          //               .industrialVisits,
+                                          //       projects: profileController
+                                          //           .profileDataModel
+                                          //           .projects!,
+                                          //       skills: profileController
+                                          //           .profileDataModel
+                                          //           .studProgrammingLang,
+                                          //       profileSummary:
+                                          //           profileController
+                                          //               .profileDataModel
+                                          //               .profileSummary!,
+                                          //       colleges: profileController
+                                          //           .profileDataModel
+                                          //           .collegeData!,
+                                          //       degree: [],
+                                          //       experience: profileController
+                                          //           .profileDataModel
+                                          //           .experience,
+                                          //       trainings: [],
+                                          //       studentId: profileController
+                                          //           .profileDataModel
+                                          //           .id,
+                                          //       higherSecondary:
+                                          //           profileController
+                                          //               .profileDataModel
+                                          //               .education!
+                                          //               .school!
+                                          //               .higherSecondary,
+                                          //       institution: [],
+                                          //       parents: [],
+                                          //       secondary: profileController
+                                          //           .profileDataModel
+                                          //           .education!
+                                          //           .school!
+                                          //           .secondary,
+                                          //     ),
                                         },
                                       );
                                     }),
@@ -637,16 +644,16 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 150,)
+                              const SizedBox(height: 150),
                             ],
                           ),
                         ),
                       ),
                     ],
                   ),
-                );
-        }),
-      ),
+                ),
+              );
+      }),
     );
   }
 
@@ -1019,10 +1026,7 @@ class _HomeProfileScreenState extends State<HomeProfileScreen> {
         shareText: CommonUtils.resDpShareContent,
       );
     } catch (e) {
-      AppAlertUtils.showToast(
-        message: "Share failed",
-        isError: true,
-      );
+      AppAlertUtils.showToast(message: "Share failed", isError: true);
     }
   }
 

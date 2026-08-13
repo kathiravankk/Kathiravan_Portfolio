@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
+import 'package:internsharks/app/modules/home/view/similar_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/student_buy_credit_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/home/view/privacy_policy_screen.dart';
@@ -15,6 +16,7 @@ import 'package:internsharks/app/modules/home/view/chat_resume_update_screen.dar
 import 'package:internsharks/app/modules/home/view/student_dashboard_screen.dart';
 import 'package:internsharks/app/modules/home/view/internship_detail_screen.dart';
 import 'package:internsharks/app/modules/internship/view/my_certificates_screen.dart';
+import 'package:internsharks/app/modules/internship/view/student_test_result_screen.dart';
 import 'package:internsharks/app/modules/login/view/chat_new_resume_creation_screen.dart';
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
 import 'package:internsharks/app/modules/profile/view/profile_edit_screen.dart';
@@ -252,6 +254,10 @@ class AppPages {
       page: () => InternshipSyllabusScreen(),
     ),
     appPage(
+      name: AppRoutes.studentTestResultScreen,
+      page: () => StudentTestResultScreen(),
+    ),
+    appPage(
       name: AppRoutes.syllabusViewScreen,
       page: () => SyllabusDetailViewScreen(),
     ),
@@ -295,6 +301,10 @@ class AppPages {
     appPage(
       name: AppRoutes.studentPurchaseHistoryScreen,
       page: () => StudentPurchaseHistoryScreen(),
+    ),
+    appPage(
+      name: AppRoutes.similarInternshipScreen,
+      page: () => SimilarInternshipScreen(),
     ),
 
     /// RECRUITER FLOW SCREENS

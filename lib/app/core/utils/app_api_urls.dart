@@ -22,6 +22,7 @@ class AppApiUrls {
       "${baseUrl}student/new-student-register";
   static const String updateStudentRegisterData =
       "${baseUrl}student/update-new-student-register";
+  static const updateChatProfile = "${baseUrl}student/update-new-student-register";
   static const String getStudentProfile = "${baseUrl}student/getById";
   static const String analyzeResumeScore = "${baseUrl}analyze-resume-score";
   static const String updateResumeData = "${baseUrl}enhance-resume";
@@ -111,6 +112,7 @@ class AppApiUrls {
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
   static String getAllCertificates = "${baseUrl}getcertificate";
+  static String getStudentMcqResult(String studentId, String jobId) => "${baseUrl}get/result?studentId=$studentId&jobId=$jobId";
 
   // INTERNSHIP PAYMENT
 

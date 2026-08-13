@@ -320,9 +320,9 @@ class _InternHomeDrawerState extends State<InternHomeDrawer> {
                             AppFunctions.navigateScreen(
                               context,
                               AppRoutes.studentTransactionHistoryScreen,
-                              arguments: {
-                                "creditBalance":0
-                              }
+                              // arguments: {
+                              //   "creditBalance":0
+                              // }
                             );
                           },
                         ),
@@ -333,14 +333,13 @@ class _InternHomeDrawerState extends State<InternHomeDrawer> {
                               icon: Icons.logout_sharp,
                               title: "Logout",
                               onTap: () {
-                                //showLogoutPopup(context);
                                 AppAlertUtils.showAppAlert(
                                   context: context,
                                   content: "Are you sure you want to logout?",
                                   confirmText: "Confirm",
                                   title: "Logout",
                                   onConfirm: () {
-                                    AppFunctions.logOutFunc(context);
+                                    AppFunctions.logOutFunc(context, isRecruiter: false);
                                   },
                                 );
                               },

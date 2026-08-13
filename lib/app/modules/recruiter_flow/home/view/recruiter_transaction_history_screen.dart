@@ -224,11 +224,11 @@ class _RecruiterTransactionHistoryScreenState
                 arguments: {
                   "creditBalance":
                       ((homeController
-                              .profileModel
+                              .profileModel.recruiterData!
                               .recruiterCreditId!
                               .freeCredits ??
                           0) +
-                      (homeController.profileModel.recruiterCreditId!.balance ??
+                      (homeController.profileModel.recruiterData!.recruiterCreditId!.balance ??
                           0)),
                 },
               );

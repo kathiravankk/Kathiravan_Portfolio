@@ -29,12 +29,12 @@ class _StudentTransactionHistoryScreenState
   Get.find<ProfileController>();
 
   String? studentId = "";
-  int creditBalance = 0;
+  //int creditBalance = 0;
 
   @override
   void initState() {
     super.initState();
-    creditBalance = Get.arguments["creditBalance"] ?? 0;
+    //creditBalance = Get.arguments["creditBalance"] ?? 0;
     loadData();
   }
 
@@ -225,16 +225,16 @@ class _StudentTransactionHistoryScreenState
               AppFunctions.navigateScreen(
                 context,
                 AppRoutes.studentCreditHistoryScreen,
-                arguments: {
-                  "creditBalance": 0
-                  // ((profileController
-                  //     .creditModel
-                  //     .recruiterCreditId!
-                  //     .freeCredits ??
-                  //     0) +
-                  //     (profileController.profileModel.recruiterCreditId!.balance ??
-                  //         0)),
-                },
+                // arguments: {
+                //   //"creditBalance": 0
+                //   // ((profileController
+                //   //     .creditModel
+                //   //     .recruiterCreditId!
+                //   //     .freeCredits ??
+                //   //     0) +
+                //   //     (profileController.profileModel.recruiterCreditId!.balance ??
+                //   //         0)),
+                // },
               );
             },
             child: Row(

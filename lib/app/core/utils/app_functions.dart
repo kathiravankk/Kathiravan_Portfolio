@@ -36,9 +36,23 @@ class AppFunctions {
     await Get.offAllNamed(screenName, arguments: arguments);
   }
 
-  static void logOutFunc(BuildContext context) {
-    LocalStorageService.clearUser();
-    AppFunctions.navigateInitialScreen(context, AppRoutes.choosePathScreen);
+  // static void logOutFunc(BuildContext context) {
+  //   LocalStorageService.clearUser();
+  //   AppFunctions.navigateInitialScreen(context, AppRoutes.choosePathScreen);
+  // }
+
+  static void logOutFunc(BuildContext context, {bool isRecruiter = false}) async {
+    if (isRecruiter) {
+      await LocalStorageService.clearRecruiter();
+    } else {
+      await LocalStorageService.clearStudent();
+    }
+
+    // Optional: Clear GetX controllers if you're using Get.delete<Controller>() here
+
+    if (context.mounted) {
+      AppFunctions.navigateInitialScreen(context, AppRoutes.choosePathScreen);
+    }
   }
 
   static void apiErrorHandling(int responseCode, String message) {

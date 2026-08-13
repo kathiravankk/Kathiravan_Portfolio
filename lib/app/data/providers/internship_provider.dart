@@ -11,6 +11,7 @@ import 'package:internsharks/app/data/models/internship/mcq_question_model.dart'
 import 'package:internsharks/app/data/models/internship/payment_create_model.dart';
 import 'package:internsharks/app/data/models/internship/payment_status_model.dart';
 import 'package:internsharks/app/data/models/internship/save_test_result_model.dart';
+import 'package:internsharks/app/data/models/internship/student_test_result_model.dart' hide Options;
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/weekly_update_model.dart';
 
@@ -296,6 +297,28 @@ class InternshipProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return AllCertificationsModel.fromJson(err.response!.data);
+    }
+  }
+
+  //GET STUDENTS RESULT
+  Future<StudentTestResultModel> getStudentTestResult({
+    required String jobId,
+    required String studentId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getStudentMcqResult(studentId, jobId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return StudentTestResultModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return StudentTestResultModel.fromJson(err.response!.data);
     }
   }
 }

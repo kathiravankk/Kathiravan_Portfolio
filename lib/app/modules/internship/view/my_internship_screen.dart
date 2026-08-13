@@ -22,10 +22,10 @@ class MyInternshipScreen extends StatefulWidget {
   const MyInternshipScreen({super.key});
 
   @override
-  State<MyInternshipScreen> createState() => _MyInternshipScreenState();
+  State<MyInternshipScreen> createState() => MyInternshipScreenState();
 }
 
-class _MyInternshipScreenState extends State<MyInternshipScreen> {
+class MyInternshipScreenState extends State<MyInternshipScreen> {
   final InternshipController internController =
       Get.find<InternshipController>();
 
@@ -37,12 +37,17 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
   String? selectedJobId;
   String? selectedCourse;
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> refreshData() async {
+    await getInternshipData();
     _initCashFreeCallbacks();
-    getInternshipData();
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _initCashFreeCallbacks();
+  //   getInternshipData();
+  // }
 
   void _initCashFreeCallbacks() {
     cfPaymentGatewayService.setCallback(
@@ -112,7 +117,12 @@ class _MyInternshipScreenState extends State<MyInternshipScreen> {
                     separatorBuilder: (context, index) => SizedBox(height: 10),
                     itemCount: syllabusList!.length,
                     shrinkWrap: true,
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 100, top: 20),
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: 100,
+                      top: 20,
+                    ),
                     itemBuilder: (context, index) {
                       final item = syllabusList![index];
                       return InternSyllabusCard(

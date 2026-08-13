@@ -43,7 +43,7 @@ class RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
       await homeController.getRecruiterProfileData(recruiterId: recruiterId!);
       if (homeController.getResponseCode() == 200 ||
           homeController.getResponseCode() == 201) {
-        referCode = homeController.profileModel.referCode ?? "";
+        referCode = homeController.profileModel.recruiterData!.referCode ?? "";
       } else {
         AppFunctions.apiErrorHandling(
           homeController.getResponseCode(),
@@ -170,7 +170,7 @@ class RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
             ),
             alignment: Alignment.center,
             child: Text(
-              homeController.profileModel.referCode  ?? "",
+              homeController.profileModel.recruiterData!.referCode  ?? "",
               style: AppStyles.customTextStyle(
                 size: 22,
                 weight: FontWeight.w700,
@@ -191,12 +191,12 @@ class RecruiterReferralScreenState extends State<RecruiterReferralScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              onPressed: homeController.profileModel.referCode!.isEmpty && homeController.profileModel.referCode != null
+              onPressed: homeController.profileModel.recruiterData!.referCode!.isEmpty && homeController.profileModel.recruiterData!.referCode != null
                   ? () {
                 AppAlertUtils.showToast(message: "Referral Code is Empty!", isError: true);
               }
                   : () {
-                      ReferralUtils.copyCode(code: homeController.profileModel.referCode ?? "");
+                      ReferralUtils.copyCode(code: homeController.profileModel.recruiterData!.referCode ?? "");
                     },
               icon: const Icon(Icons.copy, color: Colors.white),
               label: Text(
@@ -412,7 +412,7 @@ Invite them to join Internsharks and help them connect with qualified candidates
 
 https://internsharks.ai
 
-🎟️ Your Referral Code: *${homeController.profileModel.referCode ?? ""}*
+🎟️ Your Referral Code: *${homeController.profileModel.recruiterData!.referCode ?? ""}*
 
 💡 Ask the recruiter to enter this code during signup to complete your referral.
 

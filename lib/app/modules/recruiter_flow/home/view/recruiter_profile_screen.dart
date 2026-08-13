@@ -191,7 +191,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
   // ── PROFILE HEADER ────────────────────────────────────────────
 
   Widget _buildProfileHeader(RecruiterProfileModel profile) {
-    final logoUrl = (profile.recCompanyLogo ?? "").trim();
+    final logoUrl = (profile.recruiterData!.recCompanyLogo ?? "").trim();
     return Column(
       spacing: 8,
       children: [
@@ -226,9 +226,9 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
                 onTap: () {
                   CommonUtils.showProfileImageViewer(
                     context,
-                    profile.recCompanyLogo ??
+                    profile.recruiterData!.recCompanyLogo ??
                         "",
-                    profile.recCompanyName ??
+                    profile.recruiterData!.recCompanyName ??
                         "",
                   );
                 },
@@ -251,7 +251,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
           ],
         ),
         Text(
-          profile.recName ?? "",
+          profile.recruiterData!.recName ?? "",
           style: AppStyles.customTextStyle(
             size: 18,
             color: AppColors.whiteColor,
@@ -259,7 +259,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
           ),
         ),
         Text(
-          profile.recCompanyName ?? "",
+          profile.recruiterData!.recCompanyName ?? "",
           textAlign: TextAlign.center,
           style: AppStyles.customTextStyle(
             size: 13,
@@ -288,13 +288,13 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
         _statChip(
           icon: Icons.groups_outlined,
           iconColor: AppColors.primaryColor,
-          value: profile.recCompanySize ?? "—",
+          value: profile.recruiterData!.recCompanySize ?? "—",
           label: "Employees",
         ),
         _statChip(
           icon: Icons.business_center_rounded,
           iconColor: AppColors.orangeColor2,
-          value: profile.recCompanyIndustryType?.name ?? "—",
+          value: profile.recruiterData!.recCompanyIndustryType?.name ?? "—",
           label: "Industry",
         ),
         _statChip(
@@ -306,7 +306,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
         _statChip(
           icon: CupertinoIcons.location_solid,
           iconColor: AppColors.correctText,
-          value: _extractCity(profile.recCompanyAddress),
+          value: _extractCity(profile.recruiterData!.recCompanyAddress),
           label: "Location",
         ),
       ],
@@ -371,26 +371,26 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
         _infoRow(
           icon: CupertinoIcons.building_2_fill,
           label: "Company\nName",
-          value: profile.recCompanyName ?? "—",
+          value: profile.recruiterData!.recCompanyName ?? "—",
         ),
         _divider(),
         _infoRow(
           icon: Icons.factory_outlined,
           label: "Industry",
-          value: profile.recCompanyIndustryType?.name ?? "—",
+          value: profile.recruiterData!.recCompanyIndustryType?.name ?? "—",
         ),
         _divider(),
         _infoRowWidget(
           icon: CupertinoIcons.globe,
           label: "Website",
           child: GestureDetector(
-            onTap: () => _launchUrl(profile.recCompanyWebsite ?? ""),
+            onTap: () => _launchUrl(profile.recruiterData!.recCompanyWebsite ?? ""),
             child: Row(
               spacing: 4,
               children: [
                 Flexible(
                   child: Text(
-                    profile.recCompanyWebsite ?? "—",
+                    profile.recruiterData!.recCompanyWebsite ?? "—",
                     style: AppStyles.customTextStyle(
                       size: 13,
                       color: AppColors.primaryColor,
@@ -398,7 +398,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
                     ),
                   ),
                 ),
-                if ((profile.recCompanyWebsite ?? "").isNotEmpty)
+                if ((profile.recruiterData!.recCompanyWebsite ?? "").isNotEmpty)
                   const Icon(
                     Icons.open_in_new_rounded,
                     color: AppColors.primaryColor,
@@ -412,7 +412,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
         _infoRow(
           icon: Icons.people_alt_outlined,
           label: "Company\nSize",
-          value: profile.recCompanySize ?? "—",
+          value: profile.recruiterData!.recCompanySize ?? "—",
         ),
       ],
     );
@@ -428,19 +428,19 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
         _infoRow(
           icon: CupertinoIcons.mail,
           label: "Email",
-          value: profile.recEmail ?? "—",
+          value: profile.recruiterData!.recEmail ?? "—",
         ),
         _divider(),
         _infoRow(
           icon: CupertinoIcons.phone,
           label: "Phone",
-          value: profile.recMobileNo ?? "—",
+          value: profile.recruiterData!.recMobileNo ?? "—",
         ),
         _divider(),
         _infoRow(
           icon: CupertinoIcons.person,
           label: "Gender",
-          value: profile.recGender ?? "—",
+          value: profile.recruiterData!.recGender ?? "—",
         ),
       ],
     );
@@ -449,7 +449,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
   // ── CONTACT DETAILS ───────────────────────────────────────────
 
   Widget _buildContactDetailsCard(RecruiterProfileModel profile) {
-    final alternate = (profile.recSecondaryMobileNo ?? "").trim();
+    final alternate = (profile.recruiterData!.recSecondaryMobileNo ?? "").trim();
     return _sectionCard(
       icon: Icons.phone_in_talk_rounded,
       title: "Contact Details",
@@ -457,13 +457,13 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
         _infoRow(
           icon: CupertinoIcons.phone,
           label: "Phone",
-          value: profile.recMobileNo ?? "—",
+          value: profile.recruiterData!.recMobileNo ?? "—",
         ),
         _divider(),
         _infoRow(
           icon: CupertinoIcons.mail,
           label: "Email",
-          value: profile.recEmail ?? "—",
+          value: profile.recruiterData!.recEmail ?? "—",
         ),
         _divider(),
         _infoRow(
@@ -479,8 +479,8 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
   // ── ADDRESS ───────────────────────────────────────────────────
 
   Widget _buildAddressCard(RecruiterProfileModel profile) {
-    final address = (profile.recCompanyAddress ?? "").trim();
-    final pincode = (profile.recCompanyPinCode ?? "").trim();
+    final address = (profile.recruiterData!.recCompanyAddress ?? "").trim();
+    final pincode = (profile.recruiterData!.recCompanyPinCode ?? "").trim();
 
     return Container(
       width: double.infinity,
@@ -649,11 +649,11 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
             children: [
               _companyChip(
                 icon: Icons.people_alt_rounded,
-                label: "${profile.recCompanySize ?? "—"} Employees",
+                label: "${profile.recruiterData!.recCompanySize ?? "—"} Employees",
               ),
               _companyChip(
                 icon: Icons.monitor_rounded,
-                label: profile.recCompanyIndustryType?.name ?? "—",
+                label: profile.recruiterData!.recCompanyIndustryType?.name ?? "—",
               ),
             ],
           ),

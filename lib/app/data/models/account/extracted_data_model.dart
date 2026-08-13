@@ -161,5 +161,4 @@ class ResumeData {
       degree = <Degree>[];
     }
   }
-
 }

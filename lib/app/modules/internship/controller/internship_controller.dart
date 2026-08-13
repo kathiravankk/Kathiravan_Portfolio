@@ -11,6 +11,7 @@ import 'package:internsharks/app/data/models/internship/mcq_question_model.dart'
 import 'package:internsharks/app/data/models/internship/payment_create_model.dart';
 import 'package:internsharks/app/data/models/internship/payment_status_model.dart';
 import 'package:internsharks/app/data/models/internship/save_test_result_model.dart';
+import 'package:internsharks/app/data/models/internship/student_test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/test_result_model.dart';
 import 'package:internsharks/app/data/models/internship/weekly_update_model.dart';
 import 'package:internsharks/app/data/providers/internship_provider.dart';
@@ -412,4 +413,39 @@ class InternshipController extends GetxController {
       rethrow;
     }
   }
+
+  // GET STUDENT RESULT
+
+  final _studentResultLoading = false.obs;
+
+  bool get studentResultLoading => _studentResultLoading.value;
+
+  set studentResultLoading(bool value) => _studentResultLoading.value = value;
+
+  // Model
+
+  final _resultReviewModel = StudentTestResultModel().obs;
+
+  StudentTestResultModel get resultReviewModel => _resultReviewModel.value;
+
+  set resultReviewModel(StudentTestResultModel value) =>
+      _resultReviewModel.value = value;
+
+  Future<void> getStudentTestResult({
+    required String studentId,
+    required String jobId,
+  }) async {
+    try {
+      studentResultLoading = true;
+      resultReviewModel = await internshipProvider!.getStudentTestResult(
+        studentId: studentId,
+        jobId: jobId,
+      );
+    } catch (err) {
+      rethrow;
+    } finally {
+      studentResultLoading = false;
+    }
+  }
+
 }

@@ -1,26 +1,39 @@
-class  CommonLoginOtpModel {
+class CommonLoginOtpModel {
   bool? success;
   String? message;
   String? userType;
+  String? otpNumber;
 
-  CommonLoginOtpModel({this.success, this.message, this.userType});
+  CommonLoginOtpModel({
+    this.success,
+    this.message,
+    this.userType,
+    this.otpNumber,
+  });
 
   CommonLoginOtpModel.fromJson(Map<String, dynamic> json) {
     success = json["success"] ?? false;
     message = json["message"] ?? "";
     userType = json["userType"] ?? "";
+    otpNumber = json["otp"]?.toString() ?? "";
   }
 }
 
 class SendMobileOtpModel {
   String? message;
   String? userType;
+  String? otpNumber;
 
-  SendMobileOtpModel({this.message, this.userType});
+  SendMobileOtpModel({
+    this.message,
+    this.userType,
+    this.otpNumber,
+  });
 
   SendMobileOtpModel.fromJson(Map<String, dynamic> json) {
     message = json["message"] ?? "";
     userType = json["userType"] ?? "";
+    otpNumber = json["otp"]?.toString() ?? "";
   }
 }
 
@@ -28,7 +41,10 @@ class VerifyMobileOtpModel {
   String? message;
   bool? mobileVerified;
 
-  VerifyMobileOtpModel({this.message, this.mobileVerified});
+  VerifyMobileOtpModel({
+    this.message,
+    this.mobileVerified,
+  });
 
   VerifyMobileOtpModel.fromJson(Map<String, dynamic> json) {
     message = json["message"] ?? "";
@@ -38,11 +54,16 @@ class VerifyMobileOtpModel {
 
 class SendEmailOtpModel {
   String? message;
+  String? otpNumber;
 
-  SendEmailOtpModel({this.message});
+  SendEmailOtpModel({
+    this.message,
+    this.otpNumber,
+  });
 
   SendEmailOtpModel.fromJson(Map<String, dynamic> json) {
     message = json["message"] ?? "";
+    otpNumber = json["otp"]?.toString() ?? "";
   }
 }
 
@@ -51,9 +72,11 @@ class VerifyEmailOtpModel {
   String? userType;
   bool? emailVerified;
 
-  VerifyEmailOtpModel({this.message, this.emailVerified});
-
-
+  VerifyEmailOtpModel({
+    this.message,
+    this.userType,
+    this.emailVerified,
+  });
 
   VerifyEmailOtpModel.fromJson(Map<String, dynamic> json) {
     message = json["message"] ?? "";
@@ -66,18 +89,21 @@ class CoordinatorOtpModel {
   final bool? success;
   final bool? alreadyVerified;
   final String? message;
+  final String? otpNumber;
 
   CoordinatorOtpModel({
     this.success,
     this.alreadyVerified,
     this.message,
+    this.otpNumber,
   });
 
   factory CoordinatorOtpModel.fromJson(Map<String, dynamic> json) {
     return CoordinatorOtpModel(
-      success: json["success"],
-      alreadyVerified: json["alreadyVerified"],
-      message: json["message"],
+      success: json["success"] ?? false,
+      alreadyVerified: json["alreadyVerified"] ?? false,
+      message: json["message"] ?? "",
+      otpNumber: json["otp"]?.toString() ?? "",
     );
   }
 
@@ -86,6 +112,7 @@ class CoordinatorOtpModel {
       "success": success,
       "alreadyVerified": alreadyVerified,
       "message": message,
+      "otp": otpNumber,
     };
   }
 }

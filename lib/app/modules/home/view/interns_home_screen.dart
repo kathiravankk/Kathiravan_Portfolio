@@ -27,10 +27,10 @@ class InternsHomeScreen extends StatefulWidget {
   const InternsHomeScreen({super.key, required this.scaffoldKey});
 
   @override
-  State<InternsHomeScreen> createState() => _InternsHomeScreenState();
+  State<InternsHomeScreen> createState() => InternsHomeScreenState();
 }
 
-class _InternsHomeScreenState extends State<InternsHomeScreen> {
+class InternsHomeScreenState extends State<InternsHomeScreen> {
   //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int activeIndex = 0;
 
@@ -49,12 +49,17 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
   String? creditId = "";
   int? creditBalance;
 
-  @override
-  void initState() {
-    super.initState();
-    getHomeScreenData();
-    getCreditData();
+  Future<void> refreshData() async {
+    await getHomeScreenData();
+    await getCreditData();
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getHomeScreenData();
+  //   getCreditData();
+  // }
 
   Future<void> getCreditData() async {
     creditId = await LocalStorageService.getStudentCreditId();
@@ -63,7 +68,8 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
         registerController.getResponseCode() == 201) {
       if (mounted) {
         creditBalance =
-        ((registerController.creditDataModel.creditData?.balance ?? 0)+ (registerController.creditDataModel.creditData?.freeCredits ?? 0));
+            ((registerController.creditDataModel.creditData?.balance ?? 0) +
+            (registerController.creditDataModel.creditData?.freeCredits ?? 0));
       }
     } else {
       AppFunctions.apiErrorHandling(
@@ -204,9 +210,12 @@ class _InternsHomeScreenState extends State<InternsHomeScreen> {
                         spacing: 10,
                         children: [
                           ProfileWidgets.buildSearchBar(
-                            buttonFunc: (){
-                              AppFunctions.navigateScreen(context, AppRoutes.allInternshipScreen);
-                            }
+                            buttonFunc: () {
+                              AppFunctions.navigateScreen(
+                                context,
+                                AppRoutes.allInternshipScreen,
+                              );
+                            },
                           ),
                           const SizedBox(height: 10),
                           _buildBannerCarousel(),

@@ -85,17 +85,17 @@ class _RecruiterProfileEditScreenState
   void _prefillFromProfile() {
     final profile = profileController.profileModel;
 
-    recruiterNameController.text = profile.recName ?? "";
-    primaryNumberController.text = profile.recMobileNo ?? "";
-    secondaryNumberController.text = profile.recSecondaryMobileNo ?? "";
-    recruiterEmailController.text = profile.recEmail ?? "";
-    designationController.text = profile.recDesignation ?? "";
-    companyNameController.text = profile.recCompanyName ?? "";
-    companyAddressController.text = profile.recCompanyAddress ?? "";
-    pincodeController.text = profile.recCompanyPinCode ?? "";
-    employeeCount = int.tryParse(profile.recCompanySize ?? "0") ?? 0;
-    _existingLogoUrl = profile.recCompanyLogo ?? "";
-    _existingCertificateUrl = profile.recCompanyDocument?.toString() ?? "";
+    recruiterNameController.text = profile.recruiterData!.recName ?? "";
+    primaryNumberController.text = profile.recruiterData!.recMobileNo ?? "";
+    secondaryNumberController.text = profile.recruiterData!.recSecondaryMobileNo ?? "";
+    recruiterEmailController.text = profile.recruiterData!.recEmail ?? "";
+    designationController.text = profile.recruiterData!.recDesignation ?? "";
+    companyNameController.text = profile.recruiterData!.recCompanyName ?? "";
+    companyAddressController.text = profile.recruiterData!.recCompanyAddress ?? "";
+    pincodeController.text = profile.recruiterData!.recCompanyPinCode ?? "";
+    employeeCount = int.tryParse(profile.recruiterData!.recCompanySize ?? "0") ?? 0;
+    _existingLogoUrl = profile.recruiterData!.recCompanyLogo ?? "";
+    _existingCertificateUrl = profile.recruiterData!.recCompanyDocument?.toString() ?? "";
   }
 
   // ── Logo Picker ───────────────────────────────────────────────

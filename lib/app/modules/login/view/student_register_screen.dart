@@ -732,6 +732,13 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
             "OTP sent to your mobile!",
         isError: false,
       );
+      //Will hide for production
+      // AppAlertUtils.showToast(
+      //   message:
+      //   registerController.sendMobileOtpModel.otpNumber ??
+      //       "Your OTP is ${registerController.sendMobileOtpModel.otpNumber ?? "0000"}",
+      //   isError: true,
+      // );
       _startMobileResendTimer();
     } else {
       AppFunctions.apiErrorHandling(
