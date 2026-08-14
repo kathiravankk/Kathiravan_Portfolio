@@ -54,6 +54,10 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
   bool isProjectSubmitted = false;
   bool isFeedbackSubmitted = false;
+  int? submittedRating;
+  String? submittedReview;
+  String? submittedFeedbackType;
+  String? submittedReferenceLink;
 
   // ─────────────────────────────────────────
   // INIT
@@ -102,12 +106,16 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       final reviewModel = await provider.fetchReviewData(jobId: jobId);
       if (reviewModel.reviewList != null &&
           reviewModel.reviewList!.isNotEmpty) {
-        final hasReviewed = reviewModel.reviewList!.any(
+        final existing = reviewModel.reviewList!.firstWhereOrNull(
           (r) => r.studentData?.studentId == studentId,
         );
-        if (hasReviewed && mounted) {
+        if (existing != null && mounted) {
           setState(() {
             isFeedbackSubmitted = true;
+            submittedRating = (existing.rating is int)
+                ? existing.rating
+                : int.tryParse(existing.rating?.toString() ?? "0") ?? 0;
+            submittedReview = existing.review;
           });
         }
       }
@@ -845,14 +853,12 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
               Expanded(
                 child: CustomButtonWidget(
                   height: 45,
-                  disable: isFeedbackSubmitted,
+                  disable: false,
                   buttonFunction: () {
-                    if (!isFeedbackSubmitted) {
-                      showAddFeedbackDialog(context);
-                    }
+                    showAddFeedbackDialog(context);
                   },
                   buttonText: isFeedbackSubmitted
-                      ? "Feedback Submitted"
+                      ? "View Feedback"
                       : " Add Feedback",
                 ),
               ),
@@ -867,6 +873,11 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
   void showAddFeedbackDialog(BuildContext context) {
     Get.dialog(
       FeedbackDialog(
+        isReadOnly: isFeedbackSubmitted,
+        initialRating: submittedRating,
+        initialReview: submittedReview,
+        initialFeedbackType: submittedFeedbackType,
+        initialReferenceLink: submittedReferenceLink,
         onSubmit:
             ({
               required int rating,
@@ -914,6 +925,10 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       if (mounted) {
         setState(() {
           isFeedbackSubmitted = true;
+          submittedRating = rating;
+          submittedReview = review;
+          submittedFeedbackType = feedbackType;
+          submittedReferenceLink = referenceLink;
         });
       }
       return true;

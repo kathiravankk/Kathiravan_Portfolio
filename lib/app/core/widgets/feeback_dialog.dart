@@ -15,7 +15,21 @@ class FeedbackDialog extends StatefulWidget {
   })
   onSubmit;
 
-  const FeedbackDialog({super.key, required this.onSubmit});
+  final bool isReadOnly;
+  final int? initialRating;
+  final String? initialReview;
+  final String? initialFeedbackType;
+  final String? initialReferenceLink;
+
+  const FeedbackDialog({
+    super.key,
+    required this.onSubmit,
+    this.isReadOnly = false,
+    this.initialRating,
+    this.initialReview,
+    this.initialFeedbackType,
+    this.initialReferenceLink,
+  });
 
   @override
   State<FeedbackDialog> createState() => _FeedbackDialogState();
@@ -38,6 +52,25 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     "Feedback",
     "Other",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialRating != null) {
+      _selectedRating = widget.initialRating!;
+    }
+    if (widget.initialFeedbackType != null &&
+        _feedbackOptions.contains(widget.initialFeedbackType)) {
+      _selectedFeedbackType = widget.initialFeedbackType;
+    }
+    if (widget.initialReview != null) {
+      _reviewController.text = widget.initialReview!;
+      _charCount = _reviewController.text.length;
+    }
+    if (widget.initialReferenceLink != null) {
+      _linkController.text = widget.initialReferenceLink!;
+    }
+  }
 
   @override
   void dispose() {
@@ -157,21 +190,23 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 ),
                 const SizedBox(height: 25),
 
-                // 5. Submit Button
+                // 5. Submit / Close Button
                 CustomButtonWidget(
-                  buttonFunction: _handleSubmit,
+                  buttonFunction: widget.isReadOnly ? () => Get.back() : _handleSubmit,
                   isLoading: _isLoading,
                   buttonWidget: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 10,
                     children: [
                       Icon(
-                        CupertinoIcons.location,
+                        widget.isReadOnly
+                            ? CupertinoIcons.check_mark_circled
+                            : CupertinoIcons.location,
                         color: AppColors.blackColor,
                         size: 16,
                       ),
                       Text(
-                        "Submit Feedback",
+                        widget.isReadOnly ? "Close" : "Submit Feedback",
                         style: AppStyles.customTextStyle(
                           color: Colors.black,
                           size: 14,
@@ -212,11 +247,13 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       children: List.generate(5, (index) {
         final starIndex = index + 1;
         return GestureDetector(
-          onTap: () {
-            setState(() {
-              _selectedRating = starIndex;
-            });
-          },
+          onTap: widget.isReadOnly
+              ? null
+              : () {
+                  setState(() {
+                    _selectedRating = starIndex;
+                  });
+                },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOutBack,
@@ -249,11 +286,13 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       items: _feedbackOptions.map((String type) {
         return DropdownMenuItem<String>(value: type, child: Text(type));
       }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedFeedbackType = newValue;
-        });
-      },
+      onChanged: widget.isReadOnly
+          ? null
+          : (String? newValue) {
+              setState(() {
+                _selectedFeedbackType = newValue;
+              });
+            },
     );
   }
 
@@ -262,6 +301,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     return Stack(
       children: [
         TextFormField(
+          readOnly: widget.isReadOnly,
           controller: _reviewController,
           maxLines: 5,
           maxLength: 500,
@@ -297,6 +337,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   // Reference Link Text Field
   Widget _buildReferenceLinkField() {
     return TextFormField(
+      readOnly: widget.isReadOnly,
       controller: _linkController,
       style: AppStyles.customTextStyle(color: AppColors.whiteColor,weight: FontWeight.w500, size: 14),
       decoration: _inputDecoration(
