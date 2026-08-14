@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/data/providers/dashboard_provider.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
@@ -51,6 +53,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
   Map<int, String> dayProgressMap = {};
 
   bool isProjectSubmitted = false;
+  bool isFeedbackSubmitted = false;
 
   // ─────────────────────────────────────────
   // INIT
@@ -62,6 +65,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
     studentId = Get.arguments["studentId"] ?? "";
     getStatusData();
     getInitialData();
+    checkFeedbackStatus();
     super.initState();
   }
 
@@ -89,6 +93,26 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
       }
 
       setState(() {});
+    }
+  }
+
+  Future<void> checkFeedbackStatus() async {
+    try {
+      final provider = DashboardProvider(client: Dio());
+      final reviewModel = await provider.fetchReviewData(jobId: jobId);
+      if (reviewModel.reviewList != null &&
+          reviewModel.reviewList!.isNotEmpty) {
+        final hasReviewed = reviewModel.reviewList!.any(
+          (r) => r.studentData?.studentId == studentId,
+        );
+        if (hasReviewed && mounted) {
+          setState(() {
+            isFeedbackSubmitted = true;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("checkFeedbackStatus error: $e");
     }
   }
 
@@ -195,7 +219,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
   bool get canAttendMockTest =>
       (internController.internStatusModel.isTestTaken ?? false) ||
-          isProjectSubmitted;
+      isProjectSubmitted;
 
   // ─────────────────────────────────────────
   // BUILD
@@ -778,11 +802,12 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                   onTap: canAttendMockTest
                       ? null
                       : () {
-                    AppAlertUtils.showToast(
-                      message: "Please complete syllabus & Submit your project",
-                      isError: true,
-                    );
-                  },
+                          AppAlertUtils.showToast(
+                            message:
+                                "Please complete syllabus & Submit your project",
+                            isError: true,
+                          );
+                        },
                   child: CustomButtonWidget(
                     isLoading: internController.getMcqQuestionLoading,
                     buttonFunction: () async {
@@ -790,17 +815,14 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                         AppFunctions.navigateScreen(
                           context,
                           AppRoutes.studentTestResultScreen,
-                          arguments: {
-                            "studentId": studentId,
-                            "jobId": jobId,
-                          },
+                          arguments: {"studentId": studentId, "jobId": jobId},
                         );
                       } else {
                         AppAlertUtils.showAppAlert(
                           context: context,
                           title: "Mock Test Instructions",
                           content:
-                          "This mock test contains 30 questions.\n\n"
+                              "This mock test contains 30 questions.\n\n"
                               "Total test duration is 15 minutes.\n\n"
                               "Please feel free to attend the test.\n"
                               "Once the time is up, your answers will be automatically submitted.",
@@ -812,7 +834,9 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
                         );
                       }
                     },
-                    buttonText: isTestTaken ? "View Result" : "Attend Mock Test",
+                    buttonText: isTestTaken
+                        ? "View Result"
+                        : "Attend Mock Test",
                     disable: !canAttendMockTest,
                     height: 45,
                   ),
@@ -821,10 +845,15 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
               Expanded(
                 child: CustomButtonWidget(
                   height: 45,
+                  disable: isFeedbackSubmitted,
                   buttonFunction: () {
-                    showAddFeedbackDialog(context);
+                    if (!isFeedbackSubmitted) {
+                      showAddFeedbackDialog(context);
+                    }
                   },
-                  buttonText: " Add Feedback",
+                  buttonText: isFeedbackSubmitted
+                      ? "Feedback Submitted"
+                      : " Add Feedback",
                 ),
               ),
             ],
@@ -882,6 +911,11 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
             internController.reviewModel.message ??
             "Feedback Submitted Successfully!",
       );
+      if (mounted) {
+        setState(() {
+          isFeedbackSubmitted = true;
+        });
+      }
       return true;
     } else {
       AppFunctions.apiErrorHandling(
@@ -1293,7 +1327,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
                 /// DISABLE AFTER SUBMIT
                 isEnabled:
-                canSubmitProject &&
+                    canSubmitProject &&
                     (!isProjectSubmitted || isEditingProject),
 
                 hintText: "Paste your GitHub / Drive / Live URL here..",
@@ -1304,26 +1338,26 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
                 suffixWidget: hasUrl
                     ? GestureDetector(
-                  onTap: () async {
-                    await Clipboard.setData(
-                      ClipboardData(text: projectController.text.trim()),
-                    );
+                        onTap: () async {
+                          await Clipboard.setData(
+                            ClipboardData(text: projectController.text.trim()),
+                          );
 
-                    AppAlertUtils.showToast(
-                      message: "Copied successfully!",
-                      isError: false,
-                    );
-                  },
-                  child: Icon(
-                    Icons.copy,
-                    size: 20,
-                    color:
-                    canSubmitProject &&
-                        (!isProjectSubmitted || isEditingProject)
-                        ? AppColors.primaryColor
-                        : AppColors.greyColor,
-                  ),
-                )
+                          AppAlertUtils.showToast(
+                            message: "Copied successfully!",
+                            isError: false,
+                          );
+                        },
+                        child: Icon(
+                          Icons.copy,
+                          size: 20,
+                          color:
+                              canSubmitProject &&
+                                  (!isProjectSubmitted || isEditingProject)
+                              ? AppColors.primaryColor
+                              : AppColors.greyColor,
+                        ),
+                      )
                     : null,
               ),
 
@@ -1367,7 +1401,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
                 /// MODIFIED DISABLE LOGIC
                 disable:
-                !canSubmitProject ||
+                    !canSubmitProject ||
                     (isProjectSubmitted && !isEditingProject),
               ),
             ],
