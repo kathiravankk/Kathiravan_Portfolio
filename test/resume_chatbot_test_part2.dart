@@ -1,11 +1,15 @@
 // ignore_for_file: avoid_print
-// Run with: flutter test test/resume_chatbot_test_part2.dart --reporter=expanded
+// =============================================================================
+// RUNNING INSTRUCTIONS:
+// 1. Run All Steps Together:
+//    flutter test test/resume_chatbot_test_part2.dart --reporter=expanded
 //
-// PART 2: Step 7 onwards (OTP verification)
-// Prerequisites:
-//   1. Run Part 1 first: flutter test test/resume_chatbot_test.dart --reporter=expanded
-//   2. Get OTP from your email
-//   3. Set testOtp below, then run this file
+// 2. Run a Single Step (e.g. Step 11):
+//    flutter test test/resume_chatbot_test_part2.dart --plain-name="Step 11" --reporter=expanded
+//
+// 3. Run a Subset of Steps (e.g. Steps 8 to 11):
+//    flutter test test/resume_chatbot_test_part2.dart --name="Step (8|9|10|11)" --reporter=expanded
+// =============================================================================
 
 import 'dart:convert';
 import 'dart:io';
@@ -23,6 +27,32 @@ String testPhone = "9943155120";
 String testPhoneConfirmation = "Yes";
 String testPhoneOtp = "1234";
 String testRefcode = "No";
+String testLocation = "No";
+String testLinkedIn = "No";
+
+String getActiveUserId() {
+  final manualId = testUserId.trim();
+  if (manualId.isNotEmpty) return manualId;
+
+  final File sessionFile = File('.chatbot_session.json');
+  expect(
+    sessionFile.existsSync(),
+    isTrue,
+    reason:
+        "Run Part 1 (resume_chatbot_test.dart) first to generate .chatbot_session.json, or set testUserId directly above.",
+  );
+
+  final Map<String, dynamic> session = jsonDecode(
+    sessionFile.readAsStringSync(),
+  );
+  final String savedId = session["user_id"] ?? "";
+  expect(
+    savedId,
+    isNotEmpty,
+    reason: "user_id is empty in .chatbot_session.json. Set testUserId manually or rerun Part 1.",
+  );
+  return savedId;
+}
 
 void main() {
   final Dio dio = Dio(
@@ -34,164 +64,196 @@ void main() {
     ),
   );
 
-  test('Part 2 – Steps 7 to 11: Verify Email OTP, Phone, Phone OTP, and Refcode', () async {
-    String userId = testUserId.trim();
-
-    if (userId.isEmpty) {
-      final File sessionFile = File('.chatbot_session.json');
-      expect(
-        sessionFile.existsSync(),
-        isTrue,
-        reason:
-            "Run Part 1 (resume_chatbot_test.dart) first to generate .chatbot_session.json, or set testUserId directly above.",
-      );
-
-      final Map<String, dynamic> session = jsonDecode(
-        sessionFile.readAsStringSync(),
-      );
-      userId = session["user_id"] ?? "";
-    }
-
-    expect(
-      userId,
-      isNotEmpty,
-      reason: "user_id is empty. Provide testUserId or run Part 1.",
-    );
-
-    expect(
-      testOtp,
-      isNotEmpty,
-      reason: "Set testOtp variable before running Part 2",
-    );
-
-    print("\n🚀 PART 2: STEP 7 to 11 – Chatbot Flow Verification\n");
-    print("👤 Resuming session for user_id: $userId");
-
+  group('Resume Chatbot Part 2', () {
     // -------------------------------------------------------------------------
     // STEP 7: SEND EMAIL OTP
     // -------------------------------------------------------------------------
-    final Map<String, dynamic> step7Payload = {
-      "action": "send_message",
-      "user_id": userId,
-      "message": testOtp,
-    };
+    test('Step 7: Send Email OTP', () async {
+      final userId = getActiveUserId();
+      expect(testOtp, isNotEmpty, reason: "Set testOtp variable before running Step 7");
 
-    print("==================================================");
-    print("🔄 STEP 7: Sending Email OTP '$testOtp'");
-    print("➡️ Request Payload: ${jsonEncode(step7Payload)}");
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 7: Sending Email OTP '$testOtp'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testOtp,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
 
-    final Response step7Res = await dio.post(apiEndpoint, data: step7Payload);
-    expect(step7Res.statusCode, anyOf(200, 201),
-        reason: "Step 7 Error: ${step7Res.data}");
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 7 Error: ${response.data}");
 
-    final Map<String, dynamic> step7Data = step7Res.data is Map<String, dynamic>
-        ? step7Res.data
-        : <String, dynamic>{};
-    print("Status: ${step7Res.statusCode}");
-    print("🤖 Bot Message: ${step7Data["message"]}");
-    print("📌 next_field: ${step7Data["next_field"]}");
-    print("📌 completed_section: ${step7Data["completed_section"]}");
-    print("==================================================\n");
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
 
     // -------------------------------------------------------------------------
     // STEP 8: SEND PHONE NUMBER
     // -------------------------------------------------------------------------
-    final Map<String, dynamic> step8Payload = {
-      "action": "send_message",
-      "user_id": userId,
-      "message": testPhone,
-    };
+    test('Step 8: Send Phone Number', () async {
+      final userId = getActiveUserId();
+      expect(testPhone, isNotEmpty, reason: "Set testPhone variable before running Step 8");
 
-    print("==================================================");
-    print("🔄 STEP 8: Sending Phone Number '$testPhone'");
-    print("➡️ Request Payload: ${jsonEncode(step8Payload)}");
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 8: Sending Phone Number '$testPhone'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testPhone,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
 
-    final Response step8Res = await dio.post(apiEndpoint, data: step8Payload);
-    expect(step8Res.statusCode, anyOf(200, 201),
-        reason: "Step 8 Error: ${step8Res.data}");
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 8 Error: ${response.data}");
 
-    final Map<String, dynamic> step8Data = step8Res.data is Map<String, dynamic>
-        ? step8Res.data
-        : <String, dynamic>{};
-    print("Status: ${step8Res.statusCode}");
-    print("🤖 Bot Message: ${step8Data["message"]}");
-    print("📌 next_field: ${step8Data["next_field"]}");
-    print("📌 completed_section: ${step8Data["completed_section"]}");
-    print("==================================================\n");
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
 
     // -------------------------------------------------------------------------
-    // STEP 9: CONFIRM PHONE NUMBER ('Yes')
+    // STEP 9: CONFIRM PHONE NUMBER
     // -------------------------------------------------------------------------
-    final Map<String, dynamic> step9Payload = {
-      "action": "send_message",
-      "user_id": userId,
-      "message": testPhoneConfirmation,
-    };
+    test('Step 9: Confirm Phone Number (Yes)', () async {
+      final userId = getActiveUserId();
 
-    print("==================================================");
-    print("🔄 STEP 9: Confirming Phone with '$testPhoneConfirmation'");
-    print("➡️ Request Payload: ${jsonEncode(step9Payload)}");
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 9: Confirming Phone with '$testPhoneConfirmation'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testPhoneConfirmation,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
 
-    final Response step9Res = await dio.post(apiEndpoint, data: step9Payload);
-    expect(step9Res.statusCode, anyOf(200, 201),
-        reason: "Step 9 Error: ${step9Res.data}");
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 9 Error: ${response.data}");
 
-    final Map<String, dynamic> step9Data = step9Res.data is Map<String, dynamic>
-        ? step9Res.data
-        : <String, dynamic>{};
-    print("Status: ${step9Res.statusCode}");
-    print("🤖 Bot Message: ${step9Data["message"]}");
-    print("📌 next_field: ${step9Data["next_field"]}");
-    print("📌 completed_section: ${step9Data["completed_section"]}");
-    print("==================================================\n");
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
 
     // -------------------------------------------------------------------------
     // STEP 10: SEND PHONE OTP
     // -------------------------------------------------------------------------
-    final Map<String, dynamic> step10Payload = {
-      "action": "send_message",
-      "user_id": userId,
-      "message": testPhoneOtp,
-    };
+    test('Step 10: Send Phone OTP', () async {
+      final userId = getActiveUserId();
+      expect(testPhoneOtp, isNotEmpty, reason: "Set testPhoneOtp variable before running Step 10");
 
-    print("==================================================");
-    print("🔄 STEP 10: Sending Phone OTP '$testPhoneOtp'");
-    print("➡️ Request Payload: ${jsonEncode(step10Payload)}");
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 10: Sending Phone OTP '$testPhoneOtp'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testPhoneOtp,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
 
-    final Response step10Res = await dio.post(apiEndpoint, data: step10Payload);
-    expect(step10Res.statusCode, anyOf(200, 201),
-        reason: "Step 10 Error: ${step10Res.data}");
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 10 Error: ${response.data}");
 
-    final Map<String, dynamic> step10Data = step10Res.data is Map<String, dynamic>
-        ? step10Res.data
-        : <String, dynamic>{};
-    print("Status: ${step10Res.statusCode}");
-    print("🤖 Bot Message: ${step10Data["message"]}");
-    print("📌 next_field: ${step10Data["next_field"]}");
-    print("📌 completed_section: ${step10Data["completed_section"]}");
-    print("==================================================\n");
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
 
     // -------------------------------------------------------------------------
-    // STEP 11: SEND REFERRAL CODE ('No')
+    // STEP 11: SEND REFERRAL CODE
     // -------------------------------------------------------------------------
-    final Map<String, dynamic> step11Payload = {
-      "action": "send_message",
-      "user_id": userId,
-      "message": testRefcode,
-    };
+    test('Step 11: Send Referral Code', () async {
+      final userId = getActiveUserId();
 
-    print("==================================================");
-    print("🔄 STEP 11: Sending Referral Code '$testRefcode'");
-    print("➡️ Request Payload: ${jsonEncode(step11Payload)}");
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 11: Sending Referral Code '$testRefcode'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testRefcode,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
 
-    final Response step11Res = await dio.post(apiEndpoint, data: step11Payload);
-    expect(step11Res.statusCode, anyOf(200, 201),
-        reason: "Step 11 Error: ${step11Res.data}");
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 11 Error: ${response.data}");
 
-    print("Status: ${step11Res.statusCode}");
-    print("📩 STEP 11 RESPONSE RECEIVED:");
-    print(const JsonEncoder.withIndent('  ').convert(step11Res.data));
-    print("==================================================\n");
-    print("🛑 Stopped at Step 11 response. Ready for Step 12.");
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 12: SEND LOCATION
+    // -------------------------------------------------------------------------
+    test('Step 12: Send Location', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 12: Sending Location '$testLocation'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testLocation,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 12 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 13: SEND LINKEDIN
+    // -------------------------------------------------------------------------
+    test('Step 13: Send LinkedIn', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 13: Sending LinkedIn '$testLinkedIn'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testLinkedIn,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 13 Error: ${response.data}");
+
+      print("Status: ${response.statusCode}");
+      print("📩 STEP 13 RESPONSE RECEIVED:");
+      print(const JsonEncoder.withIndent('  ').convert(response.data));
+      print("==================================================\n");
+      print("🛑 Stopped at Step 13 response. Ready for Step 14.");
+    });
   });
 }
