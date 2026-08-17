@@ -54,6 +54,7 @@ String testVolunteerExperience = "No";
 String testLanguages = "English, Tamil";
 String testAreasOfInterest = "Mobile App Development, UI/UX Design";
 String testHobbies = "Reading tech blogs, Chess";
+String testAchievements = "No";
 
 String getActiveUserId() {
   final manualId = testUserId.trim();
@@ -949,11 +950,38 @@ void main() {
       final response = await dio.post(apiEndpoint, data: payload);
       expect(response.statusCode, anyOf(200, 201), reason: "Step 38 Error: ${response.data}");
 
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
       print("Status: ${response.statusCode}");
-      print("📩 STEP 38 RESPONSE RECEIVED:");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 39: SEND ACHIEVEMENTS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 39: Send Achievements', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 39: Sending Achievements '$testAchievements'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testAchievements,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 39 Error: ${response.data}");
+
+      print("Status: ${response.statusCode}");
+      print("📩 STEP 39 RESPONSE RECEIVED:");
       print(const JsonEncoder.withIndent('  ').convert(response.data));
       print("==================================================\n");
-      print("🛑 Stopped at Step 38 response. Ready for Step 39.");
+      print("🎉 Resume Chatbot Data Collection COMPLETE! (next_field: DONE)");
     });
   });
 }
