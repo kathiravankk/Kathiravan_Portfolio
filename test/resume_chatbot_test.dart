@@ -20,6 +20,7 @@ void main() {
       headers: {"Content-Type": "application/json"},
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
+      validateStatus: (status) => true, // Don't throw on 4xx/5xx so we can print the response body
     ),
   );
 
@@ -35,9 +36,16 @@ void main() {
       apiEndpoint,
       data: {"action": "start_chat"},
     );
-    expect(step1Res.statusCode, anyOf(200, 201));
 
-    final Map<String, dynamic> step1Data = step1Res.data;
+    print("Status: ${step1Res.statusCode}");
+    print("📩 Response Body: ${step1Res.data}");
+
+    expect(step1Res.statusCode, anyOf(200, 201),
+        reason: "Server returned error: ${step1Res.data}");
+
+    final Map<String, dynamic> step1Data = step1Res.data is Map<String, dynamic>
+        ? step1Res.data
+        : <String, dynamic>{};
     final String userId = step1Data["user_id"] ?? step1Data["userId"] ?? "";
     expect(userId, isNotEmpty);
 
