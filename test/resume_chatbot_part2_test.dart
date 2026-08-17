@@ -29,6 +29,10 @@ String testPhoneOtp = "1234";
 String testRefcode = "No";
 String testLocation = "No";
 String testLinkedIn = "No";
+String testGithub = "No";
+String testSummaryChoice = "you generate";
+String testSecondarySchool = "Velammal Matric";
+String testSecondaryBoard = "CBSE";
 
 String getActiveUserId() {
   final manualId = testUserId.trim();
@@ -249,11 +253,119 @@ void main() {
       final response = await dio.post(apiEndpoint, data: payload);
       expect(response.statusCode, anyOf(200, 201), reason: "Step 13 Error: ${response.data}");
 
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
       print("Status: ${response.statusCode}");
-      print("📩 STEP 13 RESPONSE RECEIVED:");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 14: SEND GITHUB
+    // -------------------------------------------------------------------------
+    test('Step 14: Send GitHub', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 14: Sending GitHub '$testGithub'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testGithub,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 14 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 15: SEND SUMMARY CHOICE
+    // -------------------------------------------------------------------------
+    test('Step 15: Send Summary Choice', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 15: Sending Summary Choice '$testSummaryChoice'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testSummaryChoice,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 15 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 16: SEND SECONDARY (10th) SCHOOL
+    // -------------------------------------------------------------------------
+    test('Step 16: Send Secondary (10th) School', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 16: Sending Secondary (10th) School '$testSecondarySchool'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testSecondarySchool,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 16 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 17: SEND SECONDARY (10th) BOARD
+    // -------------------------------------------------------------------------
+    test('Step 17: Send Secondary (10th) Board', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 17: Sending Secondary (10th) Board '$testSecondaryBoard'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testSecondaryBoard,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 17 Error: ${response.data}");
+
+      print("Status: ${response.statusCode}");
+      print("📩 STEP 17 RESPONSE RECEIVED:");
       print(const JsonEncoder.withIndent('  ').convert(response.data));
       print("==================================================\n");
-      print("🛑 Stopped at Step 13 response. Ready for Step 14.");
+      print("🛑 Stopped at Step 17 response. Ready for Step 18.");
     });
   });
 }
