@@ -17,7 +17,8 @@ const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
 // ---------------------------------------------------------------------------
 // ✏️  Set this after receiving OTP from email, then run this test
 // ---------------------------------------------------------------------------
-String testOtp = "";
+String testOtp = "3417";
+String testUserId = ""; // Leave empty to load from .chatbot_session.json
 
 void main() {
   final Dio dio = Dio(
@@ -25,23 +26,33 @@ void main() {
       headers: {"Content-Type": "application/json"},
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
+      validateStatus: (status) => true,
     ),
   );
 
   test('Part 2 – Step 7: Send OTP and verify email', () async {
-    // Load user_id saved by Part 1
-    final File sessionFile = File('.chatbot_session.json');
-    expect(
-      sessionFile.existsSync(),
-      isTrue,
-      reason: "Run Part 1 first to generate .chatbot_session.json",
-    );
+    String userId = testUserId.trim();
 
-    final Map<String, dynamic> session = jsonDecode(
-      sessionFile.readAsStringSync(),
+    if (userId.isEmpty) {
+      final File sessionFile = File('.chatbot_session.json');
+      expect(
+        sessionFile.existsSync(),
+        isTrue,
+        reason:
+            "Run Part 1 (resume_chatbot_test.dart) first to generate .chatbot_session.json, or set testUserId directly above.",
+      );
+
+      final Map<String, dynamic> session = jsonDecode(
+        sessionFile.readAsStringSync(),
+      );
+      userId = session["user_id"] ?? "";
+    }
+
+    expect(
+      userId,
+      isNotEmpty,
+      reason: "user_id is empty. Provide testUserId or run Part 1.",
     );
-    final String userId = session["user_id"] ?? "";
-    expect(userId, isNotEmpty, reason: "user_id missing from session file");
 
     expect(
       testOtp,

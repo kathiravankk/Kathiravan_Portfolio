@@ -163,5 +163,13 @@ void main() {
     print("📌 next_field: ${step6Data["next_field"]}");
     print("📌 completed_section: ${step6Data["completed_section"]}");
     print("==================================================\n");
+
+    // Save session so Part 2 can resume with the same user_id
+    final File sessionFile = File('.chatbot_session.json');
+    sessionFile.writeAsStringSync(jsonEncode({"user_id": userId}));
+
+    print("✅ PART 1 COMPLETE! OTP sent to $testDefaultEmail");
+    print("👉 Set testOtp in resume_chatbot_test_part2.dart, then run:");
+    print("   flutter test test/resume_chatbot_test_part2.dart --reporter=expanded");
   });
 }
