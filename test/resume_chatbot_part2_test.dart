@@ -40,6 +40,20 @@ String testHigherSecondarySchool = "Velammal Higher Secondary";
 String testHigherSecondaryBoard = "CBSE";
 String testHigherSecondaryYear = "2017";
 String testHigherSecondaryPercentage = "80";
+String testCollegeDegree = "No";
+String testTechnicalSkills = "Flutter, Dart, Firebase, REST API, Git, GetX";
+String testInternships = "No";
+String testProjects = "No";
+String testPaperPresentations = "No";
+String testCertifications = "No";
+String testIndustrialVisits = "No";
+String testWorkshops = "No";
+String testPublications = "No";
+String testLeadership = "No";
+String testVolunteerExperience = "No";
+String testLanguages = "English, Tamil";
+String testAreasOfInterest = "Mobile App Development, UI/UX Design";
+String testHobbies = "Reading tech blogs, Chess";
 
 String getActiveUserId() {
   final manualId = testUserId.trim();
@@ -557,11 +571,389 @@ void main() {
       final response = await dio.post(apiEndpoint, data: payload);
       expect(response.statusCode, anyOf(200, 201), reason: "Step 24 Error: ${response.data}");
 
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
       print("Status: ${response.statusCode}");
-      print("📩 STEP 24 RESPONSE RECEIVED:");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 25: SEND COLLEGE DEGREE ('No')
+    // -------------------------------------------------------------------------
+    test('Step 25: Send College Degree', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 25: Sending College Degree '$testCollegeDegree'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testCollegeDegree,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 25 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 26: SEND TECHNICAL SKILLS
+    // -------------------------------------------------------------------------
+    test('Step 26: Send Technical Skills', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 26: Sending Technical Skills '$testTechnicalSkills'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testTechnicalSkills,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 26 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 27: SEND INTERNSHIPS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 27: Send Internships', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 27: Sending Internships '$testInternships'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testInternships,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 27 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 28: SEND PROJECTS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 28: Send Projects', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 28: Sending Projects '$testProjects'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testProjects,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 28 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 29: SEND PAPER PRESENTATIONS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 29: Send Paper Presentations', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 29: Sending Paper Presentations '$testPaperPresentations'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testPaperPresentations,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 29 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 30: SEND CERTIFICATIONS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 30: Send Certifications', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 30: Sending Certifications '$testCertifications'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testCertifications,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 30 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 31: SEND INDUSTRIAL VISITS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 31: Send Industrial Visits', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 31: Sending Industrial Visits '$testIndustrialVisits'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testIndustrialVisits,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 31 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 32: SEND WORKSHOPS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 32: Send Workshops', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 32: Sending Workshops '$testWorkshops'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testWorkshops,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 32 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 33: SEND PUBLICATIONS ('No')
+    // -------------------------------------------------------------------------
+    test('Step 33: Send Publications', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 33: Sending Publications '$testPublications'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testPublications,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 33 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 34: SEND LEADERSHIP ('No')
+    // -------------------------------------------------------------------------
+    test('Step 34: Send Leadership', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 34: Sending Leadership '$testLeadership'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testLeadership,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 34 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 35: SEND VOLUNTEER EXPERIENCE ('No')
+    // -------------------------------------------------------------------------
+    test('Step 35: Send Volunteer Experience', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 35: Sending Volunteer Experience '$testVolunteerExperience'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testVolunteerExperience,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 35 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 36: SEND LANGUAGES
+    // -------------------------------------------------------------------------
+    test('Step 36: Send Languages', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 36: Sending Languages '$testLanguages'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testLanguages,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 36 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 37: SEND AREAS OF INTEREST
+    // -------------------------------------------------------------------------
+    test('Step 37: Send Areas of Interest', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 37: Sending Areas of Interest '$testAreasOfInterest'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testAreasOfInterest,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 37 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 38: SEND HOBBIES
+    // -------------------------------------------------------------------------
+    test('Step 38: Send Hobbies', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 38: Sending Hobbies '$testHobbies'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testHobbies,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 38 Error: ${response.data}");
+
+      print("Status: ${response.statusCode}");
+      print("📩 STEP 38 RESPONSE RECEIVED:");
       print(const JsonEncoder.withIndent('  ').convert(response.data));
       print("==================================================\n");
-      print("🛑 Stopped at Step 24 response. Ready for Step 25.");
+      print("🛑 Stopped at Step 38 response. Ready for Step 39.");
     });
   });
 }
