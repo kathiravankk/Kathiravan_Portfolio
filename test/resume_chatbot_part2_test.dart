@@ -33,6 +33,13 @@ String testGithub = "No";
 String testSummaryChoice = "you generate";
 String testSecondarySchool = "Velammal Matric";
 String testSecondaryBoard = "CBSE";
+String testSecondaryYear = "2015";
+String testSecondaryPercentage = "75";
+String testHigherSecondaryConfirm = "Yes";
+String testHigherSecondarySchool = "Velammal Higher Secondary";
+String testHigherSecondaryBoard = "CBSE";
+String testHigherSecondaryYear = "2017";
+String testHigherSecondaryPercentage = "80";
 
 String getActiveUserId() {
   final manualId = testUserId.trim();
@@ -361,11 +368,200 @@ void main() {
       final response = await dio.post(apiEndpoint, data: payload);
       expect(response.statusCode, anyOf(200, 201), reason: "Step 17 Error: ${response.data}");
 
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
       print("Status: ${response.statusCode}");
-      print("📩 STEP 17 RESPONSE RECEIVED:");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 18: SEND SECONDARY (10th) YEAR OF PASSING
+    // -------------------------------------------------------------------------
+    test('Step 18: Send Secondary (10th) Year of Passing', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 18: Sending Secondary (10th) Year of Passing '$testSecondaryYear'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testSecondaryYear,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 18 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 19: SEND SECONDARY (10th) PERCENTAGE
+    // -------------------------------------------------------------------------
+    test('Step 19: Send Secondary (10th) Percentage', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 19: Sending Secondary (10th) Percentage '$testSecondaryPercentage'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testSecondaryPercentage,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 19 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 20: CONFIRM HIGHER SECONDARY (12th) SCHOOL
+    // -------------------------------------------------------------------------
+    test('Step 20: Confirm Higher Secondary (12th) School', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 20: Confirming Higher Secondary '$testHigherSecondaryConfirm'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testHigherSecondaryConfirm,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 20 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 21: SEND HIGHER SECONDARY (12th) SCHOOL
+    // -------------------------------------------------------------------------
+    test('Step 21: Send Higher Secondary (12th) School', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 21: Sending Higher Secondary School '$testHigherSecondarySchool'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testHigherSecondarySchool,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 21 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 22: SEND HIGHER SECONDARY (12th) BOARD
+    // -------------------------------------------------------------------------
+    test('Step 22: Send Higher Secondary (12th) Board', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 22: Sending Higher Secondary Board '$testHigherSecondaryBoard'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testHigherSecondaryBoard,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 22 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 23: SEND HIGHER SECONDARY (12th) YEAR OF PASSING
+    // -------------------------------------------------------------------------
+    test('Step 23: Send Higher Secondary (12th) Year of Passing', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 23: Sending Higher Secondary Year of Passing '$testHigherSecondaryYear'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testHigherSecondaryYear,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 23 Error: ${response.data}");
+
+      final data = response.data is Map<String, dynamic> ? response.data : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
+    // STEP 24: SEND HIGHER SECONDARY (12th) PERCENTAGE
+    // -------------------------------------------------------------------------
+    test('Step 24: Send Higher Secondary (12th) Percentage', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print("🔄 STEP 24: Sending Higher Secondary Percentage '$testHigherSecondaryPercentage'");
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testHigherSecondaryPercentage,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(response.statusCode, anyOf(200, 201), reason: "Step 24 Error: ${response.data}");
+
+      print("Status: ${response.statusCode}");
+      print("📩 STEP 24 RESPONSE RECEIVED:");
       print(const JsonEncoder.withIndent('  ').convert(response.data));
       print("==================================================\n");
-      print("🛑 Stopped at Step 17 response. Ready for Step 18.");
+      print("🛑 Stopped at Step 24 response. Ready for Step 25.");
     });
   });
 }
