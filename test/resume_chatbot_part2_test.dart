@@ -21,9 +21,9 @@ const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
 // ---------------------------------------------------------------------------
 // ✏️  Configurable Test Data Variables
 // ---------------------------------------------------------------------------
-String testOtp = "4314";
+String testOtp = "4226";
 String testUserId = ""; // Leave empty to load from .chatbot_session.json
-String testPhone = "9943155120";
+String testPhone = "9150409854";
 String testPhoneConfirmation = "Yes";
 String testPhoneOtp = "1234";
 String testRefcode = "No";

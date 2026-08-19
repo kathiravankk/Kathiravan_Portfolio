@@ -19,7 +19,7 @@ import 'package:internsharks/app/data/models/account/update_chat_profile_model.d
 class RegisterProvider {
   final Dio? client;
 
-  RegisterProvider({@required this.client});
+  RegisterProvider({required this.client});
 
   // Response Code
 

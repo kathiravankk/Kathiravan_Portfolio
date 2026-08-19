@@ -284,7 +284,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
       decoration: _inputDecoration(hintText: "Select feedback type"),
       items: _feedbackOptions.map((String type) {
-        return DropdownMenuItem<String>(value: type, child: Text(type));
+        return DropdownMenuItem<String>(value: type, child: Text(type, style: AppStyles.customTextStyle(size: 12, color: AppColors.whiteColor),));
       }).toList(),
       onChanged: widget.isReadOnly
           ? null

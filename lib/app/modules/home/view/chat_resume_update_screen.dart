@@ -101,9 +101,9 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "certifications": profile.studentCertificate != null
           ? profile.studentCertificate!.map((e) => e.toJson()).toList()
           : [],
-      "tools_and_technologies": List<String>.from(
-        profile.toolsAndTechnologies ?? [],
-      ),
+      // "tools_and_technologies": List<String>.from(
+      //   profile.toolsAndTechnologies ?? [],
+      //),
     };
 
     await dashboardController.getUpdateResumeData(resumeData: resumeData);
@@ -268,9 +268,9 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
       "workshops": jsonEncode(profileData.workshops ?? []),
       "paper_presentations": jsonEncode(profileData.paperPresentations ?? []),
       "industrial_visits": jsonEncode(profileData.industrialVisits ?? []),
-      "tools_and_technologies": jsonEncode(
-        profileData.toolsAndTechnologies ?? [],
-      ),
+      // "tools_and_technologies": jsonEncode(
+      //   profileData.toolsAndTechnologies ?? [],
+      // ),
       "experience": jsonEncode(
         profileData.experience?.map((e) => e.toJson()).toList() ?? [],
       ),

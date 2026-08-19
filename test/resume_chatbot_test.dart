@@ -14,7 +14,7 @@ String testUserId = ""; // Leave empty to load from .chatbot_session.json
 String testFirstName = "Midhun";
 String testLastName = "Raj";
 String testRole = "Flutter Mobile Developer";
-String testDefaultEmail = "midhunraj2113@gmail.com";
+String testDefaultEmail = "farrukjavid@gmail.com";
 String testEmailConfirmation = "Yes";
 
 String getActiveUserId() {
