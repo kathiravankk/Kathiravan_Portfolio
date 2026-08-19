@@ -1297,7 +1297,7 @@ class _ChatNewResumeCreationScreenState
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.cardColor,
+        backgroundColor: AppColors.cardColor2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: Text(
           "Exit Resume Creation?",
@@ -1320,6 +1320,7 @@ class _ChatNewResumeCreationScreenState
             child: Text(
               "Cancel",
               style: AppStyles.customTextStyle(
+                size: 12,
                 color: AppColors.greyTextColor,
                 weight: FontWeight.w600,
               ),
@@ -1334,6 +1335,7 @@ class _ChatNewResumeCreationScreenState
             child: Text(
               "Exit",
               style: AppStyles.customTextStyle(
+                size: 12,
                 color: AppColors.blackColor,
                 weight: FontWeight.w600,
               ),
@@ -1408,6 +1410,7 @@ class _ChatNewResumeCreationScreenState
         ),
         bottomNavigationBar: _buildBottomNavigationBar(),
       ),
+      )
     );
   }
 
