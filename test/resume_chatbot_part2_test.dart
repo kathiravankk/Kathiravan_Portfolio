@@ -22,7 +22,7 @@ const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
 // ---------------------------------------------------------------------------
 // ✏️  Configurable Test Data Variables
 // ---------------------------------------------------------------------------
-String testOtp = "7439";
+String testOtp = "9907";
 String testUserId = ""; // Leave empty to load from .chatbot_session.json
 String testPhone = "9943155120"; //midhun
 String testPhoneConfirmation = "Yes";
@@ -41,9 +41,12 @@ String testHigherSecondarySchool = "Velammal Higher Secondary";
 String testHigherSecondaryBoard = "CBSE";
 String testHigherSecondaryYear = "2017";
 String testHigherSecondaryPercentage = "80";
-String testCollegeDegree = "Add college degree";
-String testCollegeDegreeDetails =
-    "Bachelor of Science, Computer Science, Einstein College, 2019-2023, 65%";
+String testCollegeDegree = "B.Sc";
+String testCollegeStartYear = "2019";
+String testCollegeEndYear = "2024";
+String testCollegePercentage = "80";
+String testCollegeFeild = "Computer Science";
+String testCollegeName = "Einstein";
 String testTechnicalSkills = "Flutter, Dart, Firebase, REST API, Git, GetX";
 String testInternships = "DTIT";
 String testInternshipRole = "Flutter Developer Intern";
@@ -93,13 +96,16 @@ String testWorkshopsConfirm = "Yes";
 String testWorkshopName = (sampleData["workshops"] as List)[0] == "name"
     ? "Flutter Development Workshop"
     : (sampleData["workshops"] as List)[0];
+String testWorkshopDate = (sampleData["workshops"] as List)[0] == "date"
+    ? "November 2024"
+    : (sampleData["workshops"] as List)[0];
 
 // Publications
 String testPublicationsConfirm = "Yes";
 String testPublicationTitle = (sampleData["publications"] as List)[0] == "title"
     ? "Cross-Platform App Performance in Flutter"
     : (sampleData["publications"] as List)[0];
-String testPublicationDate = "November 2024";
+String testPublicationDate = "November 2024 , Einstein College";
 
 // Leadership
 String testLeadershipConfirm = "Yes";
@@ -250,12 +256,7 @@ void main() {
       });
 
       test('Step 9: Confirm Phone Number (Yes)', () async {
-        await sendStep(
-          dio,
-          "STEP 9",
-          testPhoneConfirmation,
-          tracker: tracker,
-        );
+        await sendStep(dio, "STEP 9", testPhoneConfirmation, tracker: tracker);
       });
 
       test('Step 10: Send Phone OTP', () async {
@@ -360,11 +361,27 @@ void main() {
         await sendStep(dio, "STEP 25", testCollegeDegree, tracker: tracker);
       });
 
-      test('Step 25b: Send College Degree Details', () async {
+      test('Step 25b: Send College Field of Study', () async {
+        await sendStep(dio, "STEP 25b", testCollegeFeild, tracker: tracker);
+      });
+
+      test('Step 25c: Send College Name', () async {
+        await sendStep(dio, "STEP 25c", testCollegeName, tracker: tracker);
+      });
+
+      test('Step 25d: Send College Start Year', () async {
+        await sendStep(dio, "STEP 25d", testCollegeStartYear, tracker: tracker);
+      });
+
+      test('Step 25e: Send College End Year', () async {
+        await sendStep(dio, "STEP 25e", testCollegeEndYear, tracker: tracker);
+      });
+
+      test('Step 25f: Send College Percentage', () async {
         await sendStep(
           dio,
-          "STEP 25b",
-          testCollegeDegreeDetails,
+          "STEP 25f",
+          testCollegePercentage,
           tracker: tracker,
         );
       });
@@ -469,12 +486,7 @@ void main() {
       });
 
       test('Step 40: Send Certification Name', () async {
-        await sendStep(
-          dio,
-          "STEP 40",
-          testCertificationName,
-          tracker: tracker,
-        );
+        await sendStep(dio, "STEP 40", testCertificationName, tracker: tracker);
       });
 
       test('Step 41: Send Certification Issuer', () async {
@@ -487,12 +499,7 @@ void main() {
       });
 
       test('Step 42: Send Certification Date', () async {
-        await sendStep(
-          dio,
-          "STEP 42",
-          testCertificationDate,
-          tracker: tracker,
-        );
+        await sendStep(dio, "STEP 42", testCertificationDate, tracker: tracker);
       });
 
       test('Step 43: Confirm Industrial Visits', () async {
@@ -535,29 +542,27 @@ void main() {
     group('8. Workshops & Publications', () {
       final tracker = GroupTracker();
 
-      test('Step 47: Send Workshop Name', () async {
-        await sendStep(dio, "STEP 47", testWorkshopName, tracker: tracker);
+      test('Step 47: Confirm Workshops', () async {
+        await sendStep(dio, "STEP 47", testWorkshopsConfirm, tracker: tracker);
       });
 
-      test('Step 49: Confirm Publications', () async {
-        await sendStep(
-          dio,
-          "STEP 49",
-          testPublicationsConfirm,
-          tracker: tracker,
-        );
+      test('Step 47a: Send Workshop Name', () async {
+        await sendStep(dio, "STEP 47a", testWorkshopName, tracker: tracker);
       });
 
-      test('Step 50: Send Publication Title', () async {
-        await sendStep(
-          dio,
-          "STEP 50",
-          testPublicationTitle,
-          tracker: tracker,
-        );
+      test('Step 49: Send Workshop Date', () async {
+        await sendStep(dio, "STEP 49", testWorkshopDate, tracker: tracker);
       });
 
-      test('Step 50b: Send Publication Date', () async {
+       test('Step 50: Confirm Publication', () async {
+        await sendStep(dio, "STEP 50", testPublicationsConfirm, tracker: tracker);
+      });
+
+      test('Step 50a: Send Publication Title', () async {
+        await sendStep(dio, "STEP 50a", testPublicationTitle, tracker: tracker);
+      });
+
+      test('Step 50b: Send Publication Date and Venue', () async {
         await sendStep(dio, "STEP 50b", testPublicationDate, tracker: tracker);
       });
     });
@@ -566,12 +571,7 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 51: Confirm Leadership', () async {
-        await sendStep(
-          dio,
-          "STEP 51",
-          testLeadershipConfirm,
-          tracker: tracker,
-        );
+        await sendStep(dio, "STEP 51", testLeadershipConfirm, tracker: tracker);
       });
 
       test('Step 52: Send Leadership Role', () async {
