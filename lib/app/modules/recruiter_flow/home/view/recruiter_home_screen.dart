@@ -202,7 +202,7 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 15,
                                   mainAxisSpacing: 15,
-                                  childAspectRatio: 0.65,
+                                  childAspectRatio: 0.57,
                                 ),
                             itemBuilder: (context, index) {
                               final student =

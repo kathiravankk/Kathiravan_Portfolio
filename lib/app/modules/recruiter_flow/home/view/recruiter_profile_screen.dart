@@ -347,12 +347,17 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
                 ),
               ),
             ),
-            Text(
-              label,
-              style: AppStyles.customTextStyle(
-                size: 10,
-                color: AppColors.greyTextColor,
-                weight: FontWeight.w400,
+            SizedBox(
+              height: 15,
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppStyles.customTextStyle(
+                  size: 10,
+                  color: AppColors.greyTextColor,
+                  weight: FontWeight.w400,
+                ),
               ),
             ),
           ],

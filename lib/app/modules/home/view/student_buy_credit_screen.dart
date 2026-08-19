@@ -365,31 +365,33 @@ class _StudentBuyCreditScreenState extends State<StudentBuyCreditScreen> {
 
                                 const SizedBox(width: 12),
 
-                                Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
 
-                                    Text(
-                                      "Your Balance",
-                                      style: AppStyles.customTextStyle(
-                                        size: 12,
-                                        weight: FontWeight.w400,
-                                        color: Colors.white60,
+                                      Text(
+                                        "Your Balance",
+                                        style: AppStyles.customTextStyle(
+                                          size: 12,
+                                          weight: FontWeight.w400,
+                                          color: Colors.white60,
+                                        ),
                                       ),
-                                    ),
 
-                                    const SizedBox(height: 5),
+                                      const SizedBox(height: 5),
 
-                                    Text(
-                                      "${creditBalance ?? 0} Credits",
-                                      style: AppStyles.customTextStyle(
-                                        size: 16,
-                                        weight: FontWeight.w800,
-                                        color: _BuyCreditColors.gold,
+                                      Text(
+                                        "${creditBalance ?? 0} Credits",
+                                        style: AppStyles.customTextStyle(
+                                          size: 16,
+                                          weight: FontWeight.w800,
+                                          color: _BuyCreditColors.gold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -441,7 +443,7 @@ class _StudentBuyCreditScreenState extends State<StudentBuyCreditScreen> {
                   gridDelegate:
                   const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.70,
+                    childAspectRatio: 0.55,
                     crossAxisSpacing: 14,
                     mainAxisSpacing: 24,
                   ),

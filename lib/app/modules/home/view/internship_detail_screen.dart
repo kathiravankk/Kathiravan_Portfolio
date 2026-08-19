@@ -207,8 +207,6 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
                             Expanded(
                               child: Text(
                                 internship!.companyName ?? "",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                                 style: AppStyles.customTextStyle(
                                   size: 16,
                                   weight: FontWeight.w700,
@@ -671,8 +669,6 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
             Expanded(
               child: Text(
                 internship!.companyName ?? "NA",
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
                 style: AppStyles.customTextStyle(
                   size: 16,
                   weight: FontWeight.w700,

@@ -170,7 +170,7 @@ class _ChatNewResumeCreationScreenState
       final String prettyJson = const JsonEncoder.withIndent('  ').convert(data);
       debugPrint('\n==================================================');
       debugPrint('➡️ API LOG: $title');
-      debugPrint(prettyJson, wrapWidth: 1024);
+      prettyJson.split('\n').forEach((line) => debugPrint(line));
       debugPrint('==================================================\n');
     } catch (e) {
       debugPrint('\n➡️ API LOG: $title => $data\n');
@@ -222,11 +222,15 @@ class _ChatNewResumeCreationScreenState
           userId = loginController.createNewResumeModel.userId ?? userId;
         }
 
-        if (loginController.createNewResumeModel.message != null &&
-            loginController.createNewResumeModel.message!.isNotEmpty) {
+        final String? completedSection =
+            loginController.createNewResumeModel.completedSection;
+        final String? botMessage = loginController.createNewResumeModel.message;
+        final bool hasQuiz = completedSection != null && kQuizGatedSections[completedSection] != null;
+
+        if (botMessage != null && botMessage.isNotEmpty && !hasQuiz) {
           messages.add(
             ChatMessage(
-              text: loginController.createNewResumeModel.message!,
+              text: botMessage,
               isBot: true,
             ),
           );
@@ -326,8 +330,8 @@ class _ChatNewResumeCreationScreenState
           loginController.createNewResumeModelRx.refresh();
         }
 
-        final String? completedSection =
-            loginController.createNewResumeModel.completedSection;
+        // final String? completedSection =
+        //     loginController.createNewResumeModel.completedSection;
 
         final String? nextField =
             loginController.createNewResumeModel.nextField;
@@ -351,7 +355,10 @@ class _ChatNewResumeCreationScreenState
           });
         } else if (completedSection != null && completedSection.isNotEmpty) {
           _completedSections.add(completedSection);
-          await _handleCompletedSection(completedSection);
+          await _handleCompletedSection(
+            completedSection,
+            pendingBotMessage: hasQuiz ? botMessage : null,
+          );
         }
       } else {
         // ── Restore previous collectedData on API error ──
@@ -470,19 +477,32 @@ class _ChatNewResumeCreationScreenState
   // COMPLETED-SECTION ROUTER
   // ==========================================================================
 
-  Future<void> _handleCompletedSection(String completedSection) async {
+  Future<void> _handleCompletedSection(
+    String completedSection, {
+    String? pendingBotMessage,
+  }) async {
     final String? quizSection = kQuizGatedSections[completedSection];
     if (quizSection != null &&
         !_handledCompletionSignatures.contains(completedSection)) {
       _handledCompletionSignatures.add(completedSection);
       await Future.delayed(const Duration(milliseconds: 500));
-      await _startKnowledgeCheck(quizSection);
+      await _startKnowledgeCheck(quizSection, pendingBotMessage: pendingBotMessage);
+    } else {
+      if (pendingBotMessage != null && pendingBotMessage.isNotEmpty) {
+        messages.add(
+          ChatMessage(
+            text: pendingBotMessage,
+            isBot: true,
+          ),
+        );
+      }
     }
 
     // Call Update Profile API on every section completion or DONE trigger
     await updateCompleteSectionInfo(
       isDone: completedSection == "DONE",
       completedSection: completedSection,
+      fromChatFlow: true,
     );
   }
 
@@ -490,7 +510,10 @@ class _ChatNewResumeCreationScreenState
   // QUIZ: start_quiz / submit_quiz
   // ==========================================================================
 
-  Future<void> _startKnowledgeCheck(String section) async {
+  Future<void> _startKnowledgeCheck(
+    String section, {
+    String? pendingBotMessage,
+  }) async {
     if (_quizDialogOpen) return;
 
     final Map<String, dynamic> quizData = {
@@ -545,6 +568,16 @@ class _ChatNewResumeCreationScreenState
               isBot: true,
             ),
           );
+
+          // 2. Now show the previous API response chat message below the score!
+          if (pendingBotMessage != null && pendingBotMessage.isNotEmpty) {
+            messages.add(
+              ChatMessage(
+                text: pendingBotMessage,
+                isBot: true,
+              ),
+            );
+          }
           scrollToBottom();
 
           // 2. Track verified items if quiz passed
@@ -691,6 +724,7 @@ class _ChatNewResumeCreationScreenState
   Future<void> updateCompleteSectionInfo({
     bool isDone = false,
     String? completedSection,
+    bool fromChatFlow = false,
   }) async {
     final reply = loginController.createNewResumeModel.collectedData;
     final ResumeCollectedData? collected = reply;
@@ -980,14 +1014,16 @@ class _ChatNewResumeCreationScreenState
       };
 
       // Call Chat Resume Sync API first
-      _logApi(title: "updateCompleteSectionInfo -> createNewChatResume REQUEST", data: chatPayload);
-      await loginController.createNewChatResume(chatRequestData: chatPayload);
-      _logApi(
-        title: "updateCompleteSectionInfo -> createNewChatResume RESPONSE [Status: ${loginController.getResponseCode()}]",
-        data: loginController.createNewResumeModel.toJson(),
-      );
+      if (!fromChatFlow) {
+        _logApi(title: "updateCompleteSectionInfo -> createNewChatResume REQUEST", data: chatPayload);
+        await loginController.createNewChatResume(chatRequestData: chatPayload);
+        _logApi(
+          title: "updateCompleteSectionInfo -> createNewChatResume RESPONSE [Status: ${loginController.getResponseCode()}]",
+          data: loginController.createNewResumeModel.toJson(),
+        );
+      }
 
-      final int statusCode = loginController.getResponseCode();
+      final int statusCode = fromChatFlow ? 200 : loginController.getResponseCode();
 
       if (statusCode == 200 || statusCode == 201) {
         debugPrint("%%%%%%%%%%%%%%%%%%%");
@@ -998,9 +1034,38 @@ class _ChatNewResumeCreationScreenState
         }
 
         // Call Profile Update API
+        final allowedSections = {
+          "linkedin_completed",
+          "refcode_completed",
+          "location_completed",
+          "github_completed",
+          "summary_completed",
+          "education_completed",
+          "skills_completed",
+          "internships_completed",
+          "projects_completed",
+          "paper_presentations_completed",
+          "certifications_completed",
+          "industrial_visits_completed",
+          "workshops_completed",
+          "publications_completed",
+          "leadership_completed",
+          "volunteer_experience_completed",
+          "languages_completed",
+          "areas_of_interest_completed",
+          "hobbies_completed",
+          "achievements_completed",
+        };
+
         if ((apiPayload["studemail"] != null && apiPayload["studemail"] != "") &&
             (apiPayload["studmobileno"] != null &&
-                apiPayload["studmobileno"] != "")) {
+                apiPayload["studmobileno"] != "") &&
+            allowedSections.contains(completedSection)) {
+          debugPrint("\n=================== API PAYLOAD KEYS & TYPES ===================");
+          apiPayload.forEach((key, value) {
+            debugPrint("Key: $key | Type: ${value.runtimeType} | Value: $value");
+          });
+          debugPrint("==============================================================\n");
           _logApi(title: "updateStudentProfileData (apiPayload) REQUEST", data: apiPayload);
           await registerController.updateChatStudentProfileData(
             updateData: apiPayload,
@@ -1159,11 +1224,20 @@ class _ChatNewResumeCreationScreenState
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       if (!mounted) return;
+      int templateId = 1;
+      final args = Get.arguments;
+      if (args is Map && args['templateId'] != null) {
+        try {
+          templateId = int.parse(args['templateId'].toString());
+        } catch (_) {
+          templateId = 1;
+        }
+      }
       AppFunctions.navigateScreen(
         context,
         AppRoutes.chatResumeTemplateScreen,
         arguments: {
-          "templateId": 1,
+          "templateId": templateId,
           "isRegisterFlow": true,
         },
       );
@@ -1219,39 +1293,105 @@ class _ChatNewResumeCreationScreenState
   // UI BUILD
   // ==========================================================================
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.chatScreenBg),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 25,
-              color: AppColors.whiteColor,
-            ),
-            onPressed: () => Get.back(),
+  Future<bool> _showExitConfirmationDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.cardColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(
+          "Exit Resume Creation?",
+          style: AppStyles.customTextStyle(
+            size: 18,
+            weight: FontWeight.w700,
+            color: AppColors.whiteColor,
           ),
-          title: Obx(
-            () => Text(
-              _titleForTab(currentTabIndex.value),
+        ),
+        content: Text(
+          "Are you sure you want to exit? Your progress may not be saved.",
+          style: AppStyles.customTextStyle(
+            size: 14,
+            color: AppColors.whiteColor,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              "Cancel",
               style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.secondaryColor,
+                color: AppColors.greyTextColor,
                 weight: FontWeight.w600,
               ),
             ),
           ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              "Exit",
+              style: AppStyles.customTextStyle(
+                color: AppColors.blackColor,
+                weight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldPop = await _showExitConfirmationDialog();
+        if (shouldPop && context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.chatScreenBg),
+            fit: BoxFit.cover,
+          ),
         ),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                size: 25,
+                color: AppColors.whiteColor,
+              ),
+              onPressed: () async {
+                final shouldPop = await _showExitConfirmationDialog();
+                if (shouldPop) {
+                  Get.back();
+                }
+              },
+            ),
+            title: Obx(
+              () => Text(
+                _titleForTab(currentTabIndex.value),
+                style: AppStyles.customTextStyle(
+                  size: 18,
+                  color: AppColors.secondaryColor,
+                  weight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
         body: Obx(
           () =>
               (isInitialLoading && loginController.createNewResumeLoading) ||
@@ -1412,6 +1552,32 @@ class _ChatNewResumeCreationScreenState
               ),
             ],
           ),
+          if (isSuccessMessage) ...[
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 44),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                ),
+                onPressed: () async {
+                  await getStudentProfileData();
+                },
+                child: Text(
+                  "Proceed to template",
+                  style: AppStyles.customTextStyle(
+                    color: AppColors.blackColor,
+                    weight: FontWeight.w700,
+                    size: 13,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -1472,75 +1638,85 @@ class _ChatNewResumeCreationScreenState
       );
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end, // Keeps send button aligned to bottom as box expands
-      children: [
-        Expanded(
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeInOut,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
-              decoration: BoxDecoration(
-                color: AppColors.chatGradient3,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: TextField(
-                controller: chatTextController,
-                focusNode: chatFocusNode,
-                minLines: 1, // Starts at 1 line
-                maxLines: 5, // Expands up to 5 lines dynamically
-                keyboardType: TextInputType.multiline,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  weight: FontWeight.w400,
-                  color: AppColors.whiteColor,
+    return Obx(
+      () => Row(
+        crossAxisAlignment: CrossAxisAlignment.end, // Keeps send button aligned to bottom as box expands
+        children: [
+          Expanded(
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeInOut,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+                decoration: BoxDecoration(
+                  color: AppColors.chatGradient3,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                cursorColor: AppColors.primaryColor,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero, // Allows Container padding to govern layout
-                  hintText: 'Type here...',
-                  hintStyle: AppStyles.customTextStyle(
-                    color: AppColors.chatTextColor,
-                    size: 12,
+                child: TextField(
+                  enabled: !loginController.createNewResumeLoading,
+                  controller: chatTextController,
+                  focusNode: chatFocusNode,
+                  minLines: 1, // Starts at 1 line
+                  maxLines: 5, // Expands up to 5 lines dynamically
+                  keyboardType: TextInputType.multiline,
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w400,
+                    color: AppColors.whiteColor,
                   ),
-                  border: InputBorder.none,
+                  cursorColor: AppColors.primaryColor,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero, // Allows Container padding to govern layout
+                    hintText: loginController.createNewResumeLoading
+                        ? 'Please wait...'
+                        : 'Type here...',
+                    hintStyle: AppStyles.customTextStyle(
+                      color: AppColors.chatTextColor,
+                      size: 12,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                  onSubmitted: (value) async {
+                    if (loginController.createNewResumeLoading) return;
+                    if (selectedOptions.isNotEmpty) {
+                      await sendSelectedOptions();
+                    } else {
+                      await sendTypedMessage();
+                    }
+                  },
                 ),
-                onSubmitted: (value) async {
-                  if (selectedOptions.isNotEmpty) {
-                    await sendSelectedOptions();
-                  } else {
-                    await sendTypedMessage();
-                  }
-                },
               ),
             ),
           ),
-        ),
-        IconButton(
-          icon: Container(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primaryColor,
+          IconButton(
+            icon: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: loginController.createNewResumeLoading
+                    ? AppColors.disableBorderColor
+                    : AppColors.primaryColor,
+              ),
+              padding: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              child: Icon(
+                CupertinoIcons.location,
+                color: AppColors.whiteColor,
+                size: 22,
+              ),
             ),
-            padding: const EdgeInsets.all(10),
-            alignment: Alignment.center,
-            child:  Icon(
-              CupertinoIcons.location,
-              color: AppColors.whiteColor,
-              size: 22,
-            ),
+            onPressed: loginController.createNewResumeLoading
+                ? null
+                : () async {
+                    if (selectedOptions.isNotEmpty) {
+                      await sendSelectedOptions();
+                    } else {
+                      await sendTypedMessage();
+                    }
+                  },
           ),
-          onPressed: () async {
-            if (selectedOptions.isNotEmpty) {
-              await sendSelectedOptions();
-            } else {
-              await sendTypedMessage();
-            }
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 

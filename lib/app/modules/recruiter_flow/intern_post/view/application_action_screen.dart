@@ -305,29 +305,33 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                               ),
                             ),
                             const SizedBox(width: 15,),
-                            Column(
-                              spacing: 10,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Feedback",
-                                  style: AppStyles.customTextStyle(
-                                    size: 16,
-                                    color: AppColors.whiteColor,
-                                    weight: FontWeight.w700,
+                            Expanded(
+                              child: Column(
+                                spacing: 10,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Feedback",
+                                    style: AppStyles.customTextStyle(
+                                      size: 16,
+                                      color: AppColors.whiteColor,
+                                      weight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  "Help us improve by sharing your feedback",
-                                  style: AppStyles.customTextStyle(
-                                    size: 12,
-                                    color: AppColors.contLightText2,
-                                    weight: FontWeight.w400,
+                                  Text(
+                                    "Help us improve by sharing your feedback",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppStyles.customTextStyle(
+                                      size: 12,
+                                      color: AppColors.contLightText2,
+                                      weight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                            const Spacer(),
+                            const SizedBox(width: 10),
                             Icon(
                               Icons.keyboard_arrow_down,
                               color: AppColors.whiteColor,
