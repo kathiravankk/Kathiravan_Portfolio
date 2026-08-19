@@ -15,6 +15,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dio/dio.dart';
+import 'package:internsharks/app/data/providers/student_login_provider.dart';
+import 'package:internsharks/app/data/models/account/create_new_resume_model.dart';
 import 'sample_data.dart';
 
 const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
@@ -61,17 +63,16 @@ class GroupTracker {
   bool failed = false;
 }
 
-/// Helper function to execute a test step without repeating boilerplate.
-/// If a prior step in the group failed, subsequent steps in the same group are skipped.
-Future<Map<String, dynamic>> sendStep(
-  Dio dio,
+/// Helper function using StudentLoginProvider.makeNewChatResume
+Future<CreateNewChatResumeModel> sendStep(
+  StudentLoginProvider provider,
   String stepTag,
   String message, {
   GroupTracker? tracker,
 }) async {
   if (tracker != null && tracker.failed) {
     markTestSkipped("Skipped because a previous step in this group failed.");
-    return {};
+    return CreateNewChatResumeModel();
   }
 
   final userId = getActiveUserId();
@@ -87,25 +88,27 @@ Future<Map<String, dynamic>> sendStep(
   print("➡️ Request Payload: ${jsonEncode(payload)}");
 
   try {
-    final response = await dio.post(apiEndpoint, data: payload);
-    expect(
-      response.statusCode,
-      anyOf(200, 201),
-      reason: "$stepTag Error: ${response.data}",
+    final CreateNewChatResumeModel model = await provider.makeNewChatResume(
+      chatRequestData: payload,
     );
 
-    final data = response.data is Map<String, dynamic>
-        ? response.data
-        : <String, dynamic>{};
-    print("Status: ${response.statusCode}");
-    print("🤖 Bot Message: ${data["message"]}");
-    print("📌 next_field: ${data["next_field"]}");
-    print("📌 completed_section: ${data["completed_section"]}");
-    if (data.containsKey("collected_data")) {
-      print("📤 Collected Data: ${data["collected_data"]}");
+    expect(
+      provider.responseStatus,
+      anyOf(200, 201),
+      reason: "$stepTag Error: status=${provider.responseStatus}",
+    );
+
+    print("Status: ${provider.responseStatus}");
+    print("🤖 Bot Message: ${model.message}");
+    print("📌 next_field: ${model.nextField}");
+    print("📌 completed_section: ${model.completedSection}");
+    if (model.collectedData != null) {
+      print(
+        "📤 Collected Data: ${jsonEncode(model.collectedData!.toJson())}",
+      );
     }
     print("==================================================\n");
-    return data;
+    return model;
   } catch (e) {
     if (tracker != null) tracker.failed = true;
     rethrow;
@@ -122,6 +125,8 @@ void main() {
     ),
   );
 
+  final StudentLoginProvider provider = StudentLoginProvider(client: dio);
+
   group('Resume Chatbot Part 1', () {
     group('1. Initial Session Setup', () {
       final tracker = GroupTracker();
@@ -135,35 +140,26 @@ void main() {
         print("\n==================================================");
         print("🔄 STEP 1: Sending action='start_chat'");
         try {
-          final Response step1Res = await dio.post(
-            apiEndpoint,
-            data: {"action": "start_chat"},
-          );
-
-          print("Status: ${step1Res.statusCode}");
-          print("📩 Response Body: ${step1Res.data}");
+          final CreateNewChatResumeModel model = await provider
+              .makeNewChatResume(chatRequestData: {"action": "start_chat"});
 
           expect(
-            step1Res.statusCode,
+            provider.responseStatus,
             anyOf(200, 201),
-            reason: "Server returned error: ${step1Res.data}",
+            reason: "Server returned error: status=${provider.responseStatus}",
           );
 
-          final Map<String, dynamic> step1Data =
-              step1Res.data is Map<String, dynamic>
-                  ? step1Res.data
-                  : <String, dynamic>{};
-          final String userId =
-              step1Data["user_id"] ?? step1Data["userId"] ?? "";
+          final String userId = model.userId ?? "";
           expect(userId, isNotEmpty, reason: "user_id should not be empty");
 
           // Save session so all subsequent steps can reuse it
           final File sessionFile = File('.chatbot_session.json');
           sessionFile.writeAsStringSync(jsonEncode({"user_id": userId}));
 
+          print("Status: ${provider.responseStatus}");
           print("👤 user_id: $userId");
-          print("🤖 Bot Message: ${step1Data["message"]}");
-          print("📌 next_field: ${step1Data["next_field"]}");
+          print("🤖 Bot Message: ${model.message}");
+          print("📌 next_field: ${model.nextField}");
           print("💾 Saved user_id to .chatbot_session.json");
           print("==================================================\n");
         } catch (e) {
@@ -177,15 +173,15 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 2: Send First Name', () async {
-        await sendStep(dio, "STEP 2", testFirstName, tracker: tracker);
+        await sendStep(provider, "STEP 2", testFirstName, tracker: tracker);
       });
 
       test('Step 3: Send Surname / Last Name', () async {
-        await sendStep(dio, "STEP 3", testLastName, tracker: tracker);
+        await sendStep(provider, "STEP 3", testLastName, tracker: tracker);
       });
 
       test('Step 4: Send Role', () async {
-        await sendStep(dio, "STEP 4", testRole, tracker: tracker);
+        await sendStep(provider, "STEP 4", testRole, tracker: tracker);
       });
     });
 
@@ -193,17 +189,22 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 5: Send Email Address', () async {
-        await sendStep(dio, "STEP 5", testDefaultEmail, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 5",
+          testDefaultEmail,
+          tracker: tracker,
+        );
       });
 
       test('Step 6: Confirm Email Address', () async {
-        final data = await sendStep(
-          dio,
+        final model = await sendStep(
+          provider,
           "STEP 6",
           testEmailConfirmation,
           tracker: tracker,
         );
-        if (data.isNotEmpty) {
+        if (model.message != null && model.message!.isNotEmpty) {
           print(
             "✅ Part 1 completed! OTP has been sent to $testDefaultEmail",
           );

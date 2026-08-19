@@ -15,6 +15,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dio/dio.dart';
+import 'package:internsharks/app/data/providers/student_login_provider.dart';
+import 'package:internsharks/app/data/models/account/create_new_resume_model.dart';
 import 'sample_data.dart';
 
 const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
@@ -22,7 +24,7 @@ const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
 // ---------------------------------------------------------------------------
 // ✏️  Configurable Test Data Variables
 // ---------------------------------------------------------------------------
-String testOtp = "5564";
+String testOtp = "1198";
 String testUserId = ""; // Leave empty to load from .chatbot_session.json
 String testPhone = "9943155120"; //midhun
 String testPhoneConfirmation = "Yes";
@@ -168,17 +170,16 @@ class GroupTracker {
   bool failed = false;
 }
 
-/// Helper function to execute a test step without repeating boilerplate.
-/// If a prior step in the group failed, subsequent steps in the same group are skipped.
-Future<Map<String, dynamic>> sendStep(
-  Dio dio,
+/// Helper function using StudentLoginProvider.makeNewChatResume
+Future<CreateNewChatResumeModel> sendStep(
+  StudentLoginProvider provider,
   String stepTag,
   String message, {
   GroupTracker? tracker,
 }) async {
   if (tracker != null && tracker.failed) {
     markTestSkipped("Skipped because a previous step in this group failed.");
-    return {};
+    return CreateNewChatResumeModel();
   }
 
   final userId = getActiveUserId();
@@ -194,25 +195,27 @@ Future<Map<String, dynamic>> sendStep(
   print("➡️ Request Payload: ${jsonEncode(payload)}");
 
   try {
-    final response = await dio.post(apiEndpoint, data: payload);
-    expect(
-      response.statusCode,
-      anyOf(200, 201),
-      reason: "$stepTag Error: ${response.data}",
+    final CreateNewChatResumeModel model = await provider.makeNewChatResume(
+      chatRequestData: payload,
     );
 
-    final data = response.data is Map<String, dynamic>
-        ? response.data
-        : <String, dynamic>{};
-    print("Status: ${response.statusCode}");
-    print("🤖 Bot Message: ${data["message"]}");
-    print("📌 next_field: ${data["next_field"]}");
-    print("📌 completed_section: ${data["completed_section"]}");
-    if (data.containsKey("collected_data")) {
-      print("📤 Collected Data: ${data["collected_data"]}");
+    expect(
+      provider.responseStatus,
+      anyOf(200, 201),
+      reason: "$stepTag Error: status=${provider.responseStatus}",
+    );
+
+    print("Status: ${provider.responseStatus}");
+    print("🤖 Bot Message: ${model.message}");
+    print("📌 next_field: ${model.nextField}");
+    print("📌 completed_section: ${model.completedSection}");
+    if (model.collectedData != null) {
+      print(
+        "📤 Collected Data: ${jsonEncode(model.collectedData!.toJson())}",
+      );
     }
     print("==================================================\n");
-    return data;
+    return model;
   } catch (e) {
     if (tracker != null) tracker.failed = true;
     rethrow;
@@ -229,6 +232,8 @@ void main() {
     ),
   );
 
+  final StudentLoginProvider provider = StudentLoginProvider(client: dio);
+
   group('Resume Chatbot Part 2', () {
     group('1. Email OTP Verification', () {
       final tracker = GroupTracker();
@@ -239,7 +244,7 @@ void main() {
           isNotEmpty,
           reason: "Set testOtp variable before running Step 7",
         );
-        await sendStep(dio, "STEP 7", testOtp, tracker: tracker);
+        await sendStep(provider, "STEP 7", testOtp, tracker: tracker);
       });
     });
 
@@ -252,15 +257,20 @@ void main() {
           isNotEmpty,
           reason: "Set testPhone variable before running Step 8",
         );
-        await sendStep(dio, "STEP 8", testPhone, tracker: tracker);
+        await sendStep(provider, "STEP 8", testPhone, tracker: tracker);
       });
 
       test('Step 9: Confirm Phone Number (Yes)', () async {
-        await sendStep(dio, "STEP 9", testPhoneConfirmation, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 9",
+          testPhoneConfirmation,
+          tracker: tracker,
+        );
       });
 
       test('Step 10: Send Phone OTP', () async {
-        await sendStep(dio, "STEP 10", testPhoneOtp, tracker: tracker);
+        await sendStep(provider, "STEP 10", testPhoneOtp, tracker: tracker);
       });
     });
 
@@ -268,23 +278,28 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 11: Send Referral Code', () async {
-        await sendStep(dio, "STEP 11", testRefcode, tracker: tracker);
+        await sendStep(provider, "STEP 11", testRefcode, tracker: tracker);
       });
 
       test('Step 12: Send Location', () async {
-        await sendStep(dio, "STEP 12", testLocation, tracker: tracker);
+        await sendStep(provider, "STEP 12", testLocation, tracker: tracker);
       });
 
       test('Step 13: Send LinkedIn', () async {
-        await sendStep(dio, "STEP 13", testLinkedIn, tracker: tracker);
+        await sendStep(provider, "STEP 13", testLinkedIn, tracker: tracker);
       });
 
       test('Step 14: Send GitHub', () async {
-        await sendStep(dio, "STEP 14", testGithub, tracker: tracker);
+        await sendStep(provider, "STEP 14", testGithub, tracker: tracker);
       });
 
       test('Step 15: Send Summary Choice', () async {
-        await sendStep(dio, "STEP 15", testSummaryChoice, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 15",
+          testSummaryChoice,
+          tracker: tracker,
+        );
       });
     });
 
@@ -292,20 +307,35 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 16: Send Secondary (10th) School', () async {
-        await sendStep(dio, "STEP 16", testSecondarySchool, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 16",
+          testSecondarySchool,
+          tracker: tracker,
+        );
       });
 
       test('Step 17: Send Secondary (10th) Board', () async {
-        await sendStep(dio, "STEP 17", testSecondaryBoard, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 17",
+          testSecondaryBoard,
+          tracker: tracker,
+        );
       });
 
       test('Step 18: Send Secondary (10th) Year of Passing', () async {
-        await sendStep(dio, "STEP 18", testSecondaryYear, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 18",
+          testSecondaryYear,
+          tracker: tracker,
+        );
       });
 
       test('Step 19: Send Secondary (10th) Percentage', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 19",
           testSecondaryPercentage,
           tracker: tracker,
@@ -314,7 +344,7 @@ void main() {
 
       test('Step 20: Confirm Higher Secondary (12th) School', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 20",
           testHigherSecondaryConfirm,
           tracker: tracker,
@@ -323,7 +353,7 @@ void main() {
 
       test('Step 21: Send Higher Secondary (12th) School', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 21",
           testHigherSecondarySchool,
           tracker: tracker,
@@ -332,7 +362,7 @@ void main() {
 
       test('Step 22: Send Higher Secondary (12th) Board', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 22",
           testHigherSecondaryBoard,
           tracker: tracker,
@@ -341,7 +371,7 @@ void main() {
 
       test('Step 23: Send Higher Secondary (12th) Year of Passing', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 23",
           testHigherSecondaryYear,
           tracker: tracker,
@@ -350,7 +380,7 @@ void main() {
 
       test('Step 24: Send Higher Secondary (12th) Percentage', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 24",
           testHigherSecondaryPercentage,
           tracker: tracker,
@@ -358,28 +388,38 @@ void main() {
       });
 
       test('Step 25: Send College Degree', () async {
-        await sendStep(dio, "STEP 25", testCollegeDegree, tracker: tracker);
+        await sendStep(provider, "STEP 25", testCollegeDegree, tracker: tracker);
       });
 
       test('Step 25b: Send College Field of Study', () async {
-        await sendStep(dio, "STEP 25b", testCollegeFeild, tracker: tracker);
+        await sendStep(provider, "STEP 25b", testCollegeFeild, tracker: tracker);
       });
 
       test('Step 25c: Send College Name', () async {
-        await sendStep(dio, "STEP 25c", testCollegeName, tracker: tracker);
+        await sendStep(provider, "STEP 25c", testCollegeName, tracker: tracker);
       });
 
       test('Step 25d: Send College Start Year', () async {
-        await sendStep(dio, "STEP 25d", testCollegeStartYear, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 25d",
+          testCollegeStartYear,
+          tracker: tracker,
+        );
       });
 
       test('Step 25e: Send College End Year', () async {
-        await sendStep(dio, "STEP 25e", testCollegeEndYear, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 25e",
+          testCollegeEndYear,
+          tracker: tracker,
+        );
       });
 
       test('Step 25f: Send College Percentage', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 25f",
           testCollegePercentage,
           tracker: tracker,
@@ -391,24 +431,39 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 26: Send Technical Skills', () async {
-        await sendStep(dio, "STEP 26", testTechnicalSkills, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 26",
+          testTechnicalSkills,
+          tracker: tracker,
+        );
       });
 
       test('Step 27: Send Internships', () async {
-        await sendStep(dio, "STEP 27", testInternships, tracker: tracker);
+        await sendStep(provider, "STEP 27", testInternships, tracker: tracker);
       });
 
       test('Step 28: Send Internship Role', () async {
-        await sendStep(dio, "STEP 28", testInternshipRole, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 28",
+          testInternshipRole,
+          tracker: tracker,
+        );
       });
 
       test('Step 29: Send Internship Start and End Dates', () async {
-        await sendStep(dio, "STEP 29", testInternshipDates, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 29",
+          testInternshipDates,
+          tracker: tracker,
+        );
       });
 
       test('Step 30: Send Internship Description Choice', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 30",
           testInternshipDescriptionChoice,
           tracker: tracker,
@@ -420,16 +475,16 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 31: Send Projects', () async {
-        await sendStep(dio, "STEP 31", testProjects, tracker: tracker);
+        await sendStep(provider, "STEP 31", testProjects, tracker: tracker);
       });
 
       test('Step 32: Send Project Name', () async {
-        await sendStep(dio, "STEP 32", testProjectName, tracker: tracker);
+        await sendStep(provider, "STEP 32", testProjectName, tracker: tracker);
       });
 
       test('Step 33: Send Project Description Choice', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 33",
           testProjectDescriptionChoice,
           tracker: tracker,
@@ -438,7 +493,7 @@ void main() {
 
       test('Step 34: Confirm Paper Presentations', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 34",
           testPaperPresentationsConfirm,
           tracker: tracker,
@@ -447,7 +502,7 @@ void main() {
 
       test('Step 35: Send Paper Presentation Title', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 35",
           testPaperPresentationTitle,
           tracker: tracker,
@@ -456,7 +511,7 @@ void main() {
 
       test('Step 36: Send Paper Presentation Venue and Date', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 36",
           testPaperPresentationVenueAndDate,
           tracker: tracker,
@@ -465,7 +520,7 @@ void main() {
 
       test('Step 37: Send Paper Presentation Description Choice', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 37",
           testPaperPresentationDescriptionChoice,
           tracker: tracker,
@@ -478,7 +533,7 @@ void main() {
 
       test('Step 39: Confirm Certifications', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 39",
           testCertificationsConfirm,
           tracker: tracker,
@@ -486,12 +541,17 @@ void main() {
       });
 
       test('Step 40: Send Certification Name', () async {
-        await sendStep(dio, "STEP 40", testCertificationName, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 40",
+          testCertificationName,
+          tracker: tracker,
+        );
       });
 
       test('Step 41: Send Certification Issuer', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 41",
           testCertificationIssuer,
           tracker: tracker,
@@ -499,12 +559,17 @@ void main() {
       });
 
       test('Step 42: Send Certification Date', () async {
-        await sendStep(dio, "STEP 42", testCertificationDate, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 42",
+          testCertificationDate,
+          tracker: tracker,
+        );
       });
 
       test('Step 43: Confirm Industrial Visits', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 43",
           testIndustrialVisitsConfirm,
           tracker: tracker,
@@ -513,7 +578,7 @@ void main() {
 
       test('Step 44: Send Industrial Visit Company', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 44",
           testIndustrialVisitCompany,
           tracker: tracker,
@@ -522,7 +587,7 @@ void main() {
 
       test('Step 45: Send Industrial Visit Location', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 45",
           testIndustrialVisitLocation,
           tracker: tracker,
@@ -531,7 +596,7 @@ void main() {
 
       test('Step 46: Send Industrial Visit Date', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 46",
           testIndustrialVisitDate,
           tracker: tracker,
@@ -543,27 +608,52 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 47: Confirm Workshops', () async {
-        await sendStep(dio, "STEP 47", testWorkshopsConfirm, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 47",
+          testWorkshopsConfirm,
+          tracker: tracker,
+        );
       });
 
       test('Step 47a: Send Workshop Name', () async {
-        await sendStep(dio, "STEP 47a", testWorkshopName, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 47a",
+          testWorkshopName,
+          tracker: tracker,
+        );
       });
 
       test('Step 49: Send Workshop Date', () async {
-        await sendStep(dio, "STEP 49", testWorkshopDate, tracker: tracker);
+        await sendStep(provider, "STEP 49", testWorkshopDate, tracker: tracker);
       });
 
-       test('Step 50: Confirm Publication', () async {
-        await sendStep(dio, "STEP 50", testPublicationsConfirm, tracker: tracker);
+      test('Step 50: Confirm Publication', () async {
+        await sendStep(
+          provider,
+          "STEP 50",
+          testPublicationsConfirm,
+          tracker: tracker,
+        );
       });
 
       test('Step 50a: Send Publication Title', () async {
-        await sendStep(dio, "STEP 50a", testPublicationTitle, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 50a",
+          testPublicationTitle,
+          tracker: tracker,
+        );
       });
 
       test('Step 50b: Send Publication Date and Venue', () async {
-        await sendStep(dio, "STEP 50b", testPublicationDate, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 50b",
+          testPublicationDate,
+          tracker: tracker,
+        );
       });
     });
 
@@ -571,16 +661,26 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 51: Confirm Leadership', () async {
-        await sendStep(dio, "STEP 51", testLeadershipConfirm, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 51",
+          testLeadershipConfirm,
+          tracker: tracker,
+        );
       });
 
       test('Step 52: Send Leadership Role', () async {
-        await sendStep(dio, "STEP 52", testLeadershipRole, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 52",
+          testLeadershipRole,
+          tracker: tracker,
+        );
       });
 
       test('Step 52b: Send Leadership Description Choice', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 52b",
           testLeadershipDescriptionChoice,
           tracker: tracker,
@@ -589,7 +689,7 @@ void main() {
 
       test('Step 53: Confirm Volunteer Experience', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 53",
           testVolunteerExperienceConfirm,
           tracker: tracker,
@@ -597,12 +697,17 @@ void main() {
       });
 
       test('Step 54: Send Volunteer Experience Role', () async {
-        await sendStep(dio, "STEP 54", testVolunteerRole, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 54",
+          testVolunteerRole,
+          tracker: tracker,
+        );
       });
 
       test('Step 54b: Send Volunteer Experience Description Choice', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 54b",
           testVolunteerDescriptionChoice,
           tracker: tracker,
@@ -614,12 +719,17 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 55: Send Languages', () async {
-        await sendStep(dio, "STEP 55", testLanguagesData, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 55",
+          testLanguagesData,
+          tracker: tracker,
+        );
       });
 
       test('Step 56: Send Areas of Interest', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 56",
           testAreasOfInterestData,
           tracker: tracker,
@@ -627,12 +737,12 @@ void main() {
       });
 
       test('Step 57: Send Hobbies', () async {
-        await sendStep(dio, "STEP 57", testHobbiesData, tracker: tracker);
+        await sendStep(provider, "STEP 57", testHobbiesData, tracker: tracker);
       });
 
       test('Step 58: Confirm Achievements', () async {
         await sendStep(
-          dio,
+          provider,
           "STEP 58",
           testAchievementsConfirm,
           tracker: tracker,
@@ -640,13 +750,13 @@ void main() {
       });
 
       test('Step 59: Send Achievement Description', () async {
-        final data = await sendStep(
-          dio,
+        final model = await sendStep(
+          provider,
           "STEP 59",
           testAchievementDescription,
           tracker: tracker,
         );
-        print(const JsonEncoder.withIndent('  ').convert(data));
+        print(const JsonEncoder.withIndent('  ').convert(model.toJson()));
         print("🎉 Resume Chatbot Data Collection COMPLETE! (next_field: DONE)");
       });
     });
