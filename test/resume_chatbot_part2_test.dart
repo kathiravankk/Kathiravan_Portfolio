@@ -41,7 +41,8 @@ String testHigherSecondarySchool = "Velammal Higher Secondary";
 String testHigherSecondaryBoard = "CBSE";
 String testHigherSecondaryYear = "2017";
 String testHigherSecondaryPercentage = "80";
-String testCollegeDegree = "No";
+String testCollegeDegree = "Add college degree";
+String testCollegeDegreeDetails = "Bachelor of Science, Computer Science, Einstein College, 2019-2023, 65%";
 String testTechnicalSkills = "Flutter, Dart, Firebase, REST API, Git, GetX";
 String testInternships = "DTIT";
 String testInternshipRole = "Flutter Developer Intern";
@@ -50,56 +51,85 @@ String testInternshipDescriptionChoice = "you generate";
 String testProjects = "Yes";
 
 // Projects & subsequent fields (from sampleData in test/sample_data.dart)
-String testProjectName = (sampleData["projects"] as List)[0]["title"] ?? "No Network Game App";
+String testProjectName =
+    (sampleData["projects"] as List)[0]["title"] ?? "No Network Game App";
 String testProjectDescriptionChoice = "you generate";
 
 // Paper Presentations
 String testPaperPresentationsConfirm = "paper presentation";
-String testPaperPresentationTitle = (sampleData["paper_presentations"] as List)[0]["title"] ?? "AI Chat App";
-String testPaperPresentationEvent = (sampleData["paper_presentations"] as List)[0]["event"] ?? "Einstein College";
-String testPaperPresentationYear = (sampleData["paper_presentations"] as List)[0]["year"] ?? "August 2024";
-String testPaperPresentationVenueAndDate = "$testPaperPresentationEvent, $testPaperPresentationYear";
+String testPaperPresentationTitle =
+    (sampleData["paper_presentations"] as List)[0]["title"] ?? "AI Chat App";
+String testPaperPresentationEvent =
+    (sampleData["paper_presentations"] as List)[0]["event"] ??
+    "Einstein College";
+String testPaperPresentationYear =
+    (sampleData["paper_presentations"] as List)[0]["year"] ?? "August 2024";
+String testPaperPresentationVenueAndDate =
+    "$testPaperPresentationEvent, $testPaperPresentationYear";
 String testPaperPresentationDescriptionChoice = "you generate";
 
 // Certifications
 String testCertificationsConfirm = "Yes";
-String testCertificationName = (sampleData["certifications"] as List)[0]["name"] ?? "Flutter Certification";
-String testCertificationIssuer = (sampleData["certifications"] as List)[0]["issuer"] ?? "Udemy";
-String testCertificationDate = (sampleData["certifications"] as List)[0]["date"] ?? "September 2024";
+String testCertificationName =
+    (sampleData["certifications"] as List)[0]["name"] ??
+    "Flutter Certification";
+String testCertificationIssuer =
+    (sampleData["certifications"] as List)[0]["issuer"] ?? "Udemy";
+String testCertificationDate =
+    (sampleData["certifications"] as List)[0]["date"] ?? "September 2024";
 
 // Industrial Visits
 String testIndustrialVisitsConfirm = "Yes";
-String testIndustrialVisitCompany = (sampleData["industrial_visits"] as List)[0]["company"] ?? "Microsoft";
-String testIndustrialVisitLocation = (sampleData["industrial_visits"] as List)[0]["location"] ?? "Chennai";
-String testIndustrialVisitDate = (sampleData["industrial_visits"] as List)[0]["date"] ?? "October 2024";
+String testIndustrialVisitCompany =
+    (sampleData["industrial_visits"] as List)[0]["company"] ?? "Microsoft";
+String testIndustrialVisitLocation =
+    (sampleData["industrial_visits"] as List)[0]["location"] ?? "Chennai";
+String testIndustrialVisitDate =
+    (sampleData["industrial_visits"] as List)[0]["date"] ?? "October 2024";
 
 // Workshops
 String testWorkshopsConfirm = "Yes";
-String testWorkshopName = (sampleData["workshops"] as List)[0] == "name" ? "Flutter Development Workshop" : (sampleData["workshops"] as List)[0];
+String testWorkshopName = (sampleData["workshops"] as List)[0] == "name"
+    ? "Flutter Development Workshop"
+    : (sampleData["workshops"] as List)[0];
 
 // Publications
 String testPublicationsConfirm = "Yes";
-String testPublicationTitle = (sampleData["publications"] as List)[0] == "title" ? "Cross-Platform App Performance in Flutter" : (sampleData["publications"] as List)[0];
+String testPublicationTitle = (sampleData["publications"] as List)[0] == "title"
+    ? "Cross-Platform App Performance in Flutter"
+    : (sampleData["publications"] as List)[0];
 String testPublicationDate = "November 2024";
 
 // Leadership
 String testLeadershipConfirm = "Yes";
-String testLeadershipRole = (sampleData["leadership"] as List)[0] == "role" ? "Team Lead" : (sampleData["leadership"] as List)[0];
-String testLeadershipDescriptionChoice = "I lead a team of 5 ,mentoring juniors and ensuring deadlines";
+String testLeadershipRole = (sampleData["leadership"] as List)[0] == "role"
+    ? "Team Lead"
+    : (sampleData["leadership"] as List)[0];
+String testLeadershipDescriptionChoice =
+    "I lead a team of 5 ,mentoring juniors and ensuring deadlines";
 
 // Volunteer Experience
 String testVolunteerExperienceConfirm = "Yes";
-String testVolunteerRole = (sampleData["volunteer_experience"] as List)[0] == "role" ? "NSS Volunteer" : (sampleData["volunteer_experience"] as List)[0];
+String testVolunteerRole =
+    (sampleData["volunteer_experience"] as List)[0] == "role"
+    ? "NSS Volunteer"
+    : (sampleData["volunteer_experience"] as List)[0];
 String testVolunteerDescriptionChoice = "I helped clean the city";
 
 // Languages, Areas of Interest, Hobbies
-String testLanguagesData = ((sampleData["languages"] as List?) ?? ["Tamil", "English"]).join(", ");
-String testAreasOfInterestData = ((sampleData["areas_of_interest"] as List?) ?? ["Mobile App Development"]).join(", ");
-String testHobbiesData = ((sampleData["hobbies"] as List?) ?? ["Watching Cartoons"]).join(", ");
+String testLanguagesData =
+    ((sampleData["languages"] as List?) ?? ["Tamil", "English"]).join(", ");
+String testAreasOfInterestData =
+    ((sampleData["areas_of_interest"] as List?) ?? ["Mobile App Development"])
+        .join(", ");
+String testHobbiesData =
+    ((sampleData["hobbies"] as List?) ?? ["Watching Cartoons"]).join(", ");
 
 // Achievements
 String testAchievementsConfirm = "Yes";
-String testAchievementDescription = (sampleData["achievements"] as List)[0] ?? "Won the first prize at Quiz competition";
+String testAchievementDescription =
+    (sampleData["achievements"] as List)[0] ??
+    "Won the first prize at Quiz competition";
 
 String getActiveUserId() {
   final manualId = testUserId.trim();
@@ -796,6 +826,41 @@ void main() {
     });
 
     // -------------------------------------------------------------------------
+    // STEP 25b: SEND COLLEGE DEGREE DETAILS
+    // -------------------------------------------------------------------------
+    test('Step 25b: Send College Degree Details', () async {
+      final userId = getActiveUserId();
+
+      print("\n==================================================");
+      print("👤 user_id: $userId");
+      print(
+        "🔄 STEP 25b: Sending College Degree Details '$testCollegeDegreeDetails'",
+      );
+      final payload = {
+        "action": "send_message",
+        "user_id": userId,
+        "message": testCollegeDegreeDetails,
+      };
+      print("➡️ Request Payload: ${jsonEncode(payload)}");
+
+      final response = await dio.post(apiEndpoint, data: payload);
+      expect(
+        response.statusCode,
+        anyOf(200, 201),
+        reason: "Step 25b Error: ${response.data}",
+      );
+
+      final data = response.data is Map<String, dynamic>
+          ? response.data
+          : <String, dynamic>{};
+      print("Status: ${response.statusCode}");
+      print("🤖 Bot Message: ${data["message"]}");
+      print("📌 next_field: ${data["next_field"]}");
+      print("📌 completed_section: ${data["completed_section"]}");
+      print("==================================================\n");
+    });
+
+    // -------------------------------------------------------------------------
     // STEP 26: SEND TECHNICAL SKILLS
     // -------------------------------------------------------------------------
     test('Step 26: Send Technical Skills', () async {
@@ -902,7 +967,9 @@ void main() {
 
       print("\n==================================================");
       print("👤 user_id: $userId");
-      print("🔄 STEP 29: Sending Internship Start & End Dates '$testInternshipDates'");
+      print(
+        "🔄 STEP 29: Sending Internship Start & End Dates '$testInternshipDates'",
+      );
       final payload = {
         "action": "send_message",
         "user_id": userId,
@@ -1246,9 +1313,7 @@ void main() {
 
       print("\n==================================================");
       print("👤 user_id: $userId");
-      print(
-        "🔄 STEP 40: Sending Certification Name '$testCertificationName'",
-      );
+      print("🔄 STEP 40: Sending Certification Name '$testCertificationName'");
       final payload = {
         "action": "send_message",
         "user_id": userId,
@@ -1316,9 +1381,7 @@ void main() {
 
       print("\n==================================================");
       print("👤 user_id: $userId");
-      print(
-        "🔄 STEP 42: Sending Certification Date '$testCertificationDate'",
-      );
+      print("🔄 STEP 42: Sending Certification Date '$testCertificationDate'");
       final payload = {
         "action": "send_message",
         "user_id": userId,
@@ -1627,7 +1690,7 @@ void main() {
       final payload = {
         "action": "send_message",
         "user_id": userId,
-        "message": 'Add Leadership Experience',
+        "message": testLeadershipConfirm,
       };
       print("➡️ Request Payload: ${jsonEncode(payload)}");
 
@@ -1862,9 +1925,7 @@ void main() {
 
       print("\n==================================================");
       print("👤 user_id: $userId");
-      print(
-        "🔄 STEP 56: Sending Areas of Interest '$testAreasOfInterestData'",
-      );
+      print("🔄 STEP 56: Sending Areas of Interest '$testAreasOfInterestData'");
       final payload = {
         "action": "send_message",
         "user_id": userId,
@@ -1930,9 +1991,7 @@ void main() {
 
       print("\n==================================================");
       print("👤 user_id: $userId");
-      print(
-        "🔄 STEP 58: Confirming Achievements '$testAchievementsConfirm'",
-      );
+      print("🔄 STEP 58: Confirming Achievements '$testAchievementsConfirm'");
       final payload = {
         "action": "send_message",
         "user_id": userId,
