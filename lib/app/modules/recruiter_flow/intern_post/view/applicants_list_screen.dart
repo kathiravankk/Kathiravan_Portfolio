@@ -256,7 +256,7 @@ class _ApplicantsCard extends StatelessWidget {
                           const SizedBox(width: 5),
                           Flexible(
                             child: Text(
-                              '• Applied on ${_formatDate(
+                              'on ${_formatDate(
                                   applicant.createdAt)}',
                               overflow: TextOverflow.ellipsis,
                               style: AppStyles.customTextStyle(
@@ -302,12 +302,12 @@ class _ApplicantsCard extends StatelessWidget {
                       const Icon(
                         Icons.remove_red_eye_outlined,
                         color: AppColors.blackColor,
-                        size: 14,
+                        size: 12,
                       ),
                       Text(
                         'View',
                         style: AppStyles.customTextStyle(
-                          size: 12,
+                          size: 10,
                           color: AppColors.blackColor,
                           weight: FontWeight.w600,
                         ),

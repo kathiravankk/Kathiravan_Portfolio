@@ -50,6 +50,13 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
   List<String> projectList = [];
   PostData? internshipData;
 
+  // ── Feedback state ────────────────────────────────────────────────────────
+  bool isFeedbackSubmitted = false;
+  int? submittedRating;
+  String? submittedReview;
+  String? submittedFeedbackType;
+  String? submittedReferenceLink;
+
   @override
   void initState() {
     studentId = Get.arguments["studentId"] ?? "";
@@ -59,6 +66,29 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     internshipData = Get.arguments["internshipData"] ?? PostData();
     super.initState();
     getStudentProfileData();
+    checkFeedbackStatus();
+  }
+
+  // ── Fetch existing recruiter feedback for this job+student ──────────────
+  Future<void> checkFeedbackStatus() async {
+    try {
+      await applicationController.getRecruiterReview(jobId: jobId);
+      final reviews = applicationController.recruiterReviewModel.reviewsList;
+      if (reviews != null && reviews.isNotEmpty) {
+        final existing = reviews.firstWhereOrNull(
+          (r) => r.student?.id == studentId,
+        );
+        if (existing != null && mounted) {
+          setState(() {
+            isFeedbackSubmitted = true;
+            submittedRating = existing.rating;
+            submittedReview = existing.review;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("checkFeedbackStatus error: $e");
+    }
   }
 
   Future<void> getStudentProfileData() async {
@@ -276,16 +306,20 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                   Visibility(
                     visible: studentData!.syllabusStatus!,
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         showAddFeedbackDialog(context);
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           color: AppColors.transparentColor,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.disableBorderColor),
+                          border: Border.all(
+                            color: isFeedbackSubmitted
+                                ? AppColors.secondaryColor
+                                : AppColors.disableBorderColor,
+                          ),
                         ),
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         child: Row(
                           children: [
                             Container(
@@ -293,25 +327,33 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                                 borderRadius: BorderRadius.circular(10),
                                 color: AppColors.transparentColor,
                                 border: Border.all(
-                                  color: AppColors.secondaryColor,
+                                  color: isFeedbackSubmitted
+                                      ? AppColors.primaryColor
+                                      : AppColors.secondaryColor,
                                   width: 2,
                                 ),
                               ),
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               child: Icon(
-                                CupertinoIcons.chat_bubble_text,
-                                color: AppColors.whiteColor,
+                                isFeedbackSubmitted
+                                    ? CupertinoIcons.checkmark_seal_fill
+                                    : CupertinoIcons.chat_bubble_text,
+                                color: isFeedbackSubmitted
+                                    ? AppColors.primaryColor
+                                    : AppColors.whiteColor,
                                 size: 25,
                               ),
                             ),
-                            const SizedBox(width: 15,),
+                            const SizedBox(width: 15),
                             Expanded(
                               child: Column(
                                 spacing: 10,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Feedback",
+                                    isFeedbackSubmitted
+                                        ? "View Feedback"
+                                        : "Add Feedback",
                                     style: AppStyles.customTextStyle(
                                       size: 16,
                                       color: AppColors.whiteColor,
@@ -319,7 +361,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                                     ),
                                   ),
                                   Text(
-                                    "Help us improve by sharing your feedback",
+                                    isFeedbackSubmitted
+                                        ? "Tap to view your submitted feedback"
+                                        : "Help us improve by sharing your feedback",
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: AppStyles.customTextStyle(
@@ -333,7 +377,9 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                             ),
                             const SizedBox(width: 10),
                             Icon(
-                              Icons.keyboard_arrow_down,
+                              isFeedbackSubmitted
+                                  ? Icons.keyboard_arrow_right
+                                  : Icons.keyboard_arrow_down,
                               color: AppColors.whiteColor,
                               size: 25,
                             ),
@@ -609,8 +655,12 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
   void showAddFeedbackDialog(BuildContext context) {
     Get.dialog(
       FeedbackDialog(
-        onSubmit:
-            ({
+        isReadOnly: isFeedbackSubmitted,
+        initialRating: submittedRating,
+        initialReview: submittedReview,
+        initialFeedbackType: submittedFeedbackType,
+        initialReferenceLink: submittedReferenceLink,
+        onSubmit: ({
           required int rating,
           required String review,
           required String feedbackType,
@@ -634,7 +684,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     required String feedbackType,
     String? referenceLink,
   }) async {
-    Map<String, dynamic> feedBackData = {
+    final Map<String, dynamic> feedBackData = {
       "jobId": jobId,
       "studentId": studentId,
       "review": review,
@@ -650,9 +700,18 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
     if (code == 200 || code == 201) {
       AppAlertUtils.showToast(
         message:
-        applicationController.feedbackModel.message ??
+            applicationController.feedbackModel.message ??
             "Feedback Submitted Successfully!",
       );
+      if (mounted) {
+        setState(() {
+          isFeedbackSubmitted = true;
+          submittedRating = rating;
+          submittedReview = review;
+          submittedFeedbackType = feedbackType;
+          submittedReferenceLink = referenceLink;
+        });
+      }
       return true;
     } else {
       AppFunctions.apiErrorHandling(

@@ -11,7 +11,6 @@ import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
-import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 
@@ -57,10 +56,15 @@ class ResumeFileUtils {
   static String _injectPdfStyles(String html) {
     const pdfCss = '''
 <style id="__pdf_override__">
-  /* Force A4 width — nothing overflows horizontally */
+  /* Force A4 page dimensions and uniform margins on all pages (Page 1, Page 2, etc.) */
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 12mm 15mm !important;
+  }
+
   html, body {
-    width: 210mm !important;
-    max-width: 210mm !important;
+    width: 100% !important;
+    max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
@@ -69,28 +73,75 @@ class ResumeFileUtils {
     print-color-adjust: exact !important;
   }
 
-  /* No page breaks anywhere — single continuous page */
-  * {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    page-break-before: avoid !important;
-    break-before: avoid !important;
-    page-break-after: avoid !important;
-    break-after: avoid !important;
-  }
-
-  /* Remove fixed heights that push content off-screen */
-  section, .section, header, .header,
-  .resume-header, .resume-body, .resume-container,
-  .container, .wrapper, main, article, .content,
-  div[class], div[id] {
+  /* Allow main layout wrappers & columns to break across pages naturally */
+  body > *,
+  .resume-container,
+  .container,
+  .wrapper,
+  .content-wrapper,
+  .main-wrapper,
+  .resume-v10-page-bg,
+  .row,
+  .main-col,
+  .sidebar-col,
+  .left-column,
+  .right-column,
+  .left-sidebar,
+  .right-content,
+  main,
+  article {
+    width: 100% !important;
+    max-width: 100% !important;
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
     overflow: visible !important;
+    position: relative !important;
+    box-shadow: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    page-break-inside: auto !important;
+    break-inside: auto !important;
   }
 
-  /* Absolute → relative so invisible height gaps are eliminated */
+  /* Prevent page breaks inside section items, headers, list items, and education/work entries */
+  section,
+  .section,
+  .resume-section,
+  .avoid-break,
+  .section-wrapper,
+  .education-item,
+  .internship-item,
+  .project-item,
+  .cert-item,
+  .presentation-item,
+  .visit-item,
+  .training-item,
+  .item,
+  .contact-info,
+  .contact-row,
+  .profile-section,
+  li,
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Prevent headings from being separated from their content at page bottoms */
+  h1, h2, h3, h4, h5, h6,
+  .section-header,
+  .section-title,
+  .avery-section-title,
+  .sidebar-label {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Convert absolute positioning to relative to eliminate invisible height gaps */
   [style*="position: absolute"],
   [style*="position:absolute"] {
     position: relative !important;
@@ -100,12 +151,10 @@ class ResumeFileUtils {
     bottom: auto !important;
   }
 
-  /* Ensure root wrapper fills page naturally */
-  body > * {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-    position: relative !important;
+  /* Hide no-print elements in PDF output */
+  .action-buttons,
+  .no-print {
+    display: none !important;
   }
 </style>
 ''';

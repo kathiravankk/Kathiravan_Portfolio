@@ -35,6 +35,7 @@ class _InternProfileViewScreenState extends State<InternProfileViewScreen> {
   WebViewController? webViewController;
   bool isResumeLoading = false;
   ExtractedResumeDataModel? resumeData;
+  bool _canWebGoBack = false;
 
   @override
   void initState() {
@@ -121,31 +122,53 @@ class _InternProfileViewScreenState extends State<InternProfileViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onPageStarted: (String url) async {
+            final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+            if (mounted) setState(() => _canWebGoBack = canBack);
+          },
           onPageFinished: (_) async {
-            await Future.delayed(const Duration(milliseconds: 300));
+            final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+            if (mounted) setState(() => _canWebGoBack = canBack);
 
-            await webViewController!.runJavaScript("""
-          var meta = document.querySelector('meta[name="viewport"]');
-          if (!meta) {
-            meta = document.createElement('meta');
-            meta.name = 'viewport';
-            document.head.appendChild(meta);
-          }
-          meta.content =
-          'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-          """);
+            if (!canBack && resumeData != null) {
+              await Future.delayed(const Duration(milliseconds: 300));
 
-            final jsonData = jsonEncode(resumeData!.toJson());
-            final safeJson = jsonEncode(jsonData);
+              await webViewController!.runJavaScript("""
+            var meta = document.querySelector('meta[name="viewport"]');
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.name = 'viewport';
+              document.head.appendChild(meta);
+            }
+            meta.content =
+            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+            """);
 
-            await webViewController!.runJavaScript(
-              "renderResume(JSON.parse($safeJson));",
-            );
+              final jsonData = jsonEncode(resumeData!.toJson());
+              final safeJson = jsonEncode(jsonData);
+
+              await webViewController!.runJavaScript(
+                "renderResume(JSON.parse($safeJson));",
+              );
+            }
           },
         ),
       );
 
     _loadHtml(template.htmlPath);
+  }
+
+  Future<void> _handleWebBack() async {
+    if (webViewController != null && await webViewController!.canGoBack()) {
+      await webViewController!.goBack();
+      final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+      if (!canBack) {
+        _initWebview();
+      }
+      if (mounted) setState(() => _canWebGoBack = canBack);
+    } else {
+      Get.back();
+    }
   }
 
   Future<void> _loadHtml(String path) async {
@@ -161,34 +184,44 @@ class _InternProfileViewScreenState extends State<InternProfileViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.appBackgroundImg),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: AppColors.transparentColor,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
-            onPressed: () {
-              Get.back();
-            },
+    return PopScope(
+      canPop: !_canWebGoBack,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleWebBack();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
           ),
-          title: Text(
-            "Profile",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
+        ),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: AppColors.transparentColor,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+              onPressed: () async {
+                if (_canWebGoBack) {
+                  await _handleWebBack();
+                } else {
+                  Get.back();
+                }
+              },
+            ),
+            title: Text(
+              "Profile",
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.secondaryColor,
+                weight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
         body: Obx(
           () => applicationController.internProfileLoading
               ? AppAlertUtils.customLoader()
@@ -394,7 +427,9 @@ class _InternProfileViewScreenState extends State<InternProfileViewScreen> {
                       ),
                     ],
                   ),
-                ): CustomEmptyWidget(),
+                )
+              : CustomEmptyWidget(),
+          ),
         ),
       ),
     );

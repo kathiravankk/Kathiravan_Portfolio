@@ -57,15 +57,15 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
   Widget _buildStudentNavBar(int value) {
     return Positioned(
-      right: 20,
-      left: 20,
-      bottom: 20,
+      right: 14,
+      left: 14,
+      bottom: 15,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        height: 75,
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        height: 68,
         decoration: BoxDecoration(
           color: AppColors.fieldBgColor,
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(35),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.3),
@@ -76,7 +76,6 @@ class _CustomNavBarState extends State<CustomNavBar> {
         ),
         child: widget.isStudentFlow
             ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _navItem(
                     index: 0,
@@ -84,18 +83,21 @@ class _CustomNavBarState extends State<CustomNavBar> {
                     label: "Home",
                     selectedIndex: value,
                   ),
+                  const SizedBox(width: 4),
                   _navItem(
                     index: 1,
                     icon: CupertinoIcons.location_fill,
                     label: "Applied",
                     selectedIndex: value,
                   ),
+                  const SizedBox(width: 4),
                   _navItem(
                     index: 2,
                     icon: Icons.work,
                     label: "Internships",
                     selectedIndex: value,
                   ),
+                  const SizedBox(width: 4),
                   _navItem(
                     index: 3,
                     icon: Icons.person,
@@ -105,7 +107,6 @@ class _CustomNavBarState extends State<CustomNavBar> {
                 ],
               )
             : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _navItem(
                     index: 0,
@@ -113,12 +114,14 @@ class _CustomNavBarState extends State<CustomNavBar> {
                     label: "Home",
                     selectedIndex: value,
                   ),
+                  const SizedBox(width: 4),
                   _navItem(
                     index: 1,
                     icon: CupertinoIcons.location_fill,
                     label: "My Post",
                     selectedIndex: value,
                   ),
+                  const SizedBox(width: 4),
                   _navItem(
                     index: 3,
                     icon: Icons.person,
@@ -139,65 +142,69 @@ class _CustomNavBarState extends State<CustomNavBar> {
   }) {
     bool isSelected = index == selectedIndex;
 
-    return GestureDetector(
-      onTap: () {
-        currentIndex.value = index;
-        widget.onTabChanged?.call(index);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        width: isSelected ? 140 : 55,
-        height: 55,
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.contColor2 : AppColors.fieldBgColor,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              width: 45,
-              height: 45,
-              margin: const EdgeInsets.only(left: 5),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected
-                    ? AppColors.primaryColor
-                    : AppColors.contColor2,
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: AppColors.primaryColor.withValues(alpha: .45),
-                          blurRadius: 10,
-                          spreadRadius: 2,
-                        ),
-                      ]
-                    : [],
+    return Expanded(
+      flex: isSelected ? 3 : 1,
+      child: GestureDetector(
+        onTap: () {
+          currentIndex.value = index;
+          widget.onTabChanged?.call(index);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          height: 56,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.contColor2 : AppColors.fieldBgColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected
+                      ? AppColors.primaryColor
+                      : AppColors.contColor2,
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppColors.primaryColor.withValues(alpha: .45),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ]
+                      : [],
+                ),
+                child: Icon(
+                  icon,
+                  color: isSelected ? AppColors.blackColor : AppColors.whiteColor,
+                  size: 22,
+                ),
               ),
-              child: Icon(
-                icon,
-                color: isSelected ? AppColors.blackColor : AppColors.whiteColor,
-                size: 24,
-              ),
-            ),
 
-            if (isSelected)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    label,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppStyles.customTextStyle(
-                      size: 14,
-                      weight: FontWeight.w500,
-                      color: AppColors.whiteColor,
+              if (isSelected)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 6, right: 4),
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.customTextStyle(
+                        size: 13,
+                        weight: FontWeight.w600,
+                        color: AppColors.whiteColor,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

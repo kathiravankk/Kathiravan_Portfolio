@@ -111,7 +111,7 @@ class ResumeCollectedData {
 
   factory ResumeCollectedData.fromJson(Map<String, dynamic> json) {
     return ResumeCollectedData(
-      profileSummary: json["profile_summary"],
+      profileSummary: json["profile_summary"]??"",
       personalInfo: json["personal_info"] != null
           ? PersonalInfoModel.fromJson(json["personal_info"])
           : null,

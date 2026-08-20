@@ -16,15 +16,12 @@ import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/full_screen_image_preview.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
-import 'package:internsharks/app/data/models/account/personal_info_model.dart';
-import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../home/view/resume_template_preview_screen.dart' show templates;
@@ -91,6 +88,7 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
   bool isLoading = true;
   bool waterMarkValue = false;
   bool isWaterMarkRemoved = false;
+  bool _canWebGoBack = false;
 
   Future<void> getProfileData() async {
     studentId = await LocalStorageService.getStudentId();
@@ -175,6 +173,58 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
     }
   }
 
+  void showKycVerifyAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.fieldBgColor,
+        title: Image.asset(AssetImages.alertImage, height: 30, width: 30),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 15,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Verification Pending..!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              "Your identity verification is pending. This step is mandatory before generating your ResDp!",
+              textAlign: TextAlign.center,
+              style: AppStyles.customTextStyle(
+                size: 14,
+                color: AppColors.whiteColor,
+                weight: FontWeight.w300,
+                lineSpace: 1.3,
+              ),
+            ),
+          ],
+        ),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          CustomButtonWidget(
+            buttonFunction: () {
+              Get.back();
+              AppFunctions.navigateScreen(
+                context,
+                AppRoutes.kycVerificationScreen,
+                arguments: {"isRegisterFlow": false},
+              );
+            },
+            buttonText: "Check Now",
+            width: 150,
+            height: 40,
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> removeWaterMark() async {
     await profileController.removeWaterMark(
       imageUrl: AppFunctions.extractFilePathFromUrl(
@@ -233,32 +283,52 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onPageStarted: (String url) async {
+            final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+            if (mounted) setState(() => _canWebGoBack = canBack);
+          },
           onPageFinished: (_) async {
-            await Future.delayed(const Duration(milliseconds: 300));
+            final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+            if (mounted) setState(() => _canWebGoBack = canBack);
 
-            // ✅ Force proper viewport scaling
-            await webViewController!.runJavaScript("""
-            var meta = document.querySelector('meta[name="viewport"]');
-            if (!meta) {
-              meta = document.createElement('meta');
-              meta.name = 'viewport';
-              document.head.appendChild(meta);
+            if (!canBack && resumeData != null) {
+              await Future.delayed(const Duration(milliseconds: 300));
+
+              // ✅ Force proper viewport scaling
+              await webViewController!.runJavaScript("""
+              var meta = document.querySelector('meta[name="viewport"]');
+              if (!meta) {
+                meta = document.createElement('meta');
+                meta.name = 'viewport';
+                document.head.appendChild(meta);
+              }
+              meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+            """);
+
+              final jsonData = jsonEncode(resumeData!.toJson());
+              final safeJson = jsonEncode(jsonData);
+              await webViewController!.runJavaScript(
+                "renderResume(JSON.parse($safeJson));",
+              );
             }
-            meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-          """);
 
-            final jsonData = jsonEncode(resumeData!.toJson());
-            final safeJson = jsonEncode(jsonData);
-            await webViewController!.runJavaScript(
-              "renderResume(JSON.parse($safeJson));",
-            );
-
-            setState(() => isLoading = false);
+            if (mounted) setState(() => isLoading = false);
           },
         ),
       );
 
     _loadHtml(template.htmlPath);
+  }
+
+  Future<void> _handleWebBack() async {
+    if (webViewController != null && await webViewController!.canGoBack()) {
+      await webViewController!.goBack();
+      final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+      if (!canBack) {
+        _initWebview();
+      }
+      if (mounted) setState(() => _canWebGoBack = canBack);
+    }
   }
 
   // Future<void> _loadHtml(String path) async {
@@ -322,18 +392,24 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.appBackgroundImg),
-          fit: BoxFit.cover,
+    return PopScope(
+      canPop: !_canWebGoBack,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleWebBack();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Obx(() {
-        return profileController.profileDataLoading ||
-                registerController.creditDataLoading
-            ? AppAlertUtils.customLoader()
-            : Scaffold(
+        child: Obx(() {
+          return profileController.profileDataLoading ||
+                  registerController.creditDataLoading
+              ? AppAlertUtils.customLoader()
+              : Scaffold(
                 backgroundColor: AppColors.transparentColor,
                 appBar: AppBar(
                   iconTheme: const IconThemeData(color: AppColors.whiteColor),
@@ -420,6 +496,60 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
                                             WebViewWidget(
                                               controller: webViewController!,
                                             ),
+                                            if (_canWebGoBack)
+                                              Positioned(
+                                                top: 10,
+                                                left: 10,
+                                                child: Material(
+                                                  elevation: 6,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        20,
+                                                      ),
+                                                  color: AppColors.primaryColor,
+                                                  child: InkWell(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
+                                                    onTap: _handleWebBack,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 6,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          const Icon(
+                                                            Icons.arrow_back,
+                                                            color: Colors.white,
+                                                            size: 16,
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 4,
+                                                          ),
+                                                          Text(
+                                                            "Back to Resume",
+                                                            style: AppStyles
+                                                                .customTextStyle(
+                                                                  size: 12,
+                                                                  color:
+                                                                      Colors
+                                                                          .white,
+                                                                  weight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             if (isLoading)
                                               Container(
                                                 color: Colors.black45,
@@ -654,7 +784,8 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
                 ),
               );
       }),
-    );
+    ),
+  );
   }
 
   Widget resDpContainer() {
@@ -780,7 +911,14 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
             width: 175,
             height: 35,
             buttonFunction: () async {
-              await generateAiBanner();
+              bool isVerified = (await LocalStorageService.getVerifiedValue()) ??
+                  (profileController.profileDataModel.isVerified ?? false);
+
+              if (!isVerified) {
+                showKycVerifyAlertDialog();
+              } else {
+                await generateAiBanner();
+              }
             },
             buttonText: "✧˖° Generate ResDp",
             buttonTextStyle: AppStyles.customTextStyle(
@@ -931,6 +1069,14 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
             iconWidget(
               icon: Icons.refresh,
               onTap: () async {
+                bool isVerified = (await LocalStorageService.getVerifiedValue()) ??
+                    (profileController.profileDataModel.isVerified ?? false);
+
+                if (!isVerified) {
+                  showKycVerifyAlertDialog();
+                  return;
+                }
+
                 AppAlertUtils.showAppAlert(
                   context: context,
                   title: "Regenerate ResDp",

@@ -1,3 +1,5 @@
+import 'package:internsharks/app/core/utils/app_functions.dart';
+
 class StudentListModel {
   List<StudentDetails>? studentList;
 
@@ -195,11 +197,9 @@ class StudentDetails {
 
     studsecondaryschoollocation = json['studsecondaryschoollocation'];
 
-    studprogramminglang =
-        (json['studprogramminglang'] as List?)
-            ?.map((e) => e.toString())
-            .toList() ??
-        [];
+    studprogramminglang = AppFunctions.parseSkillsList(
+      json['studprogramminglang'],
+    );
 
     /// Supports both old and new API
     studentcertificate =

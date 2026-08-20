@@ -5,7 +5,7 @@ class AppStyles {
     required double size,
     FontWeight weight = FontWeight.normal,
     Color? color,
-    double lineSpace = 1.0,
+    double lineSpace = 1.2,
     bool isUnderlined = false,
     Color? underlineColor,
     double underlineThickness = 1.0,

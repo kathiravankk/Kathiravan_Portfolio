@@ -224,67 +224,162 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
     };
 
     Map<String, dynamic> updateData = {
-      "studmobileno": profileData.personalInfo?.phone ?? "",
-      "studemail": profileData.personalInfo?.email ?? "",
+      // =========================
+      // BASIC INFORMATION
+      // =========================
+      "studentId": studentId,
       "studname": profileData.personalInfo?.name ?? "",
-      "studgender": profileData.personalInfo?.gender ?? "",
-      "studentaddress": profileData.personalInfo?.location ?? "",
+      "studemail": profileData.personalInfo?.email ?? "",
+      "studmobileno": profileData.personalInfo?.phone ?? "",
+      "role": profileData.personalInfo?.role ?? "",
+      "linkedIn": profileData.personalInfo?.linkedIn ?? "",
+      "github": profileData.personalInfo?.github ?? "",
+      "location": profileData.personalInfo?.location ?? "",
+      "profile_summary": profileData.profileSummary ?? "",
+
+      // =========================
+      // PROGRAMMING LANGUAGES
+      // =========================
+      "studprogramminglang":
+      convertToNestedList(profileData.skills ?? []),
+
+      // =========================
+      // EDUCATION - LEGACY FIELDS
+      // =========================
       "studentdegree": collegeArray.isNotEmpty
           ? collegeArray.first["degree"] ?? ""
           : "",
+
       "studentfieldofstudy": collegeArray.isNotEmpty
           ? collegeArray.first["department"] ?? ""
           : "",
+
       "studentcollegename": collegeArray.isNotEmpty
           ? collegeArray.first["institution"] ?? ""
           : "",
+
       "studcollegestartyear": collegeArray.isNotEmpty
           ? collegeArray.first["start_year"] ?? ""
           : "",
+
       "studcollegeendyear": collegeArray.isNotEmpty
           ? collegeArray.first["end_year"] ?? ""
           : "",
-      //"studcollegelocation": "",
-      "studhighschollname": higherSecondaryObject["institution"],
-      "studhighschoolpercentage": higherSecondaryObject["percentage"],
+
+      "studhighschollname":
+      higherSecondaryObject["institution"] ?? "",
+
+      "studhighschoolpercentage":
+      higherSecondaryObject["percentage"] ?? "",
+
       "studhighschoollocation": "",
-      "studentsecondaryschoolname": secondaryObject["institution"],
-      "studentsecondaryschoolpercentage": secondaryObject["percentage"],
-      //"studsecondaryschoollocation": "",
+
+      "studentsecondaryschoolname":
+      secondaryObject["institution"] ?? "",
+
+      "studentsecondaryschoolpercentage":
+      secondaryObject["percentage"] ?? "",
+
+      // =========================
+      // EDUCATION OBJECTS
+      // =========================
       "college": jsonEncode(collegeArray),
-      "higher_secondary": jsonEncode([higherSecondaryObject]),
-      "secondary": jsonEncode([secondaryObject]),
+
+      "higher_secondary":
+      jsonEncode([higherSecondaryObject]),
+
+      "secondary":
+      jsonEncode([secondaryObject]),
+
       "education": jsonEncode(educationObject),
+
+      // =========================
+      // RESUME SECTIONS
+      // =========================
       "projects": jsonEncode(
-        profileData.projects?.map((e) => e.toJson()).toList() ?? [],
+        profileData.projects
+            ?.map((e) => e.toJson())
+            .toList() ??
+            [],
       ),
-      "areas_of_interest": jsonEncode(profileData.areasOfInterest ?? []),
-      "hobbies": jsonEncode(profileData.hobbies ?? []),
-      "languages_known": jsonEncode(profileData.languages ?? []),
-      "volunteer_experience": jsonEncode(profileData.volunteerExperience ?? []),
-      "leadership": jsonEncode(profileData.leadership ?? []),
-      "achievements": jsonEncode(profileData.achievements ?? []),
-      "publications": jsonEncode(profileData.publications ?? []),
-      "workshops": jsonEncode(profileData.workshops ?? []),
-      "paper_presentations": jsonEncode(profileData.paperPresentations ?? []),
-      "industrial_visits": jsonEncode(profileData.industrialVisits ?? []),
-      // "tools_and_technologies": jsonEncode(
-      //   profileData.toolsAndTechnologies ?? [],
-      // ),
+
+      "paper_presentations": jsonEncode(
+        profileData.paperPresentations ?? [],
+      ),
+
       "experience": jsonEncode(
-        profileData.experience?.map((e) => e.toJson()).toList() ?? [],
+        profileData.experience
+            ?.map((e) => e.toJson())
+            .toList() ??
+            [],
       ),
+
       "internships": jsonEncode(
-        profileData.internships?.map((e) => e.toJson()).toList() ?? [],
+        profileData.internships
+            ?.map((e) => e.toJson())
+            .toList() ??
+            [],
       ),
+
       "studentcertificate": jsonEncode(
-        profileData.certifications?.map((e) => e.toJson()).toList() ?? [],
+        profileData.certifications
+            ?.map((e) => e.toJson())
+            .toList() ??
+            [],
       ),
-      "studprogramminglang": convertToNestedList(profileData.skills ?? []),
-      "linkedIn": profileData.personalInfo?.linkedIn ?? "",
-      "github": profileData.personalInfo?.github ?? "",
-      "portfolio_website": profileData.personalInfo?.github ?? "",
-      "profile_summary": profileData.profileSummary ?? "",
+
+      // =========================
+      // OTHER SECTIONS
+      // =========================
+      "parents": jsonEncode(
+        profileData.parents ?? [],
+      ),
+
+      "achievements": jsonEncode(
+        profileData.achievements ?? [],
+      ),
+
+      "leadership": jsonEncode(
+        profileData.leadership ?? [],
+      ),
+
+      "volunteer_experience": jsonEncode(
+        profileData.volunteerExperience ?? [],
+      ),
+
+      "languages_known": jsonEncode(
+        profileData.languages ?? [],
+      ),
+
+      "areas_of_interest": jsonEncode(
+        profileData.areasOfInterest ?? [],
+      ),
+
+      "hobbies": jsonEncode(
+        profileData.hobbies ?? [],
+      ),
+
+      "industrial_visits": jsonEncode(
+        profileData.industrialVisits ?? [],
+      ),
+
+      // "soft_skills": jsonEncode(
+      //   profileData.softSkills ?? [],
+      // ),
+
+      "publications": jsonEncode(
+        profileData.publications ?? [],
+      ),
+
+      "workshops": jsonEncode(
+        profileData.workshops ?? [],
+      ),
+
+      // =========================
+      // FONT
+      // =========================
+      "font_name": "Outfit",
+      "font_style": "Outfit",
     };
 
     await registerController.updateStudentProfileData(updateData: updateData);
@@ -383,9 +478,9 @@ class _ChatResumeUpdateScreenState extends State<ChatResumeUpdateScreen> {
 
     return NewStudentProfileModel(
       id: profile.id,
-
       // Personal Information (Flattened top-level fields)
       studentName: personalInfo?.name ?? profile.studentName ?? "",
+      role: personalInfo?.role ?? profile.role ?? "",
       studentGender: personalInfo?.gender ?? profile.studentGender,
       studEmail: personalInfo?.email ?? profile.studEmail ?? "",
       studMobileNo: personalInfo?.phone ?? profile.studMobileNo ?? "",
