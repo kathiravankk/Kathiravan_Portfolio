@@ -142,11 +142,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     _experiences = (p.experience ?? [])
         .map<Map<String, dynamic>>(
           (e) => {
-            'role': e.role ?? '',
-            'company': e.company ?? '',
-            'duration': e.duration ?? '',
+            'role': e['role'] ?? '',
+            'company': e['company'] ?? '',
+            'duration': e['duration'] ?? '',
             'type': 'Full Time',
-            'description': e.description ?? '',
+            'description': e['description'] ?? '',
           },
         )
         .toList();
@@ -163,9 +163,29 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         )
         .toList();
 
-    _programmingSkills = p.studProgrammingLang?.isNotEmpty == true
-        ? p.studProgrammingLang!
-        : [];
+    List<String> parsedSkills = [];
+    if (p.studProgrammingLang != null) {
+      for (var skill in p.studProgrammingLang!) {
+        if (skill.startsWith('[') && skill.endsWith(']')) {
+          try {
+            final decoded = jsonDecode(skill);
+            if (decoded is List) {
+              for (var item in decoded) {
+                parsedSkills.add(item.toString());
+              }
+            } else {
+              parsedSkills.add(skill);
+            }
+          } catch (_) {
+            parsedSkills.add(skill);
+          }
+        } else {
+          parsedSkills.add(skill);
+        }
+      }
+    }
+    _programmingSkills = parsedSkills;
+
     _toolsSkills = (p.toolsAndTechnologies ?? [])
         .map<String>((e) => e.toString())
         .toList();
@@ -173,11 +193,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     if (p.college?.isNotEmpty == true) {
       final c = p.college!.first;
       _collegeData = {
-        'degree': c.degree ?? '',
-        'department': c.department ?? '',
-        'institution': c.institution ?? '',
-        'start_year': c.startYear ?? '',
-        'end_year': c.endYear ?? '',
+        'degree': c['degree'] ?? '',
+        'department': c['department'] ?? '',
+        'institution': c['institution'] ?? '',
+        'start_year': c['start_year'] ?? '',
+        'end_year': c['end_year'] ?? '',
       };
     }
     if (p.higherSecondary?.isNotEmpty == true) {
@@ -265,6 +285,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       dobController.clear();
       selectedDobForApi = null;
     }
+
+    _initialProfileSnapshot = _generateProfileSnapshot();
 
     if (mounted) setState(() {});
   }
@@ -1163,13 +1185,32 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: AppStyles.customTextStyle(
-            color: AppColors.whiteColor,
-            size: 14,
-            weight: FontWeight.w600,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: AppStyles.customTextStyle(
+                color: AppColors.whiteColor,
+                size: 14,
+                weight: FontWeight.w600,
+              ),
+            ),
+            GestureDetector(
+              onTap: () => _editSingleInfoListSheet(title, items),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  "+ Add / Edit",
+                  style: AppStyles.customTextStyle(
+                    color: AppColors.primaryColor,
+                    size: 12,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         items.isEmpty
@@ -1196,18 +1237,53 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 spacing: 8,
                 runSpacing: 8,
                 children: items
-                    .asMap()
-                    .entries
-                    .map(
-                      (e) => ProfileWidgets.chip(
-                        e.value,
-                        () => setState(() => items.removeAt(e.key)),
-                      ),
-                    )
-                    .toList(),
+                  .asMap()
+                  .entries
+                  .map(
+                    (e) => ProfileWidgets.chip(
+                      e.value,
+                      () => setState(() => items.removeAt(e.key)),
+                    ),
+                  )
+                  .toList(),
               ),
         const SizedBox(height: 12),
       ],
+    );
+  }
+
+  void _editSingleInfoListSheet(String title, List<String> targetList) {
+    final controller = TextEditingController(text: targetList.join(', '));
+    ProfileWidgets.showBottomSheet(
+      context: context,
+      title: 'Edit $title',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
+        children: [
+          CustomTextField(
+            isNumberKeyboard: false,
+            isProfileFlow: true,
+            controller: controller,
+            labelText: '$title (comma separated)',
+            hintText: 'e.g., Value 1, Value 2',
+          ),
+        ],
+      ),
+      onSave: () {
+        setState(() {
+          targetList.clear();
+          if (controller.text.trim().isNotEmpty) {
+            targetList.addAll(
+              controller.text
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty),
+            );
+          }
+        });
+        Get.back();
+      },
     );
   }
 
@@ -1715,104 +1791,130 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   void _additionalInfoSheet() {
-    final languageCtrl = TextEditingController();
-    final hobbyCtrl = TextEditingController();
-    final interestCtrl = TextEditingController();
-    final achievementCtrl = TextEditingController();
-    final volunteerCtrl = TextEditingController();
-    final leadershipCtrl = TextEditingController();
-    final publicationCtrl = TextEditingController();
-    final workshopCtrl = TextEditingController();
+    final languageCtrl = TextEditingController(text: _languagesKnown.join(', '));
+    final hobbyCtrl = TextEditingController(text: _hobbies.join(', '));
+    final interestCtrl = TextEditingController(text: _areasOfInterest.join(', '));
+    final achievementCtrl = TextEditingController(text: _achievements.join(', '));
+    final volunteerCtrl = TextEditingController(text: _volunteerExperience.join(', '));
+    final leadershipCtrl = TextEditingController(text: _leadership.join(', '));
+    final publicationCtrl = TextEditingController(text: _publications.join(', '));
+    final workshopCtrl = TextEditingController(text: _workshops.join(', '));
 
     ProfileWidgets.showBottomSheet(
       context: context,
       title: 'Additional Information',
-      content: Column(
-        spacing: 12,
-        children: [
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: languageCtrl,
-            labelText: 'Languages Known',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: hobbyCtrl,
-            labelText: 'Hobbies',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: interestCtrl,
-            labelText: 'Areas of Interest',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: achievementCtrl,
-            labelText: 'Achievements',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: volunteerCtrl,
-            labelText: 'Volunteer Experience',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: leadershipCtrl,
-            labelText: 'Leadership',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: publicationCtrl,
-            labelText: 'Publications',
-            onChanged: (_) {},
-          ),
-          CustomTextField(
-            isNumberKeyboard: false,
-            isProfileFlow: true,
-            controller: workshopCtrl,
-            labelText: 'Workshops',
-            onChanged: (_) {},
-          ),
-        ],
+      content: SingleChildScrollView(
+        child: Column(
+          spacing: 12,
+          children: [
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: languageCtrl,
+              labelText: 'Languages Known',
+              onChanged: (_) {},
+            ),
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: hobbyCtrl,
+              labelText: 'Hobbies',
+              onChanged: (_) {},
+            ),
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: interestCtrl,
+              labelText: 'Areas of Interest',
+              onChanged: (_) {},
+            ),
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: achievementCtrl,
+              labelText: 'Achievements',
+              onChanged: (_) {},
+            ),
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: volunteerCtrl,
+              labelText: 'Volunteer Experience',
+              onChanged: (_) {},
+            ),
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: leadershipCtrl,
+              labelText: 'Leadership',
+              onChanged: (_) {},
+            ),
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: publicationCtrl,
+              labelText: 'Publications',
+              onChanged: (_) {},
+            ),
+            CustomTextField(
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+              controller: workshopCtrl,
+              labelText: 'Workshops',
+              onChanged: (_) {},
+            ),
+          ],
+        ),
       ),
       onSave: () {
         setState(() {
+          _languagesKnown.clear();
           if (languageCtrl.text.isNotEmpty) {
-            _languagesKnown.add(languageCtrl.text.trim());
+            _languagesKnown.addAll(
+              languageCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
+          _hobbies.clear();
           if (hobbyCtrl.text.isNotEmpty) {
-            _hobbies.add(hobbyCtrl.text.trim());
+            _hobbies.addAll(
+              hobbyCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
+          _areasOfInterest.clear();
           if (interestCtrl.text.isNotEmpty) {
-            _areasOfInterest.add(interestCtrl.text.trim());
+            _areasOfInterest.addAll(
+              interestCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
+          _achievements.clear();
           if (achievementCtrl.text.isNotEmpty) {
-            _achievements.add(achievementCtrl.text.trim());
+            _achievements.addAll(
+              achievementCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
+          _volunteerExperience.clear();
           if (volunteerCtrl.text.isNotEmpty) {
-            _volunteerExperience.add(volunteerCtrl.text.trim());
+            _volunteerExperience.addAll(
+              volunteerCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
+          _leadership.clear();
           if (leadershipCtrl.text.isNotEmpty) {
-            _leadership.add(leadershipCtrl.text.trim());
+            _leadership.addAll(
+              leadershipCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
+          _publications.clear();
           if (publicationCtrl.text.isNotEmpty) {
-            _publications.add(publicationCtrl.text.trim());
+            _publications.addAll(
+              publicationCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
+          _workshops.clear();
           if (workshopCtrl.text.isNotEmpty) {
-            _workshops.add(workshopCtrl.text.trim());
+            _workshops.addAll(
+              workshopCtrl.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+            );
           }
         });
 

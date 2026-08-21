@@ -1,3 +1,4 @@
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -170,7 +171,9 @@ class ProfileDataModel {
       profileSummary: json['profile_summary'] ?? "",
       studEmail: json['studemail'],
       studMobileNo: json['studmobileno'],
-      studProgrammingLang: List<String>.from(json['studprogramminglang'] ?? []),
+      studProgrammingLang: AppFunctions.parseSkillsList(
+        json['studprogramminglang'],
+      ),
       //studentCertificate: json['studentcertificate'] ?? [],
       studentCertificate: (json['studentcertificate'] ?? [])
           .map<Certification>((e) => Certification.fromJson(e))

@@ -19,7 +19,7 @@ import 'package:internsharks/app/data/models/account/update_chat_profile_model.d
 class RegisterProvider {
   final Dio? client;
 
-  RegisterProvider({@required this.client});
+  RegisterProvider({required this.client});
 
   // Response Code
 
@@ -250,11 +250,22 @@ class RegisterProvider {
       );
       responseStatus = response.statusCode!;
       if (responseStatus == 200 || responseStatus == 201) {
-        return NewStudentProfileModel.fromJson(response.data);
+        final data = response.data;
+        if (data is Map<String, dynamic>) {
+          return NewStudentProfileModel.fromJson(data);
+        } else {
+          return NewStudentProfileModel(message: data?.toString() ?? "Empty success data");
+        }
       }
+      return NewStudentProfileModel(message: "Failed with status: $responseStatus");
     } on DioException catch (err) {
-      responseStatus = err.response!.statusCode!;
-      return NewStudentProfileModel.fromJson(err.response!.data);
+      responseStatus = err.response?.statusCode ?? 500;
+      final data = err.response?.data;
+      if (data is Map<String, dynamic>) {
+        return NewStudentProfileModel.fromJson(data);
+      } else {
+        return NewStudentProfileModel(message: data?.toString() ?? "API Error");
+      }
     }
   }
 

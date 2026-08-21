@@ -162,7 +162,7 @@ class _StepUpdateScreenState extends State<StepUpdateScreen> {
                       AppRoutes.studentDashBoardScreen,
                     );
                   },
-                  buttonText: "Go to Intern's Page",
+                  buttonText: "Go to Your Dashboard",
                 ),
               ],
             ),
@@ -318,34 +318,36 @@ class _StepCardWidgetState extends State<StepCardWidget> {
                 ),
                 child: widget.icon,
               ),
-              Column(
-                spacing: 10,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.step,
-                    style: AppStyles.customTextStyle(
-                      color: (shouldHighlight || widget.isCompleted)
-                          ? AppColors.whiteColor
-                          : AppColors.darkText,
-                      size: 14,
-                      weight: FontWeight.w500,
+              Expanded(
+                child: Column(
+                  spacing: 10,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.step,
+                      style: AppStyles.customTextStyle(
+                        color: (shouldHighlight || widget.isCompleted)
+                            ? AppColors.whiteColor
+                            : AppColors.darkText,
+                        size: 14,
+                        weight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  Text(
-                    widget.title,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppStyles.customTextStyle(
-                      color: (shouldHighlight || widget.isCompleted)
-                          ? AppColors.whiteColor
-                          : AppColors.darkText,
-                      size: 16,
-                      weight: FontWeight.w600,
+                    Text(
+                      widget.title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      style: AppStyles.customTextStyle(
+                        color: (shouldHighlight || widget.isCompleted)
+                            ? AppColors.whiteColor
+                            : AppColors.darkText,
+                        size: 16,
+                        weight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const Spacer(),
               if (shouldHighlight)
                 const Icon(
                   Icons.arrow_forward_ios,

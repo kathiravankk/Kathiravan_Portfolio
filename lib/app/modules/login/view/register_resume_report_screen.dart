@@ -45,6 +45,15 @@ class _RegisterResumeReportScreenState
     super.initState();
   }
 
+  bool get _isAnySuggestionSelected {
+    for (var section in _suggestionSelection.values) {
+      if (section.values.any((isSelected) => isSelected)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // Future<void> getResumeScore() async {
   //   try {
   //     AiLoadingWidget.show(context, type: LoadingDialogType.atsJson);
@@ -719,17 +728,18 @@ class _RegisterResumeReportScreenState
   }
 
   Widget buildBottomButtons() {
+    final isEnabled = _isAnySuggestionSelected;
+
     return Row(
       spacing: 20,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: CustomButtonWidget(
-            //width: 150,
             height: 45,
-            buttonFunction: () async {
-              // final payload = buildSuggestionPayload();
-              // debugPrint(payload.toString());
+            bgColor: isEnabled ? AppColors.primaryColor : AppColors.disableButtonColor2,
+            buttonFunction: isEnabled
+                ? () async {
               registerController
                   .resumeAnalyzeModel
                   .extractedData!
@@ -738,6 +748,7 @@ class _RegisterResumeReportScreenState
                   .where((e) => e.value)
                   .map((e) => e.key)
                   .toList();
+
               registerController
                   .resumeAnalyzeModel
                   .extractedData!
@@ -746,45 +757,29 @@ class _RegisterResumeReportScreenState
                   .where((e) => e.value)
                   .map((e) => e.key)
                   .toList();
+
               registerController
                   .resumeAnalyzeModel
                   .extractedData!
-                  .updatedProjects = _suggestionSelection["Projects"]?.entries
+                  .updatedProjects = _suggestionSelection["Projects"]
+                  ?.entries
                   .where((e) => e.value)
                   .map((e) => e.key)
                   .toList();
+
               registerController
-                      .resumeAnalyzeModel
-                      .extractedData!
-                      .updatedProfileSummary =
-                  _suggestionSelection["Profile Summary"]?.entries
+                  .resumeAnalyzeModel
+                  .extractedData!
+                  .updatedProfileSummary =
+                  _suggestionSelection["Profile Summary"]
+                      ?.entries
                       .where((e) => e.value)
                       .map((e) => e.key)
                       .toList();
 
-              debugPrint(
-                registerController.resumeAnalyzeModel.extractedData!.toString(),
-              );
-              debugPrint(
-                registerController
-                    .resumeAnalyzeModel
-                    .extractedData!
-                    .updatedProfileSummary
-                    .toString(),
-              );
-              // AppAlertUtils.showAppAlert(
-              //   context: context,
-              //   title: "Update Resume",
-              //   content:
-              //       "Updating your resume will consume 50 credits. Are you sure you want to continue?",
-              //   onConfirm: () async {
-              //     await updateResumeFunc();
-              //   },
-              //   confirmText: "Confirm",
-              //   cancelText: "Cancel",
-              // );
               await updateResumeFunc();
-            },
+            }
+                : (){}, // Disables button when false
             isLoading: registerController.updateResumeLoading,
             buttonText: "Update (🪙50)",
             buttonWidget: Row(
@@ -794,7 +789,7 @@ class _RegisterResumeReportScreenState
                   "Update - ",
                   style: AppStyles.customTextStyle(
                     size: 16,
-                    color: AppColors.blackColor,
+                    color: isEnabled ? AppColors.blackColor : AppColors.whiteColor,
                     weight: FontWeight.w500,
                     fontFamily: "Roboto",
                   ),
@@ -803,7 +798,7 @@ class _RegisterResumeReportScreenState
                   "50",
                   style: AppStyles.customTextStyle(
                     size: 16,
-                    color: AppColors.blackColor,
+                    color: isEnabled ? AppColors.blackColor : AppColors.whiteColor,
                     weight: FontWeight.w500,
                     fontFamily: "Roboto",
                   ),
@@ -821,7 +816,6 @@ class _RegisterResumeReportScreenState
               color: AppColors.whiteColor,
               weight: FontWeight.w700,
             ),
-            //width: 150,
             height: 45,
             isLoading: registerController.updateResumeTemplateLoading,
             buttonFunction: () async {

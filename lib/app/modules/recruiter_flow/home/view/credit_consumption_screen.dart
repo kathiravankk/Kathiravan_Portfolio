@@ -102,12 +102,14 @@ class _CreditConsumptionScreenState extends State<CreditConsumptionScreen> {
                 child:Image.asset(AssetImages.creditsIconNew, height: 35, width: 35,),
               ),
               const SizedBox(width: 10),
-              Text(
-                "Understand How Credits Work",
-                style: AppStyles.customTextStyle(
-                  size: 18,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w700,
+              Expanded(
+                child: Text(
+                  "Understand How Credits Work",
+                  style: AppStyles.customTextStyle(
+                    size: 18,
+                    color: AppColors.whiteColor,
+                    weight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],

@@ -64,6 +64,10 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
 
   int latestGeneratedTemplateIndex = 0;
 
+  /// Tracks how many templates have already been unlocked (from profileData.templateUnlock).
+  /// Templates at index < _unlockedUpToIndex are free to navigate without charging credits.
+  int _unlockedUpToIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -129,7 +133,7 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     if (isRegisterFlow == true) {
       currentTemplateIndex = 0;
       latestGeneratedTemplateIndex = 0;
-
+      _unlockedUpToIndex = 0;
       templateHistory = [0];
       return;
     }
@@ -150,8 +154,31 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     } else {
       currentTemplateIndex = 0;
       latestGeneratedTemplateIndex = 0;
-
       templateHistory = [0];
+    }
+  }
+
+  /// Called after profile is loaded — reads templateUnlock to set free slots.
+  void _applyUnlockFromProfile() {
+    final activeProfile = profileData ?? registerController.studentProfileModel;
+    final unlockValue = activeProfile.templateUnlock;
+    if (unlockValue != null && unlockValue > 0) {
+      final unlockedIndex = unlockValue - 1; // templateUnlock=5 → index 4
+      if (unlockedIndex > _unlockedUpToIndex) {
+        setState(() {
+          _unlockedUpToIndex = unlockedIndex;
+          // Expand latestGeneratedTemplateIndex to include previously unlocked ones
+          if (unlockedIndex > latestGeneratedTemplateIndex) {
+            latestGeneratedTemplateIndex = unlockedIndex;
+          }
+          // Populate history for all unlocked templates
+          for (int i = 0; i <= unlockedIndex; i++) {
+            if (!templateHistory.contains(i)) {
+              templateHistory.add(i);
+            }
+          }
+        });
+      }
     }
   }
 
@@ -162,6 +189,8 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
       if (registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201) {
         profileData = registerController.studentProfileModel;
+        // Apply previously unlocked templates from API
+        _applyUnlockFromProfile();
         if (profileData?.studentCreditId != null) {
           creditIdString = profileData?.studentCreditId?.id ?? "";
           await getCreditData(creditId: creditIdString);
@@ -191,12 +220,34 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
     }
   }
 
+  /// Whether the next template (latestGeneratedTemplateIndex+1) is already unlocked
+  /// and can be loaded for free.
+  bool get _nextTemplateIsFree {
+    final nextIndex = latestGeneratedTemplateIndex + 1;
+    return nextIndex <= _unlockedUpToIndex;
+  }
+
   Future<void> nextTemplate() async {
     /// stop refresh after template 10
     if (latestGeneratedTemplateIndex >= templates.length - 1) {
       return;
     }
 
+    final nextIndex = latestGeneratedTemplateIndex + 1;
+
+    if (_nextTemplateIsFree) {
+      // ── FREE: template was previously unlocked, no credit charge ──
+      setState(() {
+        latestGeneratedTemplateIndex = nextIndex;
+        currentTemplateIndex = latestGeneratedTemplateIndex;
+        if (!templateHistory.contains(currentTemplateIndex)) {
+          templateHistory.add(currentTemplateIndex);
+        }
+      });
+      return;
+    }
+
+    // ── PAID: new unlock requires credits ──
     await registerController.templateRefreshCredit();
 
     if (registerController.getResponseCode() == 200 ||
@@ -204,17 +255,20 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
       await getCreditData(creditId: creditIdString);
 
       setState(() {
-        /// move only from latest generated template
-        latestGeneratedTemplateIndex++;
-
-        /// show latest generated template
+        latestGeneratedTemplateIndex = nextIndex;
         currentTemplateIndex = latestGeneratedTemplateIndex;
-
-        /// store into history
+        if (latestGeneratedTemplateIndex > _unlockedUpToIndex) {
+          _unlockedUpToIndex = latestGeneratedTemplateIndex;
+        }
         if (!templateHistory.contains(currentTemplateIndex)) {
           templateHistory.add(currentTemplateIndex);
         }
       });
+
+      // Persist the new unlock level so next session it's free
+      final activeProfile = profileData ?? registerController.studentProfileModel;
+      activeProfile.templateUnlock = _unlockedUpToIndex + 1; // 1-based
+      await registerController.updateResumeProfileData(updateData: activeProfile);
     } else {
       AppFunctions.apiErrorHandling(
         registerController.getResponseCode(),
@@ -311,16 +365,10 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                           AppRoutes.buyCreditsScreen,
                         );
                       },
-                      creditCount:
-                      (registerController
-                              .creditDataModel
-                              .creditData!
-                              .balance ??
-                          0)+(registerController
-                          .creditDataModel
-                          .creditData!
-                          .freeCredits ??
-                          0) ,
+                      creditCount: registerController.creditDataModel.creditData != null
+                          ? ((registerController.creditDataModel.creditData!.balance ?? 0) +
+                             (registerController.creditDataModel.creditData!.freeCredits ?? 0))
+                          : 0,
                     ),
               const SizedBox(width: 10),
             ],
@@ -618,7 +666,6 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                         backgroundColor: AppColors.primaryColor,
                         onPressed: () async {
                           await nextTemplate();
-
                           _initWebView(templates[currentTemplateIndex]);
                         },
                         child: const Icon(
@@ -628,15 +675,33 @@ class _ChatResumeTemplateScreenState extends State<ChatResumeTemplateScreen> {
                         ),
                       ),
                     ),
-                    Image.asset(AssetImages.creditsIconNew, height: 25, width: 25),
-                    Text(
-                      "25",
-                      style: AppStyles.customTextStyle(
-                        size: 16,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w700,
+                    const SizedBox(width: 4),
+                    if (_nextTemplateIsFree) ...[
+                      const Icon(
+                        CupertinoIcons.lock_open_fill,
+                        color: AppColors.secondaryColor,
+                        size: 18,
                       ),
-                    ),
+                      const SizedBox(width: 2),
+                      Text(
+                        "Free",
+                        style: AppStyles.customTextStyle(
+                          size: 13,
+                          color: AppColors.secondaryColor,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                    ] else ...[
+                      Image.asset(AssetImages.creditsIconNew, height: 25, width: 25),
+                      Text(
+                        "25",
+                        style: AppStyles.customTextStyle(
+                          size: 16,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ],

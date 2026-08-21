@@ -1,3 +1,4 @@
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/education_model.dart';
 import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
@@ -197,27 +198,7 @@ class StudentProfileModel {
   }
 
   static List<String> _parseProgrammingLanguages(dynamic value) {
-    if (value == null) return [];
-
-    if (value is List && value.isNotEmpty) {
-      final first = value.first;
-
-      if (first is String && first.startsWith('[')) {
-        try {
-          return List<String>.from(
-            (first
-                .replaceAll('[', '')
-                .replaceAll(']', '')
-                .replaceAll('"', '')
-                .split(',')),
-          );
-        } catch (_) {}
-      }
-
-      return List<String>.from(value.map((e) => e.toString()));
-    }
-
-    return [];
+    return AppFunctions.parseSkillsList(value);
   }
 }
 

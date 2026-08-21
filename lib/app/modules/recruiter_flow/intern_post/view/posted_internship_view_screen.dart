@@ -561,27 +561,30 @@ class _PostedInternshipViewScreenState
                   color: AppColors.pinkColor,
                 ),
                 const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 5,
-                  children: [
-                    Text(
-                      "Posted On",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.lightColorText,
-                        weight: FontWeight.w300,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 5,
+                    children: [
+                      Text(
+                        "Posted On",
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          color: AppColors.lightColorText,
+                          weight: FontWeight.w300,
+                        ),
                       ),
-                    ),
-                    Text(
-                      AppFunctions.formatIsoDate(internship.createdAt ?? ""),
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.lightColorText,
-                        weight: FontWeight.w700,
+                      Text(
+                        AppFunctions.formatIsoDate(internship.createdAt ?? ""),
+                        overflow: TextOverflow.ellipsis,
+                        style: AppStyles.customTextStyle(
+                          size: 14,
+                          color: AppColors.lightColorText,
+                          weight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -596,43 +599,46 @@ class _PostedInternshipViewScreenState
                   color: AppColors.orangeColor2,
                 ),
                 const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 5,
-                  children: [
-                    Text(
-                      "Position",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.lightColorText,
-                        weight: FontWeight.w300,
-                      ),
-                    ),
-                    Row(
-                      spacing: 5,
-                      children: [
-                        Text(
-                          internship.internPositions.toString(),
-                          style: AppStyles.customTextStyle(
-                            size: 14,
-                            color: AppColors.lightColorText,
-                            weight: FontWeight.w700,
-                          ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 5,
+                    children: [
+                      Text(
+                        "Position",
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          color: AppColors.lightColorText,
+                          weight: FontWeight.w300,
                         ),
-                        Visibility(
-                          visible: internship.noOfPosition != 0,
-                          child: Text(
-                            "(Only ${internship.noOfPosition.toString()} left)",
+                      ),
+                      Wrap(
+                        spacing: 5,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            internship.internPositions.toString(),
                             style: AppStyles.customTextStyle(
-                              size: 12,
-                              color: AppColors.primaryColor,
-                              weight: FontWeight.w500,
+                              size: 14,
+                              color: AppColors.lightColorText,
+                              weight: FontWeight.w700,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          Visibility(
+                            visible: internship.noOfPosition != 0,
+                            child: Text(
+                              "(Only ${internship.noOfPosition.toString()} left)",
+                              style: AppStyles.customTextStyle(
+                                size: 12,
+                                color: AppColors.primaryColor,
+                                weight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

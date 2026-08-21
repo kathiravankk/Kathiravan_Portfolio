@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
@@ -11,7 +10,6 @@ import 'package:internsharks/app/core/utils/common_utils.dart';
 import 'package:internsharks/app/core/utils/resume_file_utils.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
-import 'package:internsharks/app/data/models/account/resume_analyze_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -31,6 +29,7 @@ class _ResumeTemplatePreviewScreenState
   late int templateId;
   NewStudentProfileModel? resumeData;
   final profileController = Get.find<ProfileController>();
+  bool _canWebGoBack = false;
 
   @override
   void initState() {
@@ -73,15 +72,36 @@ class _ResumeTemplatePreviewScreenState
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageFinished: (_) async {
-            final jsonData = jsonEncode(resumeData!.toJson());
-            await _controller.runJavaScript("renderResume($jsonData);");
-            setState(() => isLoading = false);
+          onPageStarted: (String url) async {
+            final canBack = await _controller.canGoBack();
+            if (mounted) setState(() => _canWebGoBack = canBack);
+          },
+          onPageFinished: (String url) async {
+            final canBack = await _controller.canGoBack();
+            if (mounted) setState(() => _canWebGoBack = canBack);
+            if (!canBack && resumeData != null) {
+              final jsonData = jsonEncode(resumeData!.toJson());
+              await _controller.runJavaScript("renderResume($jsonData);");
+            }
+            if (mounted) setState(() => isLoading = false);
           },
         ),
       );
 
     _loadHtml(template.htmlPath);
+  }
+
+  Future<void> _handleWebBack() async {
+    if (await _controller.canGoBack()) {
+      await _controller.goBack();
+      final canBack = await _controller.canGoBack();
+      if (!canBack) {
+        _initWebview();
+      }
+      if (mounted) setState(() => _canWebGoBack = canBack);
+    } else {
+      Get.back();
+    }
   }
 
   Future<void> _loadHtml(String path) async {
@@ -339,57 +359,108 @@ class _ResumeTemplatePreviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.appBackgroundImg),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
+    return PopScope(
+      canPop: !_canWebGoBack,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _handleWebBack();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.appBackgroundImg),
+            fit: BoxFit.cover,
           ),
-          title: Text(
-            "Resume Preview",
-            style: AppStyles.customTextStyle(
-              size: 18,
-              color: AppColors.secondaryColor,
-              weight: FontWeight.w600,
+        ),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () async {
+                if (_canWebGoBack) {
+                  await _handleWebBack();
+                } else {
+                  Get.back();
+                }
+              },
+            ),
+            title: Text(
+              "Resume Preview",
+              style: AppStyles.customTextStyle(
+                size: 18,
+                color: AppColors.secondaryColor,
+                weight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-        body: Obx(
-          () => profileController.profileDataLoading
-              ? AppAlertUtils.customLoader()
-              : Stack(
-                  children: [
-                    WebViewWidget(controller: _controller),
-                    if (isLoading)
-                      Container(
-                        color: Colors.black45,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AppAlertUtils.customLoader(),
-                              SizedBox(height: 12),
-                              Text(
-                                "Processing...",
-                                style: TextStyle(color: Colors.white70),
+          body: Obx(
+            () => profileController.profileDataLoading
+                ? AppAlertUtils.customLoader()
+                : Stack(
+                    children: [
+                      WebViewWidget(controller: _controller),
+                      if (_canWebGoBack)
+                        Positioned(
+                          top: 12,
+                          left: 12,
+                          child: Material(
+                            elevation: 6,
+                            borderRadius: BorderRadius.circular(20),
+                            color: AppColors.primaryColor,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: _handleWebBack,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.arrow_back,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      "Back to Resume",
+                                      style: AppStyles.customTextStyle(
+                                        size: 13,
+                                        color: Colors.white,
+                                        weight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                  ],
-                ),
-        ),
+                      if (isLoading)
+                        Container(
+                          color: Colors.black45,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AppAlertUtils.customLoader(),
+                                SizedBox(height: 12),
+                                Text(
+                                  "Processing...",
+                                  style: TextStyle(color: Colors.white70),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+          ),
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -411,7 +482,8 @@ class _ResumeTemplatePreviewScreenState
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 }
 

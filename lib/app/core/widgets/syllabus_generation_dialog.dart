@@ -86,168 +86,170 @@ class _SyllabusGenerationDialogState extends State<SyllabusGenerationDialog> {
           color: AppColors.recContainerColor2,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ── Icon ────────────────────────────────────────────────
-            Image.asset(AssetImages.syllabusAlertIcon, height: 100, width: 100),
-            const SizedBox(height: 14),
-            Text(
-              "Project Description",
-              textAlign: TextAlign.center,
-              style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "You can edit this project description before generating syllabus:",
-              textAlign: TextAlign.center,
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: AppColors.greyTextColor,
-                weight: FontWeight.w400,
-                lineSpace: 1.4
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // ── Project description field ────────────────────────────
-            Text(
-              "Project Description",
-              style: AppStyles.customTextStyle(
-                size: 13,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.statusBorder),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextField(
-                    controller: _descController,
-                    maxLength: _maxLength,
-                    maxLines: 4,
-                    style: AppStyles.customTextStyle(
-                      size: 13,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w400,
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      isDense: true,
-                      counterText:
-                          "", // hide default counter, we render our own
-                    ),
-                    onChanged: (_) => setState(() {}),
-                  ),
-                  Text(
-                    "${_descController.text.length}/$_maxLength",
-                    style: AppStyles.customTextStyle(
-                      size: 11,
-                      color: AppColors.greyTextColor,
-                      weight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 18),
-
-            // ── Difficulty dropdown ──────────────────────────────────
-            Text(
-              "Syllabus Difficulty Level:",
-              style: AppStyles.customTextStyle(
-                size: 13,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.statusBorder),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: _selectedLevel,
-                  isExpanded: true,
-                  dropdownColor: AppColors.recContainerColor,
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: AppColors.primaryColor,
-                  ),
-                  style: AppStyles.customTextStyle(
-                    size: 14,
-                    color: AppColors.primaryColor,
-                    weight: FontWeight.w700,
-                  ),
-                  items: widget.levels
-                      .map(
-                        (level) => DropdownMenuItem(
-                          value: level,
-                          child: Text(level),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value != null) setState(() => _selectedLevel = value);
-                  },
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── Icon ────────────────────────────────────────────────
+              Image.asset(AssetImages.syllabusAlertIcon, height: 100, width: 100),
+              const SizedBox(height: 14),
+              Text(
+                "Project Description",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 18,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
                 ),
               ),
-            ),
-            const SizedBox(height: 22),
-
-            // ── Generate button ──────────────────────────────────────
-            CustomButtonWidget(
-              buttonFunction: () {
-                final description = _descController.text.trim();
-                Navigator.of(context).pop();
-                widget.onGenerate(description, _selectedLevel);
-              },
-              buttonWidget: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 6,
-                children: [
-                  Text(
-                    "Generate Syllabus",
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      color: AppColors.blackColor,
-                      weight: FontWeight.w500,
-                      fontFamily: "Roboto",
-                    ),
-                  ),
-                  Text(
-                    "${widget.creditCost}",
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      color: AppColors.blackColor,
-                      weight: FontWeight.w500,
-                      fontFamily: "Roboto",
-                    ),
-                  ),
-                  Image.asset(
-                    AssetImages.creditsIconNew,
-                    height: 20,
-                    width: 20,
-                  ),
-                ],
+              const SizedBox(height: 10),
+              Text(
+                "You can edit this project description before generating syllabus:",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.greyTextColor,
+                  weight: FontWeight.w400,
+                  lineSpace: 1.4
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+
+              // ── Project description field ────────────────────────────
+              Text(
+                "Project Description",
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.statusBorder),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextField(
+                      controller: _descController,
+                      maxLength: _maxLength,
+                      maxLines: 4,
+                      style: AppStyles.customTextStyle(
+                        size: 13,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w400,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        isDense: true,
+                        counterText:
+                            "", // hide default counter, we render our own
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    Text(
+                      "${_descController.text.length}/$_maxLength",
+                      style: AppStyles.customTextStyle(
+                        size: 11,
+                        color: AppColors.greyTextColor,
+                        weight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              // ── Difficulty dropdown ──────────────────────────────────
+              Text(
+                "Syllabus Difficulty Level:",
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.statusBorder),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedLevel,
+                    isExpanded: true,
+                    dropdownColor: AppColors.recContainerColor,
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: AppColors.primaryColor,
+                    ),
+                    style: AppStyles.customTextStyle(
+                      size: 14,
+                      color: AppColors.primaryColor,
+                      weight: FontWeight.w700,
+                    ),
+                    items: widget.levels
+                        .map(
+                          (level) => DropdownMenuItem(
+                            value: level,
+                            child: Text(level),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value != null) setState(() => _selectedLevel = value);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+
+              // ── Generate button ──────────────────────────────────────
+              CustomButtonWidget(
+                buttonFunction: () {
+                  final description = _descController.text.trim();
+                  Navigator.of(context).pop();
+                  widget.onGenerate(description, _selectedLevel);
+                },
+                buttonWidget: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 6,
+                  children: [
+                    Text(
+                      "Generate Syllabus",
+                      style: AppStyles.customTextStyle(
+                        size: 16,
+                        color: AppColors.blackColor,
+                        weight: FontWeight.w500,
+                        fontFamily: "Roboto",
+                      ),
+                    ),
+                    Text(
+                      "${widget.creditCost}",
+                      style: AppStyles.customTextStyle(
+                        size: 16,
+                        color: AppColors.blackColor,
+                        weight: FontWeight.w500,
+                        fontFamily: "Roboto",
+                      ),
+                    ),
+                    Image.asset(
+                      AssetImages.creditsIconNew,
+                      height: 20,
+                      width: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

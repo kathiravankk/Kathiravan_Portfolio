@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 
 class NewStudentProfileModel {
   String? message;
@@ -14,6 +15,7 @@ class NewStudentProfileModel {
   List<StudentCertificate>? studentCertificate;
   String? studentResume;
   String? profileSummary;
+  String? sureName;
   List<dynamic>? studentAadhaar;
   List<dynamic>? studentId;
   List<String>? areasOfInterest;
@@ -139,9 +141,9 @@ class NewStudentProfileModel {
       studEmail: json['studemail']??"",
       studMobileNo: json['studmobileno']??"",
       role: json['role']??"",
-      studProgrammingLang: (json['studprogramminglang'] as List?)
-          ?.map((e) => e.toString())
-          .toList(),
+      studProgrammingLang: AppFunctions.parseSkillsList(
+        json['studprogramminglang'],
+      ),
       studentCertificate: (json['studentcertificate'] as List?)
           ?.map((e) => StudentCertificate.fromJson(e))
           .toList(),
@@ -188,7 +190,7 @@ class NewStudentProfileModel {
           .toList(),
       trainings: json['trainings'] ?? [],
       parents: json['parents'] ?? [],
-      templateUnlock: json['templateunlock']??"",
+      templateUnlock: json['templateunlock'] != null ? int.tryParse(json['templateunlock'].toString()) : null,
       college: json['college'] ?? [],
       higherSecondary: (json['higher_secondary'] as List?)
           ?.map((e) => HigherSecondary.fromJson(e))
@@ -365,6 +367,7 @@ class NewStudentProfileModel {
       "studentId": id ?? "",
       "templateNumber": templateNumber ?? "",
       "message": message ?? "",
+      "templateunlock":templateUnlock ?? 1,
     };
   }
 }

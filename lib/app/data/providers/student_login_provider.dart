@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
@@ -83,22 +85,27 @@ class StudentLoginProvider {
   }) async {
     //Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
-
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
       );
-      Response response = await client!
-          .post(AppApiUrls.createNewChatResume,
-          //options: Options(headers: header),
-          data: chatRequestData);
+      Response response = await client!.post(
+        AppApiUrls.createNewChatResume,
+        //options: Options(headers: header),
+        data: chatRequestData,
+      );
+      debugPrint(response.data.toString(),wrapWidth: 1024);
+      debugPrint(response.statusCode.toString());
       responseStatus = response.statusCode!;
       return CreateNewChatResumeModel.fromJson(response.data);
-    } on DioException catch (error) {
-      responseStatus = error.response?.statusCode ?? 0;
-      return CreateNewChatResumeModel.fromJson(error.response?.data);
+    } catch (error) {
+      if (error is DioException) {
+        responseStatus = error.response?.statusCode ?? 0;
+        return CreateNewChatResumeModel.fromJson(error.response?.data);
+      }
+      debugPrint('Resume Uncaught Exception :${error.toString()}');
+      throw TimeoutException('ED');
     }
   }
-
 
   // CHAT MCQ QUESTION
 

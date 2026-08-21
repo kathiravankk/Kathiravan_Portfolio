@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/internship/student_test_result_model.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
@@ -15,12 +16,13 @@ class StudentTestResultScreen extends StatefulWidget {
   const StudentTestResultScreen({super.key});
 
   @override
-  State<StudentTestResultScreen> createState() => _StudentTestResultScreenState();
+  State<StudentTestResultScreen> createState() =>
+      _StudentTestResultScreenState();
 }
 
 class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
   final InternshipController internController =
-  Get.find<InternshipController>();
+      Get.find<InternshipController>();
   final ProfileController profileController = Get.find<ProfileController>();
 
   StudentTestData? _internData;
@@ -40,7 +42,10 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
 
   Future<void> getTestResult() async {
     try {
-      await internController.getStudentTestResult(studentId: studentId, jobId: jobId);
+      await internController.getStudentTestResult(
+        studentId: studentId,
+        jobId: jobId,
+      );
       if (internController.getResponseCode() == 200 ||
           internController.getResponseCode() == 201) {
         setState(() {
@@ -89,52 +94,54 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
         ),
       ),
       child: Obx(
-            () =>
-        internController.studentResultLoading ||
-            profileController.profileDataLoading
+        () =>
+            internController.studentResultLoading ||
+                profileController.profileDataLoading
             ? AppAlertUtils.customLoader()
             : Scaffold(
-          backgroundColor: AppColors.transparentColor,
-          appBar: _buildAppBar(),
-          body: _internData == null
-              ? Center(
-            child: Text(
-              "No test result available.",
-              style: AppStyles.customTextStyle(
-                size: 14,
-                color: AppColors.lightTextColor,
-                weight: FontWeight.w400,
+                backgroundColor: AppColors.transparentColor,
+                appBar: _buildAppBar(),
+                body: _internData == null
+                    ? Center(
+                        child: Text(
+                          "No test result available.",
+                          style: AppStyles.customTextStyle(
+                            size: 14,
+                            color: AppColors.lightTextColor,
+                            weight: FontWeight.w400,
+                          ),
+                        ),
+                      )
+                    : SafeArea(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 110),
+                          child: Column(
+                            spacing: 16,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _profileHeader(),
+                              _scoreAndRatingRow(),
+                              _dailyProgressCard(),
+                              if ((_internData
+                                          ?.testWeeklyReport
+                                          ?.internProjectLink ??
+                                      [])
+                                  .isNotEmpty)
+                                _projectLinkCard(),
+                              Text(
+                                "Answer Review",
+                                style: AppStyles.customTextStyle(
+                                  size: 18,
+                                  color: AppColors.whiteColor,
+                                  weight: FontWeight.w700,
+                                ),
+                              ),
+                              ..._answerReviewCards(),
+                            ],
+                          ),
+                        ),
+                      ),
               ),
-            ),
-          )
-              : SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 110),
-              child: Column(
-                spacing: 16,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _profileHeader(),
-                  _scoreAndRatingRow(),
-                  _dailyProgressCard(),
-                  if ((_internData?.testWeeklyReport?.internProjectLink ?? [])
-                      .isNotEmpty)
-                    _projectLinkCard(),
-                  Text(
-                    "Answer Review",
-                    style: AppStyles.customTextStyle(
-                      size: 18,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w700,
-                    ),
-                  ),
-                  ..._answerReviewCards(),
-
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -170,6 +177,17 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
   // PROFILE HEADER
   // ─────────────────────────────────────────
 
+  String _parseCollegeName(NewStudentProfileModel profileDataModel) {
+    if (profileDataModel.education != null &&
+        profileDataModel.education!.college != null &&
+        profileDataModel.education!.college!.isNotEmpty) {
+      if (profileDataModel.education!.college!.first.degree != null) {
+        return profileDataModel.education!.college!.first.degree!;
+      }
+    }
+    return 'College';
+  }
+
   Widget _profileHeader() {
     final status = _internData?.testWeeklyReport?.status ?? "";
 
@@ -189,8 +207,7 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                profileController.profileDataModel.studentName ??
-                    "Student",
+                profileController.profileDataModel.studentName ?? "Student",
                 style: AppStyles.customTextStyle(
                   size: 17,
                   color: AppColors.whiteColor,
@@ -198,9 +215,7 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
                 ),
               ),
               Text(
-                profileController.profileDataModel
-                    .education!.college!.first.degree ??
-                    "College",
+                _parseCollegeName(profileController.profileDataModel),
                 style: AppStyles.customTextStyle(
                   size: 12,
                   color: AppColors.lightTextColor,
@@ -568,7 +583,7 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
           ),
           const SizedBox(height: 8),
           ...links.map(
-                (url) => Padding(
+            (url) => Padding(
               padding: const EdgeInsets.only(top: 4),
               child: GestureDetector(
                 onTap: () async {
@@ -669,8 +684,8 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
                     color: isSkipped
                         ? AppColors.disableContColor
                         : (isCorrect
-                        ? AppColors.correctBg
-                        : AppColors.inCorrectBg),
+                              ? AppColors.correctBg
+                              : AppColors.inCorrectBg),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -682,8 +697,8 @@ class _StudentTestResultScreenState extends State<StudentTestResultScreen> {
                       color: isSkipped
                           ? AppColors.lightTextColor
                           : (isCorrect
-                          ? AppColors.correctText
-                          : AppColors.inCorrectText),
+                                ? AppColors.correctText
+                                : AppColors.inCorrectText),
                       weight: FontWeight.w700,
                     ),
                   ),

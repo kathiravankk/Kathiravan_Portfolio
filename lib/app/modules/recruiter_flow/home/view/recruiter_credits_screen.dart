@@ -370,28 +370,30 @@ class _RecruiterCreditsPlanScreenState
                                         ),
                                       ),
                                       const SizedBox(width: 12),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        spacing: 5,
-                                        children: [
-                                          Text(
-                                            "Your Balance",
-                                            style: AppStyles.customTextStyle(
-                                              size: 12,
-                                              weight: FontWeight.w400,
-                                              color: Colors.white60,
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          spacing: 5,
+                                          children: [
+                                            Text(
+                                              "Your Balance",
+                                              style: AppStyles.customTextStyle(
+                                                size: 12,
+                                                weight: FontWeight.w400,
+                                                color: Colors.white60,
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                            "${((homeController.profileModel.recruiterData!.recruiterCreditId!.freeCredits ?? 0) + (homeController.profileModel.recruiterData!.recruiterCreditId!.balance ?? 0))} Credits",
-                                            style: AppStyles.customTextStyle(
-                                              size: 16,
-                                              weight: FontWeight.w800,
-                                              color: _BuyCreditColors.gold,
+                                            Text(
+                                              "${((homeController.profileModel.recruiterData!.recruiterCreditId!.freeCredits ?? 0) + (homeController.profileModel.recruiterData!.recruiterCreditId!.balance ?? 0))} Credits",
+                                              style: AppStyles.customTextStyle(
+                                                size: 16,
+                                                weight: FontWeight.w800,
+                                                color: _BuyCreditColors.gold,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -438,7 +440,7 @@ class _RecruiterCreditsPlanScreenState
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 0.70,
+                              childAspectRatio: 0.55,
                               crossAxisSpacing: 14,
                               mainAxisSpacing: 24,
                             ),

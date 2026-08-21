@@ -133,24 +133,30 @@ class _RecruiterReviewDialogState extends State<RecruiterReviewDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                spacing: 10,
-                children: [
-                  const Icon(
-                    Icons.star,
-                    color: AppColors.secondaryColor,
-                    size: 20,
-                  ),
-                  Text(
-                    "Internship Review",
-                    style: AppStyles.customTextStyle(
-                      size: 16,
-                      color: Colors.white,
-                      weight: FontWeight.w700,
+              Expanded(
+                child: Row(
+                  spacing: 10,
+                  children: [
+                    const Icon(
+                      Icons.star,
+                      color: AppColors.secondaryColor,
+                      size: 20,
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Text(
+                        "Internship Review",
+                        overflow: TextOverflow.ellipsis,
+                        style: AppStyles.customTextStyle(
+                          size: 16,
+                          color: Colors.white,
+                          weight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -195,16 +201,20 @@ class _RecruiterReviewDialogState extends State<RecruiterReviewDialog> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      review.student != null
-                          ? review.student!.studName ?? "---"
-                          : "Anonymous Student",
-                      style: AppStyles.customTextStyle(
-                        size: 14,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w500,
+                    Expanded(
+                      child: Text(
+                        review.student != null
+                            ? review.student!.studName ?? "---"
+                            : "Anonymous Student",
+                        overflow: TextOverflow.ellipsis,
+                        style: AppStyles.customTextStyle(
+                          size: 14,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w500,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Row(
                       children: List.generate(5, (i) {
                         return Icon(

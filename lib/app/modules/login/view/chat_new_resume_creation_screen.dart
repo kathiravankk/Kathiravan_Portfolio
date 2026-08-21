@@ -11,7 +11,9 @@ import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_text_field.dart';
+import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/core/widgets/show_template_view.dart';
+import 'package:internsharks/app/data/models/account/certification_model.dart';
 import 'package:internsharks/app/data/models/account/chat_mcq_question_model.dart'
     hide QuestionOptions;
 import 'package:internsharks/app/data/models/account/chat_mcq_result_model.dart';
@@ -88,6 +90,7 @@ class _ChatNewResumeCreationScreenState
   final _mobileCtrl = TextEditingController();
   final _linkedinCtrl = TextEditingController();
   final _githubCtrl = TextEditingController();
+  final _locationCtrl = TextEditingController();
   final _summaryCtrl = TextEditingController();
   final _skillsCtrl = TextEditingController();
   final _languagesCtrl = TextEditingController();
@@ -135,6 +138,7 @@ class _ChatNewResumeCreationScreenState
     _mobileCtrl.dispose();
     _linkedinCtrl.dispose();
     _githubCtrl.dispose();
+    _locationCtrl.dispose();
     _summaryCtrl.dispose();
     _skillsCtrl.dispose();
     _languagesCtrl.dispose();
@@ -170,7 +174,7 @@ class _ChatNewResumeCreationScreenState
       final String prettyJson = const JsonEncoder.withIndent('  ').convert(data);
       debugPrint('\n==================================================');
       debugPrint('➡️ API LOG: $title');
-      debugPrint(prettyJson, wrapWidth: 1024);
+      prettyJson.split('\n').forEach((line) => debugPrint(line));
       debugPrint('==================================================\n');
     } catch (e) {
       debugPrint('\n➡️ API LOG: $title => $data\n');
@@ -222,11 +226,15 @@ class _ChatNewResumeCreationScreenState
           userId = loginController.createNewResumeModel.userId ?? userId;
         }
 
-        if (loginController.createNewResumeModel.message != null &&
-            loginController.createNewResumeModel.message!.isNotEmpty) {
+        final String? completedSection =
+            loginController.createNewResumeModel.completedSection;
+        final String? botMessage = loginController.createNewResumeModel.message;
+        final bool hasQuiz = completedSection != null && kQuizGatedSections[completedSection] != null;
+
+        if (botMessage != null && botMessage.isNotEmpty && !hasQuiz) {
           messages.add(
             ChatMessage(
-              text: loginController.createNewResumeModel.message!,
+              text: botMessage,
               isBot: true,
             ),
           );
@@ -258,7 +266,7 @@ class _ChatNewResumeCreationScreenState
                 (profileModel.studentName != null
                     ? PersonalInfoModel(
                         name: profileModel.studentName ?? '',
-                        sureName: '',
+                        sureName: profileModel.sureName ?? "",
                         role: profileModel.role,
                         email: profileModel.studEmail ?? '',
                         phone: profileModel.studMobileNo ?? '',
@@ -326,8 +334,8 @@ class _ChatNewResumeCreationScreenState
           loginController.createNewResumeModelRx.refresh();
         }
 
-        final String? completedSection =
-            loginController.createNewResumeModel.completedSection;
+        // final String? completedSection =
+        //     loginController.createNewResumeModel.completedSection;
 
         final String? nextField =
             loginController.createNewResumeModel.nextField;
@@ -351,7 +359,10 @@ class _ChatNewResumeCreationScreenState
           });
         } else if (completedSection != null && completedSection.isNotEmpty) {
           _completedSections.add(completedSection);
-          await _handleCompletedSection(completedSection);
+          await _handleCompletedSection(
+            completedSection,
+            pendingBotMessage: hasQuiz ? botMessage : null,
+          );
         }
       } else {
         // ── Restore previous collectedData on API error ──
@@ -419,6 +430,7 @@ class _ChatNewResumeCreationScreenState
 
       _linkedinCtrl.text = data.personalInfo!.linkedIn ?? _linkedinCtrl.text;
       _githubCtrl.text = data.personalInfo!.github ?? _githubCtrl.text;
+      _locationCtrl.text = data.personalInfo!.location ?? _locationCtrl.text;
     }
 
     if (data.profileSummary != null && data.profileSummary!.isNotEmpty) {
@@ -470,19 +482,32 @@ class _ChatNewResumeCreationScreenState
   // COMPLETED-SECTION ROUTER
   // ==========================================================================
 
-  Future<void> _handleCompletedSection(String completedSection) async {
+  Future<void> _handleCompletedSection(
+    String completedSection, {
+    String? pendingBotMessage,
+  }) async {
     final String? quizSection = kQuizGatedSections[completedSection];
     if (quizSection != null &&
         !_handledCompletionSignatures.contains(completedSection)) {
       _handledCompletionSignatures.add(completedSection);
       await Future.delayed(const Duration(milliseconds: 500));
-      await _startKnowledgeCheck(quizSection);
+      await _startKnowledgeCheck(quizSection, pendingBotMessage: pendingBotMessage);
+    } else {
+      if (pendingBotMessage != null && pendingBotMessage.isNotEmpty) {
+        messages.add(
+          ChatMessage(
+            text: pendingBotMessage,
+            isBot: true,
+          ),
+        );
+      }
     }
 
     // Call Update Profile API on every section completion or DONE trigger
     await updateCompleteSectionInfo(
       isDone: completedSection == "DONE",
       completedSection: completedSection,
+      fromChatFlow: true,
     );
   }
 
@@ -490,7 +515,10 @@ class _ChatNewResumeCreationScreenState
   // QUIZ: start_quiz / submit_quiz
   // ==========================================================================
 
-  Future<void> _startKnowledgeCheck(String section) async {
+  Future<void> _startKnowledgeCheck(
+    String section, {
+    String? pendingBotMessage,
+  }) async {
     if (_quizDialogOpen) return;
 
     final Map<String, dynamic> quizData = {
@@ -545,6 +573,16 @@ class _ChatNewResumeCreationScreenState
               isBot: true,
             ),
           );
+
+          // 2. Now show the previous API response chat message below the score!
+          if (pendingBotMessage != null && pendingBotMessage.isNotEmpty) {
+            messages.add(
+              ChatMessage(
+                text: pendingBotMessage,
+                isBot: true,
+              ),
+            );
+          }
           scrollToBottom();
 
           // 2. Track verified items if quiz passed
@@ -688,9 +726,14 @@ class _ChatNewResumeCreationScreenState
     return data;
   }
 
+  List<List<String>> convertToNestedList(List<String> values) {
+    return values.map((e) => [e]).toList();
+  }
+
   Future<void> updateCompleteSectionInfo({
     bool isDone = false,
     String? completedSection,
+    bool fromChatFlow = false,
   }) async {
     final reply = loginController.createNewResumeModel.collectedData;
     final ResumeCollectedData? collected = reply;
@@ -724,7 +767,9 @@ class _ChatNewResumeCreationScreenState
     final String resolvedGitHub = _githubCtrl.text.trim().isNotEmpty
         ? _githubCtrl.text.trim()
         : (collected?.personalInfo?.github ?? "");
-    final String resolvedLocation = collected?.personalInfo?.location ?? "";
+    final String resolvedLocation = _locationCtrl.text.trim().isNotEmpty
+        ? _locationCtrl.text.trim()
+        : (collected?.personalInfo?.location ?? "");
 
     final collegeArray = collected?.education?.college ?? [];
     final secondaryData = collected?.education?.school?.secondary;
@@ -887,7 +932,7 @@ class _ChatNewResumeCreationScreenState
       "github": resolvedGitHub,
       "portfolio_website": resolvedGitHub,
 
-      "studprogramminglang": jsonEncode(rawSkills),
+      "studprogramminglang": rawSkills,
       "languages_known": jsonEncode(rawLanguages),
       "areas_of_interest": jsonEncode(rawInterests),
       "hobbies": jsonEncode(rawHobbies),
@@ -980,14 +1025,16 @@ class _ChatNewResumeCreationScreenState
       };
 
       // Call Chat Resume Sync API first
-      _logApi(title: "updateCompleteSectionInfo -> createNewChatResume REQUEST", data: chatPayload);
-      await loginController.createNewChatResume(chatRequestData: chatPayload);
-      _logApi(
-        title: "updateCompleteSectionInfo -> createNewChatResume RESPONSE [Status: ${loginController.getResponseCode()}]",
-        data: loginController.createNewResumeModel.toJson(),
-      );
+      if (!fromChatFlow) {
+        _logApi(title: "updateCompleteSectionInfo -> createNewChatResume REQUEST", data: chatPayload);
+        await loginController.createNewChatResume(chatRequestData: chatPayload);
+        _logApi(
+          title: "updateCompleteSectionInfo -> createNewChatResume RESPONSE [Status: ${loginController.getResponseCode()}]",
+          data: loginController.createNewResumeModel.toJson(),
+        );
+      }
 
-      final int statusCode = loginController.getResponseCode();
+      final int statusCode = fromChatFlow ? 200 : loginController.getResponseCode();
 
       if (statusCode == 200 || statusCode == 201) {
         debugPrint("%%%%%%%%%%%%%%%%%%%");
@@ -998,9 +1045,37 @@ class _ChatNewResumeCreationScreenState
         }
 
         // Call Profile Update API
+        final allowedSections = {
+          "linkedin_completed",
+          "refcode_completed",
+          "location_completed",
+          "github_completed",
+          "summary_completed",
+          "education_completed",
+          "skills_completed",
+          "internships_completed",
+          "projects_completed",
+          "paper_presentations_completed",
+          "certifications_completed",
+          "industrial_visits_completed",
+          "workshops_completed",
+          "publications_completed",
+          "leadership_completed",
+          "volunteer_experience_completed",
+          "languages_completed",
+          "areas_of_interest_completed",
+          "hobbies_completed",
+          "achievements_completed",
+        };
+
         if ((apiPayload["studemail"] != null && apiPayload["studemail"] != "") &&
             (apiPayload["studmobileno"] != null &&
                 apiPayload["studmobileno"] != "")) {
+          debugPrint("\n=================== API PAYLOAD KEYS & TYPES ===================");
+          apiPayload.forEach((key, value) {
+            debugPrint("Key: $key | Type: ${value.runtimeType} | Value: $value");
+          });
+          debugPrint("==============================================================\n");
           _logApi(title: "updateStudentProfileData (apiPayload) REQUEST", data: apiPayload);
           await registerController.updateChatStudentProfileData(
             updateData: apiPayload,
@@ -1067,6 +1142,9 @@ class _ChatNewResumeCreationScreenState
         //await registerController.getStudentProfile(studentId: "");
         if (isDone && mounted) {
           debugPrint("^^^^^^^^^^^^^^^^^^^^^^^^^");
+          await registerController.updateChatStudentProfileData(
+            updateData: apiPayload,
+          );
           await getStudentProfileData();
         }
       } else {
@@ -1159,11 +1237,20 @@ class _ChatNewResumeCreationScreenState
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       if (!mounted) return;
+      int templateId = 1;
+      final args = Get.arguments;
+      if (args is Map && args['templateId'] != null) {
+        try {
+          templateId = int.parse(args['templateId'].toString());
+        } catch (_) {
+          templateId = 1;
+        }
+      }
       AppFunctions.navigateScreen(
         context,
         AppRoutes.chatResumeTemplateScreen,
         arguments: {
-          "templateId": 1,
+          "templateId": templateId,
           "isRegisterFlow": true,
         },
       );
@@ -1219,39 +1306,107 @@ class _ChatNewResumeCreationScreenState
   // UI BUILD
   // ==========================================================================
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(AssetImages.chatScreenBg),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: AppColors.transparentColor,
-        appBar: AppBar(
-          backgroundColor: AppColors.transparentColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              size: 25,
-              color: AppColors.whiteColor,
-            ),
-            onPressed: () => Get.back(),
+  Future<bool> _showExitConfirmationDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.cardColor2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(
+          "Exit Resume Creation?",
+          style: AppStyles.customTextStyle(
+            size: 18,
+            weight: FontWeight.w700,
+            color: AppColors.whiteColor,
           ),
-          title: Obx(
-            () => Text(
-              _titleForTab(currentTabIndex.value),
+        ),
+        content: Text(
+          "Are you sure you want to exit? Your progress may not be saved.",
+          style: AppStyles.customTextStyle(
+            size: 14,
+            color: AppColors.whiteColor,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              "Cancel",
               style: AppStyles.customTextStyle(
-                size: 18,
-                color: AppColors.secondaryColor,
+                size: 12,
+                color: AppColors.greyTextColor,
                 weight: FontWeight.w600,
               ),
             ),
           ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              "Exit",
+              style: AppStyles.customTextStyle(
+                size: 12,
+                color: AppColors.blackColor,
+                weight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldPop = await _showExitConfirmationDialog();
+        if (shouldPop && context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(AssetImages.chatScreenBg),
+            fit: BoxFit.cover,
+          ),
         ),
+        child: Scaffold(
+          backgroundColor: AppColors.transparentColor,
+          appBar: AppBar(
+            backgroundColor: AppColors.transparentColor,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back,
+                size: 25,
+                color: AppColors.whiteColor,
+              ),
+              onPressed: () async {
+                final shouldPop = await _showExitConfirmationDialog();
+                if (shouldPop) {
+                  Get.back();
+                }
+              },
+            ),
+            title: Obx(
+              () => Text(
+                _titleForTab(currentTabIndex.value),
+                style: AppStyles.customTextStyle(
+                  size: 18,
+                  color: AppColors.secondaryColor,
+                  weight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
         body: Obx(
           () =>
               (isInitialLoading && loginController.createNewResumeLoading) ||
@@ -1268,6 +1423,7 @@ class _ChatNewResumeCreationScreenState
         ),
         bottomNavigationBar: _buildBottomNavigationBar(),
       ),
+      )
     );
   }
 
@@ -1299,7 +1455,7 @@ class _ChatNewResumeCreationScreenState
             ),
           ),
           Obx(
-            () => loginController.createNewResumeLoading
+            () => loginController.createNewResumeLoading || loginController.chatMcqQuestionLoading
                 ? loadingContainer()
                 : const SizedBox.shrink(),
           ),
@@ -1412,6 +1568,32 @@ class _ChatNewResumeCreationScreenState
               ),
             ],
           ),
+          if (isSuccessMessage) ...[
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 44),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                ),
+                onPressed: () async {
+                  await getStudentProfileData();
+                },
+                child: Text(
+                  "Proceed to template",
+                  style: AppStyles.customTextStyle(
+                    color: AppColors.blackColor,
+                    weight: FontWeight.w700,
+                    size: 13,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -1472,75 +1654,85 @@ class _ChatNewResumeCreationScreenState
       );
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end, // Keeps send button aligned to bottom as box expands
-      children: [
-        Expanded(
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeInOut,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
-              decoration: BoxDecoration(
-                color: AppColors.chatGradient3,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: TextField(
-                controller: chatTextController,
-                focusNode: chatFocusNode,
-                minLines: 1, // Starts at 1 line
-                maxLines: 5, // Expands up to 5 lines dynamically
-                keyboardType: TextInputType.multiline,
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  weight: FontWeight.w400,
-                  color: AppColors.whiteColor,
+    return Obx(
+      () => Row(
+        crossAxisAlignment: CrossAxisAlignment.end, // Keeps send button aligned to bottom as box expands
+        children: [
+          Expanded(
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeInOut,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+                decoration: BoxDecoration(
+                  color: AppColors.chatGradient3,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                cursorColor: AppColors.primaryColor,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero, // Allows Container padding to govern layout
-                  hintText: 'Type here...',
-                  hintStyle: AppStyles.customTextStyle(
-                    color: AppColors.chatTextColor,
-                    size: 12,
+                child: TextField(
+                  enabled: !loginController.createNewResumeLoading,
+                  controller: chatTextController,
+                  focusNode: chatFocusNode,
+                  minLines: 1, // Starts at 1 line
+                  maxLines: 5, // Expands up to 5 lines dynamically
+                  keyboardType: TextInputType.multiline,
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w400,
+                    color: AppColors.whiteColor,
                   ),
-                  border: InputBorder.none,
+                  cursorColor: AppColors.primaryColor,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero, // Allows Container padding to govern layout
+                    hintText: loginController.createNewResumeLoading
+                        ? 'Please wait...'
+                        : 'Type here...',
+                    hintStyle: AppStyles.customTextStyle(
+                      color: AppColors.chatTextColor,
+                      size: 12,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                  onSubmitted: (value) async {
+                    if (loginController.createNewResumeLoading) return;
+                    if (selectedOptions.isNotEmpty) {
+                      await sendSelectedOptions();
+                    } else {
+                      await sendTypedMessage();
+                    }
+                  },
                 ),
-                onSubmitted: (value) async {
-                  if (selectedOptions.isNotEmpty) {
-                    await sendSelectedOptions();
-                  } else {
-                    await sendTypedMessage();
-                  }
-                },
               ),
             ),
           ),
-        ),
-        IconButton(
-          icon: Container(
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primaryColor,
+          IconButton(
+            icon: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: loginController.createNewResumeLoading
+                    ? AppColors.disableBorderColor
+                    : AppColors.primaryColor,
+              ),
+              padding: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              child: Icon(
+                CupertinoIcons.location,
+                color: AppColors.whiteColor,
+                size: 22,
+              ),
             ),
-            padding: const EdgeInsets.all(10),
-            alignment: Alignment.center,
-            child:  Icon(
-              CupertinoIcons.location,
-              color: AppColors.whiteColor,
-              size: 22,
-            ),
+            onPressed: loginController.createNewResumeLoading
+                ? null
+                : () async {
+                    if (selectedOptions.isNotEmpty) {
+                      await sendSelectedOptions();
+                    } else {
+                      await sendTypedMessage();
+                    }
+                  },
           ),
-          onPressed: () async {
-            if (selectedOptions.isNotEmpty) {
-              await sendSelectedOptions();
-            } else {
-              await sendTypedMessage();
-            }
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1937,7 +2129,7 @@ class _ChatNewResumeCreationScreenState
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16),
-                        child: _buildSectionFormFields(meta.key),
+                        child: _buildSectionFormFields(meta.key, collected),
                       ),
                     ],
                   ),
@@ -1950,7 +2142,7 @@ class _ChatNewResumeCreationScreenState
     );
   }
 
-  Widget _buildSectionFormFields(String key) {
+  Widget _buildSectionFormFields(String key, ResumeCollectedData? collected) {
     switch (key) {
       case "personal_info":
         return Column(
@@ -1988,6 +2180,13 @@ class _ChatNewResumeCreationScreenState
             CustomTextField(
               controller: _githubCtrl,
               labelText: "GitHub Profile",
+              isNumberKeyboard: false,
+              isProfileFlow: true,
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              controller: _locationCtrl,
+              labelText: "Location",
               isNumberKeyboard: false,
               isProfileFlow: true,
             ),
@@ -2302,20 +2501,781 @@ class _ChatNewResumeCreationScreenState
           ],
         );
       case "internships":
-      case "projects":
-      case "certifications":
-      case "paper_presentations":
-      case "industrial_visits":
+        final internships = collected?.internships ?? [];
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Section details are collected dynamically in the chat or live preview.",
-              style: AppStyles.customTextStyle(
-                size: 13,
-                color: AppColors.chatTextColor,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Internships List",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    final rawList = internships.map((e) => e.toJson()).toList();
+                    _showDynamicFormSheet(
+                      title: "Internship",
+                      fields: const [
+                        DynamicFieldConfig(key: "role", label: "Role / Job Title"),
+                        DynamicFieldConfig(key: "company", label: "Company / Organization"),
+                        DynamicFieldConfig(key: "duration", label: "Duration (e.g. 3 Months)"),
+                        DynamicFieldConfig(key: "description", label: "Description / Key achievements", maxLines: 3),
+                      ],
+                      targetList: rawList,
+                      onSaveCallback: () async {
+                        collected?.internships = rawList.map((e) => NewInternshipData.fromJson(e)).toList();
+                        await updateCompleteSectionInfo();
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add, size: 16, color: AppColors.primaryColor),
+                  label: Text(
+                    "Add",
+                    style: AppStyles.customTextStyle(
+                      size: 13,
+                      color: AppColors.primaryColor,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 8),
+            if (internships.isEmpty)
+              Text(
+                "No internships added yet.",
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: AppColors.chatTextColor,
+                ),
+              )
+            else
+              ...internships.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.fieldBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.fieldBorderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.role ?? "—",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                weight: FontWeight.w700,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon:  Icon(CupertinoIcons.square_pencil, size: 20, color: AppColors.primaryColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  final rawList = internships.map((e) => e.toJson()).toList();
+                                  _showDynamicFormSheet(
+                                    title: "Internship",
+                                    fields: const [
+                                      DynamicFieldConfig(key: "role", label: "Role / Job Title"),
+                                      DynamicFieldConfig(key: "company", label: "Company / Organization"),
+                                      DynamicFieldConfig(key: "duration", label: "Duration (e.g. 3 Months)"),
+                                      DynamicFieldConfig(key: "description", label: "Description / Key achievements", maxLines: 3),
+                                    ],
+                                    targetList: rawList,
+                                    editIndex: index,
+                                    onSaveCallback: () async {
+                                      collected?.internships = rawList.map((e) => NewInternshipData.fromJson(e)).toList();
+                                      await updateCompleteSectionInfo();
+                                    },
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon:  Icon(CupertinoIcons.delete, size: 20, color: AppColors.redColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () async {
+                                  setState(() {
+                                    internships.removeAt(index);
+                                  });
+                                  await updateCompleteSectionInfo();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.company ?? "—",
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.secondaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.duration ?? "—",
+                        style: AppStyles.customTextStyle(
+                          size: 11,
+                          color: AppColors.greyTextColor,
+                        ),
+                      ),
+                      if (item.description != null && item.description!.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          item.description!,
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            color: AppColors.whiteColor.withOpacity(0.8),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }),
+            const SizedBox(height: 10),
+            CustomButtonWidget(
+              buttonText: "Save & Refresh Section",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Section data synced!");
+              },
+            ),
+          ],
+        );
+      case "projects":
+        final projects = collected?.projects ?? [];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Projects List",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    final rawList = projects.map((e) => e.toJson()).toList();
+                    _showDynamicFormSheet(
+                      title: "Project",
+                      fields: const [
+                        DynamicFieldConfig(key: "title", label: "Project Title"),
+                        DynamicFieldConfig(key: "description", label: "Description", maxLines: 4),
+                      ],
+                      targetList: rawList,
+                      onSaveCallback: () async {
+                        collected?.projects = rawList.map((e) => NewProjectData.fromJson(e)).toList();
+                        await updateCompleteSectionInfo();
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add, size: 16, color: AppColors.primaryColor),
+                  label: Text(
+                    "Add",
+                    style: AppStyles.customTextStyle(
+                      size: 13,
+                      color: AppColors.primaryColor,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (projects.isEmpty)
+              Text(
+                "No projects added yet.",
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: AppColors.chatTextColor,
+                ),
+              )
+            else
+              ...projects.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.fieldBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.fieldBgColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.title ?? "—",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                weight: FontWeight.w700,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon:  Icon(CupertinoIcons.square_pencil, size: 20, color: AppColors.primaryColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  final rawList = projects.map((e) => e.toJson()).toList();
+                                  _showDynamicFormSheet(
+                                    title: "Project",
+                                    fields: const [
+                                      DynamicFieldConfig(key: "title", label: "Project Title"),
+                                      DynamicFieldConfig(key: "description", label: "Description", maxLines: 4),
+                                    ],
+                                    targetList: rawList,
+                                    editIndex: index,
+                                    onSaveCallback: () async {
+                                      collected?.projects = rawList.map((e) => NewProjectData.fromJson(e)).toList();
+                                      await updateCompleteSectionInfo();
+                                    },
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon:  Icon(CupertinoIcons.delete, size: 20, color: AppColors.redColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () async {
+                                  setState(() {
+                                    projects.removeAt(index);
+                                  });
+                                  await updateCompleteSectionInfo();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      if (item.description != null && item.description!.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          item.description!.join("\n"),
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            color: AppColors.whiteColor.withOpacity(0.8),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }),
+            const SizedBox(height: 10),
+            CustomButtonWidget(
+              buttonText: "Save & Refresh Section",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Section data synced!");
+              },
+            ),
+          ],
+        );
+      case "certifications":
+        final certifications = collected?.certifications ?? [];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Certifications List",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    final rawList = certifications.map((e) => e.toJson()).toList();
+                    _showDynamicFormSheet(
+                      title: "Certification",
+                      fields: const [
+                        DynamicFieldConfig(key: "name", label: "Certification Name"),
+                        DynamicFieldConfig(key: "issuer", label: "Issuer"),
+                        DynamicFieldConfig(key: "date", label: "Date / Year"),
+                      ],
+                      targetList: rawList,
+                      onSaveCallback: () async {
+                        collected?.certifications = rawList.map((e) => Certification.fromJson(e)).toList();
+                        await updateCompleteSectionInfo();
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add, size: 16, color: AppColors.primaryColor),
+                  label: Text(
+                    "Add",
+                    style: AppStyles.customTextStyle(
+                      size: 13,
+                      color: AppColors.primaryColor,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (certifications.isEmpty)
+              Text(
+                "No certifications added yet.",
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: AppColors.chatTextColor,
+                ),
+              )
+            else
+              ...certifications.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.fieldBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.fieldBorderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.name ?? "—",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                weight: FontWeight.w700,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(CupertinoIcons.square_pencil, size: 20, color: AppColors.primaryColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  final rawList = certifications.map((e) => e.toJson()).toList();
+                                  _showDynamicFormSheet(
+                                    title: "Certification",
+                                    fields: const [
+                                      DynamicFieldConfig(key: "name", label: "Certification Name"),
+                                      DynamicFieldConfig(key: "issuer", label: "Issuer"),
+                                      DynamicFieldConfig(key: "date", label: "Date / Year"),
+                                    ],
+                                    targetList: rawList,
+                                    editIndex: index,
+                                    onSaveCallback: () async {
+                                      collected?.certifications = rawList.map((e) => Certification.fromJson(e)).toList();
+                                      await updateCompleteSectionInfo();
+                                    },
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: Icon(CupertinoIcons.delete, size: 20, color: AppColors.redColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () async {
+                                  setState(() {
+                                    certifications.removeAt(index);
+                                  });
+                                  await updateCompleteSectionInfo();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.issuer ?? "—",
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.secondaryColor,
+                        ),
+                      ),
+                      if (item.date != null && item.date!.toString().isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          item.date!.toString(),
+                          style: AppStyles.customTextStyle(
+                            size: 11,
+                            color: AppColors.greyTextColor,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }),
+            const SizedBox(height: 10),
+            CustomButtonWidget(
+              buttonText: "Save & Refresh Section",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Section data synced!");
+              },
+            ),
+          ],
+        );
+      case "paper_presentations":
+        final papers = collected?.paperPresentations ?? [];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Paper Presentations List",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    final rawList = papers.map((e) => e.toJson()).toList();
+                    _showDynamicFormSheet(
+                      title: "Paper Presentation",
+                      fields: const [
+                        DynamicFieldConfig(key: "title", label: "Paper Title"),
+                        DynamicFieldConfig(key: "event", label: "Event Name / Organizer"),
+                        DynamicFieldConfig(key: "year", label: "Year"),
+                        DynamicFieldConfig(key: "description", label: "Description / Key details", maxLines: 3),
+                      ],
+                      targetList: rawList,
+                      onSaveCallback: () async {
+                        collected?.paperPresentations = rawList.map((e) => NewPaperPresentation.fromJson(e)).toList();
+                        await updateCompleteSectionInfo();
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add, size: 16, color: AppColors.primaryColor),
+                  label: Text(
+                    "Add",
+                    style: AppStyles.customTextStyle(
+                      size: 13,
+                      color: AppColors.primaryColor,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (papers.isEmpty)
+              Text(
+                "No paper presentations added yet.",
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: AppColors.chatTextColor,
+                ),
+              )
+            else
+              ...papers.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.fieldBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.fieldBorderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.title ?? "—",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                weight: FontWeight.w700,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(CupertinoIcons.square_pencil, size: 20, color: AppColors.primaryColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  final rawList = papers.map((e) => e.toJson()).toList();
+                                  _showDynamicFormSheet(
+                                    title: "Paper Presentation",
+                                    fields: const [
+                                      DynamicFieldConfig(key: "title", label: "Paper Title"),
+                                      DynamicFieldConfig(key: "event", label: "Event Name / Organizer"),
+                                      DynamicFieldConfig(key: "year", label: "Year"),
+                                      DynamicFieldConfig(key: "description", label: "Description / Key details", maxLines: 3),
+                                    ],
+                                    targetList: rawList,
+                                    editIndex: index,
+                                    onSaveCallback: () async {
+                                      collected?.paperPresentations = rawList.map((e) => NewPaperPresentation.fromJson(e)).toList();
+                                      await updateCompleteSectionInfo();
+                                    },
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon:  Icon(CupertinoIcons.delete, size: 20, color: AppColors.redColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () async {
+                                  setState(() {
+                                    papers.removeAt(index);
+                                  });
+                                  await updateCompleteSectionInfo();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.event ?? "—",
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.secondaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.year ?? "—",
+                        style: AppStyles.customTextStyle(
+                          size: 11,
+                          color: AppColors.greyTextColor,
+                        ),
+                      ),
+                      if (item.description != null && item.description!.isNotEmpty) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          item.description!,
+                          style: AppStyles.customTextStyle(
+                            size: 12,
+                            color: AppColors.whiteColor.withOpacity(0.8),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }),
+            const SizedBox(height: 10),
+            CustomButtonWidget(
+              buttonText: "Save & Refresh Section",
+              isLoading: registerController.updateChatProfileLoading,
+              buttonFunction: () async {
+                await updateCompleteSectionInfo();
+                AppAlertUtils.showToast(message: "Section data synced!");
+              },
+            ),
+          ],
+        );
+      case "industrial_visits":
+        final visits = collected?.industrialVisits ?? [];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Industrial Visits List",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    weight: FontWeight.w600,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    final rawList = visits.map((e) => e.toJson()).toList();
+                    _showDynamicFormSheet(
+                      title: "Industrial Visit",
+                      fields: const [
+                        DynamicFieldConfig(key: "company", label: "Company / Location Visited"),
+                        //DynamicFieldConfig(key: "location", label: "City / Area"),
+                        DynamicFieldConfig(key: "date", label: "Date / Year"),
+                      ],
+                      targetList: rawList,
+                      onSaveCallback: () async {
+                        collected?.industrialVisits = rawList.map((e) => NewIndustrialVisit.fromJson(e)).toList();
+                        await updateCompleteSectionInfo();
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add, size: 16, color: AppColors.primaryColor),
+                  label: Text(
+                    "Add",
+                    style: AppStyles.customTextStyle(
+                      size: 13,
+                      color: AppColors.primaryColor,
+                      weight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (visits.isEmpty)
+              Text(
+                "No industrial visits added yet.",
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: AppColors.chatTextColor,
+                ),
+              )
+            else
+              ...visits.asMap().entries.map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.fieldBgColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.fieldBgColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.company ?? "—",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                weight: FontWeight.w700,
+                                color: AppColors.whiteColor,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon:  Icon(CupertinoIcons.square_pencil, size: 20, color: AppColors.primaryColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () {
+                                  final rawList = visits.map((e) => e.toJson()).toList();
+                                  _showDynamicFormSheet(
+                                    title: "Industrial Visit",
+                                    fields: const [
+                                      DynamicFieldConfig(key: "company", label: "Company / Location Visited"),
+                                      //DynamicFieldConfig(key: "location", label: "City / Area"),
+                                      DynamicFieldConfig(key: "date", label: "Date / Year"),
+                                    ],
+                                    targetList: rawList,
+                                    editIndex: index,
+                                    onSaveCallback: () async {
+                                      collected?.industrialVisits = rawList.map((e) => NewIndustrialVisit.fromJson(e)).toList();
+                                      await updateCompleteSectionInfo();
+                                    },
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon:  Icon(CupertinoIcons.delete, size: 20, color: AppColors.redColor),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                onPressed: () async {
+                                  setState(() {
+                                    visits.removeAt(index);
+                                  });
+                                  await updateCompleteSectionInfo();
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.location ?? "—",
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.secondaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.date ?? "—",
+                        style: AppStyles.customTextStyle(
+                          size: 11,
+                          color: AppColors.greyTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
             const SizedBox(height: 10),
             CustomButtonWidget(
               buttonText: "Save & Refresh Section",
@@ -2428,4 +3388,74 @@ class _ChatNewResumeCreationScreenState
       ),
     );
   }
+
+  void _showDynamicFormSheet({
+    required String title,
+    required List<DynamicFieldConfig> fields,
+    required List<Map<String, dynamic>> targetList,
+    int? editIndex,
+    required VoidCallback onSaveCallback,
+  }) {
+    final controllers = <String, TextEditingController>{};
+
+    for (final field in fields) {
+      controllers[field.key] = TextEditingController(
+        text: editIndex != null
+            ? targetList[editIndex][field.key]?.toString() ?? ''
+            : '',
+      );
+    }
+
+    ProfileWidgets.showBottomSheet(
+      context: context,
+      title: editIndex != null ? 'Edit $title' : 'Add $title',
+      content: SingleChildScrollView(
+        child: Column(
+          spacing: 12,
+          children: fields.map((field) {
+            return CustomTextField(
+              isNumberKeyboard: field.isNumber,
+              isProfileFlow: true,
+              controller: controllers[field.key]!,
+              labelText: field.label,
+              maxLines: field.maxLines,
+              onChanged: (_) {},
+            );
+          }).toList(),
+        ),
+      ),
+      onSave: () {
+        final data = <String, dynamic>{};
+
+        for (final field in fields) {
+          data[field.key] = controllers[field.key]!.text.trim();
+        }
+
+        setState(() {
+          if (editIndex != null) {
+            targetList[editIndex] = data;
+          } else {
+            targetList.add(data);
+          }
+        });
+
+        onSaveCallback();
+        Get.back();
+      },
+    );
+  }
+}
+
+class DynamicFieldConfig {
+  final String key;
+  final String label;
+  final bool isNumber;
+  final int maxLines;
+
+  const DynamicFieldConfig({
+    required this.key,
+    required this.label,
+    this.isNumber = false,
+    this.maxLines = 1,
+  });
 }

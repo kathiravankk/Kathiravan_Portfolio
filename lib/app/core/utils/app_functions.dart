@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
@@ -337,6 +338,66 @@ class AppFunctions {
     }
 
     return fullName;
+  }
+
+  /// Parsers and sanitizes programming skills into a clean List<String>.
+  /// Handles stringified JSON arrays, nested lists, comma-separated strings, etc.
+  static List<String> parseSkillsList(dynamic value) {
+    if (value == null) return [];
+
+    if (value is String) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) return [];
+      if (trimmed.startsWith('[')) {
+        try {
+          final decoded = jsonDecode(trimmed);
+          return parseSkillsList(decoded);
+        } catch (_) {}
+      }
+      return trimmed
+          .split(',')
+          .map((e) => e.replaceAll(RegExp(r'[\[\]\\"]'), '').trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+
+    if (value is List) {
+      final List<String> result = [];
+      for (var item in value) {
+        if (item == null) continue;
+        if (item is List) {
+          result.addAll(parseSkillsList(item));
+        } else if (item is String) {
+          final trimmed = item.trim();
+          if (trimmed.startsWith('[')) {
+            try {
+              final decoded = jsonDecode(trimmed);
+              result.addAll(parseSkillsList(decoded));
+            } catch (_) {
+              final cleaned = trimmed
+                  .replaceAll('[', '')
+                  .replaceAll(']', '')
+                  .replaceAll('"', '')
+                  .replaceAll('\\', '')
+                  .split(',')
+                  .map((e) => e.trim())
+                  .where((e) => e.isNotEmpty);
+              result.addAll(cleaned);
+            }
+          } else if (trimmed.isNotEmpty) {
+            result.add(trimmed);
+          }
+        } else {
+          final str = item.toString().trim();
+          if (str.isNotEmpty) result.add(str);
+        }
+      }
+      // Deduplicate preserving order
+      final seen = <String>{};
+      return result.where((e) => seen.add(e)).toList();
+    }
+
+    return [];
   }
 }
 
