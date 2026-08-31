@@ -530,7 +530,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                           viewFunc: () {
                             AppFunctions.navigateScreen(
                               context,
-                              AppRoutes.resumeTemplatePreviewScreen,
+                              AppRoutes.recruiterResumePreviewScreen,
                               arguments: {
                                 "templateId": int.parse(
                                   studentData!.templateNumber?.isNotEmpty ==
@@ -538,47 +538,50 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
                                       ? studentData!.templateNumber!
                                       : "1",
                                 ),
-                                "resumeData": ExtractedResumeDataModel(
-                                  personalInfo: PersonalInfoModel(
-                                    name: studentData!.studName ?? "",
-                                    email: studentData!.studEmail ?? "",
-                                    phone: studentData!.studMobileNo ?? "",
-                                    github: studentData!.github ?? "",
-                                    linkedIn: studentData!.linkedIn ?? "",
-                                    location: studentData!.location ?? "",
-                                    gender: "",
-                                  ),
-                                  profileSummary:
-                                      studentData!.profileSummary ?? "",
-                                  skills: studentData!.studProgrammingLang,
-                                  certifications:
-                                      studentData!.studentCertificate,
-                                  educationData: studentData!.education,
-                                  colleges: studentData!.college,
-                                  internships: studentData!.internships,
-                                  experience: studentData!.experience,
-                                  projects: studentData!.projects,
-                                  hobbies: studentData!.hobbies,
-                                  achievements: studentData!.achievements,
-                                  publications: studentData!.publications,
-                                  volunteerExperience:
-                                      studentData!.volunteerExperience,
-                                  workShops: studentData!.workshops,
-                                  paperPresentations:
-                                      studentData!.paperPresentations,
-                                  industrialVisits:
-                                      studentData!.industrialVisits,
-                                  languages: studentData!.languagesKnown,
-                                  areasOfInterest: studentData!.areasOfInterest,
-                                  leaderships: studentData!.leadership,
-                                  studentId: studentData!.id,
-                                  higherSecondary: studentData!
-                                      .education
-                                      ?.school
-                                      ?.higherSecondary,
-                                  secondary:
-                                      studentData!.education?.school?.secondary,
-                                ),
+                                "studentId": studentData!.id!.isNotEmpty == true
+                                    ? studentData!.id!
+                                    : "",
+                                // "resumeData": ExtractedResumeDataModel(
+                                //   personalInfo: PersonalInfoModel(
+                                //     name: studentData!.studName ?? "",
+                                //     email: studentData!.studEmail ?? "",
+                                //     phone: studentData!.studMobileNo ?? "",
+                                //     github: studentData!.github ?? "",
+                                //     linkedIn: studentData!.linkedIn ?? "",
+                                //     location: studentData!.location ?? "",
+                                //     gender: "",
+                                //   ),
+                                //   profileSummary:
+                                //       studentData!.profileSummary ?? "",
+                                //   skills: studentData!.studProgrammingLang,
+                                //   certifications:
+                                //       studentData!.studentCertificate,
+                                //   educationData: studentData!.education,
+                                //   colleges: studentData!.college,
+                                //   internships: studentData!.internships,
+                                //   experience: studentData!.experience,
+                                //   projects: studentData!.projects,
+                                //   hobbies: studentData!.hobbies,
+                                //   achievements: studentData!.achievements,
+                                //   publications: studentData!.publications,
+                                //   volunteerExperience:
+                                //       studentData!.volunteerExperience,
+                                //   workShops: studentData!.workshops,
+                                //   paperPresentations:
+                                //       studentData!.paperPresentations,
+                                //   industrialVisits:
+                                //       studentData!.industrialVisits,
+                                //   languages: studentData!.languagesKnown,
+                                //   areasOfInterest: studentData!.areasOfInterest,
+                                //   leaderships: studentData!.leadership,
+                                //   studentId: studentData!.id,
+                                //   higherSecondary: studentData!
+                                //       .education
+                                //       ?.school
+                                //       ?.higherSecondary,
+                                //   secondary:
+                                //       studentData!.education?.school?.secondary,
+                                // ),
                               },
                             );
                           },
@@ -959,7 +962,7 @@ class _ApplicantActionsScreenState extends State<ApplicantActionsScreen> {
             "Applicant Actions",
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w700,
             ),
           ),

@@ -164,6 +164,8 @@ class AppApiUrls {
   static String sendCoordinatorOtp = "${baseUrl}sendcoordinatorotp";
   static String verifyCoordinatorOtp = "${baseUrl}verifycoordinatorotp";
   static String giveRecruiterReview = "${baseUrl}recruiterreview";
+  static String getAllCoordinators = "${baseUrl}coordinators";
+  static String deleteCoordinator(String coId) => "${baseUrl}coordinator/$coId";
 
 
 }

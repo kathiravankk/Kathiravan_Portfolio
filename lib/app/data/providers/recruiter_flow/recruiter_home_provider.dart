@@ -7,6 +7,7 @@ import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/coordinator_data_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
@@ -409,8 +410,11 @@ class RecruiterHomeProvider {
       responseStatus = response.statusCode!;
       return InternStudentProfileModel.fromJson(response.data);
     } on DioException catch (err) {
-      responseStatus = err.response!.statusCode!;
-      return InternStudentProfileModel.fromJson(err.response!.data);
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null) {
+        return InternStudentProfileModel.fromJson(err.response!.data);
+      }
+      rethrow;
     }
   }
 
@@ -434,6 +438,62 @@ class RecruiterHomeProvider {
       return RecruiterPaymentHistoryModel.fromJson(err.response!.data);
     }
   }
-  
-  
+
+  // GET COORDINATOR LIST
+
+  Future<CoordinatorDataListModel> fetchCoordinatorList({
+    int page = 1,
+    int limit = 10,
+    String search = "",
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Map<String, dynamic> queryParams = {
+        'page': page,
+        'limit': limit,
+      };
+      if (search.isNotEmpty) {
+        queryParams['search'] = search;
+      }
+      Response response = await client!.get(
+        AppApiUrls.getAllCoordinators,
+        queryParameters: queryParams,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return CoordinatorDataListModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null) {
+        return CoordinatorDataListModel.fromJson(err.response!.data);
+      }
+      rethrow;
+    }
+  }
+
+  // DELETE COORDINATOR
+
+  Future<CommonLoginOtpModel> deleteCoordinator({required String id}) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.delete(
+        AppApiUrls.deleteCoordinator(id),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null) {
+        return CommonLoginOtpModel.fromJson(err.response!.data);
+      }
+      rethrow;
+    }
+  }
 }

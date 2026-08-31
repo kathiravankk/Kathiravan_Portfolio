@@ -1485,6 +1485,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               const SizedBox(height: 5),
               CustomTextField(
                 isProfileFlow: true,
+                isNumberKeyboard: false,
                 controller: collegeInstitutionCtrl,
                 labelText: 'Institution',
                 onChanged: (_) {},

@@ -25,12 +25,17 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
   }
 
   String? recruiterId = "";
+  String userType = "";
 
   final RecruiterHomeController homeController =
       Get.find<RecruiterHomeController>();
 
   Future<void> getProfileData() async {
     recruiterId = await LocalStorageService.getRecruiterId();
+    userType = await LocalStorageService.getUserType() ?? "";
+    if (mounted) {
+      setState(() {});
+    }
     try {
       await homeController.getRecruiterProfileData(recruiterId: recruiterId!);
       if (homeController.getResponseCode() == 200 ||
@@ -208,6 +213,18 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                         );
                       },
                     ),
+                    if (userType.isEmpty || userType.toLowerCase() == "recruiter") ...[
+                      CardWidgets.settingsTile(
+                        icon: Icons.people_alt_outlined,
+                        title: "Coordinator Management",
+                        onTap: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.coordinatorListScreen,
+                          );
+                        },
+                      ),
+                    ],
 
                     const Spacer(),
 

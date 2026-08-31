@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/coordinator_data_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_login_model.dart';
 
 class RecruiterLoginProvider {
@@ -91,6 +92,26 @@ class RecruiterLoginProvider {
     } on DioException catch (err) {
       responseStatus = err.response!.statusCode!;
       return CommonLoginOtpModel.fromJson(err.response!.data);
+    }
+  }
+
+  // GET COORDINATOR LIST
+
+  Future<CoordinatorDataListModel> fetchCoordinatorList() async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getAllCoordinators,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return CoordinatorDataListModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return CoordinatorDataListModel.fromJson(err.response!.data);
     }
   }
 

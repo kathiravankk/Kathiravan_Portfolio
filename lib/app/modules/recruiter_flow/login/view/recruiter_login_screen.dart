@@ -285,6 +285,9 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
       if (loginController.getResponseCode() == 200 ||
           loginController.getResponseCode() == 201) {
         if (loginController.commonPostModel.userType != "student") {
+          final String userType =
+              loginController.commonPostModel.userType ?? "recruiter";
+          await LocalStorageService.saveUserType(userType: userType);
           AppAlertUtils.showToast(
             message:
             loginController.commonPostModel.message ??
@@ -345,6 +348,8 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
           await LocalStorageService.saveRecruiterCreditId(
             creditId: recruiter?.recruiterCreditId ?? "",
           );
+
+          await LocalStorageService.saveUserType(userType: "coordinator");
         } else {
           // Recruiter Login (Old API)
           await LocalStorageService.saveRecruiterId(
@@ -354,7 +359,12 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
           await LocalStorageService.saveRecruiterCreditId(
             creditId: recruiter?.recruiterCreditId ?? "",
           );
+
+          final String userType =
+              loginController.commonPostModel.userType ?? "recruiter";
+          await LocalStorageService.saveUserType(userType: userType);
         }
+
         AppAlertUtils.showToast(
           message:
           loginController.recruiterLoginModel.message ??

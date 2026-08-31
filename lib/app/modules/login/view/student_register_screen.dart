@@ -456,7 +456,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
                     child: Icon(
                       isReferralSubmitted
                           ? CupertinoIcons.square_pencil_fill
-                          : CupertinoIcons.check_mark,
+                          : Icons.check_sharp,
                       color: AppColors.whiteColor,
                       size: 30,
                     ),
@@ -548,7 +548,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           Obx(
             () => _buildContinueButton(
               enabled: mobileOtpController.text.length == 4,
-              isLoading: registerController.verifyMobileOtpLoading,
+              isLoading: registerController.verifyMobileOtpLoading || registerController.sendEmailOtpLoading,
               onTap: _onStep1Continue,
             ),
           ),
@@ -812,6 +812,10 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
 
   String? fcmToken = "";
 
+  List<List<String>> convertToNestedList(List<String> values) {
+    return values.map((e) => [e]).toList();
+  }
+
   Future<void> _studentRegisterFunc() async {
     fcmToken = await LocalStorageService.getFcmToken() ?? "";
     final resumePath = await ResumeStorageService.getResumePath();
@@ -839,7 +843,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
         filename: resumePath.split('/').last,
         contentType: MediaType("application", "pdf"),
       ),
-      "studprogramminglang": extractedData.skills ?? [],
+      "studprogramminglang": convertToNestedList(extractedData.skills ?? []),
       "college": jsonEncode(extractedData.education?.college ?? []),
     };
 

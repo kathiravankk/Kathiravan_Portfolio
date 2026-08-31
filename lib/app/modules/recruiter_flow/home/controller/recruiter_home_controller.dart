@@ -5,6 +5,7 @@ import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/certificate_generate_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/coordinator_data_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
@@ -736,6 +737,7 @@ class RecruiterHomeController extends GetxController {
       internProfileModel = await recruiterHomeProvider!.fetchInternProfileData(
         studentId: studentId,
       );
+      internProfileLoading = false;
     } catch (err) {
       rethrow;
     } finally {
@@ -921,4 +923,131 @@ class RecruiterHomeController extends GetxController {
       }),
     );
   }
+
+  //  COORDINATOR MANAGEMENT
+  
+  final _getCoordinatorLoading = false.obs;
+  bool get getCoordinatorLoading => _getCoordinatorLoading.value;
+  set getCoordinatorLoading(bool value) => _getCoordinatorLoading.value = value;
+
+  final _getCoordinatorLoadingMore = false.obs;
+  bool get getCoordinatorLoadingMore => _getCoordinatorLoadingMore.value;
+  set getCoordinatorLoadingMore(bool value) => _getCoordinatorLoadingMore.value = value;
+
+  final _deleteCoordinatorLoading = false.obs;
+  bool get deleteCoordinatorLoading => _deleteCoordinatorLoading.value;
+  set deleteCoordinatorLoading(bool value) => _deleteCoordinatorLoading.value = value;
+
+  final _coordinatorHasMore = false.obs;
+  bool get coordinatorHasMore => _coordinatorHasMore.value;
+
+  int _coordinatorCurrentPage = 1;
+  int get coordinatorCurrentPage => _coordinatorCurrentPage;
+
+  final _coordinatorModel = CoordinatorDataListModel().obs;
+  CoordinatorDataListModel get coordinatorModel => _coordinatorModel.value;
+  set coordinatorModel(CoordinatorDataListModel value) => _coordinatorModel.value = value;
+
+  final RxList<CoordinatorData> coordinatorList = <CoordinatorData>[].obs;
+  final RxList<CoordinatorData> filteredCoordinatorList = <CoordinatorData>[].obs;
+  final RxString coordinatorSearchQuery = "".obs;
+  final TextEditingController coordinatorSearchController = TextEditingController();
+
+  Future<void> getCoordinatorList({
+    bool isLoadMore = false,
+    String search = "",
+  }) async {
+    try {
+      if (isLoadMore) {
+        getCoordinatorLoadingMore = true;
+      } else {
+        getCoordinatorLoading = true;
+        _coordinatorCurrentPage = 1;
+      }
+
+      final pageToFetch = isLoadMore ? _coordinatorCurrentPage + 1 : 1;
+      final resultModel = await recruiterHomeProvider!.fetchCoordinatorList(
+        page: pageToFetch,
+        limit: 10,
+        search: search,
+      );
+
+      coordinatorModel = resultModel;
+      final newData = coordinatorModel.coordinatorList ?? [];
+
+      if (isLoadMore) {
+        coordinatorList.addAll(newData);
+        _coordinatorCurrentPage++;
+      } else {
+        coordinatorList.assignAll(newData);
+      }
+
+      final pagination = coordinatorModel.pagination;
+      if (pagination != null) {
+        final current = pagination.current ?? _coordinatorCurrentPage;
+        final totalPages = pagination.total ?? (current + (newData.isEmpty ? 0 : 1));
+        _coordinatorHasMore.value = current < totalPages;
+      } else {
+        _coordinatorHasMore.value = newData.length >= 10;
+      }
+
+      filterCoordinators(coordinatorSearchController.text.trim());
+    } catch (err) {
+      rethrow;
+    } finally {
+      if (isLoadMore) {
+        getCoordinatorLoadingMore = false;
+      } else {
+        getCoordinatorLoading = false;
+      }
+    }
+  }
+
+  void filterCoordinators(String query) {
+    coordinatorSearchQuery.value = query;
+    if (query.trim().isEmpty) {
+      filteredCoordinatorList.assignAll(coordinatorList);
+    } else {
+      final q = query.toLowerCase().trim();
+      filteredCoordinatorList.assignAll(
+        coordinatorList.where((item) {
+          final name = (item.name ?? "").toLowerCase();
+          final email = (item.email ?? "").toLowerCase();
+          final mobile = (item.mobile ?? "").toLowerCase();
+          final role = (item.role ?? "").toLowerCase();
+          return name.contains(q) ||
+              email.contains(q) ||
+              mobile.contains(q) ||
+              role.contains(q);
+        }).toList(),
+      );
+    }
+  }
+
+  void clearCoordinatorSearch() {
+    coordinatorSearchController.clear();
+    filterCoordinators("");
+  }
+
+  Future<bool> deleteCoordinator(String coordinatorId) async {
+    try {
+      deleteCoordinatorLoading = true;
+      commonPostModel = await recruiterHomeProvider!.deleteCoordinator(id: coordinatorId);
+      deleteCoordinatorLoading = false;
+      final statusCode = getResponseCode();
+      if (statusCode == 200 || statusCode == 201) {
+        coordinatorList.removeWhere((item) => item.id == coordinatorId);
+        filteredCoordinatorList.removeWhere((item) => item.id == coordinatorId);
+        return true;
+
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    } finally {
+      deleteCoordinatorLoading = false;
+    }
+  }
 }
+

@@ -42,9 +42,11 @@ import 'package:internsharks/app/modules/profile/view/student_credit_history_scr
 import 'package:internsharks/app/modules/profile/view/student_purchase_history_screen.dart';
 import 'package:internsharks/app/modules/profile/view/student_transaction_history_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/binding/recruiter_home_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/coordinator_list_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/credit_consumption_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/intern_profile_view.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_certificate_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_resume_preview_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_transaction_history_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_credits_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_profile_screen.dart';
@@ -423,6 +425,14 @@ class AppPages {
     appPage(
       name: AppRoutes.recruiterSettingScreen,
       page: () => RecruiterSettingScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterResumePreviewScreen,
+      page: () => RecruiterResumePreviewScreen(),
+    ),
+    appPage(
+      name: AppRoutes.coordinatorListScreen,
+      page: () => CoordinatorListScreen(),
     ),
   ];
 }
