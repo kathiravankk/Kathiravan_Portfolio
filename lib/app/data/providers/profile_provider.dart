@@ -12,6 +12,7 @@ import 'package:internsharks/app/data/models/home/profile_information_model.dart
 import 'package:internsharks/app/data/models/home/remove_watermark_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 import '../models/account/common_login_model.dart';
+import '../models/home/recruiter_review_model.dart';
 
 class ProfileProvider {
   final Dio? client;
@@ -334,4 +335,27 @@ class ProfileProvider {
       return StudentPurchaseHistoryModel.fromJson(err.response!.data);
     }
   }
+
+  // GET RECRUITER REVIEW FOR STUDENT
+
+  Future<RecruiterReviewModel> fetchRecruiterReviewForStudent({
+    required String jobId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getRecruiterReviewForStudent(jobId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterReviewModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response!.statusCode!;
+      return RecruiterReviewModel.fromJson(err.response!.data);
+    }
+  }
 }
+

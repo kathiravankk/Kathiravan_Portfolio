@@ -14,6 +14,7 @@ import 'package:internsharks/app/data/models/home/profile_information_model.dart
 import 'package:internsharks/app/data/models/home/remove_watermark_model.dart';
 import 'package:internsharks/app/data/models/home/saved_internship_model.dart';
 import 'package:internsharks/app/data/providers/profile_provider.dart';
+import 'package:internsharks/app/data/models/home/recruiter_review_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/view/resume_template_preview_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -599,4 +600,32 @@ class ProfileController extends GetxController {
       }),
     );
   }
+
+  // GET RECRUITER REVIEW FOR STUDENT
+
+  final _recruiterReviewLoading = false.obs;
+
+  bool get recruiterReviewLoading => _recruiterReviewLoading.value;
+
+  set recruiterReviewLoading(bool value) => _recruiterReviewLoading.value = value;
+
+  final _recruiterReviewModel = RecruiterReviewModel().obs;
+
+  RecruiterReviewModel get recruiterReviewModel => _recruiterReviewModel.value;
+
+  set recruiterReviewModel(RecruiterReviewModel value) =>
+      _recruiterReviewModel.value = value;
+
+  Future<void> getRecruiterReview({required String jobId}) async {
+    try {
+      recruiterReviewLoading = true;
+      recruiterReviewModel = await profileProvider!
+          .fetchRecruiterReviewForStudent(jobId: jobId);
+      recruiterReviewLoading = false;
+    } catch (err) {
+      recruiterReviewLoading = false;
+      rethrow;
+    }
+  }
 }
+

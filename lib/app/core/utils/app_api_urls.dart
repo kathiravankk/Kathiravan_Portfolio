@@ -22,7 +22,8 @@ class AppApiUrls {
       "${baseUrl}student/new-student-register";
   static const String updateStudentRegisterData =
       "${baseUrl}student/update-new-student-register";
-  static const updateChatProfile = "${baseUrl}student/update-new-student-register";
+  static const updateChatProfile =
+      "${baseUrl}student/update-new-student-register";
   static const String getStudentProfile = "${baseUrl}student/getById";
   static const String analyzeResumeScore = "${baseUrl}analyze-resume-score";
   static const String updateResumeData = "${baseUrl}enhance-resume";
@@ -31,7 +32,7 @@ class AppApiUrls {
   static const String createNewChatResume = "${baseUrl}resumechatbot";
   static const String templateRefresh = "${baseUrl}reduceresrefresh";
   static const String chatResumeCredit = "${baseUrl}reduceresumecredit";
-  static  String getCreditData(String creditId) => "${baseUrl}credit/$creditId";
+  static String getCreditData(String creditId) => "${baseUrl}credit/$creditId";
 
   //DASHBOARD FLOW
   static const String getCategoryList = "${baseUrl}industry/getindustrylist";
@@ -93,10 +94,10 @@ class AppApiUrls {
   static String removeWaterMark = "${baseUrl}removewater";
   static String bannerLike = "${baseUrl}studentlike";
   static String studentDeleteAccount = "${baseUrl}student/delete";
-  static String getStudentCreditHistory(String studentId, int page)=> "${baseUrl}student/getallfreecredittransaction/$studentId?page=$page&limit=10";
-  static String getStudentPurchaseHistory(int page,int limit )=> "${baseUrl}getallcreditpayment?page=$page&limit=$limit";
-
-
+  static String getStudentCreditHistory(String studentId, int page) =>
+      "${baseUrl}student/getallfreecredittransaction/$studentId?page=$page&limit=10";
+  static String getStudentPurchaseHistory(int page, int limit) =>
+      "${baseUrl}getallcreditpayment?page=$page&limit=$limit";
 
   // INTERNSHIP FLOW
 
@@ -112,7 +113,8 @@ class AppApiUrls {
   static String addFeedbackReview = "${baseUrl}job/review";
   static String saveTestResult = "${baseUrl}savetestresult";
   static String getAllCertificates = "${baseUrl}getcertificate";
-  static String getStudentMcqResult(String studentId, String jobId) => "${baseUrl}get/result?studentId=$studentId&jobId=$jobId";
+  static String getStudentMcqResult(String studentId, String jobId) =>
+      "${baseUrl}get/result?studentId=$studentId&jobId=$jobId";
 
   // INTERNSHIP PAYMENT
 
@@ -133,39 +135,55 @@ class AppApiUrls {
   static String getShortlistedStudents = "${baseUrl}favorite/getfavorites";
   static String addToShortlistedStudents = "${baseUrl}favorite/add";
   static String removeShortlistedStudents = "${baseUrl}favorite/deletefavorite";
-  static String recruiterUpdateProfile = "${baseUrl}recruiter/recruiterregisterupdate";
-  static String getPostedInternships(String recruiterId) => "${baseUrl}jobpost/jobs/$recruiterId";
-  static String getJobApplicants(String jobId, String status) => "${baseUrl}getjob/jobs/$jobId?status=$status";
-  static String getInternStudentProfile(String jobId) => "${baseUrl}student/getstudentdetail?jobId=$jobId";
+  static String recruiterUpdateProfile =
+      "${baseUrl}recruiter/recruiterregisterupdate";
+  static String getPostedInternships(String recruiterId) =>
+      "${baseUrl}jobpost/jobs/$recruiterId";
+  static String getJobApplicants(String jobId, String status) =>
+      "${baseUrl}getjob/jobs/$jobId?status=$status";
+  static String getInternStudentProfile(String jobId) =>
+      "${baseUrl}student/getstudentdetail?jobId=$jobId";
   static String newInternPost = "${baseUrl}jobpost/recruiter-jobpost";
-  static String updateNewInternPost(String jobId) => "${baseUrl}jobpost/job/$jobId";
-  static String sendInternshipRequest = "${baseUrl}favorite/sendapplicationrequest";
-  static String updateApplicationStatus(String applicationId) => "${baseUrl}getjob/updatejobstatus/$applicationId";
-  static String getRecruiterReview(String jobId) => "${baseUrl}job/reviews?jobId=$jobId";
-  static String generateSyllabus= "${baseUrl}generate-syllabus";
-  static String saveSyllabus= "${baseUrl}savesyllabus";
-  static String getSyllabus(String studentId, String jobId)=> "${baseUrl}syllabus/recruiter/$studentId/$jobId";
-  static String getStudentResult(String studentId, String jobId)=> "${baseUrl}getresult?jobId=$jobId&studentId=$studentId";
-  static String getIssuedCertificate(String studentId, String jobId)=> "${baseUrl}viewstudentcertificate?jobId=$jobId&studentId=$studentId";
-  static String getRecruiterCreditPlans= "${baseUrl}recruiterplan/getallrecruiterplan";
-  static String createRecruiterCreditOrder= "${baseUrl}recruiter/create-order";
-  static String verifyRecruiterCreditOrder= "${baseUrl}recruiter/verify";
-  static String updateSyllabusData= "${baseUrl}updatesyllabus";
-  static String syllabusUpdateChat= "${baseUrl}jsonchatsyllabusupdate";
-  static String generateAiCertificate= "${baseUrl}generate";
-  static String createStipendOrder= "${baseUrl}createstippedpay";
-  static String verifyStipendOrder= "${baseUrl}verifystippedpay";
-  static String getInternProfile= "${baseUrl}student/getstudentdetail";
-  static String getPaymentHistory(int page,int limit )=> "${baseUrl}recbuyhistory?page=$page&limit=$limit";
-  static String getTransactionHistory(String recruiterId, int page)=> "${baseUrl}recruiter/getallcredittransaction/$recruiterId?page=$page&limit=10";
-  static String syllabusDataUpdate(String studentId, String jobId)=> "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
-  static String checkStipendStatus(String studentId, String jobId)=> "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";
+  static String updateNewInternPost(String jobId) =>
+      "${baseUrl}jobpost/job/$jobId";
+  static String sendInternshipRequest =
+      "${baseUrl}favorite/sendapplicationrequest";
+  static String updateApplicationStatus(String applicationId) =>
+      "${baseUrl}getjob/updatejobstatus/$applicationId";
+  static String getRecruiterReview(String jobId) =>
+      "${baseUrl}job/reviews?jobId=$jobId";
+  static String generateSyllabus = "${baseUrl}generate-syllabus";
+  static String saveSyllabus = "${baseUrl}savesyllabus";
+  static String getSyllabus(String studentId, String jobId) =>
+      "${baseUrl}syllabus/recruiter/$studentId/$jobId";
+  static String getStudentResult(String studentId, String jobId) =>
+      "${baseUrl}getresult?jobId=$jobId&studentId=$studentId";
+  static String getIssuedCertificate(String studentId, String jobId) =>
+      "${baseUrl}viewstudentcertificate?jobId=$jobId&studentId=$studentId";
+  static String getRecruiterCreditPlans =
+      "${baseUrl}recruiterplan/getallrecruiterplan";
+  static String createRecruiterCreditOrder = "${baseUrl}recruiter/create-order";
+  static String verifyRecruiterCreditOrder = "${baseUrl}recruiter/verify";
+  static String updateSyllabusData = "${baseUrl}updatesyllabus";
+  static String syllabusUpdateChat = "${baseUrl}jsonchatsyllabusupdate";
+  static String generateAiCertificate = "${baseUrl}generate";
+  static String createStipendOrder = "${baseUrl}createstippedpay";
+  static String verifyStipendOrder = "${baseUrl}verifystippedpay";
+  static String getInternProfile = "${baseUrl}student/getstudentdetail";
+  static String getPaymentHistory(int page, int limit) =>
+      "${baseUrl}recbuyhistory?page=$page&limit=$limit";
+  static String getTransactionHistory(String recruiterId, int page) =>
+      "${baseUrl}recruiter/getallcredittransaction/$recruiterId?page=$page&limit=10";
+  static String syllabusDataUpdate(String studentId, String jobId) =>
+      "${baseUrl}syllabus/updatebyid?studentId=$studentId&jobid=$jobId";
+  static String checkStipendStatus(String studentId, String jobId) =>
+      "${baseUrl}checkstipendstatus?jobId=$jobId&studentId=$studentId";
   static String recruiterDeleteAccount = "${baseUrl}recruiter/delete";
   static String sendCoordinatorOtp = "${baseUrl}sendcoordinatorotp";
   static String verifyCoordinatorOtp = "${baseUrl}verifycoordinatorotp";
   static String giveRecruiterReview = "${baseUrl}recruiterreview";
+  static String getRecruiterReviewForStudent(String jobId) =>
+      "${baseUrl}getrecruiterreviewforstudent?jobId=$jobId";
   static String getAllCoordinators = "${baseUrl}coordinators";
   static String deleteCoordinator(String coId) => "${baseUrl}coordinator/$coId";
-
-
 }

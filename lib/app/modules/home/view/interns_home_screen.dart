@@ -63,7 +63,7 @@ class InternsHomeScreenState extends State<InternsHomeScreen> {
 
   Future<void> getCreditData() async {
     creditId = await LocalStorageService.getStudentCreditId();
-    await registerController.getCreditData(creditId: creditId!);
+    await registerController.getCreditData(creditId: creditId ?? "");
     if (registerController.getResponseCode() == 200 ||
         registerController.getResponseCode() == 201) {
       if (mounted) {

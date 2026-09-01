@@ -444,6 +444,7 @@ class NewStudentProfileModel {
       'github': github ?? '',
       'studdob': studentDob ?? '',
       'location': location ?? '',
+      'role': role ?? '',
       'portfolio_website': github ?? '',
       'profile_summary': profileSummary ?? '',
 

@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_empty_widget.dart';
 import 'package:internsharks/app/core/widgets/custom_tab_bar.dart';
 import 'package:internsharks/app/data/models/home/review_data_model.dart';
+import 'package:internsharks/app/data/models/home/recruiter_review_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/modules/login/controllers/register_controller.dart';
@@ -60,6 +61,9 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
     }
     await dashboardController.getReviewData(jobId: internshipId);
     reviewList = dashboardController.reviewModel.reviewList;
+    if (isStatusFlow) {
+      await profileController.getRecruiterReview(jobId: internshipId);
+    }
   }
 
   List<String> tabNames = ["Internship Details", "About Company", "Reviews"];
@@ -413,11 +417,190 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
               color: AppColors.whiteColor,
             ),
           ),
+          if (isStatusFlow) recruiterFeedbackWidget(),
           const SizedBox(height: 50),
         ],
       ),
     );
   }
+
+  Widget recruiterFeedbackWidget() {
+    return Obx(() {
+      if (profileController.recruiterReviewLoading) {
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: CupertinoActivityIndicator(color: AppColors.secondaryColor),
+          ),
+        );
+      }
+
+      final reviews =
+          profileController.recruiterReviewModel.reviews ?? [];
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
+        children: [
+          const SizedBox(height: 5),
+          Text(
+            "Recruiter's Feedback",
+            style: AppStyles.customTextStyle(
+              size: 16,
+              weight: FontWeight.w700,
+              color: AppColors.secondaryColor,
+            ),
+          ),
+          if (reviews.isEmpty)
+            CustomEmptyWidget()
+          else
+            ...reviews.map((review) => recruiterFeedbackCard(review)),
+        ],
+      );
+    });
+  }
+
+  Widget recruiterFeedbackCard(RecruiterReview review) {
+    final recruiter = review.recruiter;
+    final rating = int.tryParse(review.rating.toString()) ?? 0;
+
+    String formattedDate = '';
+    try {
+      formattedDate = DateFormat("MMMM yyyy")
+          .format(DateTime.parse(review.createdAt ?? ''));
+    } catch (_) {}
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: AppColors.contColor2,
+        border: Border.all(color: AppColors.contBorderColor2),
+      ),
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Recruiter logo
+              ClipOval(
+                child: Image.network(
+                  recruiter?.recCompanyLogo ?? '',
+                  height: 38,
+                  width: 38,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 38,
+                    width: 38,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.contBorderColor2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.person_2_outlined,
+                      size: 22,
+                      color: AppColors.whiteColor,
+                    ),
+                  ),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const SizedBox(
+                      height: 38,
+                      width: 38,
+                      child: Center(
+                        child: CupertinoActivityIndicator(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Recruiter name + date
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 4,
+                  children: [
+                    Text(
+                      (recruiter?.recName ?? 'Recruiter').toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.customTextStyle(
+                        size: 14,
+                        color: AppColors.whiteColor,
+                        weight: FontWeight.w700,
+                      ),
+                    ),
+                    if (formattedDate.isNotEmpty)
+                      Text(
+                        formattedDate,
+                        style: AppStyles.customTextStyle(
+                          size: 12,
+                          color: AppColors.lightColorText,
+                          weight: FontWeight.w400,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              // Star rating
+              Row(
+                children: List.generate(5, (index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 2),
+                    child: Icon(
+                      Icons.star,
+                      size: 18,
+                      color: index < rating
+                          ? AppColors.secondaryColor
+                          : AppColors.whiteColor,
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
+          // Feedback type badge
+          if ((review.feedbackType ?? '').isNotEmpty)
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.primaryColor.withValues(alpha: 0.4),
+                ),
+              ),
+              child: Text(
+                review.feedbackType!,
+                style: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.primaryColor,
+                  weight: FontWeight.w500,
+                ),
+              ),
+            ),
+          // Review text
+          Text(
+            review.review ?? '',
+            style: AppStyles.customTextStyle(
+              size: 14,
+              lineSpace: 1.4,
+              color: AppColors.whiteColor,
+              weight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget buildCompanyWidget() {
     return SingleChildScrollView(
@@ -447,6 +630,7 @@ class _InternshipDetailScreenState extends State<InternshipDetailScreen>
       ),
     );
   }
+
 
   Widget buildReviewWidget() {
     return SingleChildScrollView(

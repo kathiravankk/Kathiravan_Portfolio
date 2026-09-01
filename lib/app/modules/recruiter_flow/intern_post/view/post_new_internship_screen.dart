@@ -214,7 +214,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         homeController.profileModel.recruiterData!.recCompanyWebsite ?? "";
     aboutCompanyController.text =
         homeController.profileModel.recruiterData!.recCompanyDescription ?? "";
-    _existingLogoUrl = homeController.profileModel.recruiterData!.recCompanyLogo ?? "";
+    _existingLogoUrl =
+        homeController.profileModel.recruiterData!.recCompanyLogo ?? "";
   }
 
   void _prefillEditData() {
@@ -1473,42 +1474,48 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   void _showQualificationPicker() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // Enables expandable height if needed
       backgroundColor: AppColors.fieldBgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => StatefulBuilder(
         builder: (context, setSheetState) => SafeArea(
-          child: Wrap(
-            children: List.generate(qualificationOptions.length, (index) {
-              final option = qualificationOptions[index];
-              final isSelected = selectedQualifications.contains(option);
-              return ListTile(
-                title: Text(
-                  option,
-                  style: AppStyles.customTextStyle(
-                    fontFamily: 'Roboto',
-                    color: AppColors.whiteColor,
-                    size: 14,
-                    weight: FontWeight.w500,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(
+              bottom: 24.0,
+            ), // Adds extra space at the bottom
+            child: Wrap(
+              children: List.generate(qualificationOptions.length, (index) {
+                final option = qualificationOptions[index];
+                final isSelected = selectedQualifications.contains(option);
+                return ListTile(
+                  title: Text(
+                    option,
+                    style: AppStyles.customTextStyle(
+                      fontFamily: 'Roboto',
+                      color: AppColors.whiteColor,
+                      size: 14,
+                      weight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                trailing: isSelected
-                    ? const Icon(Icons.check, color: AppColors.primaryColor)
-                    : null,
-                onTap: () {
-                  setSheetState(() {
-                    setState(() {
-                      if (isSelected) {
-                        selectedQualifications.remove(option);
-                      } else {
-                        selectedQualifications.add(option);
-                      }
+                  trailing: isSelected
+                      ? const Icon(Icons.check, color: AppColors.primaryColor)
+                      : null,
+                  onTap: () {
+                    setSheetState(() {
+                      setState(() {
+                        if (isSelected) {
+                          selectedQualifications.remove(option);
+                        } else {
+                          selectedQualifications.add(option);
+                        }
+                      });
                     });
-                  });
-                },
-              );
-            }),
+                  },
+                );
+              }),
+            ),
           ),
         ),
       ),

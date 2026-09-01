@@ -246,7 +246,7 @@ class AppAlertUtils {
                       },
                       buttonText: confirmText,
                       //width: 130,
-                      height: 35,
+                      height: 38,
                     ),
                   ),
                   Expanded(
@@ -258,7 +258,7 @@ class AppAlertUtils {
                       buttonText: cancelText,
                       bgColor: AppColors.disableButtonColor3,
                       //width: 130,
-                      height: 35,
+                      height: 38,
                     ),
                   ),
                 ],
@@ -397,7 +397,7 @@ class AppAlertUtils {
       child: Lottie.asset(
         AssetImages.loadingIndicator,
         height: 200,
-        width: 200
+        width: 200,
       ),
     );
   }

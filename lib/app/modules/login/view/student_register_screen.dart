@@ -303,7 +303,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           CustomTextField(
             controller: mobileController,
             labelText: "Mobile Number",
-            isEnabled: true,
+            isEnabled: false,
             prefixWidget: const Icon(
               Icons.phone,
               color: AppColors.primaryColor,
@@ -325,7 +325,7 @@ class _StudentRegisterScreenState extends State<StudentRegisterScreen> {
           CustomTextField(
             controller: emailController,
             labelText: "Email Address",
-            isEnabled: true,
+            isEnabled: false,
             prefixWidget: const Icon(
               Icons.mail_outline_sharp,
               color: AppColors.primaryColor,

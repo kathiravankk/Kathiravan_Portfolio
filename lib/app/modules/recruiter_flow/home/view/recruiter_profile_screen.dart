@@ -334,7 +334,7 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
           children: [
             Icon(icon, color: iconColor, size: 23),
             SizedBox(
-              height: 25,
+              height: 30,
               child: Text(
                 value,
                 maxLines: 2,

@@ -210,116 +210,154 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Column(
-                          children: [
-                            _buildStatusItem(
-                              iconWidget: Icon(
-                                Icons.check_circle_sharp,
-                                color: AppColors.selectedContColor,
-                                size: 20,
-                              ),
-                              title: 'Applied',
-                              date: AppFunctions.formatIsoDate(
-                                appliedData!.jobData!.createdAt ?? "",
-                              ),
-                              showLine: true,
-                            ),
-                            _buildStatusItem(
-                              iconWidget: Icon(
-                                Icons.check_circle_sharp,
-                                color: AppColors.selectedContColor,
-                                size: 20,
-                              ),
-                              title: 'Application Sent',
-                              date: AppFunctions.formatIsoDate(
-                                appliedData!.jobData!.createdAt ?? "",
-                              ),
-                              showLine: true,
-                            ),
-                            _buildStatusItem(
-                              iconWidget: appliedData!.status != "Applied"
-                                  ? Icon(
+                        Builder(
+                          builder: (context) {
+                            final String statusStr =
+                                (appliedData?.status ?? "").trim();
+                            final String statusLower = statusStr.toLowerCase();
+
+                            final bool isAppliedOnly = statusLower == "applied";
+                            final bool isViewed =
+                                !isAppliedOnly && statusStr.isNotEmpty;
+                            final bool isWaiting = statusLower == "view";
+                            final bool isSelected = statusLower == "selected" ||
+                                statusLower == "shortlisted";
+                            final bool isRejected = statusLower == "rejected";
+                            final bool isCompleted = statusLower == "completed";
+
+                            final bool isFeeJob = (appliedData?.jobType == "Fee" ||
+                                appliedData?.jobType == "fee");
+
+                            return Column(
+                              children: [
+                                _buildStatusItem(
+                                  iconWidget: Icon(
+                                    Icons.check_circle_sharp,
+                                    color: AppColors.selectedContColor,
+                                    size: 20,
+                                  ),
+                                  title: 'Applied',
+                                  date: AppFunctions.formatIsoDate(
+                                    appliedData!.jobData!.createdAt ?? "",
+                                  ),
+                                  showLine: true,
+                                ),
+                                _buildStatusItem(
+                                  iconWidget: Icon(
+                                    Icons.check_circle_sharp,
+                                    color: AppColors.selectedContColor,
+                                    size: 20,
+                                  ),
+                                  title: 'Application Sent',
+                                  date: AppFunctions.formatIsoDate(
+                                    appliedData!.jobData!.createdAt ?? "",
+                                  ),
+                                  showLine: true,
+                                ),
+                                _buildStatusItem(
+                                  iconWidget: isViewed
+                                      ? Icon(
+                                          Icons.check_circle_sharp,
+                                          color: AppColors.selectedContColor,
+                                          size: 20,
+                                        )
+                                      : Icon(
+                                          Icons.circle_outlined,
+                                          color: AppColors.whiteColor,
+                                          size: 20,
+                                        ),
+                                  title: 'Application viewed by recruiter',
+                                  showLine: isViewed,
+                                ),
+                                if (isWaiting)
+                                  _buildStatusItem(
+                                    iconWidget: Icon(
+                                      Icons.access_time,
+                                      color: AppColors.selectedContColor,
+                                      size: 20,
+                                    ),
+                                    title: 'Waiting for Recruiter action',
+                                    showLine: false,
+                                  ),
+                                if (isSelected || isCompleted)
+                                  _buildStatusItem(
+                                    iconWidget: Icon(
                                       Icons.check_circle_sharp,
                                       color: AppColors.selectedContColor,
                                       size: 20,
-                                    )
-                                  : Icon(
-                                      Icons.circle_outlined,
-                                      color: AppColors.whiteColor,
+                                    ),
+                                    title: statusLower == "shortlisted"
+                                        ? 'Shortlisted'
+                                        : 'Selected',
+                                    showLine: (isFeeJob || isCompleted),
+                                  ),
+                                if (isFeeJob && (isSelected || isCompleted))
+                                  _buildStatusItem(
+                                    iconWidget:
+                                        internController
+                                                .paymentStatusModel
+                                                .status ==
+                                            "completed"
+                                        ? Icon(
+                                            Icons.check_circle_sharp,
+                                            color: AppColors.sucTextColor,
+                                            size: 20,
+                                          )
+                                        : Icon(
+                                            Icons.close,
+                                            color: AppColors.failTextColor,
+                                            size: 20,
+                                          ),
+                                    title:
+                                        internController
+                                                .paymentStatusModel
+                                                .status ==
+                                            "completed"
+                                        ? "Payment Completed"
+                                        : "Payment Pending",
+                                    showLine: isCompleted,
+                                  ),
+                                if (isCompleted)
+                                  _buildStatusItem(
+                                    iconWidget: Icon(
+                                      Icons.check_circle_sharp,
+                                      color: AppColors.sucTextColor,
                                       size: 20,
                                     ),
-                              title: 'Application viewed by recruiter',
-                              showLine: appliedData!.status != "Applied"
-                                  ? true
-                                  : false,
-                            ),
-                            Visibility(
-                              visible: appliedData!.status == "View",
-                              child: _buildStatusItem(
-                                iconWidget: appliedData!.status == "View"
-                                    ? Icon(
-                                        Icons.access_time,
-                                        color: AppColors.selectedContColor,
-                                        size: 20,
-                                      )
-                                    : Icon(
-                                        Icons.close,
-                                        color: AppColors.whiteColor,
-                                        size: 20,
-                                      ),
-                                title: appliedData!.status == "View"
-                                    ? "Waiting for Recruiter action"
-                                    : appliedData!.status!,
-                                showLine:
-                                    (appliedData!.status == "Selected" ||
-                                        appliedData!.status == "Shortlisted" ||
-                                        appliedData!.status == "Rejected")
-                                    ? true
-                                    : false,
-                              ),
-                            ),
-                            Visibility(
-                              visible:
-                                  (appliedData!.jobType == "Fee" ||
-                                      appliedData!.jobType == "fee") &&
-                                  (appliedData!.status == "Selected" ||
-                                      appliedData!.status == "Shortlisted"),
-
-                              child: _buildStatusItem(
-                                iconWidget:
-                                    internController
-                                            .paymentStatusModel
-                                            .status ==
-                                        "completed"
-                                    ? Icon(
-                                        Icons.check_circle_sharp,
-                                        color: AppColors.sucTextColor,
-                                        size: 20,
-                                      )
-                                    : Icon(
-                                        Icons.close,
-                                        color: AppColors.failTextColor,
-                                        size: 20,
-                                      ),
-
-                                title:
-                                    internController
-                                            .paymentStatusModel
-                                            .status ==
-                                        "completed"
-                                    ? "Payment Completed"
-                                    : "Payment Pending",
-
-                                showLine: false,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            if ((appliedData!.jobType == "Fee" ||
-                                    appliedData!.jobType == "fee") &&
-                                (appliedData!.status == "Selected" ||
-                                    appliedData!.status == "Shortlisted"))
-                              _buildPaymentSection(),
-                          ],
+                                    title: 'Completed',
+                                    showLine: false,
+                                  ),
+                                if (isRejected)
+                                  _buildStatusItem(
+                                    iconWidget: Icon(
+                                      Icons.close,
+                                      color: AppColors.failTextColor,
+                                      size: 20,
+                                    ),
+                                    title: 'Rejected',
+                                    showLine: false,
+                                  ),
+                                if (!isAppliedOnly &&
+                                    !isWaiting &&
+                                    !isSelected &&
+                                    !isRejected &&
+                                    !isCompleted &&
+                                    statusStr.isNotEmpty)
+                                  _buildStatusItem(
+                                    iconWidget: Icon(
+                                      Icons.check_circle_sharp,
+                                      color: AppColors.selectedContColor,
+                                      size: 20,
+                                    ),
+                                    title: statusStr,
+                                    showLine: false,
+                                  ),
+                                SizedBox(height: 10),
+                                if (isFeeJob && (isSelected || isCompleted))
+                                  _buildPaymentSection(),
+                              ],
+                            );
+                          },
                         ),
 
                         const SizedBox(height: 10),

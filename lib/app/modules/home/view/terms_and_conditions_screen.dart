@@ -48,7 +48,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                   border: Border.all(color: AppColors.primaryColor.withOpacity(0.4)),
                 ),
                 child: Text(
-                  "Last updated: August 21, 2026",
+                  "Version 2.0 · Effective and last updated: August 21, 2026",
                   style: AppStyles.customTextStyle(
                     size: 12,
                     color: AppColors.primaryColor,
@@ -59,202 +59,250 @@ class TermsAndConditionsScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               _bodyText(
-                "Please read these terms and conditions carefully before using Our Service.",
+                "These Terms govern access to InternSharks.ai™ by students, parents or lawful guardians, recruiters, employers, institutions, coordinators and visitors. They also establish special safeguards for Minor users and clear rules for AI-assisted recruitment.",
               ),
 
-              _sectionTitle("Interpretation and Definitions"),
-              _subTitle("Interpretation"),
+              _subTitle("Agreement Overview"),
+              const SizedBox(height: 4),
+              _definitionItem("Operator", "DoubleTap Innovations and Technologies Pvt Ltd."),
+              _definitionItem("Registered office", "78, 2nd Floor, Usman Road, T Nagar, Chennai – 600017, Tamil Nadu, India"),
+              _definitionItem("GSTIN", "33AALCD9144Q1ZZ"),
+              _definitionItem("Contact", "info@internsharks.ai | +91 9600043880 | www.internsharks.ai"),
+
+              _sectionTitle("1. Acceptance and Operator"),
               _bodyText(
-                "The words whose initial letters are capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.",
+                "These Terms and Conditions (\"Terms\") form a binding agreement between the person or organisation using the Platform (\"you\" or \"User\") and DoubleTap Innovations and Technologies Pvt Ltd. (\"InternSharks\", \"we\", \"us\" or \"our\"). By registering, clicking acceptance, purchasing a plan or credit, or using the Platform, you agree to these Terms and our Privacy Policy. If you act for a company, institution or Minor, you confirm that you have authority to bind that person or organisation.",
               ),
-              _subTitle("Definitions"),
-              _bodyText("For the purposes of these Terms and Conditions:"),
-              const SizedBox(height: 8),
-              _definitionItem("Company (\"the Company\", \"We\", \"Us\" or \"Our\")",
-                  "refers to DoubleTap Innovations and Technologies Pvt Ltd, 2nd Floor, 78, North Usman Road, T Nagar, Chennai – 600016, Tamil Nadu, India."),
-              _definitionItem("Application / Platform",
-                  "means the software program, web platform, or mobile application provided by the Company named InternSharks."),
-              _definitionItem("Country", "refers to: India."),
+              _bodyText(
+                "If you do not agree, do not use the Platform. Consumer and data-protection rights that cannot lawfully be waived remain unaffected.",
+              ),
+
+              _sectionTitle("2. Definitions"),
+              _definitionItem("Platform",
+                  "the InternSharks.ai™ website, mobile apps, APIs, communications and associated services."),
+              _definitionItem("Student",
+                  "a learner or candidate using the Platform, including a school student where permitted under Section 3."),
+              _definitionItem("Recruiter",
+                  "an employer, company representative or authorised person creating opportunities or evaluating candidates."),
+              _definitionItem("Institution",
+                  "a school, college, university, training provider or authorised coordinator using institution functions."),
+              _definitionItem("AI Services",
+                  "automated or AI-assisted tools for resumes, ATS analysis, matching, content, chat, assessment, KYC support, mock interviews, syllabus, recommendations or related functions."),
               _definitionItem("Credits",
-                  "refers to InternSharks Credits used to access and consume specific AI-powered tools and features on the Platform."),
-              _definitionItem("Device",
-                  "means any device that can access the Service, such as a computer, a mobile phone, or a digital tablet."),
-              _definitionItem("Service",
-                  "refers to the Application, the website (www.internsharks.ai), and all associated AI-powered career tools, assessments, webinars, and recruitment services provided by the Company."),
-              _definitionItem("Terms and Conditions (\"Terms\")",
-                  "mean these Terms and Conditions that form the entire agreement between You and the Company regarding the use of the Service."),
-              _definitionItem("Third-party Service",
-                  "means any services, content (including data, information, or software), cloud hosting providers, payment gateways, analytics platforms, or AI services provided by a third party that may be displayed, included, integrated, or made available by the Service."),
-              _definitionItem("You",
-                  "means the individual accessing or using the Service (including Students, Recruiters, and University Representatives), or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable."),
+                  "Platform units that may be required to access defined features; Credits are not money, securities or stored value."),
 
-              _sectionTitle("Acknowledgment and Eligibility"),
+              _sectionTitle("3. Eligibility, Minors and Guardian Agreement"),
               _bodyText(
-                "These are the Terms and Conditions governing the use of this Service and the agreement that operates between You and the Company. These Terms and Conditions set out the rights and obligations of all users regarding the use of the Service.",
-              ),
-              _bodyText(
-                "Your access to and use of the Service is conditioned on Your acceptance of and compliance with these Terms and Conditions. These Terms and Conditions apply to all visitors, users, students, recruiters, universities, and others who access or use the Service.",
-              ),
-              _bodyText(
-                "By accessing or using the Service You agree to be bound by these Terms and Conditions. If You disagree with any part of these Terms and Conditions then You may not access the Service.",
+                "The Platform permits users under 18, including school students, to register for age-appropriate learning, career-exposure and internship opportunities. A Minor may use the Platform only with verifiable consent and supervision of a parent or lawful guardian to the extent required by applicable law. The guardian accepts these Terms on the Minor's behalf and is responsible for supervising the account. Institution approval alone is not a substitute for guardian consent unless applicable law expressly permits it.",
               ),
               _highlightBox(
-                "Age and Legal Capacity",
-                "You represent that You are at least 18 years of age and possess the legal capacity to enter into this binding agreement. The Company does not permit individuals under 18 to use the Service without verifiable parental or legal guardian consent where permitted by law.",
+                "Guardian Consent Required for Minors",
+                "A Minor must not falsely state their age or bypass a guardian-consent process, and any placement involving a Minor must be lawful, age-appropriate, non-hazardous, safe, compatible with education and compliant with working-hour, welfare and child or adolescent labour requirements.",
               ),
+              _bulletItem("Registration does not establish legal eligibility for every internship. Recruiters must independently verify age and all required permissions before placement."),
+              _bulletItem("We may restrict or remove an opportunity, application or placement involving a Minor when safety, legality, consent or suitability is uncertain."),
+              const SizedBox(height: 6),
               _bodyText(
-                "Your access to and use of the Service is also conditioned on Your acceptance of and compliance with the Privacy Policy of the Company. Our Privacy Policy describes Our policies and procedures on the collection, use, and disclosure of Your personal information when You use the Application or the Website and tells You about Your privacy rights and how the law protects You. Please read Our Privacy Policy carefully before using Our Service.",
+                "Users who are legally incapable of entering a contract may not independently purchase paid services or accept an internship agreement; a competent parent, guardian or authorised representative must complete the relevant action.",
               ),
 
-              _sectionTitle("User Categories and Responsibilities"),
-              _definitionItem("Student Responsibilities",
-                  "Students must provide truthful academic, skill, and career information and must not submit misleading, fraudulent, or copyrighted materials without authorization."),
-              _definitionItem("Recruiter Responsibilities",
-                  "Recruiters are solely responsible for lawful internship and job postings, adherence to fair hiring practices, and the accuracy of job descriptions and company credentials."),
-              _definitionItem("University Responsibilities",
-                  "Universities and designated coordinators must use institutional accounts responsibly, maintain strict confidentiality, and protect student data and privacy."),
-              _definitionItem("Account Security",
-                  "You are responsible for all activities conducted under Your account credentials and must immediately notify the Company of any unauthorized access or breach of security."),
-
-              _sectionTitle("User-Generated Content and License"),
+              _sectionTitle("4. Accounts, Verification and Security"),
+              _bulletItem("Provide accurate, current and complete information and keep it updated."),
+              _bulletItem("Maintain one appropriate account unless we approve otherwise. Do not impersonate another person or organisation."),
+              _bulletItem("Keep passwords, OTPs, devices and access links confidential. You are responsible for activity conducted through your account until you notify us of unauthorised access."),
+              _bulletItem("Complete reasonable email, mobile, identity, student, company, institution or representative verification when requested."),
+              _bulletItem("Provide only documents requested for verification and do not submit forged, altered or unlawfully obtained documents."),
+              const SizedBox(height: 6),
               _bodyText(
-                "You retain ownership of any text, resumes, portfolio files, job descriptions, assessments, or other content (\"User Content\") that You upload, submit, or transmit to the Service.",
-              ),
-              _bodyText(
-                "By submitting User Content to InternSharks, You grant the Company a worldwide, non-exclusive, royalty-free license to use, host, store, process, reproduce, adapt, and display such content solely for the purposes of operating, improving, analyzing, and providing the Service (including resume scoring, job matching, and recruiter forwarding).",
+                "We may refuse registration, require additional verification, limit visibility or suspend access where information is incomplete, inconsistent, unsafe or suspected to be fraudulent.",
               ),
 
-              _sectionTitle("AI Services and Disclaimer"),
+              _sectionTitle("5. Services and Platform Role"),
               _bodyText(
-                "The Service provides AI-driven features, including but not limited to Resume Builder, Resume Review, ATS Resume Score, Job Matching, Mock Interview, Career Assistant, Skill Recommendations, and Syllabus Generation.",
+                "The Platform may provide profiles, internship listings, search and matching, applications, shortlists, assessments, certificates, communications, progress tracking, recruiter and institution tools, credits, payments, webinars and AI Services. Features may differ by role, plan, geography, device or release and may change over time.",
               ),
               _bodyText(
-                "AI outputs and recommendations are generated algorithmically for assistance and career development purposes only. The Company does not guarantee employment, internship offers, job interviews, or university admissions through the use of these tools.",
-              ),
-
-              _sectionTitle("InternSharks Credits and Payments"),
-              _definitionItem("InternSharks Credits",
-                  "Certain AI features consume InternSharks Credits. Credits are non-refundable and non-transferable unless explicitly required by applicable law or stated in an active written refund policy."),
-              _definitionItem("Payments & Taxes",
-                  "Paid services and subscriptions must be completed through approved payment methods. Applicable statutory taxes (including GST) may be charged where required by law."),
-
-              _sectionTitle("Webinars and Events"),
-              _bodyText(
-                "Registration may be required for webinars and virtual sessions hosted through the Service. The Company reserves the right to record and process attendance records for certification verification, platform administration, and event management.",
+                "InternSharks provides technology and facilitation unless expressly agreed otherwise. We are not the employer, educational institution, agent or guarantor of a Student, Recruiter or Institution. A listing, profile, verification badge, score, match or recommendation is not an endorsement or promise of identity, legality, suitability, selection, payment, stipend, academic credit or outcome.",
               ),
 
-              _sectionTitle("Prohibited Activities"),
-              _bodyText(
-                "You agree not to misuse the Service or engage in unlawful or disruptive conduct, including but not limited to:",
-              ),
-              _bulletItem("Misusing AI features, reverse-engineering platform algorithms, or attempting unauthorized model extraction."),
-              _bulletItem("Creating fake, misleading, or multiple fraudulent accounts."),
-              _bulletItem("Attempting unauthorized access to the Service, connected servers, databases, or user accounts."),
-              _bulletItem("Distributing malware, viruses, trojans, worms, timebombs, or other malicious components."),
-              _bulletItem("Scraping, harvesting, crawling, or extracting platform data through automated or manual processes."),
-              _bulletItem("Violating any applicable local, national, or international laws or regulations."),
+              _sectionTitle("6. Student Responsibilities"),
+              _bulletItem("Submit truthful qualifications, experience, documents, work samples and application information."),
+              _bulletItem("Apply only where genuinely interested and eligible; attend interviews and complete accepted work professionally and safely."),
+              _bulletItem("Do not plagiarise, cheat in assessments, misrepresent AI-generated content as independently created where disclosure is required, or upload confidential information without permission."),
+              _bulletItem("Use communications respectfully and report demands for unlawful fees, unsafe work, discrimination, harassment or suspicious conduct."),
+              _bulletItem("Retain copies of important certificates and outputs before deleting an account or when an opportunity closes."),
 
-              _sectionTitle("Intellectual Property"),
-              _bodyText(
-                "The Service and its original content, software, AI models, UI designs, graphics, and the InternSharks brand name and logos remain the exclusive intellectual property of DoubleTap Innovations and Technologies Pvt Ltd. You may not copy, modify, distribute, or create derivative works without prior express written authorization.",
-              ),
+              _sectionTitle("7. Recruiter Responsibilities"),
+              _bulletItem("Create genuine, accurate and complete internship or project listings, including role, location or remote status, duration, working hours, selection process, stipend or fees, deliverables, supervision and eligibility."),
+              _bulletItem("Have authority to recruit for the named organisation and comply with employment, internship, anti-discrimination, accessibility, safety, tax and sector-specific laws."),
+              _bulletItem("Do not demand unlawful deposits, security payments, training purchases or off-platform payments from Students. Any permitted fee must be transparent, lawful and clearly disclosed before application."),
+              _bulletItem("Use candidate data only for the stated opportunity or another purpose separately authorised by the Student; do not scrape, resell, publish or build unrelated databases."),
+              _bulletItem("Apply meaningful human review to AI scores, rankings, recommendations and generated content. Do not make consequential decisions solely because of an automated output."),
+              _bulletItem("For Minors, verify age, guardian consent, safety, legality, working hours and supervision before any placement. Prohibited or hazardous work is not allowed."),
+              _bulletItem("Maintain accurate application statuses and progress records and promptly communicate material changes or cancellation of an opportunity."),
 
-              _sectionTitle("Third-Party Services and Links"),
+              _sectionTitle("8. Institutions and Coordinators"),
               _bodyText(
-                "Our Service may integrate with or contain links to third-party web sites or services (such as cloud hosting providers, payment gateways, email/SMS/WhatsApp providers, analytics platforms, and AI service providers) that are not owned or controlled by the Company.",
-              ),
-              _bodyText(
-                "The Company has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third-party websites or services. You further acknowledge and agree that the Company shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such content, goods, or services.",
+                "An Institution must authorise each coordinator and ensure that student linkage, data access, recommendations, assessments and progress monitoring are lawful and within the Institution's authority. Coordinators must keep credentials confidential and access only records relevant to their assigned responsibilities. An Institution is responsible for its coordinators and for notices or consents it is required to provide independently.",
               ),
 
-              _sectionTitle("Indemnification"),
+              _sectionTitle("9. Access, Licences and Credits"),
               _bodyText(
-                "You agree to defend, indemnify, and hold harmless DoubleTap Innovations and Technologies Pvt Ltd, its directors, employees, affiliates, licensors, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable legal and accounting fees) arising out of or in any way connected with (i) Your access to or use of the Service; (ii) Your violation of these Terms; (iii) Your User Content; or (iv) Your infringement of any third-party intellectual property or privacy rights.",
+                "Some functions require an active plan, licence or sufficient Credits. Entitlement may vary by role and feature. A licence or Credit balance gives access only to the functionality shown for that account; it does not override privacy, consent, eligibility, verification or role-based access controls and does not grant unrestricted access to all Platform information.",
+              ),
+              _bulletItem("Free or promotional Credits may be offered, changed, limited, revoked or expire according to the promotion displayed at the time."),
+              _bulletItem("Purchased Credits and plans are usable only for the account and permitted features, have no cash value and may not be transferred, resold or exchanged unless we expressly allow it."),
+              _bulletItem("Credit deductions may occur when a feature is successfully requested or delivered as described at the point of use. If a verified technical failure prevents delivery, we may restore the affected Credits."),
+              _bulletItem("When a licence, plan or Credits expire or are exhausted, paid functions may stop immediately, although the account and lawful records may remain subject to these Terms and the Privacy Policy."),
+
+              _sectionTitle("10. Plans, Payments, Refunds and Cancellation"),
+              _bodyText(
+                "Prices, plan duration, included Credits, taxes and feature limits are displayed at checkout and may change for future purchases based on market demand, promotions and product changes. An existing completed purchase is governed by the checkout terms shown for that purchase. Unless checkout clearly states otherwise, plans do not automatically renew.",
+              ),
+              _bulletItem("Payments may be processed through Cashfree or, where required, an applicable app store or other disclosed payment provider. Their terms and billing rules also apply."),
+              _bulletItem("You authorise the payment provider to charge the amount shown, including applicable taxes, and must provide accurate billing information."),
+              _bulletItem("Completed purchases, fixed-term plans and allocated Credits are generally non-cancellable and non-refundable. Exceptions apply where required by law, an app-store or payment-provider policy, or for a verified duplicate or unauthorised charge or a service we fail to deliver."),
+              _bulletItem("If recurring billing is introduced, the renewal price, frequency and method for stopping future renewals will be disclosed before purchase. Stopping renewal does not ordinarily refund the current paid period."),
+              _bulletItem("Chargebacks made without a valid basis may lead to suspension while the dispute is investigated. Nothing in this section limits mandatory consumer remedies."),
+              const SizedBox(height: 6),
+              _bodyText(
+                "Paid services and subscriptions must be completed through approved payment methods. Applicable statutory taxes (including GST) may be charged where required by law.",
               ),
 
-              _sectionTitle("Termination and Account Suspension"),
+              _sectionTitle("11. Internships, Projects, Stipends and Progress"),
               _bodyText(
-                "We may terminate or suspend Your access and account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if You breach these Terms and Conditions, engage in fraudulent activities, or abuse AI services.",
+                "A Student and Recruiter are responsible for agreeing the specific internship or project terms, including deliverables, ownership, confidentiality, stipend, fee, expenses, schedule, supervision, assessment, certificate and termination. InternSharks is not responsible for off-platform promises or for payment of a stipend unless we expressly accept that obligation in writing.",
               ),
-              _bodyText("Upon termination, Your right to use the Service will cease immediately."),
-
-              _sectionTitle("Account Deletion (Delete Account)"),
               _bodyText(
-                "InternSharks allows users to permanently delete their account and personal information, subject to applicable legal, regulatory, and operational requirements.",
-              ),
-              _subTitle("How to Delete Your Account"),
-              _bulletItem("Navigate to Profile → Settings → Delete Account within the InternSharks App or Website; or"),
-              _bulletItem("Contact our support team directly at info@internsharks.ai with your registered account details."),
-              _subTitle("What Happens After Deletion"),
-              _bulletItem("Your account will be permanently deleted and profile data removed from active systems."),
-              _bulletItem("Your AI history, saved preferences, and non-essential personal data will be erased where technically feasible."),
-              _bulletItem("You will immediately forfeit all unused InternSharks Credits, saved resumes, internship history, and AI-generated content."),
-              _subTitle("Information We May Retain & Processing Time"),
-              _bodyText(
-                "We may retain certain transaction records, security logs, or identification details where strictly necessary to comply with legal obligations, prevent fraud, resolve disputes, or enforce agreements. Verified account deletion requests are generally processed within thirty (30) days.",
+                "The Platform may allow daily progress, status, links, assessments, results and completion records. Each party must keep these records accurate and must not falsify completion, attendance, output or performance. Disputes should first be raised through the Platform and with the relevant counterparty; we may preserve records and facilitate communication but are not required to adjudicate private contractual disputes.",
               ),
 
-              _sectionTitle("Limitation of Liability"),
+              _sectionTitle("12. AI Services and Automated Outputs"),
               _bodyText(
-                "Notwithstanding any damages that You might incur, the entire liability of the Company and any of its suppliers under any provision of these Terms and Your exclusive remedy for all of the foregoing shall be limited to the amount actually paid by You through the Service or 100 USD (or equivalent INR) if You haven't purchased anything through the Service.",
+                "AI Services may analyse resumes and internship descriptions, generate or improve content, calculate ATS or fit scores, rank or recommend candidates, create syllabi or assessments, support KYC, conduct chat or mock interviews, transcribe audio, generate feedback and provide career assistance. AI outputs are probabilistic and may be inaccurate, incomplete, outdated or biased.",
+              ),
+              _bulletItem("Review and verify every important output before use. Do not rely on AI as legal, financial, medical, safety, academic or employment advice."),
+              _bulletItem("Recruiters remain responsible for final decisions and must consider relevant evidence, reasonable accommodations and applicable non-discrimination duties."),
+              _bulletItem("Students remain responsible for the truthfulness of AI-assisted resumes, answers, portfolios and other submissions."),
+              _bulletItem("You grant us permission to process submitted content through our AI and infrastructure Service Providers solely to operate, secure and improve the requested service as described in the Privacy Policy."),
+              _bulletItem("Do not use AI Services to infer highly sensitive traits unlawfully, create deceptive documents, impersonate people, cheat, harass, discriminate or make prohibited decisions."),
+              _bulletItem("A User may request correction of inaccurate source data or raise a concern about a significant automated score through the grievance process."),
+
+              _sectionTitle("13. User Content and Permissions"),
+              _bodyText(
+                "You retain ownership of content you lawfully own. You grant InternSharks a worldwide, non-exclusive, royalty-free, limited licence to host, copy, format, transmit, display, process and create technical or AI-assisted transformations of that content only as needed to operate, secure, support and improve the Platform, comply with law and exercise these Terms. This licence ends when the content is deleted from active systems, subject to legal retention, backups and content already shared with authorised recipients.",
               ),
               _bodyText(
-                "To the maximum extent permitted by applicable law, in no event shall the Company or its suppliers be liable for any special, incidental, indirect, or consequential damages whatsoever (including, but not limited to, damages for loss of profits, loss of data, loss of career opportunities, business interruption, or personal injury arising out of or in any way related to the use of or inability to use the Service).",
+                "You confirm that you have the rights and permissions needed to upload content and that it does not infringe intellectual property, privacy, confidentiality or other rights. Feedback about the Platform may be used without restriction or payment, but we will not publicly identify you without permission.",
               ),
 
-              _sectionTitle("\"AS IS\" and \"AS AVAILABLE\" Disclaimer"),
+              _sectionTitle("14. Communications, Notifications and Webinars"),
               _bodyText(
-                "The Service is provided to You \"AS IS\" and \"AS AVAILABLE\" with all faults and defects without warranty of any kind. To the maximum extent permitted under applicable law, the Company expressly disclaims all warranties, whether express, implied, statutory, or otherwise, including all implied warranties of merchantability, fitness for a particular purpose, title, non-infringement, and accuracy of AI outputs.",
-              ),
-              _bodyText(
-                "Without limiting the foregoing, neither the Company nor any provider makes any warranty that the Service will meet Your requirements, operate without interruption, be error-free, or that defects can or will be corrected.",
+                "You agree to receive transactional communications necessary for registration, security, applications, payments, service operation and grievances. Optional marketing may be withdrawn using available controls. Webinar or event recordings will be disclosed before recording; participation after notice may constitute consent where permitted, and separate consent will be obtained where required.",
               ),
 
-              _sectionTitle("Force Majeure"),
+              _sectionTitle("15. Prohibited Conduct"),
+              _bodyText("You agree not to:"),
+              _bulletItem("break the law, violate another person's rights, exploit or endanger a Minor, discriminate unlawfully, harass, threaten or deceive;"),
+              _bulletItem("post fake opportunities, charge undisclosed or unlawful fees, conduct pyramid schemes, facilitate forced labour or offer hazardous work to a Minor;"),
+              _bulletItem("scrape, harvest, export, resell or use personal data outside authorised recruitment or institution purposes;"),
+              _bulletItem("circumvent Credits, licences, security, access controls, rate limits or account restrictions;"),
+              _bulletItem("upload malware, probe vulnerabilities, disrupt systems, reverse engineer protected components or use automated access without written permission;"),
+              _bulletItem("impersonate a person or organisation, manipulate assessments or progress, submit forged documents or create misleading AI-generated records;"),
+              _bulletItem("infringe intellectual property or confidentiality, upload unlawful content, spam users or use the Platform for an unrelated commercial database; or"),
+              _bulletItem("use outputs to train competing models or services where doing so would copy protected Platform content, violate privacy or breach these Terms."),
+
+              _sectionTitle("16. Intellectual Property"),
               _bodyText(
-                "Neither the Company nor You shall be liable for any failure or delay in performing obligations under these Terms if such failure or delay arises from circumstances beyond reasonable control, including but not limited to acts of God, natural disasters, epidemics, internet outages, cyber-attacks, telecommunications failures, government actions, war, or civil unrest.",
+                "The Platform, software, interfaces, designs, branding, databases, documentation and InternSharks-created content are owned by InternSharks or its licensors and protected by applicable law. Subject to these Terms, we grant you a limited, revocable, non-exclusive, non-transferable right to use the Platform for its intended purpose. No other rights are granted.",
               ),
 
-              _sectionTitle("Governing Law and Dispute Resolution"),
-              _subTitle("Governing Law"),
+              _sectionTitle("17. Third-Party Services and Links"),
               _bodyText(
-                "The laws of India, excluding its conflicts of law rules, shall govern these Terms and Your use of the Service.",
-              ),
-              _subTitle("Disputes Resolution"),
-              _bodyText(
-                "If You have any concern or dispute about the Service, You agree to first try to resolve the dispute informally by contacting the Company. Any formal dispute, claim, or controversy arising out of or relating to these Terms shall be subject to the exclusive jurisdiction of the competent courts in Chennai, Tamil Nadu, India.",
-              ),
-              _subTitle("Grievance Redressal Mechanism"),
-              _bodyText(
-                "In compliance with the Information Technology Act, 2000 and the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021, the contact details of the Grievance Officer for InternSharks are provided below:",
-              ),
-              const SizedBox(height: 8),
-              _definitionItem("Designation", "Grievance Officer, InternSharks"),
-              _definitionItem("Company", "DoubleTap Innovations and Technologies Pvt Ltd"),
-              _definitionItem("Address", "2nd Floor, 78, North Usman Road, T Nagar, Chennai – 600016, Tamil Nadu, India"),
-              _definitionItem("Email", "grievance@internsharks.ai / info@internsharks.ai"),
-              _definitionItem("Turnaround Time", "Complaints will be acknowledged within 24 hours and addressed within 15 days of receipt."),
-
-              _sectionTitle("Severability and Waiver"),
-              _subTitle("Severability"),
-              _bodyText(
-                "If any provision of these Terms is held to be unenforceable or invalid, such provision will be changed and interpreted to accomplish the objectives of such provision to the greatest extent possible under applicable law and the remaining provisions will continue in full force and effect.",
-              ),
-              _subTitle("Waiver"),
-              _bodyText(
-                "Except as provided herein, the failure to exercise a right or to require performance of an obligation under these Terms shall not affect a party's ability to exercise such right or require such performance at any time thereafter nor shall the waiver of a breach constitute a waiver of any subsequent breach.",
+                "The Platform depends on or links to payment gateways, app stores, cloud services, AI providers, communication providers, recruiter websites and other third parties. Their terms and privacy notices may apply. We are not responsible for an independent third party's content, availability or conduct, but this does not exclude liability that cannot lawfully be excluded.",
               ),
 
-              _sectionTitle("Changes to These Terms and Conditions"),
+              _sectionTitle("18. Moderation, Suspension and Termination"),
               _bodyText(
-                "We reserve the right, at Our sole discretion, to modify or replace these Terms at any time. Significant changes will be communicated through our website, email, or application notifications prior to taking effect.",
+                "We may investigate, limit, remove content, suspend or terminate access when reasonably necessary for safety, suspected fraud, non-payment, expired entitlement, legal compliance, rights protection, material breach or risk to the Platform or users. Where appropriate, we will provide notice and an opportunity to respond, but immediate action may be taken for urgent safety, security or legal reasons.",
               ),
               _bodyText(
-                "By continuing to access or use Our Service after those revisions become effective, You agree to be bound by the revised terms. If You do not agree to the new terms, please stop using the website and the Service.",
+                "On termination, rights to use the Platform stop. Provisions that by nature should survive — including payments due, intellectual property, confidentiality, disclaimers, liability, dispute terms and lawful data retention — continue to apply.",
               ),
 
-              _sectionTitle("Contact Us"),
-              _bodyText("If you have any questions about these Terms and Conditions, you can contact us:"),
+              _sectionTitle("19. Account Deletion and Inactivity"),
+              _bodyText(
+                "A user may request deletion through the mobile app's \"Delete Account\" function where available or by contacting us from the registered account. Access is deactivated promptly after verification, and deletion or anonymisation is targeted within 30 days, except for records required by law, tax, fraud prevention, security, contract, rights of other users or legal claims. Account deletion may permanently remove access to applications, reports, certificates, progress and unused promotional Credits.",
+              ),
+              _bulletItem("After 12 continuous months without meaningful activity, an account may be archived and marked inactive. Reactivation requires a written request and identity verification."),
+              _bulletItem("After 24 continuous months without meaningful activity, the account and associated personal data are deleted or irreversibly anonymised, subject to lawful retention exceptions."),
+              _bulletItem("We will provide inactivity or deletion notice where reasonably possible using current contact details. Users are responsible for keeping those details updated."),
+
+              _sectionTitle("20. Availability, Changes and Beta Features"),
+              _bodyText(
+                "We aim to provide reliable service but do not guarantee uninterrupted or error-free availability. Maintenance, provider outages, security events, legal requirements or circumstances beyond our control may affect access. Features may be added, changed or withdrawn. Beta or experimental features may be less reliable and may be subject to additional notices.",
+              ),
+
+              _sectionTitle("21. Disclaimers"),
+              _bodyText(
+                "To the maximum extent permitted by law, the Platform and AI outputs are provided on an \"as is\" and \"as available\" basis without implied warranties of accuracy, fitness, merchantability, non-infringement, selection, placement, stipend, performance, safety or outcome. You must conduct independent diligence on users, opportunities and outputs. Nothing in these Terms excludes a warranty or remedy that cannot be excluded under applicable consumer law.",
+              ),
+
+              _sectionTitle("22. Indemnity"),
+              _bodyText(
+                "To the extent permitted by law, a Recruiter, Institution or business User will defend and indemnify InternSharks and its personnel against third-party claims, losses and reasonable costs arising from that User's listings, candidate-data use, unlawful decisions, Minor placement, content, contractual promises or breach of these Terms or law. An individual consumer's liability under this clause is limited to the extent permitted by applicable law and does not apply to losses caused by our own unlawful conduct.",
+              ),
+
+              _sectionTitle("23. Limitation of Liability"),
+              _bodyText(
+                "To the maximum extent permitted by law, neither party is liable for indirect, incidental, special, punitive or consequential loss, or loss of profits, opportunity or data, arising from the Platform. InternSharks' total aggregate liability for claims relating to a paid service will not exceed the amount you paid to InternSharks for that service during the 12 months before the event giving rise to the claim; for a free service, the cap is INR 5,000.",
+              ),
+              _bodyText(
+                "These limits do not apply to fraud, wilful misconduct, death or personal injury caused by negligence, breach of confidentiality or data-protection duties where liability cannot lawfully be limited, infringement for which the responsible party must indemnify, payment obligations, or any liability that applicable law prohibits us from excluding or limiting.",
+              ),
+
+              _sectionTitle("24. Force Majeure"),
+              _bodyText(
+                "Neither party is responsible for delay or failure caused by events beyond reasonable control, including natural disasters, epidemic, war, civil disorder, government action, telecommunications or power failure, cyberattack or critical provider outage, provided the affected party uses reasonable efforts to mitigate the impact. Payment obligations already due are not excused.",
+              ),
+
+              _sectionTitle("25. Governing Law and Disputes"),
+              _bodyText(
+                "These Terms are governed by the laws of India. Before formal proceedings, the parties should attempt in good faith to resolve a dispute through the grievance process. Subject to mandatory consumer forums and other non-waivable rights, courts at Chennai, Tamil Nadu will have exclusive jurisdiction. Nothing prevents either party from seeking urgent interim relief or using a statutory regulator or complaint mechanism.",
+              ),
+
+              _sectionTitle("26. Grievance Process"),
+              _bulletItem("Write to grievance@internsharks.ai / info@internsharks.ai from the registered contact channel and identify the account, transaction or listing and the relief requested."),
+              _bulletItem("We may request proportionate verification and supporting information. Never send passwords, OTPs, CVV or UPI PIN."),
+              _bulletItem("We aim to acknowledge a grievance within 24 hours and resolve it within 15 days, or within another timeframe required by applicable law. Urgent safety or Minor-protection reports receive priority."),
+              _bulletItem("A party may pursue available statutory or judicial remedies if the issue remains unresolved."),
+
+              _sectionTitle("27. Changes to These Terms"),
+              _bodyText(
+                "We may revise these Terms for legal, security, commercial or product changes. We will provide reasonable notice of material changes through the Platform, email or another appropriate channel. Changes do not retroactively alter completed purchase terms unless required by law or agreed by you. Continued use after the effective date constitutes acceptance where permitted; otherwise, we will request fresh acceptance.",
+              ),
+
+              _sectionTitle("28. General"),
+              _definitionItem("Entire agreement",
+                  "These Terms, the Privacy Policy, checkout terms and any feature-specific terms form the agreement for the Platform."),
+              _definitionItem("Priority",
+                  "Feature-specific or checkout terms control only for their subject matter; mandatory law always prevails."),
+              _definitionItem("Severability",
+                  "If a provision is unenforceable, it will be limited or removed to the minimum extent necessary and the remainder continues."),
+              _definitionItem("No waiver", "Failure to enforce a provision is not a waiver."),
+              _definitionItem("Assignment",
+                  "You may not transfer your account or these Terms without our consent. We may assign them as part of a reorganisation, financing or transfer of the Platform, subject to law and notice obligations."),
+              _definitionItem("No partnership",
+                  "These Terms do not create employment, agency, partnership, franchise or joint venture between InternSharks and a User."),
+
+              _sectionTitle("29. Grievance Officer and Contact"),
+              _definitionItem("Grievance Officer", "Paul Simson"),
+              _definitionItem("Email", "grievance@internsharks.ai"),
+              _definitionItem("General support", "info@internsharks.ai"),
+              _definitionItem("Telephone", "+91 9600043880"),
+              _definitionItem("Registered office", "78, 2nd Floor, Usman Road, T Nagar, Chennai – 600017, Tamil Nadu, India"),
+              _definitionItem("GSTIN", "33AALCD9144Q1ZZ"),
+              _definitionItem("Website", "www.internsharks.ai"),
               const SizedBox(height: 8),
               _contactBox(),
               const SizedBox(height: 30),
@@ -410,7 +458,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
         const SizedBox(height: 8),
         _contactRow(
           Icons.location_on_outlined,
-          "DoubleTap Innovations and Technologies Pvt Ltd.\n2nd Floor, 78, North Usman Road, T Nagar, Chennai - 600016, Tamil Nadu, India",
+          "DoubleTap Innovations and Technologies Pvt Ltd.\n78, 2nd Floor, Usman Road, T Nagar, Chennai - 600017, Tamil Nadu, India",
         ),
       ],
     ),
