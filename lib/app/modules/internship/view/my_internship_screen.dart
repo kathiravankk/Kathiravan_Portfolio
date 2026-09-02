@@ -129,8 +129,13 @@ class MyInternshipScreenState extends State<MyInternshipScreen> {
                         title: item.subject ?? "NA",
                         subTitle: "Introduction to Software Developer",
                         totalWeeks: item.totalDays ?? 0,
-                        totalTopics: item.meta!.totalTopics ?? 0,
+                        totalTopics: item.meta?.totalTopics ?? 0,
                         isLoading: internController.paymentStatusCheckLoading,
+                        companyName: item.jobInfo?.companyName,
+                        companyLogo: item.jobInfo?.companyLogo,
+                        roleType: item.jobInfo?.roleType,
+                        internshipMode: item.jobInfo?.internshipMode,
+                        jobType: item.jobType,
                         viewFunc: () async {
                           selectedJobId = item.job;
                           selectedCourse = item.subject;

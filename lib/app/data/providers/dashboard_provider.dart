@@ -165,6 +165,7 @@ class DashboardProvider {
 
   Future<SimilarInternshipModel> fetchSimilarInternship({
     required List<String> skillList,
+    required String jobId,
   }) async {
     Map<String, dynamic> header = await AppApiHeader.studentHeader();
     try {
@@ -174,7 +175,7 @@ class DashboardProvider {
       Response response = await client!.post(
         AppApiUrls.getSimilarInternship,
         options: Options(headers: header),
-        data: {"skill": skillList},
+        data: {"skill": skillList, "jobId": jobId},
       );
       responseStatus = response.statusCode!;
       return SimilarInternshipModel.fromJson(response.data);

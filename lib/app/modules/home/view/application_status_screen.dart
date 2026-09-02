@@ -110,13 +110,18 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
   }
 
   Future<void> getSimilarData() async {
-    await dashboardController.getSimilarInternship(
-      skillList: appliedData!.jobData!.requiredSkills ?? [],
-    );
-    if (dashboardController.getResponseCode() == 200 ||
-        dashboardController.getResponseCode() == 201) {
-      similarList =
-          dashboardController.similarInternshipModel.similarList ?? [];
+    try {
+      await dashboardController.getSimilarInternship(
+        skillList: appliedData!.jobData!.requiredSkills ?? [],
+        jobId: appliedData!.jobData!.sId ?? "",
+      );
+      if (dashboardController.getResponseCode() == 200 ||
+          dashboardController.getResponseCode() == 201) {
+        similarList =
+            dashboardController.similarInternshipModel.similarList ?? [];
+      }
+    } catch (e) {
+      debugPrint("getSimilarData error: $e");
     }
   }
 

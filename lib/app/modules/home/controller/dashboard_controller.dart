@@ -244,11 +244,15 @@ class DashboardController extends GetxController {
   set similarInternshipModel(SimilarInternshipModel value) =>
       _similarInternshipModel.value = value;
 
-  Future<void> getSimilarInternship({required List<String> skillList}) async {
+  Future<void> getSimilarInternship({
+    required List<String> skillList,
+    required String jobId,
+  }) async {
     try {
       similarInternshipLoading = true;
       similarInternshipModel = await dashboardProvider!.fetchSimilarInternship(
         skillList: skillList,
+        jobId: jobId,
       );
       similarInternshipLoading = false;
     } catch (err) {

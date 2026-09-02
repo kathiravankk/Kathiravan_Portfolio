@@ -19,7 +19,7 @@ class CustomButtonWidget extends StatelessWidget {
     super.key,
     required this.buttonFunction,
     this.buttonIcon,
-     this.buttonText = "",
+    this.buttonText = "",
     this.width = double.infinity,
     this.height = 50,
     this.disable = false,
@@ -36,20 +36,20 @@ class CustomButtonWidget extends StatelessWidget {
 
     final BoxDecoration containerDecoration = hasCustomBgColor
         ? BoxDecoration(
-      color: bgColor,
-      borderRadius: const BorderRadius.all(Radius.circular(25)),
-    )
+            color: bgColor,
+            borderRadius: const BorderRadius.all(Radius.circular(25)),
+          )
         : BoxDecoration(
-      borderRadius: const BorderRadius.all(Radius.circular(25)),
-      gradient: disable
-          ? null
-          : const LinearGradient(
-        colors: [AppColors.buttonGrad1, AppColors.buttonGrad2],
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-      ),
-      color: disable ? AppColors.disableButColor : null,
-    );
+            borderRadius: const BorderRadius.all(Radius.circular(25)),
+            gradient: disable
+                ? null
+                : const LinearGradient(
+                    colors: [AppColors.buttonGrad1, AppColors.buttonGrad2],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+            color: disable ? AppColors.disableButColor : null,
+          );
 
     return SizedBox(
       width: width,
@@ -83,32 +83,33 @@ class CustomButtonWidget extends StatelessWidget {
           ),
           child: isLoading
               ? const SizedBox(
-            height: 20,
-            width: 20,
-            child: CupertinoActivityIndicator(
-              color: AppColors.whiteColor,
-            ),
-          )
-              : buttonWidget ??
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buttonIcon ?? const SizedBox.shrink(),
-                  if (buttonIcon != null) const SizedBox(width: 5),
-                  Text(
-                    buttonText,
-                    style: buttonTextStyle ??
-                        AppStyles.customTextStyle(
-                          size: 16,
-                          color: disable || hasCustomBgColor
-                              ? AppColors.contLightText2
-                              : AppColors.blackColor,
-                          weight: FontWeight.w700,
-                          fontFamily: "Roboto",
-                        ),
+                  height: 20,
+                  width: 20,
+                  child: CupertinoActivityIndicator(
+                    color: AppColors.whiteColor,
                   ),
-                ],
-              ),
+                )
+              : buttonWidget ??
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        buttonIcon ?? const SizedBox.shrink(),
+                        if (buttonIcon != null) const SizedBox(width: 5),
+                        Text(
+                          buttonText,
+                          style:
+                              buttonTextStyle ??
+                              AppStyles.customTextStyle(
+                                size: 14,
+                                color: disable || hasCustomBgColor
+                                    ? AppColors.contLightText2
+                                    : AppColors.blackColor,
+                                weight: FontWeight.w700,
+                                fontFamily: "Roboto",
+                              ),
+                        ),
+                      ],
+                    ),
         ),
       ),
     );

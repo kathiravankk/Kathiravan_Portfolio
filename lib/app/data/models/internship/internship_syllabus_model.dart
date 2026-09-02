@@ -33,8 +33,7 @@ class InternshipSyllabusModel {
   }
 }
 
-class
-SyllabusData {
+class SyllabusData {
   String? sId;
   String? student;
   String? job;
@@ -49,6 +48,11 @@ SyllabusData {
   String? createdAt;
   String? updatedAt;
   int? iV;
+  JobInfo? jobInfo;
+  bool? hasFee;
+  bool? hasStipend;
+  bool? isFree;
+  String? jobType;
 
   SyllabusData({
     this.sId,
@@ -65,6 +69,11 @@ SyllabusData {
     this.iV,
     this.totalDays,
     this.totalMonth,
+    this.jobInfo,
+    this.hasFee,
+    this.hasStipend,
+    this.isFree,
+    this.jobType,
   });
 
   SyllabusData.fromJson(Map<String, dynamic> json) {
@@ -79,6 +88,12 @@ SyllabusData {
     totalDays = json['total_days'];
 
     meta = json['meta'] != null ? Meta.fromJson(json['meta']) : null;
+    jobInfo = json['jobInfo'] != null ? JobInfo.fromJson(json['jobInfo']) : null;
+
+    hasFee = json['hasFee'];
+    hasStipend = json['hasStipend'];
+    isFree = json['isFree'];
+    jobType = json['jobType'];
 
     if (json['data'] != null) {
       data = (json['data'] as List).map((e) => WeeklyData.fromJson(e)).toList();
@@ -104,7 +119,58 @@ SyllabusData {
       "updatedAt": updatedAt,
       "total_month": totalMonth,
       "total_days": totalDays,
+      "jobInfo": jobInfo?.toJson(),
+      "hasFee": hasFee,
+      "hasStipend": hasStipend,
+      "isFree": isFree,
+      "jobType": jobType,
       "__v": iV,
+    };
+  }
+}
+
+class JobInfo {
+  String? sId;
+  String? companyName;
+  String? companyLogo;
+  String? roleType;
+  String? internshipMode;
+  String? internshipStipend;
+  String? fee;
+  String? days;
+
+  JobInfo({
+    this.sId,
+    this.companyName,
+    this.companyLogo,
+    this.roleType,
+    this.internshipMode,
+    this.internshipStipend,
+    this.fee,
+    this.days,
+  });
+
+  JobInfo.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    companyName = json['companyname'];
+    companyLogo = json['companylogo'];
+    roleType = json['roletype'];
+    internshipMode = json['internshipmode'];
+    internshipStipend = json['internshipstipend'];
+    fee = json['fee'];
+    days = json['days'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "_id": sId,
+      "companyname": companyName,
+      "companylogo": companyLogo,
+      "roletype": roleType,
+      "internshipmode": internshipMode,
+      "internshipstipend": internshipStipend,
+      "fee": fee,
+      "days": days,
     };
   }
 }
