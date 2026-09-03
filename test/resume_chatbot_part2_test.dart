@@ -24,9 +24,9 @@ const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
 // ---------------------------------------------------------------------------
 // ✏️  Configurable Test Data Variables
 // ---------------------------------------------------------------------------
-String testOtp = "1198";
+String testOtp = "6115";
 String testUserId = ""; // Leave empty to load from .chatbot_session.json
-String testPhone = "9943155120"; //midhun
+String testPhone = "9943155121"; //midhun
 String testPhoneConfirmation = "Yes";
 String testPhoneOtp = "1234";
 String testRefcode = "No";
@@ -210,11 +210,26 @@ Future<CreateNewChatResumeModel> sendStep(
     print("📌 next_field: ${model.nextField}");
     print("📌 completed_section: ${model.completedSection}");
     if (model.collectedData != null) {
-      print(
-        "📤 Collected Data: ${jsonEncode(model.collectedData!.toJson())}",
-      );
+      print("📤 Collected Data: ${jsonEncode(model.collectedData!.toJson())}");
     }
     print("==================================================\n");
+
+    final botMsg = model.message ?? "";
+    final botMsgLower = botMsg.toLowerCase();
+
+    if (botMsgLower.contains("already registered") ||
+        botMsgLower.contains("couldn't send") ||
+        botMsgLower.contains("already exists") ||
+        botMsgLower.contains("tell me a different") ||
+        botMsgLower.contains("mobile already registered") ||
+        botMsgLower.contains("email already registered") ||
+        botMsgLower.contains("invalid otp") ||
+        botMsgLower.contains("incorrect otp") ||
+        botMsgLower.startsWith("oops")) {
+      if (tracker != null) tracker.failed = true;
+      fail("$stepTag Failed: Bot returned error message: '$botMsg'");
+    }
+
     return model;
   } catch (e) {
     if (tracker != null) tracker.failed = true;
@@ -261,11 +276,16 @@ void main() {
       });
 
       test('Step 9: Confirm Phone Number (Yes)', () async {
-        await sendStep(
+        final model = await sendStep(
           provider,
           "STEP 9",
           testPhoneConfirmation,
           tracker: tracker,
+        );
+        expect(
+          model.message?.toLowerCase().contains("already registered") ?? false,
+          isFalse,
+          reason: "Phone number registration failed: ${model.message}",
         );
       });
 
@@ -388,11 +408,21 @@ void main() {
       });
 
       test('Step 25: Send College Degree', () async {
-        await sendStep(provider, "STEP 25", testCollegeDegree, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 25",
+          testCollegeDegree,
+          tracker: tracker,
+        );
       });
 
       test('Step 25b: Send College Field of Study', () async {
-        await sendStep(provider, "STEP 25b", testCollegeFeild, tracker: tracker);
+        await sendStep(
+          provider,
+          "STEP 25b",
+          testCollegeFeild,
+          tracker: tracker,
+        );
       });
 
       test('Step 25c: Send College Name', () async {

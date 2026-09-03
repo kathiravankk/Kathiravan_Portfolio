@@ -57,7 +57,7 @@ class ResumeFileUtils {
     const pdfCss = '''
 <style id="__pdf_override__">
   /* Force A4 page dimensions and uniform margins on all pages (Page 1, Page 2, etc.) */
-  @page {
+  @page, @page :first, @page :left, @page :right, @page :last {
     size: A4 portrait;
     margin: 12mm 15mm 12mm 15mm !important;
   }
