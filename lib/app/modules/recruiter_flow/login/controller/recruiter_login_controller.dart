@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/coordinator_data_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_login_model.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_login_provider.dart';
 
@@ -141,5 +142,7 @@ class RecruiterLoginController extends GetxController {
       rethrow;
     }
   }
+
+
 
 }

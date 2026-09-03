@@ -44,6 +44,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _bioCtrl = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
+  final TextEditingController roleController = TextEditingController();
 
   String? selectedDobForApi; // yyyy-MM-dd
 
@@ -94,6 +95,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       _linkedinCtrl,
       _websiteCtrl,
       _bioCtrl,
+      dobController,
+      locationController,
+      roleController,
     ]) {
       c.dispose();
     }
@@ -258,6 +262,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         )
         .toList();
     locationController.text = p.location ?? "";
+    roleController.text = p.role ?? "";
 
     // if ((p.studentDob ?? "").isNotEmpty) {
     //   final date = DateTime.parse(p.studentDob!);
@@ -416,6 +421,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       isNumberKeyboard: false,
                     ),
                     const SizedBox(height: 12),
+                    CustomTextField(
+                      controller: roleController,
+                      labelText: "Role",
+                      hintText: "Enter Role",
+                      isNumberKeyboard: false,
+                    ),
+                    const SizedBox(height: 12),
                     _pfield(
                       Icons.dataset_linked_outlined,
                       _linkedinCtrl,
@@ -425,7 +437,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     _pfield(
                       Icons.language_outlined,
                       _websiteCtrl,
-                      'Portfolio/Personal Website',
+                      'Portfolio / Github',
                     ),
                     const SizedBox(height: 20),
 
@@ -851,6 +863,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'linkedin': _linkedinCtrl.text.trim(),
       'website': _websiteCtrl.text.trim(),
       'bio': _bioCtrl.text.trim(),
+      'location': locationController.text.trim(),
+      'role': roleController.text.trim(),
       'pickedImage': _pickedImage?.path ?? '',
       'certifications': _certifications,
       'experiences': _experiences,
@@ -1121,6 +1135,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       'github': _websiteCtrl.text.trim(),
       "studdob": selectedDobForApi ?? "",
       "location": locationController.text.trim(),
+      "role": roleController.text.trim(),
       //'isVerified': false,
       //"role": "Software Developer",
       //"templateNumber": "1",
@@ -1485,6 +1500,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               const SizedBox(height: 5),
               CustomTextField(
                 isProfileFlow: true,
+                isNumberKeyboard: false,
                 controller: collegeInstitutionCtrl,
                 labelText: 'Institution',
                 onChanged: (_) {},

@@ -111,12 +111,12 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                           radius: 25,
                           backgroundColor: AppColors.whiteColor,
                           backgroundImage: NetworkImage(
-                            homeController.profileModel.recruiterData!.recCompanyLogo ?? "",
+                            homeController.profileModel.recruiterData!=null?homeController.profileModel.recruiterData!.recCompanyLogo ?? "":"",
                           ),
                         ),
                       ),
                       Text(
-                        homeController.profileModel.recruiterData!.recName ?? "",
+                        homeController.profileModel.recruiterData!=null?homeController.profileModel.recruiterData!.recName ?? "":"",
                         style: AppStyles.customTextStyle(
                           size: 21,
                           weight: FontWeight.w700,
@@ -126,29 +126,29 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                       const Spacer(),
                       ProfileWidgets.creditContainer(
                         creditCount:
-                            ((homeController
+                            ((homeController.profileModel.recruiterData!=null?homeController
                                     .profileModel.recruiterData!
                                     .recruiterCreditId!
                                     .freeCredits ??
-                                0) +
-                            (homeController
+                                0:0) +
+                            (homeController.profileModel.recruiterData!=null?homeController
                                     .profileModel.recruiterData!
                                     .recruiterCreditId!
                                     .balance ??
-                                0)),
+                                0:0)),
                         viewFunc: () {
                           AppFunctions.navigateScreen(
                             context,
                             AppRoutes.recruiterCreditPlanScreen,
                             arguments: {
-                              "creditBalance": homeController
+                              "creditBalance": homeController.profileModel.recruiterData!=null?homeController
                                   .profileModel.recruiterData!
                                   .recruiterCreditId!
-                                  .balance,
-                              "creditId": homeController
+                                  .balance??0 :0,
+                              "creditId": homeController.profileModel.recruiterData!=null?homeController
                                   .profileModel.recruiterData!
                                   .recruiterCreditId!
-                                  .id,
+                                  .id??"":"",
                             },
                           );
                         },
@@ -202,7 +202,7 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 15,
                                   mainAxisSpacing: 15,
-                                  childAspectRatio: 0.57,
+                                  childAspectRatio: 0.58,
                                 ),
                             itemBuilder: (context, index) {
                               final student =
@@ -233,9 +233,9 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                                 },
                                 studentName: student.studName ?? "",
                                 studentProfile: student.studProfile ?? "",
-                                studentDegree: student.studentdegree ?? "",
+                                studentDegree: student.studentdegree ?? "No Degree Specified",
                                 studentCollegeName:
-                                    student.studentcollegename ?? "",
+                                    student.studentcollegename ?? "No College Specified",
                                 studentDepartment:
                                     student.studentfieldofstudy ?? "",
                                 isVerified: student.isVerified ?? false,

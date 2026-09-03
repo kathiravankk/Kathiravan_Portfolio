@@ -25,14 +25,13 @@ const String apiEndpoint = "https://dev.api.internsharks.ai/api/resumechatbot";
 // ✏️  Configurable Test Data Variables (Part 1)
 // ---------------------------------------------------------------------------
 String testUserId = ""; // Leave empty to load from .chatbot_session.json
-String testFirstName =
-    (sampleData["personal_info"] as Map)["name"] ?? "Midhun";
-String testLastName =
-    (sampleData["personal_info"] as Map)["surname"] ?? "Raj";
+String testFirstName = (sampleData["personal_info"] as Map)["name"] ?? "Midhun";
+String testLastName = (sampleData["personal_info"] as Map)["surname"] ?? "Raj";
 String testRole =
     (sampleData["personal_info"] as Map)["role"] ?? "Flutter Developer";
 String testDefaultEmail =
-    (sampleData["personal_info"] as Map)["email"] ?? "midhunraj2113@gmail.com";
+    (sampleData["personal_info"] as Map)["email"] ??
+    "kathirkannan2002@gmail.com";
 String testEmailConfirmation = "Yes";
 
 String getActiveUserId() {
@@ -48,8 +47,8 @@ String getActiveUserId() {
   );
 
   final session = jsonDecode(sessionFile.readAsStringSync());
-  final sessionUserId =
-      (session['user_id'] ?? session['userId'] ?? "").toString();
+  final sessionUserId = (session['user_id'] ?? session['userId'] ?? "")
+      .toString();
   expect(
     sessionUserId,
     isNotEmpty,
@@ -103,11 +102,26 @@ Future<CreateNewChatResumeModel> sendStep(
     print("📌 next_field: ${model.nextField}");
     print("📌 completed_section: ${model.completedSection}");
     if (model.collectedData != null) {
-      print(
-        "📤 Collected Data: ${jsonEncode(model.collectedData!.toJson())}",
-      );
+      print("📤 Collected Data: ${jsonEncode(model.collectedData!.toJson())}");
     }
     print("==================================================\n");
+
+    final botMsg = model.message ?? "";
+    final botMsgLower = botMsg.toLowerCase();
+
+    if (botMsgLower.contains("already registered") ||
+        botMsgLower.contains("couldn't send") ||
+        botMsgLower.contains("already exists") ||
+        botMsgLower.contains("tell me a different") ||
+        botMsgLower.contains("mobile already registered") ||
+        botMsgLower.contains("email already registered") ||
+        botMsgLower.contains("invalid otp") ||
+        botMsgLower.contains("incorrect otp") ||
+        botMsgLower.startsWith("oops")) {
+      if (tracker != null) tracker.failed = true;
+      fail("$stepTag Failed: Bot returned error message: '$botMsg'");
+    }
+
     return model;
   } catch (e) {
     if (tracker != null) tracker.failed = true;
@@ -189,12 +203,7 @@ void main() {
       final tracker = GroupTracker();
 
       test('Step 5: Send Email Address', () async {
-        await sendStep(
-          provider,
-          "STEP 5",
-          testDefaultEmail,
-          tracker: tracker,
-        );
+        await sendStep(provider, "STEP 5", testDefaultEmail, tracker: tracker);
       });
 
       test('Step 6: Confirm Email Address', () async {
@@ -204,10 +213,13 @@ void main() {
           testEmailConfirmation,
           tracker: tracker,
         );
+        expect(
+          model.message?.toLowerCase().contains("already registered") ?? false,
+          isFalse,
+          reason: "Email registration failed: ${model.message}",
+        );
         if (model.message != null && model.message!.isNotEmpty) {
-          print(
-            "✅ Part 1 completed! OTP has been sent to $testDefaultEmail",
-          );
+          print("✅ Part 1 completed! OTP has been sent to $testDefaultEmail");
           print("👉 Now proceed with Part 2 (Step 7 onwards).");
         }
       });

@@ -879,7 +879,7 @@ A professional profile picture creates a great first impression.
 
 Thank you, InternSharks.ai!
 
-🌐 https://internsharks.ai
+🌐 https://play.google.com/store/apps/details?id=com.doubletap.internsharks.ai
 
 #InternSharks #ResDP #ProfessionalProfile #CareerReady #Students #LinkedIn #Resume
 ''';
@@ -901,7 +901,7 @@ A great resume is the first step toward a successful career.
 
 Thank you, InternSharks.ai, for helping me build my professional profile!
 
-🌐 https://internsharks.ai
+🌐 https://play.google.com/store/apps/details?id=com.doubletap.internsharks.ai
 
 #InternSharks #AIResumeBuilder #ATSResume #CareerReady #Students #Freshers #Resume
 ''';
@@ -917,7 +917,7 @@ Proud to have earned my certification through InternSharks.ai.
 
 Thank you, InternSharks.ai, for this amazing learning experience!
 
-🌐 https://internsharks.ai
+🌐 https://play.google.com/store/apps/details?id=com.doubletap.internsharks.ai
 
 #InternSharks #Certified #CareerReady #Students #LearningJourney
 ''';

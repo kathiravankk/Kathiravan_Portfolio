@@ -632,7 +632,7 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: AppStyles.customTextStyle(
                     size: 12,
-                    color: AppColors.selectedContColor,
+                    color: AppColors.blueTextColor,
                     weight: FontWeight.w500,
                   ),
                 ),

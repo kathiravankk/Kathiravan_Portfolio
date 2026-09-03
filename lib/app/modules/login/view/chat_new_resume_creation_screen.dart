@@ -344,6 +344,21 @@ class _ChatNewResumeCreationScreenState
             completedSection == "achievements_completed" ||
             nextField == "DONE") && !_isChatCompleted) {
           _isChatCompleted = true;
+
+          if (completedSection != null && completedSection.isNotEmpty) {
+            _completedSections.add(completedSection);
+            await _handleCompletedSection(
+              completedSection,
+              pendingBotMessage: hasQuiz ? botMessage : null,
+            );
+          } else {
+            await updateCompleteSectionInfo(
+              isDone: true,
+              completedSection: "DONE",
+              fromChatFlow: true,
+            );
+          }
+
           messages.add(
             ChatMessage(
               text:

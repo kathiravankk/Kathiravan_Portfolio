@@ -214,7 +214,8 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
         homeController.profileModel.recruiterData!.recCompanyWebsite ?? "";
     aboutCompanyController.text =
         homeController.profileModel.recruiterData!.recCompanyDescription ?? "";
-    _existingLogoUrl = homeController.profileModel.recruiterData!.recCompanyLogo ?? "";
+    _existingLogoUrl =
+        homeController.profileModel.recruiterData!.recCompanyLogo ?? "";
   }
 
   void _prefillEditData() {
@@ -234,9 +235,15 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
     // Internship Details
     // =============================
     roleTypeController.text = data.roleType ?? "";
-    coordinatorNameController.text = data.internshipNameCoordinator ?? "";
-    coordinatorMobileController.text = data.internshipMobileCoordinator ?? "";
-    coordinatorEmailController.text = data.internshipEmailCoordinator ?? "";
+
+    // Prefer the nested coordinator object when present
+    final coord = data.internshipCoordinator;
+    coordinatorNameController.text =
+        (coord?.name?.isNotEmpty == true ? coord!.name : data.internshipNameCoordinator) ?? "";
+    coordinatorMobileController.text =
+        (coord?.mobile?.isNotEmpty == true ? coord!.mobile : data.internshipMobileCoordinator) ?? "";
+    coordinatorEmailController.text =
+        (coord?.email?.isNotEmpty == true ? coord!.email : data.internshipEmailCoordinator) ?? "";
 
     _verifiedMobileNumber = coordinatorMobileController.text.trim();
     isMobileVerified = _verifiedMobileNumber.length == 10;
@@ -981,9 +988,29 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   Widget _buildCoordinatorMobileSection() {
     final String mobile = coordinatorMobileController.text.trim();
     final bool isTenDigits = mobile.length == 10;
+
+    // If the user re-types the exact same already-verified number, silently
+    // restore the verified state without a new OTP round-trip.
+    final bool reEnteredSameNumber =
+        !isMobileVerified && isTenDigits && mobile == _verifiedMobileNumber && _verifiedMobileNumber.isNotEmpty;
+
+    final bool effectivelyVerified = isMobileVerified || reEnteredSameNumber;
+
+    // Restore verification state immediately so the UI snaps back
+    if (reEnteredSameNumber && !isMobileVerified) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            isMobileVerified = true;
+            showOtpField = false;
+          });
+        }
+      });
+    }
+
     final bool canSendOtp =
         isTenDigits &&
-        !isMobileVerified &&
+        !effectivelyVerified &&
         !postController.sendCoordinatorOtpLoading;
     final bool canVerifyOtp =
         otpController.text.trim().length == 4 &&
@@ -1003,12 +1030,36 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                 labelText: "Coordinator's Mobile Number",
                 hintText: "Ex: 9090909090",
                 isNumberKeyboard: true,
-                isEnabled: !isMobileVerified,
-                suffixWidget: isMobileVerified
-                    ? const Icon(
-                        Icons.check_circle,
-                        color: AppColors.primaryColor,
-                        size: 20,
+                // Always editable — user can change the number at any time
+                isEnabled: true,
+                suffixWidget: effectivelyVerified
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            color: AppColors.primaryColor,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () {
+                              // Allow the user to intentionally clear & re-enter
+                              setState(() {
+                                isMobileVerified = false;
+                                showOtpField = false;
+                                otpController.clear();
+                                coordinatorMobileController.clear();
+                              });
+                            },
+                            child: const Icon(
+                              Icons.edit_outlined,
+                              color: AppColors.greyIcon,
+                              size: 18,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                        ],
                       )
                     : null,
                 prefixWidget: const Icon(
@@ -1018,7 +1069,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
                 ),
               ),
             ),
-            if (!isMobileVerified)
+            if (!effectivelyVerified)
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: IgnorePointer(
@@ -1039,7 +1090,7 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
               ),
           ],
         ),
-        if (showOtpField && !isMobileVerified)
+        if (showOtpField && !effectivelyVerified)
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             spacing: 10,
@@ -1473,42 +1524,48 @@ class _PostNewInternshipScreenState extends State<PostNewInternshipScreen> {
   void _showQualificationPicker() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // Enables expandable height if needed
       backgroundColor: AppColors.fieldBgColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => StatefulBuilder(
         builder: (context, setSheetState) => SafeArea(
-          child: Wrap(
-            children: List.generate(qualificationOptions.length, (index) {
-              final option = qualificationOptions[index];
-              final isSelected = selectedQualifications.contains(option);
-              return ListTile(
-                title: Text(
-                  option,
-                  style: AppStyles.customTextStyle(
-                    fontFamily: 'Roboto',
-                    color: AppColors.whiteColor,
-                    size: 14,
-                    weight: FontWeight.w500,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(
+              bottom: 24.0,
+            ), // Adds extra space at the bottom
+            child: Wrap(
+              children: List.generate(qualificationOptions.length, (index) {
+                final option = qualificationOptions[index];
+                final isSelected = selectedQualifications.contains(option);
+                return ListTile(
+                  title: Text(
+                    option,
+                    style: AppStyles.customTextStyle(
+                      fontFamily: 'Roboto',
+                      color: AppColors.whiteColor,
+                      size: 14,
+                      weight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                trailing: isSelected
-                    ? const Icon(Icons.check, color: AppColors.primaryColor)
-                    : null,
-                onTap: () {
-                  setSheetState(() {
-                    setState(() {
-                      if (isSelected) {
-                        selectedQualifications.remove(option);
-                      } else {
-                        selectedQualifications.add(option);
-                      }
+                  trailing: isSelected
+                      ? const Icon(Icons.check, color: AppColors.primaryColor)
+                      : null,
+                  onTap: () {
+                    setSheetState(() {
+                      setState(() {
+                        if (isSelected) {
+                          selectedQualifications.remove(option);
+                        } else {
+                          selectedQualifications.add(option);
+                        }
+                      });
                     });
-                  });
-                },
-              );
-            }),
+                  },
+                );
+              }),
+            ),
           ),
         ),
       ),

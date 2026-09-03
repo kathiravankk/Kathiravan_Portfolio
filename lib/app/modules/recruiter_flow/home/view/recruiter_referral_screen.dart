@@ -410,7 +410,7 @@ Invite them to join Internsharks and help them connect with qualified candidates
 
 🔗 Your Referral Link
 
-https://internsharks.ai
+https://play.google.com/store/apps/details?id=com.doubletap.internsharks.ai
 
 🎟️ Your Referral Code: *${homeController.profileModel.recruiterData!.referCode ?? ""}*
 

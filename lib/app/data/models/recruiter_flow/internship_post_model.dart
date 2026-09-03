@@ -37,6 +37,7 @@ class PostData {
   final String? internshipNameCoordinator;
   final String? internshipMobileCoordinator;
   final String? internshipEmailCoordinator;
+  final InternshipCoordinator? internshipCoordinator;
   final String? aboutInternship;
   final List<String>? studentQualification;
   final List<String>? requiredSkills;
@@ -97,55 +98,66 @@ class PostData {
     this.updatedAt,
     this.internshipEmailCoordinator,
     this.internshipMobileCoordinator,
+    this.internshipCoordinator,
     this.v,
   });
 
   factory PostData.fromJson(Map<String, dynamic> json) {
+    // Parse nested internshipCoordinator object
+    final coordJson = json['internshipCoordinator'] as Map<String, dynamic>?;
+    final InternshipCoordinator? coordinator =
+        coordJson != null ? InternshipCoordinator.fromJson(coordJson) : null;
+
     return PostData(
-      id: json['_id']??"",
-      companyName: json['companyname']??"",
-      aboutCompany: json['aboutcompany']??"",
-      companyWebsite: json['companywebsite']??"",
-      internshipEmailCoordinator: json['coordinatorEmail']??"",
-      internshipMobileCoordinator: json['coordinatorMobile']??"",
-      companyLogo: json['companylogo']??"",
-      roleType: json['roletype']??"",
-      internshipNameCoordinator: json['internship_coordinator']??"",
-      aboutInternship: json['aboutinternship']??"",
+      id: json['_id'] ?? "",
+      companyName: json['companyname'] ?? "",
+      aboutCompany: json['aboutcompany'] ?? "",
+      companyWebsite: json['companywebsite'] ?? "",
+      // Prefer nested coordinator object; fall back to flat fields
+      internshipEmailCoordinator:
+          coordinator?.email ?? json['coordinatorEmail'] ?? "",
+      internshipMobileCoordinator:
+          coordinator?.mobile ?? json['coordinatorMobile'] ?? "",
+      internshipNameCoordinator:
+          coordinator?.name ?? json['internship_coordinator'] ?? "",
+      internshipCoordinator: coordinator,
+      companyLogo: json['companylogo'] ?? "",
+      roleType: json['roletype'] ?? "",
+      aboutInternship: json['aboutinternship'] ?? "",
       studentQualification: json['studentqualification'] != null
           ? List<String>.from(json['studentqualification'])
           : null,
       requiredSkills: json['requiredskills'] != null
           ? List<String>.from(json['requiredskills'])
           : null,
-      companyState: json['companystate']??"",
-      companyCity: json['companycity']??"",
-      locationLink: json['locationlink']??"",
+      companyState: json['companystate'] ?? "",
+      companyCity: json['companycity'] ?? "",
+      locationLink: json['locationlink'] ?? "",
       location: json['location'] != null
           ? JobLocation.fromJson(json['location'])
           : null,
-      internshipDuration: json['internshipduration']??"",
-      internshipStipend: json['internshipstipend']??"",
-      fee: json['fee']??"",
+      internshipDuration: json['internshipduration'] ?? "",
+      internshipStipend: json['internshipstipend'] ?? "",
+      fee: json['fee'] ?? "",
       projectDescription: json['project_description'] != null
           ? List<String>.from(json['project_description'])
           : null,
-      internshipMode: json['internshipmode']??"",
-      days: json['days']??"",
-      recruiter: json['recruiter']??"",
+      internshipMode: json['internshipmode'] ?? "",
+      days: json['days'] ?? "",
+      recruiter: json['recruiter'] ?? "",
       industry: json['industry'] != null
           ? JobIndustry.fromJson(json['industry'])
           : null,
-      noOfPosition: json['noofposition']??0,
-      internPositions: json['internpositions']??0,
-      filledPositions: json['filledpositions']??0,
-      totalApplicants: json['totalApplications']??0,
-      selectedApplicants: json['selectedApplications']??0,
-      rejectedApplicants: json['rejectedApplications']??0,
+      noOfPosition: json['noofposition'] ?? 0,
+      internPositions: json['internpositions'] ?? 0,
+      filledPositions: json['filledpositions'] ?? 0,
+      totalApplicants: json['totalApplications'] ?? 0,
+      selectedApplicants: json['selectedApplications'] ?? 0,
+      rejectedApplicants: json['rejectedApplications'] ?? 0,
       syllabusData: json['syllabusdata'],
-      createdAt: json['createdAt']??"",
-      updatedAt: json['updatedAt']??"",
-      v: json['__v']??0,
+      createdAt: json['createdAt'] ?? "",
+      updatedAt: json['updatedAt'] ?? "",
+      v: json['__v'] ?? 0,
     );
   }
 
@@ -182,6 +194,12 @@ class PostData {
     '__v': v,
   };
 
+  /// Helper: returns true when there is a coordinator attached
+  bool get hasCoordinator =>
+      internshipCoordinator != null ||
+      (internshipNameCoordinator != null &&
+          internshipNameCoordinator!.isNotEmpty);
+
   /// Available slots = internPositions - filledPositions
   int get availableSlots =>
       (internPositions ?? 0) - (filledPositions ?? 0);
@@ -194,6 +212,45 @@ class PostData {
 
   /// Whether there is a fee
   bool get hasFee => fee != null && fee != '0' && fee!.isNotEmpty;
+}
+
+/// Coordinator details (nested object from API)
+class InternshipCoordinator {
+  final String? id;
+  final String? name;
+  final String? email;
+  final String? mobile;
+  final String? role;
+  final bool? isActive;
+
+  InternshipCoordinator({
+    this.id,
+    this.name,
+    this.email,
+    this.mobile,
+    this.role,
+    this.isActive,
+  });
+
+  factory InternshipCoordinator.fromJson(Map<String, dynamic> json) {
+    return InternshipCoordinator(
+      id: json['_id'],
+      name: json['name'],
+      email: json['email'],
+      mobile: json['mobile'],
+      role: json['role'],
+      isActive: json['isActive'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    '_id': id,
+    'name': name,
+    'email': email,
+    'mobile': mobile,
+    'role': role,
+    'isActive': isActive,
+  };
 }
 
 class JobLocation {

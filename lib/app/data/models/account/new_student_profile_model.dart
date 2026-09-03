@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/data/models/account/education_model.dart';
 
 class NewStudentProfileModel {
   String? message;
@@ -312,62 +313,221 @@ class NewStudentProfileModel {
   }
 
   Map<String, dynamic> toFormDataJson() {
+    // 1. Extract college details (flat & array)
+    String studentDegreeVal = '';
+    String studentFieldOfStudyVal = '';
+    String studentCollegeNameVal = collegeName ?? '';
+    String studCollegeStartYearVal = '';
+    String studCollegeEndYearVal = '';
+
+    List<Map<String, dynamic>> collegeArray = [];
+    if (college != null && college!.isNotEmpty) {
+      for (var e in college!) {
+        Map<String, dynamic> cMap = {};
+        if (e is CollegeEducation) {
+          cMap = {
+            'degree': e.degree ?? '',
+            'department': e.department ?? '',
+            'institution': e.institution ?? '',
+            'start_year': e.startYear ?? '',
+            'end_year': e.endYear ?? '',
+          };
+        } else if (e is CollegeData) {
+          cMap = {
+            'degree': e.degree ?? '',
+            'department': e.department ?? '',
+            'institution': e.institution ?? '',
+            'start_year': e.startYear?.toString() ?? '',
+            'end_year': e.endYear?.toString() ?? '',
+          };
+        } else if (e is Map) {
+          cMap = {
+            'degree': e['degree'] ?? '',
+            'department': e['department'] ?? '',
+            'institution': e['institution'] ?? '',
+            'start_year':
+                e['start_year']?.toString() ?? e['startYear']?.toString() ?? '',
+            'end_year':
+                e['end_year']?.toString() ?? e['endYear']?.toString() ?? '',
+          };
+        }
+        if (cMap.isNotEmpty) {
+          collegeArray.add(cMap);
+        }
+      }
+    } else if (education?.college != null && education!.college!.isNotEmpty) {
+      for (var e in education!.college!) {
+        collegeArray.add({
+          'degree': e.degree ?? '',
+          'department': e.department ?? '',
+          'institution': e.institution ?? '',
+          'start_year': e.startYear ?? '',
+          'end_year': e.endYear ?? '',
+        });
+      }
+    }
+
+    if (collegeArray.isNotEmpty) {
+      final firstC = collegeArray.first;
+      studentDegreeVal = firstC['degree'] ?? '';
+      studentFieldOfStudyVal = firstC['department'] ?? '';
+      if (studentCollegeNameVal.isEmpty) {
+        studentCollegeNameVal = firstC['institution'] ?? '';
+      }
+      studCollegeStartYearVal = firstC['start_year'] ?? '';
+      studCollegeEndYearVal = firstC['end_year'] ?? '';
+    }
+
+    // 2. Higher Secondary details
+    String studHighSchoolNameVal = '';
+    String studHighSchoolPercentageVal = '';
+    List<Map<String, dynamic>> higherSecArray = [];
+
+    HigherSecondary? hsItem;
+    if (higherSecondary != null && higherSecondary!.isNotEmpty) {
+      hsItem = higherSecondary!.first;
+    } else if (education?.school?.higherSecondary != null) {
+      hsItem = education!.school!.higherSecondary;
+    }
+
+    if (hsItem != null) {
+      studHighSchoolNameVal = hsItem.institution ?? '';
+      studHighSchoolPercentageVal = hsItem.percentage ?? '';
+      higherSecArray.add({
+        'institution': hsItem.institution ?? '',
+        'board': hsItem.board ?? '',
+        'percentage': hsItem.percentage ?? '',
+        'year_of_passing': hsItem.yearOfPassing ?? '',
+      });
+    }
+
+    // 3. Secondary details
+    String studentSecondarySchoolNameVal = '';
+    String studentSecondarySchoolPercentageVal = '';
+    List<Map<String, dynamic>> secondaryArray = [];
+
+    Secondary? secItem;
+    if (secondary != null && secondary!.isNotEmpty) {
+      secItem = secondary!.first;
+    } else if (education?.school?.secondary != null) {
+      secItem = education!.school!.secondary;
+    }
+
+    if (secItem != null) {
+      studentSecondarySchoolNameVal = secItem.institution ?? '';
+      studentSecondarySchoolPercentageVal = secItem.percentage ?? '';
+      secondaryArray.add({
+        'institution': secItem.institution ?? '',
+        'board': secItem.board ?? '',
+        'percentage': secItem.percentage ?? '',
+        'year_of_passing': secItem.yearOfPassing ?? '',
+      });
+    }
+
+    // 4. Education Object
+    final educationObject = {
+      'school': {
+        'higher_secondary':
+            higherSecArray.isNotEmpty ? higherSecArray.first : {},
+        'secondary': secondaryArray.isNotEmpty ? secondaryArray.first : {},
+      },
+      'college': collegeArray,
+    };
+
     return {
-      "personal_info": jsonEncode({
-        "name": studentName ?? "",
-        "gender": studentGender ?? "",
-        "email": studEmail ?? "",
-        "phone": studMobileNo ?? "",
-        "linkedIn": linkedIn ?? "",
-        "github": github ?? "",
-        "location": location ?? "",
-        "dob": studentDob ?? "",
-        "college_location": collegeLocation ?? "",
-        "college_name": collegeName ?? "",
-      }),
+      if (studProfile != null && studProfile!.isNotEmpty)
+        'studprofile': studProfile,
+      'studname': studentName ?? '',
+      'studemail': studEmail ?? '',
+      'studmobileno': studMobileNo ?? '',
+      'linkedIn': linkedIn ?? '',
+      'github': github ?? '',
+      'studdob': studentDob ?? '',
+      'location': location ?? '',
+      'role': role ?? '',
+      'portfolio_website': github ?? '',
+      'profile_summary': profileSummary ?? '',
 
-      "profile_summary": profileSummary ?? "",
+      'studentdegree': studentDegreeVal,
+      'studentfieldofstudy': studentFieldOfStudyVal,
+      'studentcollegename': studentCollegeNameVal,
+      'studcollegestartyear': studCollegeStartYearVal,
+      'studcollegeendyear': studCollegeEndYearVal,
+      'studcollegelocation': collegeLocation ?? '',
 
-      "skills": jsonEncode(studProgrammingLang ?? []),
-      "projects": jsonEncode(projects?.map((e) => e.toJson()).toList() ?? []),
-      "experience": jsonEncode(experience ?? []),
-      "internships": jsonEncode(
-        internships?.map((e) => e.toJson()).toList() ?? [],
+      'studhighschollname': studHighSchoolNameVal,
+      'studhighschoolpercentage': studHighSchoolPercentageVal,
+      'studhighschoollocation': '',
+
+      'studentsecondaryschoolname': studentSecondarySchoolNameVal,
+      'studentsecondaryschoolpercentage': studentSecondarySchoolPercentageVal,
+      'studsecondaryschoollocation': '',
+
+      'college': jsonEncode(collegeArray),
+      'higher_secondary': jsonEncode(higherSecArray),
+      'secondary': jsonEncode(secondaryArray),
+      'education': jsonEncode(educationObject),
+
+      'studprogramminglang':
+          (studProgrammingLang ?? []).map((e) => [e]).toList(),
+      'tools_and_technologies': jsonEncode(toolsAndTechnologies ?? []),
+
+      'projects': jsonEncode(
+        (projects ?? [])
+            .map(
+              (e) => {
+                'title': e.title ?? '',
+                'description': e.description ?? [],
+              },
+            )
+            .toList(),
       ),
-      "trainings": jsonEncode(trainings ?? []),
-
-      "workshops": jsonEncode(workshops ?? []),
-      "publications": jsonEncode(publications ?? []),
-      "parents": jsonEncode(parents ?? []),
-      "achievements": jsonEncode(achievements ?? []),
-      "leadership": jsonEncode(leadership ?? []),
-      "volunteer_experience": jsonEncode(volunteerExperience ?? []),
-      "languages": jsonEncode(languagesKnown ?? []),
-      "areas_of_interest": jsonEncode(areasOfInterest ?? []),
-      "hobbies": jsonEncode(hobbies ?? []),
-      "paper_presentations": jsonEncode(
-        paperPresentations?.map((e) => e.toJson()).toList() ?? [],
+      'experience': jsonEncode(
+        (experience ?? [])
+            .map(
+              (e) => e is Map
+                  ? {
+                      'role': e['role'] ?? '',
+                      'company': e['company'] ?? '',
+                      'duration': e['duration'] ?? '',
+                      'description': e['description'] ?? '',
+                    }
+                  : {
+                      'role': (e as dynamic).role ?? '',
+                      'company': (e as dynamic).company ?? '',
+                      'duration': (e as dynamic).duration ?? '',
+                      'description': (e as dynamic).description ?? '',
+                    },
+            )
+            .toList(),
       ),
-      "industrial_visits": jsonEncode(
-        industrialVisits?.map((e) => e.toJson()).toList() ?? [],
+      'studentcertificate': jsonEncode(
+        (studentCertificate ?? []).map((e) => e.toJson()).toList(),
       ),
-      "certifications": jsonEncode(
-        studentCertificate?.map((e) => e.toJson()).toList() ?? [],
+      'internships': jsonEncode(
+        (internships ?? []).map((e) => e.toJson()).toList(),
       ),
-
-      "education": jsonEncode(education?.toJson()),
-      "secondary": jsonEncode(secondary?.map((e) => e.toJson()).toList() ?? []),
-      "higher_secondary": jsonEncode(
-        higherSecondary?.map((e) => e.toJson()).toList() ?? [],
+      'industrial_visits': jsonEncode(
+        (industrialVisits ?? [])
+            .map((e) => e is Map ? e : (e as dynamic).toJson())
+            .toList(),
       ),
+      'paper_presentations': jsonEncode(
+        (paperPresentations ?? []).map((e) => e.toJson()).toList(),
+      ),
+      'languages_known': jsonEncode(languagesKnown ?? []),
+      'hobbies': jsonEncode(hobbies ?? []),
+      'areas_of_interest': jsonEncode(areasOfInterest ?? []),
+      'volunteer_experience': jsonEncode(volunteerExperience ?? []),
+      'leadership': jsonEncode(leadership ?? []),
+      'achievements': jsonEncode(achievements ?? []),
+      'publications': jsonEncode(publications ?? []),
+      'workshops': jsonEncode(workshops ?? []),
 
-      "college": jsonEncode(college ?? []),
-      "tools_and_technologies": jsonEncode(toolsAndTechnologies ?? []),
-
-      "studentId": id ?? "",
-      "templateNumber": templateNumber ?? "",
-      "message": message ?? "",
-      "templateunlock":templateUnlock ?? 1,
+      'studentId': id ?? '',
+      'templateNumber': templateNumber ?? '1',
+      'message': message ?? '',
+      'templateunlock': templateUnlock ?? 1,
     };
   }
 }

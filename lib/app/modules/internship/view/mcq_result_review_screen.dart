@@ -153,15 +153,15 @@ class _McqResultReviewScreenState extends State<McqResultReviewScreen> {
                         ),
                       ],
                     ),
-                    FeedbackWidget(
-                      isLoading: internController.feedBackLoading,
-                      onSubmit: (rating, feedback) async {
-                        return await addFeedbackReview(
-                          rating: rating,
-                          review: feedback,
-                        );
-                      },
-                    ),
+                    // FeedbackWidget(
+                    //   isLoading: internController.feedBackLoading,
+                    //   onSubmit: (rating, feedback) async {
+                    //     return await addFeedbackReview(
+                    //       rating: rating,
+                    //       review: feedback,
+                    //     );
+                    //   },
+                    // ),
                     ListView.separated(
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 10),

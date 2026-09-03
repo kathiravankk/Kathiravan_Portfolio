@@ -204,7 +204,8 @@ class StudentDetails {
     /// Supports both old and new API
     studentcertificate =
         (json['studentcertificate'] as List?)
-            ?.map((e) => StudentCertificate.fromJson(e))
+            ?.where((e) => e != null)  // filter out null entries from API
+            .map((e) => StudentCertificate.fromJson(e))
             .toList() ??
         [];
 
@@ -366,10 +367,15 @@ class StudentCertificate {
   String? name;
   String? issuer;
   String? file;
+  String? date;
 
-  StudentCertificate({this.name, this.issuer, this.file});
+  StudentCertificate({this.name, this.issuer, this.file, this.date});
 
   factory StudentCertificate.fromJson(dynamic json) {
+    if (json == null) {
+      return StudentCertificate();
+    }
+
     if (json is String) {
       return StudentCertificate(file: json);
     }
@@ -378,15 +384,16 @@ class StudentCertificate {
       name: json["name"],
       issuer: json["issuer"],
       file: json["file"],
+      date: json["date"],
     );
   }
 
   dynamic toJson() {
-    if (file != null && name == null && issuer == null) {
+    if (file != null && name == null && issuer == null ) {
       return file;
     }
 
-    return {"name": name, "issuer": issuer, "file": file};
+    return {"name": name, "issuer": issuer, "file": file, "date":date};
   }
 }
 

@@ -187,13 +187,14 @@ class _RegisterResumeReportScreenState
           body: Obx(
             () =>
                 registerController.resumeScoreLoading ||
-                    registerController.studentDetailsLoading
+                    registerController.studentDetailsLoading ||
+                    registerController.updateProfileLoading
                 ? AppAlertUtils.customLoader()
                 : RefreshIndicator(
-                  onRefresh: () async {
-                    await getResumeScore();
-                  },
-                  child: Padding(
+                    onRefresh: () async {
+                      await getResumeScore();
+                    },
+                    child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         children: [
@@ -259,7 +260,7 @@ class _RegisterResumeReportScreenState
                         ],
                       ),
                     ),
-                ),
+                  ),
           ),
         ),
       ),
@@ -737,50 +738,52 @@ class _RegisterResumeReportScreenState
         Expanded(
           child: CustomButtonWidget(
             height: 45,
-            bgColor: isEnabled ? AppColors.primaryColor : AppColors.disableButtonColor2,
+            bgColor: isEnabled
+                ? AppColors.primaryColor
+                : AppColors.disableButtonColor2,
             buttonFunction: isEnabled
                 ? () async {
-              registerController
-                  .resumeAnalyzeModel
-                  .extractedData!
-                  .updatedExperience = _suggestionSelection["Experience"]
-                  ?.entries
-                  .where((e) => e.value)
-                  .map((e) => e.key)
-                  .toList();
+                    registerController
+                        .resumeAnalyzeModel
+                        .extractedData!
+                        .updatedExperience = _suggestionSelection["Experience"]
+                        ?.entries
+                        .where((e) => e.value)
+                        .map((e) => e.key)
+                        .toList();
 
-              registerController
-                  .resumeAnalyzeModel
-                  .extractedData!
-                  .updatedInternships = _suggestionSelection["Internships"]
-                  ?.entries
-                  .where((e) => e.value)
-                  .map((e) => e.key)
-                  .toList();
+                    registerController
+                            .resumeAnalyzeModel
+                            .extractedData!
+                            .updatedInternships =
+                        _suggestionSelection["Internships"]?.entries
+                            .where((e) => e.value)
+                            .map((e) => e.key)
+                            .toList();
 
-              registerController
-                  .resumeAnalyzeModel
-                  .extractedData!
-                  .updatedProjects = _suggestionSelection["Projects"]
-                  ?.entries
-                  .where((e) => e.value)
-                  .map((e) => e.key)
-                  .toList();
+                    registerController
+                        .resumeAnalyzeModel
+                        .extractedData!
+                        .updatedProjects = _suggestionSelection["Projects"]
+                        ?.entries
+                        .where((e) => e.value)
+                        .map((e) => e.key)
+                        .toList();
 
-              registerController
-                  .resumeAnalyzeModel
-                  .extractedData!
-                  .updatedProfileSummary =
-                  _suggestionSelection["Profile Summary"]
-                      ?.entries
-                      .where((e) => e.value)
-                      .map((e) => e.key)
-                      .toList();
+                    registerController
+                            .resumeAnalyzeModel
+                            .extractedData!
+                            .updatedProfileSummary =
+                        _suggestionSelection["Profile Summary"]?.entries
+                            .where((e) => e.value)
+                            .map((e) => e.key)
+                            .toList();
 
-              await updateResumeFunc();
-            }
-                : (){}, // Disables button when false
-            isLoading: registerController.updateResumeLoading,
+                    await updateResumeFunc();
+                  }
+                : () {},
+            // Disables button when false
+            isLoading: registerController.updateResumeLoading || registerController.updateResumeTemplateLoading,
             buttonText: "Update (🪙50)",
             buttonWidget: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -789,7 +792,9 @@ class _RegisterResumeReportScreenState
                   "Update - ",
                   style: AppStyles.customTextStyle(
                     size: 16,
-                    color: isEnabled ? AppColors.blackColor : AppColors.whiteColor,
+                    color: isEnabled
+                        ? AppColors.blackColor
+                        : AppColors.whiteColor,
                     weight: FontWeight.w500,
                     fontFamily: "Roboto",
                   ),
@@ -798,7 +803,9 @@ class _RegisterResumeReportScreenState
                   "50",
                   style: AppStyles.customTextStyle(
                     size: 16,
-                    color: isEnabled ? AppColors.blackColor : AppColors.whiteColor,
+                    color: isEnabled
+                        ? AppColors.blackColor
+                        : AppColors.whiteColor,
                     weight: FontWeight.w500,
                     fontFamily: "Roboto",
                   ),
@@ -836,8 +843,8 @@ class _RegisterResumeReportScreenState
     extractedData.studentId = studentId!;
 
     // Convert ExtractedResumeDataModel -> NewStudentProfileModel
-    final NewStudentProfileModel newProfileData =
-    extractedData.toNewStudentProfileModel(studentId: studentId);
+    final NewStudentProfileModel newProfileData = extractedData
+        .toNewStudentProfileModel(studentId: studentId);
 
     debugPrint(newProfileData.profileSummary.toString());
 
@@ -860,7 +867,8 @@ class _RegisterResumeReportScreenState
       }
     } else {
       AppAlertUtils.showToast(
-        message: registerController.updateProfileModel.message ??
+        message:
+            registerController.updateProfileModel.message ??
             "Something went wrong!, Please try again later!",
         isError: true,
       );
@@ -882,6 +890,23 @@ class _RegisterResumeReportScreenState
 
       if ((registerController.getResponseCode() == 200 ||
           registerController.getResponseCode() == 201)) {
+        final studentId = await LocalStorageService.getStudentId();
+
+        final extractedData =
+            registerController.resumeAnalyzeModel.extractedData!;
+        extractedData.templateNumber = "1";
+        extractedData.studentId = studentId!;
+
+        // Convert ExtractedResumeDataModel -> NewStudentProfileModel
+        final NewStudentProfileModel newProfileData = extractedData
+            .toNewStudentProfileModel(studentId: studentId);
+
+        debugPrint(newProfileData.profileSummary.toString());
+
+        await registerController.updateResumeProfileData(
+          updateData: newProfileData,
+        );
+
         /// ✅ close loader BEFORE navigation
         if (Get.isDialogOpen ?? false) {
           if (mounted) {

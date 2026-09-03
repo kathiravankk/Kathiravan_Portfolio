@@ -39,7 +39,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Last updated chip
+              // Version chip
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -48,7 +48,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   border: Border.all(color: AppColors.primaryColor.withOpacity(0.4)),
                 ),
                 child: Text(
-                  "Last updated: August 21, 2026",
+                  "Version 2.0  |  Effective: August 21, 2026",
                   style: AppStyles.customTextStyle(
                     size: 12,
                     color: AppColors.primaryColor,
@@ -59,170 +59,207 @@ class PrivacyPolicyScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               _bodyText(
-                "This Privacy Policy describes Our policies and procedures on the collection, use, and disclosure of Your information when You use the Service and explains Your privacy rights and how the law protects You.\n\n"
-                    "We use Your Personal Data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.",
+                "This Policy explains what personal data InternSharks.ai™ collects, why it is used, how AI features process it, who may receive it, and the choices available to users—including users under 18 and their parents or lawful guardians.",
               ),
 
-              _sectionTitle("1. Interpretation and Definitions"),
-              _subTitle("Interpretation"),
+              // ── Section 1 ──────────────────────────────────────────────────
+              _sectionTitle("1. Scope and Who We Are"),
               _bodyText(
-                "Words with initial capital letters have meanings defined under the following conditions. These definitions apply whether they appear in singular or plural.",
+                "This Privacy Policy (\"Policy\") applies to the InternSharks.ai™ website, mobile applications, APIs, communications and related services (together, the \"Platform\") operated by DoubleTap Innovations and Technologies Pvt Ltd. (\"InternSharks\", \"we\", \"us\" or \"our\"). It applies to students, parents or lawful guardians, recruiters, employers, educational institutions, coordinators, mentors and visitors.\n\n"
+                "For applicable Indian data-protection law, we act as the Data Fiduciary for personal data for which we determine the purpose and means of processing. Where an institution or recruiter independently decides how to use data received through the Platform, that organisation may also have its own legal obligations.",
               ),
-              _subTitle("Definitions"),
-              _bodyText("For the purposes of this Privacy Policy:"),
-              const SizedBox(height: 8),
-              _definitionItem("Account",
-                  "means a unique account created for You to access our Service or parts of our Service."),
-              _definitionItem("Affiliate",
-                  "means an entity that controls, is controlled by, or is under common control with a party."),
-              _definitionItem("Application / Platform",
-                  "refers to InternSharks, the AI-powered career and recruitment platform operated by the Company."),
-              _definitionItem("Company (\"the Company\", \"We\", \"Us\" or \"Our\")",
-                  "refers to DoubleTap Innovations and Technologies Pvt Ltd."),
-              _definitionItem("Country", "refers to: India."),
-              _definitionItem("Device",
-                  "means any device that can access the Service, such as a computer, mobile phone, or digital tablet."),
-              _definitionItem("Personal Data",
-                  "is any information that relates to an identified or identifiable individual."),
-              _definitionItem("Service",
-                  "refers to the InternSharks platform and related career/recruitment tools."),
+
+              // ── Section 2 ──────────────────────────────────────────────────
+              _sectionTitle("2. Important Definitions"),
+              _definitionItem("Personal data",
+                  "data about an identifiable individual, including profile, education, identity, application, communication and device data."),
+              _definitionItem("AI Services",
+                  "features that use artificial intelligence or automated processing, including resume enhancement and analysis, ATS scoring, matching, career assistance, syllabus and assessment generation, KYC support, mock interviews, chatbots and profile-content creation."),
               _definitionItem("Service Provider",
-                  "refers to third-party individuals or companies (including AI technology providers and payment gateways) that process data on behalf of the Company."),
-              _definitionItem("Usage Data",
-                  "refers to data collected automatically during Service use."),
-              _definitionItem("You",
-                  "means the individual (student, candidate, or recruiter) accessing or using the Service."),
+                  "an organisation that processes data for us or supports the Platform—such as cloud hosting, storage, payment, AI, messaging, analytics, security or communications providers."),
+              _definitionItem("Minor",
+                  "a person who has not reached the age at which they may independently consent or contract under applicable law."),
 
-              _sectionTitle("2. Collecting and Using Your Personal Data"),
-              _subTitle("Types of Data Collected"),
-              _subTitle2("Personal Data"),
+              // ── Section 3 ──────────────────────────────────────────────────
+              _sectionTitle("3. Personal Data We Collect"),
+
+              _subTitle("3.1 Account and Contact Data"),
+              _bulletItem("Name, email address, mobile number, date of birth, gender, photograph, city, address and account credentials or one-time-password verification data."),
+              _bulletItem("Account role, referral information, verification status, subscription or credit status, notification tokens and preferences."),
+              _bulletItem("For a Minor, parent or lawful guardian identity, contact and consent records where required."),
+
+              _subTitle("3.2 Student, Education and Career Data"),
+              _bulletItem("School, college, university, degree, field of study, academic records, skills, languages, projects, work experience, internships, training and industrial visits."),
+              _bulletItem("Resume, cover letter, portfolio, LinkedIn or GitHub links, achievements, publications, workshops, interests, hobbies, volunteering and leadership information."),
+              _bulletItem("Applications, saved internships, assessment answers and results, certificates, interview content, shortlist or selection status, internship start date and daily or project progress."),
+              _bulletItem("Documents submitted for identity or eligibility verification, which may include student identity cards and government-issued identity documents."),
+
+              _subTitle("3.3 Recruiter and Institution Data"),
+              _bulletItem("Recruiter or coordinator name, designation, contact details and account-verification information."),
+              _bulletItem("Company or institution name, address, website, size, industry, description, logo, authorised contact and supporting registration or verification documents."),
+              _bulletItem("Internship listings, candidate searches, shortlist and selection actions, communications, progress reviews, assessment use, coordinator activity, credits and payment history."),
+
+              _subTitle("3.4 AI, Communications and User-Content Data"),
+              _bulletItem("Prompts, chatbot conversations, resumes, internship descriptions, documents, images, audio, interview transcripts and other content submitted to AI Services."),
+              _bulletItem("AI-generated suggestions, scores, summaries, enhanced resumes, questions, recommendations, interview reviews and other outputs."),
+              _bulletItem("Support requests, grievance correspondence, emails, notifications, webinar participation, surveys and feedback."),
+
+              _subTitle("3.5 Technical, Usage, Payment and Permission Data"),
+              _bulletItem("IP address, device and browser information, operating system, app version, log and diagnostic data, session activity, cookie or similar identifiers and security events."),
+              _bulletItem("Camera, photo-library or file access only when a user chooses a related upload or verification function, and notification permission where enabled."),
+              _bulletItem("Order identifier, plan, amount, status, invoice and payment-confirmation data. Payment credentials are handled by the payment gateway or applicable app store; we do not intend to store full card details, CVV or UPI PIN."),
+
+              // ── Section 4 ──────────────────────────────────────────────────
+              _sectionTitle("4. How We Collect Data"),
+              _bulletItem("Directly from you, your parent or guardian, recruiter, institution coordinator or authorised representative."),
+              _bulletItem("Automatically from your use of the Platform, devices, cookies, logs and security tools."),
+              _bulletItem("From recruiters, institutions or other users when they create opportunities, manage applications, record progress or communicate through the Platform."),
+              _bulletItem("From payment, communications, identity-verification, app-store and other Service Providers."),
+              _bulletItem("From public or linked professional sources only when you direct us to them or where permitted by law."),
+
+              // ── Section 5 ──────────────────────────────────────────────────
+              _sectionTitle("5. Why We Process Personal Data"),
+              _definitionItem("Provide and personalise the Platform",
+                  "Create accounts and profiles; show relevant internships; manage applications, shortlists, assessments, certificates, training and progress."),
+              _definitionItem("Operate AI Services",
+                  "Analyse or enhance resumes; score fit; create questions or content; power chat, mock interviews, syllabus, MCQs, career support and recommendations."),
+              _definitionItem("Verify users and protect safety",
+                  "OTP verification, company or student checks, KYC support, fraud prevention, abuse detection, access control and audit logs."),
+              _definitionItem("Process payments and credits",
+                  "Create and verify orders, allocate credits, maintain transaction history, issue invoices and resolve payment disputes."),
+              _definitionItem("Communicate",
+                  "Send service messages, application updates, reminders, support responses and optional promotional communications."),
+              _definitionItem("Improve and administer services",
+                  "Troubleshoot, monitor performance, test features, aggregate analytics, enforce terms and support business operations."),
+              _definitionItem("Meet legal obligations",
+                  "Respond to lawful requests, keep required tax or transaction records, manage grievances and establish or defend legal claims."),
+
+              // ── Section 6 ──────────────────────────────────────────────────
+              _sectionTitle("6. Notice, Consent and Choices"),
               _bodyText(
-                "While using Our Service, We may ask You to provide certain personally identifiable information, including but not limited to:",
+                "We process personal data on the basis permitted by applicable law, including consent, a user-requested service, compliance with law, protection against fraud or security threats, and other legitimate uses recognised by law. Where consent is required, we will provide a clear notice describing the data and purpose. You may withdraw consent through available settings or by contacting us. Withdrawal will be as easy as the method used to give consent, where practicable, and will not affect processing already lawfully completed. Some services cannot continue without data essential to provide them.\n\n"
+                "Optional permissions—such as camera, photos, files or notifications—may be changed in device settings. Marketing communications may be opted out of using the unsubscribe control or by contacting us, although essential service messages may continue.",
               ),
-              _bulletItem("First name and last name"),
-              _bulletItem("Phone number and email address"),
-              _bulletItem("Education details and academic background"),
-              _bulletItem("Resumes, skills, and portfolio links"),
-              _bulletItem("Internship preferences and job search criteria"),
-              _bulletItem("Recruiter organization details and hiring requirements"),
-              _bulletItem("Login credentials and authentication details"),
 
-              _subTitle2("Usage Data"),
+              // ── Section 7 ──────────────────────────────────────────────────
+              _sectionTitle("7. AI Services and Automated Processing"),
               _bodyText(
-                "Usage Data is collected automatically when using the Service and may include:",
+                "AI Services process the information you provide together with relevant account, profile, internship or application data. Outputs may include resume suggestions, ATS or matching scores, candidate rankings, eligibility checks, generated descriptions, interview questions, transcripts, summaries, recommendations and progress insights.",
               ),
-              _bulletItem("Your Device's Internet Protocol address (IP address)"),
-              _bulletItem("Browser type and version"),
-              _bulletItem("Pages visited, time and date of Your visit, and time spent on pages"),
-              _bulletItem("Device identifiers and diagnostic data"),
-
-              _subTitle2("Information from AI Services"),
-              _bodyText(
-                "We offer AI-powered career tools including AI Resume Builder, AI Resume Review, ATS Resume Score, AI Job Matching, AI Career Assistant, AI Skill Recommendations, and AI Syllabus Generation. AI systems only process the specific resume, skill, and career data necessary to provide the requested service.",
-              ),
-
-              _sectionTitle("3. Payment Processing & InternSharks Credits"),
-              _bulletItem("Certain features and services on the platform operate via the InternSharks Credit System."),
-              _bulletItem("All financial transactions and payments are handled exclusively through certified third-party payment gateway providers."),
-              _bulletItem("The Company does not store, process, or retain Your sensitive payment instruments, including credit/debit card numbers, CVV codes, UPI PINs, or net banking credentials on our servers."),
-
-              _sectionTitle("4. AI Output & Service Disclaimer"),
-              _bulletItem("AI-driven features (including resume reviews, scoring, skill paths, and job matching recommendations) are automated decision-support tools designed for guidance only."),
-              _bulletItem("While We strive for high accuracy, AI outputs are generated algorithmically and do not constitute a guarantee of internship placement, interview selection, or employment."),
-
-              _sectionTitle("5. Use of Your Personal Data"),
-              _bodyText("The Company may use Personal Data for the following purposes:"),
+              _bulletItem("AI outputs are decision-support tools and may be incomplete, inaccurate or biased. They are not a guarantee of selection, employability, legal compliance or performance."),
+              _bulletItem("Recruiters and institutions must apply meaningful human review before making consequential admission, selection, rejection, discipline or employment decisions."),
+              _bulletItem("Users may request correction of inaccurate source data and may contact us to question or seek review of a significant automated score or recommendation."),
+              _bulletItem("Do not submit unnecessary sensitive or confidential information in a prompt, resume, document, image or audio recording."),
+              _bulletItem("We do not intentionally use personal data submitted to the Platform to train publicly available or general-purpose AI models unless we separately explain that use and obtain any consent required by law."),
               const SizedBox(height: 8),
-              _definitionItem("To provide and maintain our Service",
-                  "Including managing the InternSharks platform and credit balances."),
-              _definitionItem("To manage Your Account",
-                  "To register You as a user and manage Your access to specific career tools."),
-              _definitionItem("To match opportunities",
-                  "Connecting students and candidates with recruiters for internships and job openings."),
-              _definitionItem("To deliver AI services",
-                  "Processing inputs to generate resume feedback, ATS scores, and skill recommendations."),
-              _definitionItem("To contact You",
-                  "Via Email, SMS, WhatsApp, Push Notifications, and Phone Calls regarding OTPs, internship updates, application status, and service announcements."),
-              _definitionItem("To manage Your requests",
-                  "Attending to customer support and technical queries."),
-              _definitionItem("For business transfers",
-                  "Evaluating or conducting mergers, restructuring, or sales of assets."),
-              _definitionItem("For platform improvement",
-                  "Conducting analytics, preventing fraud, and optimizing system performance."),
-
-              _sectionTitle("6. Sharing and Disclosure of Your Personal Data"),
-              _bodyText("We do not sell Your personal data. We may share Your information with:"),
-              const SizedBox(height: 8),
-              _definitionItem("Recruiters and Employers",
-                  "Sharing candidate profiles, resumes, and assessment outcomes for recruitment purposes."),
-              _definitionItem("Service & AI Providers",
-                  "Trusted third parties assisting with cloud hosting, database management, payment processing, and AI integrations."),
-              _definitionItem("Affiliates & Business Partners",
-                  "Entities operating under strict compliance with this Privacy Policy."),
-              _definitionItem("Law Enforcement & Legal Authorities",
-                  "Where required by applicable Indian law or official government requests."),
-              _definitionItem("With Your Consent",
-                  "For any other specific purpose disclosed at the point of collection."),
-
-              _sectionTitle("7. Cookies and Tracking Technologies"),
               _bodyText(
-                "We use cookies and similar tracking technologies to track activity, maintain secure login sessions, store user preferences, and analyze platform performance. You can set Your browser to refuse cookies, though some platform features may become unavailable.",
+                "Our active implementation may use OpenAI APIs and may use other AI providers configured for a particular feature. AI providers may temporarily retain inputs and outputs for security, abuse prevention or service operation under their applicable contracts and settings.",
               ),
 
-              _sectionTitle("8. Retention of Your Personal Data"),
-              _bodyText("We retain Personal Data only for as long as required:"),
-              _bulletItem("To provide active platform services and internship matching"),
-              _bulletItem("To comply with statutory legal obligations and resolve disputes"),
-              _bulletItem("To maintain internal security and analytical records"),
+              // ── Section 8 ──────────────────────────────────────────────────
+              _sectionTitle("8. Sharing and Service Providers"),
+              _bodyText("We do not sell personal data. We share data only as necessary for the purposes described in this Policy, subject to contractual, technical and organisational controls where applicable."),
+              _bulletItem("Recruiters and employers: relevant student profile, resume, application, assessment, interview and progress information for genuine internship or recruitment activity."),
+              _bulletItem("Educational institutions and authorised coordinators: information about linked or participating students, opportunities, assessments and progress that the institution is authorised to manage."),
+              _bulletItem("Cloud and infrastructure providers: hosting, databases, caching, storage, backups, monitoring and content delivery."),
+              _bulletItem("AI providers: current features use OpenAI APIs and may use alternate providers for defined AI processing."),
+              _bulletItem("Payments and app stores: Cashfree and, where applicable, Apple App Store or Google Play billing and payment services."),
+              _bulletItem("Communications and notifications: email, SMS/OTP and Firebase Cloud Messaging providers."),
+              _bulletItem("Professional advisers, authorities or counterparties: where required by law, necessary to protect rights or safety, or in connection with a corporate transaction subject to appropriate safeguards."),
+              _bulletItem("Other parties: when you direct us to share information or give valid consent."),
 
-              _sectionTitle("9. Transfer of Your Personal Data"),
+              // ── Section 9 ──────────────────────────────────────────────────
+              _sectionTitle("9. Recruiter and Institution Access Controls"),
               _bodyText(
-                "Your information may be processed and stored on secure servers located in India and other jurisdictions where our trusted infrastructure and service providers operate. We implement reasonable safeguards to maintain data protection across all locations.",
+                "A valid licence, plan or credit balance is a commercial condition for certain functionality; it does not provide unrestricted access to all personal data. Recruiters and institutions receive role- and purpose-based access to information relevant to authorised recruitment, internship administration or institution management.",
+              ),
+              _bulletItem("Recruiters may use candidate information only for genuine opportunities represented on the Platform and must not scrape, sell, publish, profile for unrelated purposes, or contact candidates unlawfully."),
+              _bulletItem("Institutions and coordinators may access only students and records they are authorised to manage and must keep credentials confidential."),
+              _bulletItem("Access may be suspended when credits or licences expire, an account is inactive, consent is withdrawn, or misuse is suspected."),
+              _bulletItem("Recipients must delete or securely retain downloaded data according to applicable law and their own disclosed retention obligations."),
+
+              // ── Section 10 ─────────────────────────────────────────────────
+              _sectionTitle("10. Children and Users Under 18"),
+              _bodyText(
+                "School students and other users under 18 may register and use age-appropriate features to gain early exposure to careers and internships. Before processing a Minor's personal data or enabling a Minor to accept binding terms, we require verifiable consent and agreement from a parent or lawful guardian to the extent required by law.",
+              ),
+              _bulletItem("The parent or guardian must supervise the Minor's account and confirm that submitted information is accurate and appropriate."),
+              _bulletItem("Recruiters must verify age and obtain all consents or permissions required for an internship. Any work must be lawful, age-appropriate, non-hazardous, safe and compatible with the student's education."),
+              _bulletItem("Registration does not mean every Minor may legally perform every internship. We may restrict, review or remove an opportunity or placement based on age, safety, law or guardian concerns."),
+              _bulletItem("We do not knowingly undertake tracking, behavioural monitoring or targeted advertising directed at Minors in a manner prohibited by law."),
+              _bulletItem("A parent or guardian may review, correct or request deletion of a Minor's data by contacting grievance@internsharks.ai, subject to identity and authority verification."),
+
+              // ── Section 11 ─────────────────────────────────────────────────
+              _sectionTitle("11. Cookies, Device Permissions and Analytics"),
+              _bodyText(
+                "We use essential cookies, local storage and similar technologies for authentication, preferences, security and service operation. With consent where required, we may use analytics technologies to understand feature use and improve performance. Browser and device settings may block or delete cookies, but essential functions may then be unavailable. The mobile app requests camera, photo, file or notification access only for the related user-initiated functionality; permissions can be withdrawn in device settings.",
               ),
 
-              _sectionTitle("10. Delete Your Personal Data"),
-              _bodyText("You have the right to:"),
-              _bulletItem("Request access to the Personal Data We hold about You"),
-              _bulletItem("Correct or update inaccurate details via Your account settings"),
-              _bulletItem("Request the complete deletion of Your personal information and account by contacting Us"),
+              // ── Section 12 ─────────────────────────────────────────────────
+              _sectionTitle("12. Data Retention, Inactivity and Deletion"),
+              _bodyText("We retain personal data only for as long as reasonably necessary for the stated purpose, account lifecycle, legal obligations, security, disputes and enforcement."),
+              const SizedBox(height: 4),
+              _definitionItem("Active account and profile", "Retained while the account is active and as needed to provide requested services."),
+              _definitionItem("Inactive for 12 continuous months", "Account may be archived and marked inactive. We will provide notice where reasonably possible. Reactivation requires a written request and identity verification."),
+              _definitionItem("Inactive for 24 continuous months", "Account and associated personal data are deleted or irreversibly anonymised, unless law, fraud prevention, security, contract, dispute or an express user request requires limited retention."),
+              _definitionItem("User-requested account deletion", "Access is deactivated promptly; deletion or anonymisation is targeted within 30 days after verification, except for data we must retain."),
+              _definitionItem("Temporary AI uploads and session caches", "Generally retained from about 24 hours up to 30 days depending on the feature, unless saved by the user or required for security."),
+              _definitionItem("Applications, assessments and internship progress", "Retained with the account and opportunity history while needed for administration, records, disputes and lawful reporting."),
+              _definitionItem("Payments, tax and fraud records", "Retained for the period required by tax, accounting, payment, anti-fraud and other applicable laws."),
+              _definitionItem("Support, grievance and security logs", "Retained for resolution, audit, safety and legal-claim periods, then deleted or anonymised."),
+
+              // ── Section 13 ─────────────────────────────────────────────────
+              _sectionTitle("13. Account Deletion and Reactivation"),
+              _bodyText(
+                "A user may initiate deletion through the mobile app's \"Delete Account\" function where available, or by emailing us from the registered address. We may verify identity, authority and account ownership before completing the request. Deletion may remove access to applications, reports, certificates, progress records and unused promotional credits.\n\n"
+                "To reactivate an account archived after one year of inactivity, send a written request to info@internsharks.ai. Reactivation is subject to identity verification, account integrity and availability of data not already deleted under the two-year schedule.",
+              ),
+
+              // ── Section 14 ─────────────────────────────────────────────────
+              _sectionTitle("14. International Data Transfers"),
+              _bodyText(
+                "Some Service Providers or their support systems may process data outside India. Where data is transferred across borders, we use contractual and operational safeguards appropriate to the nature of the data and comply with transfer restrictions notified under applicable law.",
+              ),
+
+              // ── Section 15 ─────────────────────────────────────────────────
+              _sectionTitle("15. Security and Incident Response"),
+              _bodyText(
+                "We use reasonable administrative, technical and physical safeguards appropriate to risk, including controlled access, authentication, encryption in transit, credential protection, logging, backups and provider oversight. No system is completely secure. Users must protect OTPs, passwords, devices and account access and notify us promptly of suspected misuse. If a personal-data breach creates a notification obligation, we will notify affected users and authorities in the manner and timeframe required by applicable law.",
+              ),
+
+              // ── Section 16 ─────────────────────────────────────────────────
+              _sectionTitle("16. Your Rights and Grievance Process"),
+              _bodyText(
+                "Subject to applicable law and verification, you or an authorised representative may request access to a summary of personal data and processing, correction or completion, erasure, withdrawal of consent, account deletion, nomination of another person to exercise rights in specified circumstances, and grievance redressal. We may refuse or limit a request where law permits and will explain the reason where required.",
+              ),
+              _bulletItem("Send the request from the registered contact channel to grievance@internsharks.ai and describe the account, request and relevant feature."),
+              _bulletItem("We may ask for proportionate information to verify identity, guardian status or authority. Do not email unnecessary identity documents."),
+              _bulletItem("We aim to acknowledge grievances within 24 hours and resolve them within 15 days, or within another period required by applicable law. Complex requests may require additional time, and we will provide an update."),
+              _bulletItem("If you are not satisfied, you may use any escalation or complaint mechanism available under applicable law, including the Data Protection Board of India when the relevant provisions are in force."),
+
+              // ── Section 17 ─────────────────────────────────────────────────
+              _sectionTitle("17. Third-Party Links and Independent Practices"),
+              _bodyText(
+                "The Platform may link to recruiter, institution, payment, app-store or other third-party services. Their privacy practices are governed by their own notices. Review them before submitting information outside InternSharks.ai™.",
+              ),
+
+              // ── Section 18 ─────────────────────────────────────────────────
+              _sectionTitle("18. Changes to This Policy"),
+              _bodyText(
+                "We may update this Policy to reflect changes in law, technology, providers or services. Material changes will be communicated through the Platform, email or another appropriate channel before they take effect where required. The version and effective date appear at the beginning of this Policy. Continued use after the effective date is subject to applicable consent requirements.",
+              ),
+
+              // ── Section 19 ─────────────────────────────────────────────────
+              _sectionTitle("19. Grievance Officer and Contact"),
+              _definitionItem("Grievance Officer", "Paul Simson"),
+              _definitionItem("Email", "grievance@internsharks.ai"),
+              _definitionItem("General support", "info@internsharks.ai"),
               const SizedBox(height: 6),
-              _bodyText(
-                "We may retain specific information where necessary to comply with legal retention requirements.",
-              ),
-
-              _sectionTitle("11. Security of Your Personal Data"),
-              _bodyText(
-                "We use HTTPS encryption, encrypted password storage, strict access controls, and secure cloud infrastructure to safeguard Your information. However, no electronic storage or internet transmission method is 100% secure.",
-              ),
-
-              _sectionTitle("12. Children's Privacy"),
-              _bodyText(
-                "Our Service is not intended for individuals under 18 years of age without parental or guardian authorization. We do not knowingly collect personal information from individuals under 18. If We identify that data of a minor has been collected without proper consent, We will remove it promptly.",
-              ),
-
-              _sectionTitle("13. Third-Party Links"),
-              _bodyText(
-                "Our Service may contain links to external sites not operated by Us. We strongly advise You to review the Privacy Policy of every third-party site You visit, as We assume no responsibility for their practices.",
-              ),
-
-              _sectionTitle("14. Changes to This Privacy Policy"),
-              _bodyText(
-                "We may update this Privacy Policy periodically. Any modifications will be posted on this page with an updated \"Last updated\" date, and significant updates will be communicated through platform notifications or email.",
-              ),
-
-              _sectionTitle("15. Grievance Officer"),
-              _bodyText(
-                "In accordance with applicable information technology rules, the name and contact details of the Grievance Officer are provided below:",
-              ),
-              const SizedBox(height: 8),
-              _definitionItem("Designation", "Grievance Officer"),
-              _definitionItem("Email", "grievance@internsharks.ai (or info@internsharks.ai)"),
-              _definitionItem("Address", "2nd Floor, 78, North Usman Road, T Nagar, Chennai – 600016, India"),
-
-              _sectionTitle("16. Contact Us"),
-              _bodyText("If you have any questions about this Privacy Policy, you can contact us:"),
-              const SizedBox(height: 8),
               _contactBox(),
+              const SizedBox(height: 8),
+              _bodyText(
+                "When contacting us, include your registered email or mobile number and enough detail to identify the request, but do not send passwords, OTPs, CVV, UPI PIN or other unnecessary sensitive credentials.",
+              ),
               const SizedBox(height: 30),
             ],
           ),
@@ -422,7 +459,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _contactRow(Icons.email_outlined, "info@internsharks.ai"),
+        _contactRow(Icons.email_outlined, "grievance@internsharks.ai"),
+        const SizedBox(height: 8),
+        _contactRow(Icons.support_agent_outlined, "info@internsharks.ai"),
         const SizedBox(height: 8),
         _contactRow(Icons.language_outlined, "www.internsharks.ai"),
         const SizedBox(height: 8),
@@ -430,7 +469,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
         const SizedBox(height: 8),
         _contactRow(
           Icons.location_on_outlined,
-          "DoubleTap Innovations and Technologies Pvt Ltd. (InternSharks)\n2nd Floor, 78, North Usman Road, T Nagar, Chennai - 600016, India",
+          "DoubleTap Innovations and Technologies Pvt Ltd. (InternSharks)\n78, 2nd Floor, Usman Road, T Nagar, Chennai – 600017, Tamil Nadu, India",
         ),
       ],
     ),

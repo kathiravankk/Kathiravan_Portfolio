@@ -1380,7 +1380,7 @@ class _InternshipSyllabusScreenState extends State<InternshipSyllabusScreen> {
 
               /// SUBMIT BUTTON
               CustomButtonWidget(
-                height: 35,
+                height: 40,
                 isLoading: internController.weeklyUpdateLoading,
 
                 buttonFunction: () async {

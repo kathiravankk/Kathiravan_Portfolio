@@ -22,8 +22,8 @@ class StudentDetailCard extends StatelessWidget {
     this.viewFunc,
     this.studentProfile = "",
     this.studentName = "",
-    this.studentCollegeName = "",
-    this.studentDegree = "",
+    this.studentCollegeName = "No College Specified",
+    this.studentDegree = "No Degree Specified",
     this.studentDepartment = "",
     this.isVerified = false,
     this.isShortList = false,
@@ -136,7 +136,7 @@ class StudentDetailCard extends StatelessWidget {
 
                 Expanded(
                   child: Text(
-                    studentCollegeName ?? "",
+                    studentCollegeName ?? "No College Specified",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppStyles.customTextStyle(
@@ -159,7 +159,7 @@ class StudentDetailCard extends StatelessWidget {
                 const Icon(Icons.school, size: 18, color: Colors.white),
                 Expanded(
                   child: Text(
-                    studentDegree ?? "",
+                    studentDegree ?? "No Degree Specified",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppStyles.customTextStyle(

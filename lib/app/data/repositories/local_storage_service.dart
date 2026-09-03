@@ -14,7 +14,9 @@ class LocalStorageService {
   static const _isVerifiedKey = 'student_verified';
   static const studentCreditId = 'student_creditId';
   static const recruiterCreditId = 'recruiter_creditId';
+  static const userTypeKey = 'user_type';
   static const waterMarkKey = 'isWaterMarkRemoved';
+
 
   /// Save student data after registration
   static Future<void> saveStudent({
@@ -162,15 +164,29 @@ class LocalStorageService {
     await prefs.remove(recruiterTokenKey);
     await prefs.remove(_recruiterIdKey);
     await prefs.remove(recruiterCreditId);
+    await prefs.remove(userTypeKey);
   }
 
   // RECRUITER FLOW
+
+  /// Save user type / role
+  static Future<void> saveUserType({String? userType}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(userTypeKey, userType ?? "");
+  }
+
+  /// Get user type / role
+  static Future<String?> getUserType() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userTypeKey);
+  }
 
   /// Save recruiter token
   static Future<void> saveRecruiterToken({String? recruiterToken}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(recruiterTokenKey, recruiterToken ?? "");
   }
+
 
   /// Save recruiter id
   static Future<void> saveRecruiterId({String? recruiterId}) async {

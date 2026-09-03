@@ -123,11 +123,15 @@ class _InternProfileViewScreenState extends State<InternProfileViewScreen> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) async {
-            final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+            final canBack = webViewController != null
+                ? await webViewController!.canGoBack()
+                : false;
             if (mounted) setState(() => _canWebGoBack = canBack);
           },
           onPageFinished: (_) async {
-            final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+            final canBack = webViewController != null
+                ? await webViewController!.canGoBack()
+                : false;
             if (mounted) setState(() => _canWebGoBack = canBack);
 
             if (!canBack && resumeData != null) {
@@ -161,7 +165,9 @@ class _InternProfileViewScreenState extends State<InternProfileViewScreen> {
   Future<void> _handleWebBack() async {
     if (webViewController != null && await webViewController!.canGoBack()) {
       await webViewController!.goBack();
-      final canBack = webViewController != null ? await webViewController!.canGoBack() : false;
+      final canBack = webViewController != null
+          ? await webViewController!.canGoBack()
+          : false;
       if (!canBack) {
         _initWebview();
       }
@@ -222,213 +228,223 @@ class _InternProfileViewScreenState extends State<InternProfileViewScreen> {
               ),
             ),
           ),
-        body: Obx(
-          () => applicationController.internProfileLoading
-              ? AppAlertUtils.customLoader()
-              : studentData!=null?Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: 12,
-                            children: [
-                              // Profile banner + avatar
-                              studentData!.studentBanner!.isNotEmpty ||
-                                      studentData!.studentBanner != null
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        final imageUrl =
-                                            studentData!.studentBanner ?? "";
+          body: Obx(
+            () => applicationController.internProfileLoading
+                ? AppAlertUtils.customLoader()
+                : studentData != null
+                ? Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 12,
+                              children: [
+                                // Profile banner + avatar
+                                studentData!.studentBanner!.isNotEmpty ||
+                                        studentData!.studentBanner != null
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          final imageUrl =
+                                              studentData!.studentBanner ?? "";
 
-                                        if (imageUrl.isNotEmpty) {
-                                          Get.to(
-                                            () => FullScreenImagePreview(
-                                              imageUrl: imageUrl,
+                                          if (imageUrl.isNotEmpty) {
+                                            Get.to(
+                                              () => FullScreenImagePreview(
+                                                imageUrl: imageUrl,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: Hero(
+                                          tag: studentData!.studentBanner ?? "",
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              15,
                                             ),
-                                          );
-                                        }
-                                      },
-                                      child: Hero(
-                                        tag: studentData!.studentBanner ?? "",
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            15,
-                                          ),
-                                          child: Image.network(
-                                            studentData!.studentBanner ?? "",
-                                            //height: 180,
-                                            width: double.infinity,
-                                            fit: BoxFit.fill,
+                                            child: Image.network(
+                                              studentData!.studentBanner ?? "",
+                                              //height: 180,
+                                              width: double.infinity,
+                                              fit: BoxFit.fill,
 
-                                            loadingBuilder: (context, child, loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              }
+                                              loadingBuilder: (context, child, loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                }
 
-                                              return Container(
-                                                height: 130,
-                                                color: AppColors.thirdColor,
-                                                child: Center(
-                                                  child: CircularProgressIndicator(
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                    value:
-                                                        loadingProgress
-                                                                .expectedTotalBytes !=
-                                                            null
-                                                        ? loadingProgress
-                                                                  .cumulativeBytesLoaded /
-                                                              loadingProgress
-                                                                  .expectedTotalBytes!
-                                                        : null,
+                                                return Container(
+                                                  height: 130,
+                                                  color: AppColors.thirdColor,
+                                                  child: Center(
+                                                    child: CircularProgressIndicator(
+                                                      color: AppColors
+                                                          .primaryColor,
+                                                      value:
+                                                          loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                    .cumulativeBytesLoaded /
+                                                                loadingProgress
+                                                                    .expectedTotalBytes!
+                                                          : null,
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            },
+                                                );
+                                              },
 
-                                            errorBuilder:
-                                                (context, error, stackTrace) =>
-                                                    const Icon(Icons.photo),
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => const Icon(Icons.photo),
+                                            ),
                                           ),
                                         ),
+                                      )
+                                    : ProfileBanner(student: studentData!),
+
+                                // Identity card
+                                IdentityCard(student: studentData!),
+
+                                // 2-column section grid
+                                TwoColRow(
+                                  left: SectionCard(
+                                    icon: Icons.notes_rounded,
+                                    iconColor: const Color(0xFF7B68EE),
+                                    title: "SUMMARY",
+                                    child: BodyText(
+                                      studentData!.profileSummary ?? "—",
+                                    ),
+                                  ),
+                                  right: SectionCard(
+                                    icon: Icons.code_rounded,
+                                    iconColor: const Color(0xFF00D4CC),
+                                    title: "SKILLS",
+                                    child: BodyText(
+                                      (studentData!.studProgrammingLang ?? [])
+                                          .join(', '),
+                                    ),
+                                  ),
+                                ),
+
+                                TwoColRow(
+                                  left: WorkExperienceCard(
+                                    student: studentData!,
+                                  ),
+                                  right: CertificationsCard(
+                                    student: studentData!,
+                                  ),
+                                ),
+
+                                TwoColRow(
+                                  left: SectionCard(
+                                    icon: Icons.language_rounded,
+                                    iconColor: const Color(0xFF00D4CC),
+                                    title: "LANGUAGES",
+                                    child: BodyText(
+                                      (studentData!.languagesKnown ?? []).join(
+                                        ', ',
                                       ),
-                                    )
-                                  : ProfileBanner(student: studentData!),
-
-                              // Identity card
-                              IdentityCard(student: studentData!),
-
-                              // 2-column section grid
-                              TwoColRow(
-                                left: SectionCard(
-                                  icon: Icons.notes_rounded,
-                                  iconColor: const Color(0xFF7B68EE),
-                                  title: "SUMMARY",
-                                  child: BodyText(
-                                    studentData!.profileSummary ?? "—",
+                                    ),
                                   ),
-                                ),
-                                right: SectionCard(
-                                  icon: Icons.code_rounded,
-                                  iconColor: const Color(0xFF00D4CC),
-                                  title: "SKILLS",
-                                  child: BodyText(
-                                    (studentData!.studProgrammingLang ?? [])
-                                        .join(', '),
-                                  ),
-                                ),
-                              ),
-
-                              TwoColRow(
-                                left: WorkExperienceCard(student: studentData!),
-                                right: CertificationsCard(
-                                  student: studentData!,
-                                ),
-                              ),
-
-                              TwoColRow(
-                                left: SectionCard(
-                                  icon: Icons.language_rounded,
-                                  iconColor: const Color(0xFF00D4CC),
-                                  title: "LANGUAGES",
-                                  child: BodyText(
-                                    (studentData!.languagesKnown ?? []).join(
-                                      ', ',
+                                  right: SectionCard(
+                                    icon: Icons.star_rounded,
+                                    iconColor: const Color(0xFFFFD700),
+                                    title: "AREAS OF INTEREST",
+                                    child: BodyText(
+                                      (studentData!.areasOfInterest ?? []).join(
+                                        ', ',
+                                      ),
                                     ),
                                   ),
                                 ),
-                                right: SectionCard(
-                                  icon: Icons.star_rounded,
-                                  iconColor: const Color(0xFFFFD700),
-                                  title: "AREAS OF INTEREST",
-                                  child: BodyText(
-                                    (studentData!.areasOfInterest ?? []).join(
-                                      ', ',
+
+                                if ((studentData!.hobbies ?? []).isNotEmpty)
+                                  SectionCard(
+                                    icon: Icons.games_rounded,
+                                    iconColor: const Color(0xFFFF8C42),
+                                    title: "HOBBIES",
+                                    fullWidth: true,
+                                    child: BodyText(
+                                      (studentData!.hobbies ?? []).join(', '),
                                     ),
                                   ),
-                                ),
-                              ),
-
-                              if ((studentData!.hobbies ?? []).isNotEmpty)
-                                SectionCard(
-                                  icon: Icons.games_rounded,
-                                  iconColor: const Color(0xFFFF8C42),
-                                  title: "HOBBIES",
-                                  fullWidth: true,
-                                  child: BodyText(
-                                    (studentData!.hobbies ?? []).join(', '),
-                                  ),
-                                ),
-                              const SizedBox(height: 20),
-                            ],
+                                const SizedBox(height: 20),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      BottomBar(
-                        student: studentData!,
-                        viewFunc: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.resumeTemplatePreviewScreen,
-                            arguments: {
-                              "templateId": int.parse(
-                                studentData!.templateNumber?.isNotEmpty == true
-                                    ? studentData!.templateNumber!
-                                    : "1",
-                              ),
-                              "resumeData": ExtractedResumeDataModel(
-                                personalInfo: PersonalInfoModel(
-                                  name: studentData!.studName ?? "",
-                                  email: studentData!.studEmail ?? "",
-                                  phone: studentData!.studMobileNo ?? "",
-                                  github: studentData!.github ?? "",
-                                  linkedIn: studentData!.linkedIn ?? "",
-                                  location: studentData!.location ?? "",
-                                  gender: "",
+                        BottomBar(
+                          student: studentData!,
+                          viewFunc: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.recruiterResumePreviewScreen,
+                              arguments: {
+                                "templateId": int.parse(
+                                  studentData!.templateNumber?.isNotEmpty ==
+                                          true
+                                      ? studentData!.templateNumber!
+                                      : "1",
                                 ),
-                                profileSummary:
-                                    studentData!.profileSummary ?? "",
-                                skills: studentData!.studProgrammingLang,
-                                certifications: studentData!.studentCertificate,
-                                educationData: studentData!.education,
-                                colleges: studentData!.college,
-                                internships: studentData!.internships,
-                                experience: studentData!.experience,
-                                projects: studentData!.projects,
-                                hobbies: studentData!.hobbies,
-                                achievements: studentData!.achievements,
-                                publications: studentData!.publications,
-                                volunteerExperience:
-                                    studentData!.volunteerExperience,
-                                workShops: studentData!.workshops,
-                                paperPresentations:
-                                    studentData!.paperPresentations,
-                                industrialVisits: studentData!.industrialVisits,
-                                languages: studentData!.languagesKnown,
-                                areasOfInterest: studentData!.areasOfInterest,
-                                leaderships: studentData!.leadership,
-                                studentId: studentData!.id,
-                                higherSecondary: studentData!
-                                    .education
-                                    ?.school
-                                    ?.higherSecondary,
-                                secondary:
-                                    studentData!.education?.school?.secondary,
-                              ),
-                            },
-                          );
-                        },
-                        downloadFunc: () async {
-                          await _handleDownload();
-                        },
-                      ),
-                    ],
-                  ),
-                )
-              : CustomEmptyWidget(),
+                                "studentId": studentData!.id!.isNotEmpty == true
+                                    ? studentData!.id!
+                                    : "",
+                                // "resumeData": ExtractedResumeDataModel(
+                                //   personalInfo: PersonalInfoModel(
+                                //     name: studentData!.studName ?? "",
+                                //     email: studentData!.studEmail ?? "",
+                                //     phone: studentData!.studMobileNo ?? "",
+                                //     github: studentData!.github ?? "",
+                                //     linkedIn: studentData!.linkedIn ?? "",
+                                //     location: studentData!.location ?? "",
+                                //     gender: "",
+                                //   ),
+                                //   profileSummary:
+                                //       studentData!.profileSummary ?? "",
+                                //   skills: studentData!.studProgrammingLang,
+                                //   certifications: studentData!.studentCertificate,
+                                //   educationData: studentData!.education,
+                                //   colleges: studentData!.college,
+                                //   internships: studentData!.internships,
+                                //   experience: studentData!.experience,
+                                //   projects: studentData!.projects,
+                                //   hobbies: studentData!.hobbies,
+                                //   achievements: studentData!.achievements,
+                                //   publications: studentData!.publications,
+                                //   volunteerExperience:
+                                //       studentData!.volunteerExperience,
+                                //   workShops: studentData!.workshops,
+                                //   paperPresentations:
+                                //       studentData!.paperPresentations,
+                                //   industrialVisits: studentData!.industrialVisits,
+                                //   languages: studentData!.languagesKnown,
+                                //   areasOfInterest: studentData!.areasOfInterest,
+                                //   leaderships: studentData!.leadership,
+                                //   studentId: studentData!.id,
+                                //   higherSecondary: studentData!
+                                //       .education
+                                //       ?.school
+                                //       ?.higherSecondary,
+                                //   secondary:
+                                //       studentData!.education?.school?.secondary,
+                                // ),
+                              },
+                            );
+                          },
+                          downloadFunc: () async {
+                            await _handleDownload();
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                : CustomEmptyWidget(),
           ),
         ),
       ),

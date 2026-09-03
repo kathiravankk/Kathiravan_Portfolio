@@ -4,8 +4,8 @@ final sampleData = {
   "personal_info": {
     "name": "Mithun",
     "surname": "Raj",
-    "email": "midhunraj2113@gmail.com",
-    "phone": "9943155120",
+    "email": "kathirkannan2002@gmail.com",
+    "phone": "9943155121",
     "linkedIn": "https://www.linkedin.com/in/httpslinkedinkathir",
     "github": "https://github.com/httpsgithubkathir",
     "portfolio": "",

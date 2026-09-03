@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:internsharks/app/data/models/account/certification_model.dart';
-import 'package:internsharks/app/data/models/account/education_model.dart';
+import 'package:internsharks/app/data/models/account/education_model.dart' hide School;
 import 'package:internsharks/app/data/models/account/new_student_profile_model.dart';
 import 'package:internsharks/app/data/models/account/personal_info_model.dart';
 import 'package:internsharks/app/data/models/account/student_profile_model.dart' hide Secondary;
@@ -228,15 +228,24 @@ class ExtractedResumeDataModel {
     educationData = json["education"] != null
         ? EducationModel.fromJson(json["education"])
         : null;
-    secondary = json["secondary"] != null
-        ? SchoolEducation.fromJson(json["secondary"])
-        : null;
-    higherSecondary = json["higher_secondary"] != null
-        ? SchoolEducation.fromJson(json["higher_secondary"])
-        : null;
-    colleges = (json['college'] ?? [])
-        .map<CollegeData>((e) => CollegeData.fromJson(e))
-        .toList();
+    if (json["secondary"] != null) {
+      secondary = SchoolEducation.fromJson(json["secondary"]);
+    } else if (educationData?.school?.secondary != null) {
+      secondary = educationData?.school?.secondary;
+    }
+    if (json["higher_secondary"] != null) {
+      higherSecondary = SchoolEducation.fromJson(json["higher_secondary"]);
+    } else if (educationData?.school?.higherSecondary != null) {
+      higherSecondary = educationData?.school?.higherSecondary;
+    }
+    if (json['college'] != null && (json['college'] as List).isNotEmpty) {
+      colleges = (json['college'] as List)
+          .map<CollegeData>((e) => CollegeData.fromJson(e))
+          .toList();
+    } else if (educationData?.college != null &&
+        educationData!.college!.isNotEmpty) {
+      colleges = educationData?.college;
+    }
     institution = (json['institution'] ?? [])
         .map<CollegeData>((e) => CollegeData.fromJson(e))
         .toList();
@@ -486,6 +495,49 @@ class Training {
 
 extension ExtractedResumeDataMapper on ExtractedResumeDataModel {
   NewStudentProfileModel toNewStudentProfileModel({String? studentId}) {
+    final hs = higherSecondary ?? educationData?.school?.higherSecondary;
+    final sec = secondary ?? educationData?.school?.secondary;
+    final colList = (colleges != null && colleges!.isNotEmpty)
+        ? colleges
+        : educationData?.college;
+
+    final schoolObj = (hs != null || sec != null)
+        ? School(
+            higherSecondary: hs != null
+                ? HigherSecondary(
+                    institution: hs.institution,
+                    board: hs.board?.toString(),
+                    percentage: hs.percentage,
+                    yearOfPassing: hs.yearOfPassing,
+                  )
+                : null,
+            secondary: sec != null
+                ? Secondary(
+                    institution: sec.institution,
+                    board: sec.board?.toString(),
+                    percentage: sec.percentage,
+                    yearOfPassing: sec.yearOfPassing,
+                  )
+                : null,
+          )
+        : null;
+
+    final collegeEduList = colList
+        ?.map((c) => CollegeEducation(
+              degree: c.degree,
+              department: c.department,
+              institution: c.institution,
+              startYear: c.startYear?.toString(),
+              endYear: c.endYear?.toString(),
+              cgpa: c.location,
+            ))
+        .toList();
+
+    final newEdu = (schoolObj != null ||
+            (collegeEduList != null && collegeEduList.isNotEmpty))
+        ? NewEducationData(school: schoolObj, college: collegeEduList)
+        : null;
+
     return NewStudentProfileModel(
       id: studentId ?? this.studentId,
       templateNumber: templateNumber ?? "1",
@@ -506,78 +558,98 @@ extension ExtractedResumeDataMapper on ExtractedResumeDataModel {
       areasOfInterest: areasOfInterest?.map((e) => e.toString()).toList() ?? [],
       hobbies: hobbies?.map((e) => e.toString()).toList() ?? [],
       languagesKnown: languages?.map((e) => e.toString()).toList() ?? [],
-      volunteerExperience: volunteerExperience?.map((e) => e.toString()).toList() ?? [],
+      volunteerExperience:
+          volunteerExperience?.map((e) => e.toString()).toList() ?? [],
       leadership: leaderships?.map((e) => e.toString()).toList() ?? [],
       achievements: achievements?.map((e) => e.toString()).toList() ?? [],
       publications: publications?.map((e) => e.toString()).toList() ?? [],
       workshops: workShops?.map((e) => e.toString()).toList() ?? [],
 
       // Custom Model Lists
-      projects: projects?.map((p) => NewProjectData(
-        title: p.title,
-        description: p.description,
-      )).toList() ?? [],
+      projects: projects
+              ?.map((p) => NewProjectData(
+                    title: p.title,
+                    description: p.description is List
+                        ? (p.description as List)
+                            .map((e) => e.toString())
+                            .toList()
+                        : (p.description != null &&
+                                p.description.toString().isNotEmpty
+                            ? [p.description.toString()]
+                            : []),
+                  ))
+              .toList() ??
+          [],
 
-      internships: internships?.map((i) => NewInternshipData(
-        company: i.company,
-        role: i.role,
-        duration: i.duration,
-        description: i.description,
-      )).toList() ?? [],
+      internships: internships
+              ?.map((i) => NewInternshipData(
+                    company: i.company,
+                    role: i.role,
+                    duration: i.duration,
+                    description: i.description,
+                  ))
+              .toList() ??
+          [],
 
-      studentCertificate: certifications?.map((c) => StudentCertificate(
-        name: c.name,
-        issuer: c.issuer,
-        date: c.date,
-      )).toList() ?? [],
+      studentCertificate: certifications
+              ?.map((c) => StudentCertificate(
+                    name: c.name,
+                    issuer: c.issuer,
+                    date: c.date,
+                  ))
+              .toList() ??
+          [],
 
       industrialVisits: industrialVisits?.map((e) {
-        if (e is Map<String, dynamic>) {
-          return NewIndustrialVisit.fromJson(e);
-        }
-        return NewIndustrialVisit(
-          company: e.company,
-          location: e.location,
-          date: e.date,
-        );
-      }).toList() ?? [],
+            if (e is Map<String, dynamic>) {
+              return NewIndustrialVisit.fromJson(e);
+            }
+            return NewIndustrialVisit(
+              company: e.company,
+              location: e.location,
+              date: e.date,
+            );
+          }).toList() ??
+          [],
 
       paperPresentations: paperPresentations?.map((e) {
-        if (e is Map<String, dynamic>) {
-          return NewPaperPresentation.fromJson(e);
-        }
-        return NewPaperPresentation(
-          title: e.title,
-          event: e.event,
-          year: e.year,
-          description: e.description,
-        );
-      }).toList() ?? [],
+            if (e is Map<String, dynamic>) {
+              return NewPaperPresentation.fromJson(e);
+            }
+            return NewPaperPresentation(
+              title: e.title,
+              event: e.event,
+              year: e.year,
+              description: e.description,
+            );
+          }).toList() ??
+          [],
 
       // Education
-      higherSecondary: higherSecondary != null
+      higherSecondary: hs != null
           ? [
-        HigherSecondary(
-          institution: higherSecondary?.institution,
-          board: higherSecondary?.board,
-          percentage: higherSecondary?.percentage,
-          yearOfPassing: higherSecondary?.yearOfPassing,
-        )
-      ]
+              HigherSecondary(
+                institution: hs.institution,
+                board: hs.board?.toString(),
+                percentage: hs.percentage,
+                yearOfPassing: hs.yearOfPassing,
+              )
+            ]
           : [],
 
-      secondary: secondary != null
+      secondary: sec != null
           ? [
-        Secondary(
-          institution: secondary?.institution,
-          board: secondary?.board,
-          percentage: secondary?.percentage,
-          yearOfPassing: secondary?.yearOfPassing,
-        )
-      ]
+              Secondary(
+                institution: sec.institution,
+                board: sec.board?.toString(),
+                percentage: sec.percentage,
+                yearOfPassing: sec.yearOfPassing,
+              )
+            ]
           : [],
 
-      college: colleges ?? [],
+      college: colList ?? [],
+      education: newEdu,
       experience: experience ?? [],
       trainings: trainings ?? [],
       parents: parents ?? [],
