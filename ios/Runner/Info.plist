@@ -28,6 +28,45 @@
     <string>Used to select your profile photo</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires camera access to take photos for your profile/documents.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires microphone access for recording videos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library to select images for upload.</string>
+	<!-- Optional: Only if your app saves images directly to the gallery -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires access to save files to your photo library.</string>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>http</string>
+		<string>https</string>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>sms</string>
+		<!-- UPI Apps required for Cashfree -->
+		<string>paytm</string>
+		<string>gpay</string>
+		<string>tez</string>
+		<string>phonepe</string>
+		<string>bhim</string>
+	</array>
+
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
