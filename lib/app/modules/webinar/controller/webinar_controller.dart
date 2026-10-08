@@ -495,6 +495,49 @@ class WebinarController extends GetxController {
     }
   }
 
+  // -------------------------------------------------------------
+  // 6. WEBINAR PAYMENT ORDER & VERIFICATION
+  // -------------------------------------------------------------
+  final _paymentCreating = false.obs;
+  bool get paymentCreating => _paymentCreating.value;
+
+  Future<Map<String, dynamic>> createWebinarPayment({
+    required String webinarId,
+    required String studentId,
+  }) async {
+    try {
+      _paymentCreating.value = true;
+      final res = await webinarProvider!.createWebinarPayment(
+        webinarId: webinarId,
+        studentId: studentId,
+      );
+      _paymentCreating.value = false;
+      return res;
+    } catch (e) {
+      _paymentCreating.value = false;
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  final _paymentVerifying = false.obs;
+  bool get paymentVerifying => _paymentVerifying.value;
+
+  Future<Map<String, dynamic>> verifyWebinarPayment({
+    required String orderId,
+  }) async {
+    try {
+      _paymentVerifying.value = true;
+      final res = await webinarProvider!.verifyWebinarPayment(
+        orderId: orderId,
+      );
+      _paymentVerifying.value = false;
+      return res;
+    } catch (e) {
+      _paymentVerifying.value = false;
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();

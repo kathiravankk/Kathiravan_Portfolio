@@ -226,5 +226,71 @@ class WebinarProvider {
       return {'success': false, 'message': e.toString()};
     }
   }
+
+  Future<Map<String, dynamic>> createWebinarPayment({
+    required String webinarId,
+    required String studentId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
+    try {
+      Response response = await client!.post(
+        AppApiUrls.createWebinarPayment,
+        data: {
+          "webinarId": webinarId,
+          "studentId": studentId,
+        },
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode ?? 200;
+      if (response.data is Map<String, dynamic>) {
+        return response.data;
+      }
+      return {'success': false, 'message': 'Invalid response format'};
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null && err.response!.data is Map<String, dynamic>) {
+        return err.response!.data;
+      }
+      return {
+        'success': false,
+        'message': err.message ?? "Failed to create payment order"
+      };
+    } catch (e) {
+      responseStatus = 500;
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> verifyWebinarPayment({
+    required String orderId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.studentHeader();
+    try {
+      Response response = await client!.post(
+        AppApiUrls.verifyWebinarPayment,
+        data: {
+          "orderId": orderId,
+        },
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode ?? 200;
+      if (response.data is Map<String, dynamic>) {
+        return response.data;
+      }
+      return {'success': false, 'message': 'Invalid response format'};
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null && err.response!.data is Map<String, dynamic>) {
+        return err.response!.data;
+      }
+      return {
+        'success': false,
+        'message': err.message ?? "Failed to verify payment"
+      };
+    } catch (e) {
+      responseStatus = 500;
+      return {'success': false, 'message': e.toString()};
+    }
+  }
 }
 

@@ -197,4 +197,6 @@ class AppApiUrls {
   static const String verifyWebinarOtp = "${baseUrl}webinar/verifyOTP";
   static String getWebinarMeetingLink(String webinarId) =>
       "${baseUrl}webinar/getmeetinglink/$webinarId";
+  static const String createWebinarPayment = "${baseUrl}webinar/createpayment";
+  static const String verifyWebinarPayment = "${baseUrl}webinar/verifypayment";
 }
