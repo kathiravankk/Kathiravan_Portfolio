@@ -1,6 +1,6 @@
 class AppApiUrls {
   // BASE URL
-  static const String baseUrl = newProdBaseUrl;
+  static const String baseUrl = newBaseUrl;
   static const String oldBaseUrl = "https://fulupo.selfietoons.com/api/";
   static const String newBaseUrl = "https://dev.api.internsharks.ai/api/";
   static const String newProdBaseUrl = "https://api.internsharks.ai/api/";
@@ -186,4 +186,15 @@ class AppApiUrls {
       "${baseUrl}getrecruiterreviewforstudent?jobId=$jobId";
   static String getAllCoordinators = "${baseUrl}coordinators";
   static String deleteCoordinator(String coId) => "${baseUrl}coordinator/$coId";
+
+  // WEBINAR FLOW
+  static const String getWebinars = "${baseUrl}webinar/getwebinar";
+  static String getWebinarById(String webinarId) =>
+      "${baseUrl}webinar/getwebinarbyid/$webinarId";
+  static const String getColleges = "${baseUrl}colleges";
+  static const String registerWebinar = "${baseUrl}webinar/register";
+  static const String sendWebinarOtp = "${baseUrl}webinar/sendOTP";
+  static const String verifyWebinarOtp = "${baseUrl}webinar/verifyOTP";
+  static String getWebinarMeetingLink(String webinarId) =>
+      "${baseUrl}webinar/getmeetinglink/$webinarId";
 }

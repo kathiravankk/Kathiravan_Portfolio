@@ -54,6 +54,11 @@ class AppRoutes {
   static const myCertificatesScreen = '/myCertificatesScreen';
   static const studentTestResultScreen = '/studentTestResultScreen';
 
+  //WEBINAR FLOW
+  static const internWebinarScreen = '/internWebinarScreen';
+  static const webinarDetailScreen = '/webinarDetailScreen';
+
+
 
   /// RECRUITER FLOW SCREENS
 

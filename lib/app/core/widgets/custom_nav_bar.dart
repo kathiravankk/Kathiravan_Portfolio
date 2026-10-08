@@ -16,7 +16,7 @@ class CustomNavBar extends StatefulWidget {
     this.screens,
     this.scaffoldKey,
     this.isStudentFlow = true,
-    this.onTabChanged
+    this.onTabChanged,
   });
 
   @override
@@ -46,7 +46,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
             ),
 
             if (widget.isStudentFlow)
-              _buildStudentNavBar(value)
+              _buildStudentNavBar(context, value)
             else
               _buildRecruiterBottomNav(value),
           ],
@@ -55,13 +55,36 @@ class _CustomNavBarState extends State<CustomNavBar> {
     );
   }
 
-  Widget _buildStudentNavBar(int value) {
+  Widget _buildStudentNavBar(BuildContext context, int value) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isSmallScreen = screenWidth < 360;
+    final bool isMediumScreen = screenWidth < 390;
+
+    final double horizontalMargin = isSmallScreen
+        ? 10.0
+        : (isMediumScreen ? 12.0 : 14.0);
+    final double itemSpacing = isSmallScreen
+        ? 2.0
+        : (isMediumScreen ? 3.0 : 4.0);
+    final double circleSize = isSmallScreen
+        ? 36.0
+        : (isMediumScreen ? 38.0 : 40.0);
+    final double iconSize = isSmallScreen
+        ? 18.0
+        : (isMediumScreen ? 20.0 : 21.0);
+    final double fontSize = isSmallScreen
+        ? 11.0
+        : (isMediumScreen ? 12.0 : 12.5);
+
     return Positioned(
-      right: 14,
-      left: 14,
+      right: horizontalMargin,
+      left: horizontalMargin,
       bottom: 15,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 4 : 6,
+          vertical: 6,
+        ),
         height: 68,
         decoration: BoxDecoration(
           color: AppColors.fieldBgColor,
@@ -82,27 +105,49 @@ class _CustomNavBarState extends State<CustomNavBar> {
                     icon: Icons.home_rounded,
                     label: "Home",
                     selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: itemSpacing),
                   _navItem(
                     index: 1,
                     icon: CupertinoIcons.location_fill,
                     label: "Applied",
                     selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: itemSpacing),
                   _navItem(
                     index: 2,
                     icon: Icons.work,
                     label: "Internships",
                     selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: itemSpacing),
                   _navItem(
                     index: 3,
+                    icon: Icons.video_chat,
+                    label: "Webinar",
+                    selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
+                  ),
+                  SizedBox(width: itemSpacing),
+                  _navItem(
+                    index: 4,
                     icon: Icons.person,
                     label: "Profile",
                     selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
                   ),
                 ],
               )
@@ -113,20 +158,29 @@ class _CustomNavBarState extends State<CustomNavBar> {
                     icon: Icons.home_rounded,
                     label: "Home",
                     selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: itemSpacing),
                   _navItem(
                     index: 1,
                     icon: CupertinoIcons.location_fill,
                     label: "My Post",
                     selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: itemSpacing),
                   _navItem(
                     index: 3,
                     icon: Icons.person,
                     label: "Profile",
                     selectedIndex: value,
+                    circleSize: circleSize,
+                    iconSize: iconSize,
+                    fontSize: fontSize,
                   ),
                 ],
               ),
@@ -139,12 +193,40 @@ class _CustomNavBarState extends State<CustomNavBar> {
     required IconData icon,
     required String label,
     required int selectedIndex,
+    required double circleSize,
+    required double iconSize,
+    required double fontSize,
   }) {
-    bool isSelected = index == selectedIndex;
+    final bool isSelected = index == selectedIndex;
+
+    final Widget circleWidget = AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: circleSize,
+      height: circleSize,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isSelected ? AppColors.primaryColor : AppColors.contColor2,
+        boxShadow: isSelected
+            ? [
+                BoxShadow(
+                  color: AppColors.primaryColor.withValues(alpha: .45),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ]
+            : [],
+      ),
+      child: Icon(
+        icon,
+        color: isSelected ? AppColors.blackColor : AppColors.whiteColor,
+        size: iconSize,
+      ),
+    );
 
     return Expanded(
       flex: isSelected ? 3 : 1,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           currentIndex.value = index;
           widget.onTabChanged?.call(index);
@@ -153,58 +235,36 @@ class _CustomNavBarState extends State<CustomNavBar> {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           height: 56,
-          padding: const EdgeInsets.symmetric(horizontal: 4),
+          padding: EdgeInsets.symmetric(horizontal: isSelected ? 4 : 0),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.contColor2 : AppColors.fieldBgColor,
             borderRadius: BorderRadius.circular(30),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected
-                      ? AppColors.primaryColor
-                      : AppColors.contColor2,
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppColors.primaryColor.withValues(alpha: .45),
-                            blurRadius: 10,
-                            spreadRadius: 2,
+          child: isSelected
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    circleWidget,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 6, right: 4),
+                        child: Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppStyles.customTextStyle(
+                            size: fontSize,
+                            weight: FontWeight.w600,
+                            color: AppColors.whiteColor,
                           ),
-                        ]
-                      : [],
-                ),
-                child: Icon(
-                  icon,
-                  color: isSelected ? AppColors.blackColor : AppColors.whiteColor,
-                  size: 22,
-                ),
-              ),
-
-              if (isSelected)
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 6, right: 4),
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppStyles.customTextStyle(
-                        size: 13,
-                        weight: FontWeight.w600,
-                        color: AppColors.whiteColor,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
+                )
+              : Center(
+                  child: FittedBox(fit: BoxFit.scaleDown, child: circleWidget),
                 ),
-            ],
-          ),
         ),
       ),
     );
@@ -333,6 +393,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: AppStyles.customTextStyle(
               size: 10,
               weight: FontWeight.w500,

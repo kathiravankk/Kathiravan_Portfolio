@@ -7,7 +7,6 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/profile_widgets.dart';
 import 'package:internsharks/app/core/widgets/student_detail_card.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/student_list_model.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_drawer_screen.dart';
@@ -334,121 +333,131 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: AppColors.recContColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Obx(
-            () => Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 20.0,
+              right: 20.0,
+              top: 20.0,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 15.0,
+            ),
+            child: SingleChildScrollView(
+              child: Obx(
+                () => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Filters",
-                      style: AppStyles.customTextStyle(
-                        size: 18,
-                        weight: FontWeight.w700,
-                        color: AppColors.whiteColor,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 15),
-
-                // 1. Degree Dynamic Dropdown
-                _buildDropdown(
-                  label: "Degree",
-                  value: tempDegree.value,
-                  items: homeController.degreesList,
-                  onChanged: (val) => tempDegree.value = val,
-                ),
-                const SizedBox(height: 15),
-
-                // 2. College Dynamic Dropdown
-                _buildDropdown(
-                  label: "College Name",
-                  value: tempCollege.value,
-                  items: homeController.collegesList,
-                  onChanged: (val) => tempCollege.value = val,
-                ),
-                const SizedBox(height: 15),
-
-                // 3. Department Dynamic Dropdown
-                _buildDropdown(
-                  label: "Field of Study / Department",
-                  value: tempDepartment.value,
-                  items: homeController.departmentsList,
-                  onChanged: (val) => tempDepartment.value = val,
-                ),
-                const SizedBox(height: 25),
-
-                // Actions: Reset & Apply
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          tempDegree.value = null;
-                          tempCollege.value = null;
-                          tempDepartment.value = null;
-                          homeController.resetFiltersOnly();
-                          Navigator.pop(context);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.primaryColor),
-                        ),
-                        child: Text(
-                          "Reset Filters",
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Filters",
                           style: AppStyles.customTextStyle(
-                            size: 14,
-                            color: AppColors.primaryColor,
+                            size: 18,
                             weight: FontWeight.w700,
+                            color: AppColors.whiteColor,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Assign localized temp choices back to persistent controller state
-                          homeController.selectedDegree.value =
-                              tempDegree.value;
-                          homeController.selectedCollege.value =
-                              tempCollege.value;
-                          homeController.selectedDepartment.value =
-                              tempDepartment.value;
-
-                          homeController.applySearchAndFilters();
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
                         ),
-                        child: Text(
-                          "Apply",
-                          style: AppStyles.customTextStyle(
-                            size: 14,
-                            color: AppColors.recContColor,
-                            weight: FontWeight.w700,
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+
+                    // 1. Degree Dynamic Dropdown
+                    _buildDropdown(
+                      label: "Degree",
+                      value: tempDegree.value,
+                      items: homeController.degreesList,
+                      onChanged: (val) => tempDegree.value = val,
+                    ),
+                    const SizedBox(height: 15),
+
+                    // 2. College Dynamic Dropdown
+                    _buildDropdown(
+                      label: "College Name",
+                      value: tempCollege.value,
+                      items: homeController.collegesList,
+                      onChanged: (val) => tempCollege.value = val,
+                    ),
+                    const SizedBox(height: 15),
+
+                    // 3. Department Dynamic Dropdown
+                    _buildDropdown(
+                      label: "Field of Study / Department",
+                      value: tempDepartment.value,
+                      items: homeController.departmentsList,
+                      onChanged: (val) => tempDepartment.value = val,
+                    ),
+                    const SizedBox(height: 25),
+
+                    // Actions: Reset & Apply
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              tempDegree.value = null;
+                              tempCollege.value = null;
+                              tempDepartment.value = null;
+                              homeController.resetFiltersOnly();
+                              Navigator.pop(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primaryColor),
+                            ),
+                            child: Text(
+                              "Reset Filters",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                color: AppColors.primaryColor,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Assign localized temp choices back to persistent controller state
+                              homeController.selectedDegree.value =
+                                  tempDegree.value;
+                              homeController.selectedCollege.value =
+                                  tempCollege.value;
+                              homeController.selectedDepartment.value =
+                                  tempDepartment.value;
+
+                              homeController.applySearchAndFilters();
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryColor,
+                            ),
+                            child: Text(
+                              "Apply",
+                              style: AppStyles.customTextStyle(
+                                size: 14,
+                                color: AppColors.recContColor,
+                                weight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
-                const SizedBox(height: 10),
-              ],
+              ),
             ),
           ),
         );

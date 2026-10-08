@@ -270,11 +270,12 @@ class AppAlertUtils {
   }
 
   static void showToast({required String message, bool isError = false}) {
+    Fluttertoast.cancel();
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 7,
+      timeInSecForIosWeb: 2,
       textColor: isError ? AppColors.failTextColor : AppColors.sucTextColor,
       fontSize: 14,
       backgroundColor: isError ? AppColors.failBgColor : AppColors.sucBgColor,

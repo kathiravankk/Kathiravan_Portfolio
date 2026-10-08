@@ -119,114 +119,123 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 15),
 
-                    CardWidgets.settingsTile(
-                      icon: Icons.person_outline,
-                      title: "My Profile",
-                      onTap: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.recruiterProfileScreen,
-                        );
-                      },
-                    ),
-                    CardWidgets.settingsTile(
-                      icon: Icons.school_outlined,
-                      title: "Shortlisted Students",
-                      onTap: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.shortlistedStudentsListScreen,
-                        );
-                      },
-                    ),
-                    CardWidgets.settingsTile(
-                      icon: Icons.account_balance_wallet_outlined,
-                      title: "Buy Credits",
-                      onTap: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.recruiterCreditPlanScreen,
-                          arguments: {
-                            "creditBalance": homeController
-                                .profileModel.recruiterData!
-                                .recruiterCreditId!
-                                .balance,
-                            "creditId": homeController
-                                .profileModel.recruiterData!
-                                .recruiterCreditId!
-                                .id,
-                          },
-                        );
-                      },
-                    ),
-                    CardWidgets.settingsTile(
-                      icon: Icons.groups_outlined,
-                      title: "Referrals",
-                      onTap: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.recruiterReferralScreen,
-                        );
-                      },
-                    ),
-                    CardWidgets.settingsTile(
-                      icon: Icons.workspace_premium_outlined,
-                      title: "Certificates",
-                      onTap: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.recruiterCertificateScreen,
-                        );
-                      },
-                    ),
-                    CardWidgets.settingsTile(
-                      icon: Icons.history,
-                      title: "My Transaction",
-                      onTap: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.recruiterCreditHistoryScreen,
-                          arguments: {
-                            "creditBalance": ((homeController
-                                .profileModel.recruiterData!
-                                .recruiterCreditId!
-                                .freeCredits ??
-                                0) +
-                                (homeController
-                                    .profileModel.recruiterData!
-                                    .recruiterCreditId!
-                                    .balance ??
-                                    0))
-                          }
-                        );
-                      },
-                    ),
-                    CardWidgets.settingsTile(
-                      icon: Icons.settings_suggest_outlined,
-                      title: "Account Settings",
-                      onTap: () {
-                        AppFunctions.navigateScreen(
-                          context,
-                          AppRoutes.recruiterSettingScreen,
-                        );
-                      },
-                    ),
-                    if (userType.isEmpty || userType.toLowerCase() == "recruiter") ...[
-                      CardWidgets.settingsTile(
-                        icon: Icons.people_alt_outlined,
-                        title: "Coordinator Management",
-                        onTap: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.coordinatorListScreen,
-                          );
-                        },
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          spacing: 15,
+                          children: [
+                            CardWidgets.settingsTile(
+                              icon: Icons.person_outline,
+                              title: "My Profile",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recruiterProfileScreen,
+                                );
+                              },
+                            ),
+                            CardWidgets.settingsTile(
+                              icon: Icons.school_outlined,
+                              title: "Shortlisted Students",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.shortlistedStudentsListScreen,
+                                );
+                              },
+                            ),
+                            CardWidgets.settingsTile(
+                              icon: Icons.account_balance_wallet_outlined,
+                              title: "Buy Credits",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recruiterCreditPlanScreen,
+                                  arguments: {
+                                    "creditBalance": homeController
+                                        .profileModel.recruiterData!
+                                        .recruiterCreditId!
+                                        .balance,
+                                    "creditId": homeController
+                                        .profileModel.recruiterData!
+                                        .recruiterCreditId!
+                                        .id,
+                                  },
+                                );
+                              },
+                            ),
+                            CardWidgets.settingsTile(
+                              icon: Icons.groups_outlined,
+                              title: "Referrals",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recruiterReferralScreen,
+                                );
+                              },
+                            ),
+                            CardWidgets.settingsTile(
+                              icon: Icons.workspace_premium_outlined,
+                              title: "Certificates",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recruiterCertificateScreen,
+                                );
+                              },
+                            ),
+                            CardWidgets.settingsTile(
+                              icon: Icons.history,
+                              title: "My Transaction",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recruiterCreditHistoryScreen,
+                                  arguments: {
+                                    "creditBalance": ((homeController
+                                        .profileModel.recruiterData!
+                                        .recruiterCreditId!
+                                        .freeCredits ??
+                                        0) +
+                                        (homeController
+                                            .profileModel.recruiterData!
+                                            .recruiterCreditId!
+                                            .balance ??
+                                            0))
+                                  }
+                                );
+                              },
+                            ),
+                            CardWidgets.settingsTile(
+                              icon: Icons.settings_suggest_outlined,
+                              title: "Account Settings",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recruiterSettingScreen,
+                                );
+                              },
+                            ),
+                            if (userType.isEmpty || userType.toLowerCase() == "recruiter") ...[
+                              CardWidgets.settingsTile(
+                                icon: Icons.people_alt_outlined,
+                                title: "Coordinator Management",
+                                onTap: () {
+                                  AppFunctions.navigateScreen(
+                                    context,
+                                    AppRoutes.coordinatorListScreen,
+                                  );
+                                },
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
 
-                    const Spacer(),
+                    const SizedBox(height: 10),
 
                     CardWidgets.settingsCard(
                       children: [
@@ -248,7 +257,7 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),

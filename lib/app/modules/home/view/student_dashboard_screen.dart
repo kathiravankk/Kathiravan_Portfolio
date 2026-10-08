@@ -10,6 +10,7 @@ import 'package:internsharks/app/modules/home/view/interns_home_screen.dart';
 import 'package:internsharks/app/modules/home/view/my_applies_screen.dart';
 import 'package:internsharks/app/modules/internship/view/my_internship_screen.dart';
 import 'package:internsharks/app/modules/profile/view/home_profile_screen.dart';
+import 'package:internsharks/app/modules/webinar/intern_webinar_screen.dart';
 import '../../../core/utils/app_functions.dart' show AppFunctions;
 
 class StudentDashboardScreen extends StatefulWidget {
@@ -26,6 +27,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   final homeKey = GlobalKey<InternsHomeScreenState>();
   final appliesKey = GlobalKey<MyAppliesScreenState>();
   final internshipKey = GlobalKey<MyInternshipScreenState>();
+  final webinarKey = GlobalKey<InternWebinarScreenState>();
   final profileKey = GlobalKey<HomeProfileScreenState>();
 
   @override
@@ -74,6 +76,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               ),
               MyAppliesScreen(key: appliesKey),
               MyInternshipScreen(key: internshipKey),
+              InternWebinarScreen(key: webinarKey),
               HomeProfileScreen(key: profileKey),
             ],
           ),
@@ -95,6 +98,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         internshipKey.currentState?.refreshData();
         break;
       case 3:
+        webinarKey.currentState?.refreshData();
+        break;
+      case 4:
         profileKey.currentState?.refreshData();
         break;
     }

@@ -89,4 +89,6 @@ class AssetImages {
   static const String freeCreditsUser = "assets/images/free_credits_user.png";
   static const String referRecruiters = "assets/images/svgs/refer_recruiters.svg";
 
+  // Webinar
+  static const String webinarHeroBanner = "assets/images/webinar_hero_banner.png";
 }

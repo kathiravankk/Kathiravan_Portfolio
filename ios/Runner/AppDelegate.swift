@@ -27,11 +27,11 @@ import FirebaseMessaging
   ) -> Bool {
 
     // VERY IMPORTANT — MUST be before any plugin registration
-    // FirebaseApp.configure()
+     //FirebaseApp.configure()
 
     UNUserNotificationCenter.current().delegate = self
     application.registerForRemoteNotifications()
-    
+
     // Register Flutter plugins after FirebaseApp.configure()
     GeneratedPluginRegistrant.register(with: self)
 

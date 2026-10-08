@@ -72,6 +72,9 @@ import 'package:internsharks/app/modules/recruiter_flow/home/view/recruiter_dash
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_login_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_setting_screen.dart';
+import 'package:internsharks/app/modules/webinar/bindings/webinar_bindings.dart';
+import 'package:internsharks/app/modules/webinar/intern_webinar_screen.dart';
+import 'package:internsharks/app/modules/webinar/webinar_detail_screen.dart';
 import '../modules/home/view/account_setting_screen.dart';
 import '../modules/home/view/application_status_screen.dart';
 import '../modules/profile/view/email_update_screen.dart';
@@ -307,6 +310,16 @@ class AppPages {
     appPage(
       name: AppRoutes.similarInternshipScreen,
       page: () => SimilarInternshipScreen(),
+    ),
+    appPage(
+      name: AppRoutes.internWebinarScreen,
+      page: () => InternWebinarScreen(),
+      bindings: [WebinarBindings()],
+    ),
+    appPage(
+      name: AppRoutes.webinarDetailScreen,
+      page: () => const WebinarDetailScreen(),
+      bindings: [WebinarBindings()],
     ),
 
     /// RECRUITER FLOW SCREENS

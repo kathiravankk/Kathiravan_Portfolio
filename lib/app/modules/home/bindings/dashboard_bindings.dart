@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:internsharks/app/data/providers/dashboard_provider.dart';
 import 'package:internsharks/app/data/providers/internship_provider.dart';
 import 'package:internsharks/app/data/providers/profile_provider.dart';
+import 'package:internsharks/app/data/providers/webinar_provider.dart';
 import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 import 'package:internsharks/app/modules/internship/controller/internship_controller.dart';
 import 'package:internsharks/app/modules/profile/controller/profile_controller.dart';
+import 'package:internsharks/app/modules/webinar/controller/webinar_controller.dart';
 
 class DashboardBindings extends Bindings {
   @override
@@ -20,6 +22,10 @@ class DashboardBindings extends Bindings {
     );
     Get.put<InternshipController>(
       InternshipController(InternshipProvider(client: Dio())),
+      permanent: true,
+    );
+    Get.put<WebinarController>(
+      WebinarController(WebinarProvider(client: Dio())),
       permanent: true,
     );
   }

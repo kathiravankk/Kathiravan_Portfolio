@@ -132,10 +132,6 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
                 "Failed to Generate your ResDp",
           );
         } else {
-          AppAlertUtils.showToast(
-            message: "Your ResDp Generated Successfully!",
-          );
-
           LocalStorageService.saveWatermarkValue(waterMarkValue: false);
 
           await registerController.updateStudentProfileData(
@@ -149,7 +145,9 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
           final code = registerController.getResponseCode();
 
           if (code == 200 || code == 201) {
-            AppAlertUtils.showToast(message: 'Profile updated successfully!');
+            AppAlertUtils.showToast(
+              message: 'Your ResDp generated successfully!',
+            );
             await getProfileData();
           } else {
             AppAlertUtils.showToast(
@@ -234,11 +232,11 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
     if (profileController.getResponseCode() == 200 ||
         profileController.getResponseCode() == 201) {
       if (profileController.waterMarkModel.watermarkData!.status! == "error") {
-        AppAlertUtils.showToast(message: "Failed to Generate your ResDp");
-      } else {
         AppAlertUtils.showToast(
-          message: "Successfully! removed Watermark  from your ResDp ",
+          message: "Failed to remove watermark from your ResDp",
+          isError: true,
         );
+      } else {
         LocalStorageService.saveWatermarkValue(waterMarkValue: true);
         debugPrint(
           profileController.waterMarkModel.watermarkData!.imageUrl ?? "",
@@ -252,7 +250,9 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
         );
         final code = registerController.getResponseCode();
         if (code == 200 || code == 201) {
-          AppAlertUtils.showToast(message: 'Profile updated successfully!');
+          AppAlertUtils.showToast(
+            message: 'Successfully removed watermark from your ResDp!',
+          );
           await getProfileData();
         } else {
           AppAlertUtils.showToast(
@@ -1077,6 +1077,7 @@ class HomeProfileScreenState extends State<HomeProfileScreen> {
                   return;
                 }
 
+                if (!mounted) return;
                 AppAlertUtils.showAppAlert(
                   context: context,
                   title: "Regenerate ResDp",
