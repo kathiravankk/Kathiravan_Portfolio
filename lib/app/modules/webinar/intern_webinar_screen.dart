@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -141,34 +142,34 @@ class InternWebinarScreenState extends State<InternWebinarScreen> {
   Widget _buildTopHeroBanner() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF0F2625),
-            Color(0xFF0A181C),
-            Color(0xFF061113),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(
-          color: AppColors.primaryColor.withValues(alpha: 0.22),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(18),
+      //   gradient: const LinearGradient(
+      //     colors: [
+      //       Color(0xFF0F2625),
+      //       Color(0xFF0A181C),
+      //       Color(0xFF061113),
+      //     ],
+      //     begin: Alignment.topLeft,
+      //     end: Alignment.bottomRight,
+      //   ),
+      //   border: Border.all(
+      //     color: AppColors.primaryColor.withValues(alpha: 0.22),
+      //     width: 1.2,
+      //   ),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Colors.black.withValues(alpha: 0.35),
+      //       blurRadius: 16,
+      //       offset: const Offset(0, 6),
+      //     ),
+      //   ],
+      // ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 120, 16),
+            padding: const EdgeInsets.fromLTRB(10, 16, 120, 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -287,9 +288,10 @@ class InternWebinarScreenState extends State<InternWebinarScreen> {
   Widget _buildUpcomingCarouselSection() {
     return Obx(() {
       if (webinarController.upcomingLoading) {
-        return const SizedBox(
+        return  SizedBox(
           height: 380,
-          child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor)),
+          child: AppAlertUtils.customLoader()
+          //Center(child: CircularProgressIndicator(color: AppColors.primaryColor)),
         );
       }
 
@@ -818,11 +820,12 @@ class InternWebinarScreenState extends State<InternWebinarScreen> {
   Widget _buildBrowseListSection() {
     return Obx(() {
       if (webinarController.browseLoading) {
-        return const Padding(
+        return  Padding(
           padding: EdgeInsets.symmetric(vertical: 40),
-          child: Center(
-            child: CircularProgressIndicator(color: AppColors.primaryColor),
-          ),
+          child: AppAlertUtils.customLoader()
+          // Center(
+          //   child: CircularProgressIndicator(color: AppColors.primaryColor),
+          // ),
         );
       }
 
