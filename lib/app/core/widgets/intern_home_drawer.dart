@@ -326,6 +326,16 @@ class _InternHomeDrawerState extends State<InternHomeDrawer> {
                             );
                           },
                         ),
+                        CardWidgets.settingsTile(
+                          icon: Icons.article_outlined,
+                          title: "Blog",
+                          onTap: () {
+                            AppFunctions.navigateScreen(
+                              context,
+                              AppRoutes.internBlogScreen,
+                            );
+                          },
+                        ),
                         CardWidgets.settingsCard(
                           children: [
                             CardWidgets.settingsTile(

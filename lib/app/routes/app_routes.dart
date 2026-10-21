@@ -58,6 +58,10 @@ class AppRoutes {
   static const internWebinarScreen = '/internWebinarScreen';
   static const webinarDetailScreen = '/webinarDetailScreen';
 
+  // BLOG FLOW
+  static const blogViewScreen = '/blogViewScreen';
+  static const internBlogScreen = '/blogDetailScreen';
+
 
 
   /// RECRUITER FLOW SCREENS

@@ -187,6 +187,10 @@ class AppApiUrls {
   static String getAllCoordinators = "${baseUrl}coordinators";
   static String deleteCoordinator(String coId) => "${baseUrl}coordinator/$coId";
 
+  // BLOG FLOW
+  static String getAllBlogs(int page, int limit) =>
+      "${baseUrl}getallblogger?page=$page&limit=$limit";
+
   // WEBINAR FLOW
   static const String getWebinars = "${baseUrl}webinar/getwebinar";
   static String getWebinarById(String webinarId) =>
