@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:internsharks/app/modules/blog/view/intern_blog_screen.dart';
+import 'package:internsharks/app/modules/blog/view/intern_notification_screen.dart';
 import 'package:internsharks/app/modules/home/bindings/dashboard_bindings.dart';
 import 'package:internsharks/app/modules/home/view/similar_internship_screen.dart';
 import 'package:internsharks/app/modules/home/view/student_buy_credit_screen.dart';
@@ -74,6 +75,7 @@ import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_log
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_setting_screen.dart';
 import 'package:internsharks/app/modules/blog/binding/blog_binding.dart';
+import 'package:internsharks/app/modules/blog/binding/notification_binding.dart';
 import 'package:internsharks/app/modules/blog/view/blog_view_screen.dart';
 import 'package:internsharks/app/modules/blog/view/blog_view_screen.dart';
 import 'package:internsharks/app/modules/webinar/bindings/webinar_bindings.dart';
@@ -90,6 +92,8 @@ import '../modules/recruiter_flow/home/view/recruiter_profile_edit_screen.dart';
 import '../modules/recruiter_flow/login/binding/recruiter_login_binding.dart';
 import '../modules/recruiter_flow/login/view/recruiter_verification_screen.dart';
 import '../modules/recruiter_flow/home/view/recruiter_referral_screen.dart';
+import '../modules/recruiter_flow/home/view/recruiter_notification_screen.dart';
+import '../modules/recruiter_flow/home/binding/recruiter_notification_binding.dart';
 
 part 'app_routes.dart';
 
@@ -338,6 +342,12 @@ class AppPages {
       bindings: [BlogBinding()],
     ),
 
+    appPage(
+      name: AppRoutes.internNotificationScreen,
+      page: () => const InternNotificationScreen(),
+      bindings: [NotificationBinding()],
+    ),
+
     /// RECRUITER FLOW SCREENS
     appPage(name: AppRoutes.choosePathScreen, page: () => ChoosePathScreen()),
     appPage(
@@ -462,6 +472,11 @@ class AppPages {
     appPage(
       name: AppRoutes.coordinatorListScreen,
       page: () => CoordinatorListScreen(),
+    ),
+    appPage(
+      name: AppRoutes.recruiterNotificationScreen,
+      page: () => const RecruiterNotificationScreen(),
+      bindings: [RecruiterNotificationBinding()],
     ),
   ];
 }

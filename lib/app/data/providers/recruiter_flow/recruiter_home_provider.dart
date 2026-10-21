@@ -68,10 +68,23 @@ class RecruiterHomeProvider {
         options: Options(headers: header),
       );
       responseStatus = response.statusCode!;
-      return StudentListModel.fromJson(response.data);
+
+      // API may return a bare List or a Map wrapper { "data": [...] }
+      final raw = response.data;
+      final List<dynamic> list = raw is List
+          ? raw
+          : (raw is Map ? (raw['data'] as List? ?? []) : []);
+
+      return StudentListModel.fromJson(list);
     } on DioException catch (err) {
-      responseStatus = err.response!.statusCode!;
-      return StudentListModel.fromJson(err.response!.data);
+      responseStatus = err.response?.statusCode ?? 500;
+      final errData = err.response?.data;
+      if (errData is List) return StudentListModel.fromJson(errData);
+      if (errData is Map) {
+        return StudentListModel.fromJson(
+            (errData['data'] as List? ?? []));
+      }
+      return StudentListModel();
     }
   }
 

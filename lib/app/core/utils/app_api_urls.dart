@@ -191,6 +191,10 @@ class AppApiUrls {
   static String getAllBlogs(int page, int limit) =>
       "${baseUrl}getallblogger?page=$page&limit=$limit";
 
+  // NOTIFICATION FLOW
+  static const String getStudentNotifications = "${baseUrl}student/notifications";
+  static const String getRecruiterNotifications = "${baseUrl}recruiter/notifications";
+
   // WEBINAR FLOW
   static const String getWebinars = "${baseUrl}webinar/getwebinar";
   static String getWebinarById(String webinarId) =>

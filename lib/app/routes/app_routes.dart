@@ -62,6 +62,9 @@ class AppRoutes {
   static const blogViewScreen = '/blogViewScreen';
   static const internBlogScreen = '/blogDetailScreen';
 
+  // NOTIFICATION
+  static const internNotificationScreen = "/internNotificationScreen";
+
 
 
   /// RECRUITER FLOW SCREENS
@@ -97,5 +100,6 @@ class AppRoutes {
   static const recruiterSettingScreen = "/recruiterSettingScreen";
   static const recruiterResumePreviewScreen = "/recruiterResumePreviewScreen";
   static const coordinatorListScreen = "/coordinatorListScreen";
+  static const recruiterNotificationScreen = "/recruiterNotificationScreen";
 
 }

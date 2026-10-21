@@ -166,8 +166,19 @@ class InternsHomeScreenState extends State<InternsHomeScreen> {
                           );
                         },
                       ),
-
                       const SizedBox(width: 10),
+                      IconButton(
+                        onPressed: () {
+                          AppFunctions.navigateScreen(
+                            context,
+                            AppRoutes.internNotificationScreen,
+                          );
+                        },
+                        icon: Icon(
+                          CupertinoIcons.bell,
+                          color: AppColors.secondaryColor,
+                        ),
+                      ),
                     ],
                     // actions: [
                     //   Stack(

@@ -107,19 +107,23 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                       GestureDetector(
                         onTap: widget.onProfileTap,
                         child: CircleAvatar(
-                          radius: 25,
+                          radius: 20,
                           backgroundColor: AppColors.whiteColor,
                           backgroundImage: NetworkImage(
                             homeController.profileModel.recruiterData!=null?homeController.profileModel.recruiterData!.recCompanyLogo ?? "":"",
                           ),
                         ),
                       ),
-                      Text(
-                        homeController.profileModel.recruiterData!=null?homeController.profileModel.recruiterData!.recName ?? "":"",
-                        style: AppStyles.customTextStyle(
-                          size: 21,
-                          weight: FontWeight.w700,
-                          color: AppColors.secondaryColor,
+                      Flexible(
+                        child: Text(
+                          homeController.profileModel.recruiterData!=null?homeController.profileModel.recruiterData!.recName ?? "":"",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: AppStyles.customTextStyle(
+                            size: 18,
+                            weight: FontWeight.w700,
+                            color: AppColors.secondaryColor,
+                          ),
                         ),
                       ),
                       const Spacer(),
@@ -152,14 +156,15 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                           );
                         },
                       ),
-                      // IconButton(
-                      //   onPressed: () {},
-                      //   icon: Icon(
-                      //     Icons.notifications_active_outlined,
-                      //     color: AppColors.secondaryColor,
-                      //     size: 30,
-                      //   ),
-                      // ),
+                      IconButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.recruiterNotificationScreen);
+                        },
+                        icon: Icon(
+                          CupertinoIcons.bell,
+                          color: AppColors.secondaryColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
