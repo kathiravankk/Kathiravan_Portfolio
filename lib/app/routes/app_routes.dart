@@ -102,4 +102,9 @@ class AppRoutes {
   static const coordinatorListScreen = "/coordinatorListScreen";
   static const recruiterNotificationScreen = "/recruiterNotificationScreen";
 
+  /// NEW RECRUITER REGISTER FLOW
+  static const newRecruiterRegisterScreen = "/newRecruiterRegisterScreen";
+  static const newRecruiterCompanyInfoScreen = "/newRecruiterCompanyInfoScreen";
+
 }
+

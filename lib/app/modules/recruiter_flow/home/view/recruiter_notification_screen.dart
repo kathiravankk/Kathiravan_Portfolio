@@ -127,9 +127,9 @@ class _RecruiterNotificationScreenState
       elevation: 0,
       leading: IconButton(
         icon: const Icon(
-          Icons.arrow_back_ios_new_rounded,
+          Icons.arrow_back,
           color: AppColors.whiteColor,
-          size: 20,
+          size: 25,
         ),
         onPressed: () => Navigator.pop(context),
       ),

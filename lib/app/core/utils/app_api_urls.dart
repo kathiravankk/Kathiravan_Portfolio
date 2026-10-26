@@ -124,6 +124,7 @@ class AppApiUrls {
 
   // RECRUITER FLOW API'S:
 
+  static String extractDocumentData = "${baseUrl}extract-data-from-document";
   static String registerEmailSendOtp = "${baseUrl}email/request-otp";
   static String registerEmailVerifyOtp = "${baseUrl}email/verify-otp";
   static String registerMobileSendOtp = "${baseUrl}student/sendMobileOTP";

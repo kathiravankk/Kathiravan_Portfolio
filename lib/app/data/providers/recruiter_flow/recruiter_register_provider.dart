@@ -2,13 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/add_shortlist-students_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/company_document_extracted_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
 
 class RecruiterRegisterProvider {
   final Dio? client;
 
-  RecruiterRegisterProvider({@required this.client});
+  RecruiterRegisterProvider({required this.client});
 
   // Response Code
 
@@ -199,5 +199,50 @@ class RecruiterRegisterProvider {
     }
   }
 
+  // EXTRACT DOCUMENT DATA
+  Future extractCompanyDocumentData({
+    String? filePath,
+    String? linkUrl,
+  }) async {
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
 
+      FormData formData;
+      if (filePath != null && filePath.isNotEmpty) {
+        formData = FormData.fromMap({
+          "file": await MultipartFile.fromFile(
+            filePath,
+            filename: filePath.split('/').last,
+          ),
+        });
+      } else {
+        formData = FormData.fromMap({
+          "link": linkUrl ?? "",
+        });
+      }
+
+      Response response = await client!
+          .post(
+            AppApiUrls.extractDocumentData,
+            data: formData,
+            options: Options(contentType: 'multipart/form-data'),
+          )
+          .timeout(const Duration(seconds: 120));
+      responseStatus = response.statusCode!;
+      return CompanyDocumentExtractedModel.fromJson(response.data);
+    } on DioException catch (error) {
+      if (error.response != null) {
+        responseStatus = error.response!.statusCode ?? 500;
+        return CompanyDocumentExtractedModel.fromJson(error.response!.data);
+      } else {
+        responseStatus = 500;
+        return CompanyDocumentExtractedModel(
+          success: false,
+          message: error.message ?? "Connection error",
+        );
+      }
+    }
+  }
 }

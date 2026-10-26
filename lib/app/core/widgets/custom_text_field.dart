@@ -58,7 +58,7 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         Container(
-          constraints: const BoxConstraints(minHeight: 55),
+          constraints: const BoxConstraints(minHeight: 52),
           width: width != null ? width! : double.maxFinite,
           child: TextFormField(
             validator: validator,

@@ -60,6 +60,7 @@ class AssetImages {
   static const String creditWalletImage = "assets/images/credit_wallet_img.png";
   static const String purchaseIcon = "assets/images/purchase_icon.png";
   static const String creditConsumeImg = "assets/images/credit_consume_img.png";
+  static const String recRegisterIcon = "assets/images/recruiter_register_icon.png";
 
 
   // //Category Images

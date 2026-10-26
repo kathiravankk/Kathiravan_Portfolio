@@ -77,7 +77,6 @@ import 'package:internsharks/app/modules/recruiter_flow/login/view/recruiter_set
 import 'package:internsharks/app/modules/blog/binding/blog_binding.dart';
 import 'package:internsharks/app/modules/blog/binding/notification_binding.dart';
 import 'package:internsharks/app/modules/blog/view/blog_view_screen.dart';
-import 'package:internsharks/app/modules/blog/view/blog_view_screen.dart';
 import 'package:internsharks/app/modules/webinar/bindings/webinar_bindings.dart';
 import 'package:internsharks/app/modules/webinar/intern_webinar_screen.dart';
 import 'package:internsharks/app/modules/webinar/webinar_detail_screen.dart';
@@ -94,6 +93,10 @@ import '../modules/recruiter_flow/login/view/recruiter_verification_screen.dart'
 import '../modules/recruiter_flow/home/view/recruiter_referral_screen.dart';
 import '../modules/recruiter_flow/home/view/recruiter_notification_screen.dart';
 import '../modules/recruiter_flow/home/binding/recruiter_notification_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/binding/new_recruiter_register_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/view/new_recruiter_register_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/binding/new_recruiter_company_info_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/view/new_recruiter_company_info_screen.dart';
 
 part 'app_routes.dart';
 
@@ -478,5 +481,18 @@ class AppPages {
       page: () => const RecruiterNotificationScreen(),
       bindings: [RecruiterNotificationBinding()],
     ),
+
+    /// NEW RECRUITER REGISTER FLOW
+    appPage(
+      name: AppRoutes.newRecruiterRegisterScreen,
+      page: () => const NewRecruiterRegisterScreen(),
+      bindings: [NewRecruiterRegisterBinding()],
+    ),
+    appPage(
+      name: AppRoutes.newRecruiterCompanyInfoScreen,
+      page: () => const NewRecruiterCompanyInfoScreen(),
+      bindings: [NewRecruiterCompanyInfoBinding()],
+    ),
   ];
 }
+

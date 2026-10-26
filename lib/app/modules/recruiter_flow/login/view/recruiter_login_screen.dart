@@ -254,7 +254,7 @@ class _RecruiterLoginScreenState extends State<RecruiterLoginScreen> {
                             ..onTap = () {
                               AppFunctions.navigateScreen(
                                 context,
-                                AppRoutes.recruiterRegisterScreen,
+                                AppRoutes.newRecruiterRegisterScreen,
                               );
                             },
                         ),
