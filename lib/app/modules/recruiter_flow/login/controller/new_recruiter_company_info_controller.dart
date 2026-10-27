@@ -10,14 +10,15 @@ import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/company_document_extracted_model.dart';
 import 'package:internsharks/app/data/providers/dashboard_provider.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_register_provider.dart';
-import 'package:internsharks/app/modules/home/controller/dashboard_controller.dart';
 
 class NewRecruiterCompanyInfoController extends GetxController {
   final RecruiterRegisterProvider recruiterRegisterProvider;
 
   NewRecruiterCompanyInfoController({required this.recruiterRegisterProvider});
 
-  late final DashboardController dashboardController;
+  /// Direct provider to fetch the industry/category list without requiring
+  /// DashboardController (which depends on ProfileController being registered).
+  late final DashboardProvider _dashboardProvider;
 
   // ─── STEP 1 ARGUMENTS ───────────────────────────────────────────
   Map<String, dynamic> step1Data = {};
@@ -101,20 +102,10 @@ class NewRecruiterCompanyInfoController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _initDashboardController();
+    _dashboardProvider = DashboardProvider(client: Dio());
     _initArguments();
     _initListeners();
     getIndustryListData();
-  }
-
-  void _initDashboardController() {
-    if (Get.isRegistered<DashboardController>()) {
-      dashboardController = Get.find<DashboardController>();
-    } else {
-      dashboardController = Get.put(
-        DashboardController(DashboardProvider(client: Dio())),
-      );
-    }
   }
 
   void _initArguments() {
@@ -141,23 +132,18 @@ class NewRecruiterCompanyInfoController extends GetxController {
   // ─── GET INDUSTRY LIST DATA ─────────────────────────────────────
   Future<void> getIndustryListData() async {
     try {
-      await dashboardController.getCategoryListData();
-      if (dashboardController.getResponseCode() == 200 ||
-          dashboardController.getResponseCode() == 201) {
-        industryList.value = dashboardController.categoryListModel.categoryList!
+      final categoryListModel = await _dashboardProvider.fetchCategoryList();
+      final code = _dashboardProvider.responseStatus;
+      if (code == 200 || code == 201) {
+        industryList.value = (categoryListModel.categoryList ?? [])
             .map((category) => category.categoryName!)
             .toList();
       } else {
-        AppFunctions.apiErrorHandling(
-          dashboardController.getResponseCode(),
-          "Something went wrong!",
-        );
+        AppFunctions.apiErrorHandling(code, "Could not load industry list");
       }
     } catch (error) {
-      AppFunctions.apiErrorHandling(
-        dashboardController.getResponseCode(),
-        "Something went wrong!",
-      );
+      // Silently fail — industry list is optional during registration
+      debugPrint("[IndustryList] Failed to fetch: $error");
     }
   }
 

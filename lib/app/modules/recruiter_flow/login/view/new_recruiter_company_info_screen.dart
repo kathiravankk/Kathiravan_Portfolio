@@ -9,6 +9,7 @@ import 'package:internsharks/app/core/utils/asset_images.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/modules/login/view/kyc_verification_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/controller/new_recruiter_company_info_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 
 class NewRecruiterCompanyInfoScreen extends StatefulWidget {
   const NewRecruiterCompanyInfoScreen({super.key});
@@ -307,7 +308,7 @@ class _NewRecruiterCompanyInfoScreenState
           ),
           const Spacer(),
           Text(
-            "Step 2 of 3",
+            "Step 2 of 4",
             style: AppStyles.customTextStyle(
               size: 14,
               color: AppColors.secondaryColor,
@@ -422,13 +423,13 @@ class _NewRecruiterCompanyInfoScreenState
 
         /// CONNECTOR 2 -> 3
         Container(
-          width: 28,
+          width: 20,
           height: 1.5,
           color: AppColors.greyTextColor.withValues(alpha: 0.3),
           margin: const EdgeInsets.only(bottom: 24),
         ),
 
-        /// STEP 3: UPCOMING
+        /// STEP 3: UPCOMING — Review
         Expanded(
           child: Column(
             children: [
@@ -446,6 +447,63 @@ class _NewRecruiterCompanyInfoScreenState
                 alignment: Alignment.center,
                 child: Text(
                   "3",
+                  style: AppStyles.customTextStyle(
+                    size: 14,
+                    color: AppColors.greyTextColor,
+                    weight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "Review",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 11,
+                  color: AppColors.greyTextColor,
+                  weight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                "Verify details",
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 9,
+                  color: AppColors.greyTextColor,
+                  weight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        /// CONNECTOR 3 -> 4
+        Container(
+          width: 20,
+          height: 1.5,
+          color: AppColors.greyTextColor.withValues(alpha: 0.3),
+          margin: const EdgeInsets.only(bottom: 24),
+        ),
+
+        /// STEP 4: UPCOMING — Choose Plan
+        Expanded(
+          child: Column(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.fieldBgColor,
+                  border: Border.all(
+                    color: AppColors.greyTextColor.withValues(alpha: 0.4),
+                    width: 1.5,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "4",
                   style: AppStyles.customTextStyle(
                     size: 14,
                     color: AppColors.greyTextColor,
@@ -2035,7 +2093,7 @@ class _NewRecruiterCompanyInfoScreenState
         ),
       ),
       child: CustomButtonWidget(
-        buttonText: "Continue",
+        buttonText: "Continue to Review",
         buttonFunction: () {
           final error = controller.validateStep2();
           if (error != null) {
@@ -2043,15 +2101,8 @@ class _NewRecruiterCompanyInfoScreenState
             return;
           }
 
-          final step2Data = controller.getCombinedRegisterData();
-          debugPrint("Step 2 Collected Data: $step2Data");
-
-          AppAlertUtils.showToast(
-            message: "Company details saved successfully!",
-            isError: false,
-          );
-
-          /// TODO: Next step will be called here (Step 3: Choose Plan)
+          final combinedData = controller.getCombinedRegisterData();
+          Get.toNamed(AppRoutes.newRecruiterReviewScreen, arguments: combinedData);
         },
       ),
     );

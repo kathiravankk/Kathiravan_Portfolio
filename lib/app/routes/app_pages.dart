@@ -97,6 +97,8 @@ import 'package:internsharks/app/modules/recruiter_flow/login/binding/new_recrui
 import 'package:internsharks/app/modules/recruiter_flow/login/view/new_recruiter_register_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/binding/new_recruiter_company_info_binding.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/new_recruiter_company_info_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/binding/new_recruiter_review_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/login/view/new_recruiter_review_screen.dart';
 
 part 'app_routes.dart';
 
@@ -492,6 +494,11 @@ class AppPages {
       name: AppRoutes.newRecruiterCompanyInfoScreen,
       page: () => const NewRecruiterCompanyInfoScreen(),
       bindings: [NewRecruiterCompanyInfoBinding()],
+    ),
+    appPage(
+      name: AppRoutes.newRecruiterReviewScreen,
+      page: () => const NewRecruiterReviewScreen(),
+      bindings: [NewRecruiterReviewBinding()],
     ),
   ];
 }

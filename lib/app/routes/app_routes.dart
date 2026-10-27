@@ -105,6 +105,7 @@ class AppRoutes {
   /// NEW RECRUITER REGISTER FLOW
   static const newRecruiterRegisterScreen = "/newRecruiterRegisterScreen";
   static const newRecruiterCompanyInfoScreen = "/newRecruiterCompanyInfoScreen";
+  static const newRecruiterReviewScreen = "/newRecruiterReviewScreen";
 
 }
 
