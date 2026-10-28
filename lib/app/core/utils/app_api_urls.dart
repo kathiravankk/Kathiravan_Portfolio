@@ -131,6 +131,8 @@ class AppApiUrls {
   static String registerMobileVerifyOtp = "${baseUrl}student/verifyMobileOTP";
   static String checkExistAccount = "${baseUrl}student/checkExistence";
   static String newRecruiterRegister = "${baseUrl}recruiter/recruiterregister";
+  static String getRecruiterSubscriptionPlans =
+      "${baseUrl}recruitersubscriptionplan/getall";
   static String getRecruiterProfile = "${baseUrl}recruiter/getrecruiterbyid";
   static String getAllStudentsList = "${baseUrl}student/getallstudentdetail";
   static String getShortlistedStudents = "${baseUrl}favorite/getfavorites";

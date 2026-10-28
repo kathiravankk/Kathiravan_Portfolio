@@ -94,6 +94,26 @@ class NewRecruiterRegisterController extends GetxController {
   final mobileResendSeconds = 0.obs;
   final verifiedMobile = ''.obs;
 
+  // Country code state (defaults to +91 India)
+  final selectedCountryCode = '+91'.obs;
+  final selectedCountryFlag = '🇮🇳'.obs;
+  final selectedCountryName = 'India'.obs;
+
+  void setCountryCode(String code, String flag, String name) {
+    if (selectedCountryCode.value != code) {
+      selectedCountryCode.value = code;
+      selectedCountryFlag.value = flag;
+      selectedCountryName.value = name;
+      // Reset mobile verification if country code changed
+      isMobileVerified.value = false;
+      showMobileOtpField.value = false;
+      verifiedMobile.value = '';
+    }
+  }
+
+  bool get isContinueEnabled =>
+      isMobileVerified.value && isEmailVerified.value;
+
   final _sendMobileOtpLoading = false.obs;
 
   bool get sendMobileOtpLoading => _sendMobileOtpLoading.value;
@@ -220,9 +240,7 @@ class NewRecruiterRegisterController extends GetxController {
   // ─── MOBILE OTP METHODS ─────────────────────────────────────────
 
   Future<void> sendMobileOtp() async {
-    final mobileError = AppFunctions.validateIndianMobile(
-      mobileController.text,
-    );
+    final mobileError = validateMobileNumber(mobileController.text);
 
     if (mobileError != null) {
       AppAlertUtils.showToast(message: mobileError, isError: true);
@@ -234,6 +252,7 @@ class NewRecruiterRegisterController extends GetxController {
       sendMobileOtpModel =
           await recruiterRegisterProvider!.registerSendMobileOtp(
         mobileNumber: mobileController.text.trim(),
+        countryCode: selectedCountryCode.value,
       );
       sendMobileOtpLoading = false;
 
@@ -266,6 +285,7 @@ class NewRecruiterRegisterController extends GetxController {
           await recruiterRegisterProvider!.registerVerifyMobileOtp(
         mobileNumber: mobileController.text.trim(),
         otpNumber: otpCode,
+        countryCode: selectedCountryCode.value,
       );
       verifyMobileOtpLoading = false;
 
@@ -316,6 +336,27 @@ class NewRecruiterRegisterController extends GetxController {
 
   // ─── FORM VALIDATION ───────────────────────────────────────────
 
+  String? validateMobileNumber(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Mobile number is required";
+    }
+
+    final mobile = value.trim();
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(mobile)) {
+      return "Only numbers are allowed";
+    }
+
+    if (selectedCountryCode.value == "+91") {
+      return AppFunctions.validateIndianMobile(mobile);
+    } else {
+      if (mobile.length < 7 || mobile.length > 15) {
+        return "Please enter a valid phone number (7-15 digits)";
+      }
+    }
+    return null;
+  }
+
   String? validateStep1() {
     final nameError = AppFunctions.validateName(nameController.text);
     if (nameError != null) return nameError;
@@ -328,14 +369,13 @@ class NewRecruiterRegisterController extends GetxController {
 
     if (!isEmailVerified.value) return "Please verify your email";
 
-    final mobileError = AppFunctions.validateIndianMobile(
-      mobileController.text,
-    );
+    final mobileError = validateMobileNumber(mobileController.text);
     if (mobileError != null) return mobileError;
 
     if (!isMobileVerified.value) return "Please verify your mobile number";
 
-    if ( designationController.text.isEmpty) {
+    if (selectedDesignation.value.isEmpty &&
+        designationController.text.isEmpty) {
       return "Please select a designation";
     }
 
@@ -348,7 +388,10 @@ class NewRecruiterRegisterController extends GetxController {
       "name": nameController.text.trim(),
       "email": emailController.text.trim(),
       "mobile": mobileController.text.trim(),
-      "designation": selectedDesignation.value,
+      "countryCode": selectedCountryCode.value,
+      "designation": selectedDesignation.value.isNotEmpty
+          ? selectedDesignation.value
+          : designationController.text.trim(),
       "referralCode": referralCodeController.text.trim(),
     };
   }

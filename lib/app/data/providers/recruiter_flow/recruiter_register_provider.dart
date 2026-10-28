@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/company_document_extracted_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_subscription_plan_model.dart';
 
 class RecruiterRegisterProvider {
   final Dio? client;
@@ -20,7 +22,10 @@ class RecruiterRegisterProvider {
 
   // MOBILE OTP
 
-  Future registerSendMobileOtp({required String mobileNumber}) async {
+  Future registerSendMobileOtp({
+    required String mobileNumber,
+    String countryCode = '+91',
+  }) async {
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
@@ -29,7 +34,10 @@ class RecruiterRegisterProvider {
       Response response = await client!
           .post(
             AppApiUrls.registerMobileSendOtp,
-            data: {"mobile": mobileNumber},
+            data: {
+              "mobile": mobileNumber,
+              "countryCode": countryCode,
+            },
           )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
@@ -47,6 +55,7 @@ class RecruiterRegisterProvider {
   Future registerVerifyMobileOtp({
     required String mobileNumber,
     required String otpNumber,
+    String countryCode = '+91',
   }) async {
     try {
       client!.interceptors.add(
@@ -56,7 +65,11 @@ class RecruiterRegisterProvider {
       Response response = await client!
           .post(
             AppApiUrls.registerMobileVerifyOtp,
-            data: {"mobile": mobileNumber, "otp": otpNumber},
+            data: {
+              "mobile": mobileNumber,
+              "otp": otpNumber,
+              "countryCode": countryCode,
+            },
           )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
@@ -242,6 +255,70 @@ class RecruiterRegisterProvider {
           success: false,
           message: error.message ?? "Connection error",
         );
+      }
+    }
+  }
+
+  // GET RECRUITER SUBSCRIPTION PLANS
+  Future<RecruiterSubscriptionPlanModel> fetchSubscriptionPlans() async {
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+
+      Response response = await client!
+          .get(
+            AppApiUrls.getRecruiterSubscriptionPlans,
+          )
+          .timeout(const Duration(seconds: 30));
+      responseStatus = response.statusCode!;
+      return RecruiterSubscriptionPlanModel.fromJson(response.data);
+    } on DioException catch (error) {
+      if (error.response != null) {
+        responseStatus = error.response!.statusCode ?? 500;
+        return RecruiterSubscriptionPlanModel.fromJson(error.response!.data);
+      } else {
+        responseStatus = 500;
+        return RecruiterSubscriptionPlanModel(
+          success: false,
+          message: error.message ?? "Connection error",
+        );
+      }
+    }
+  }
+
+  // UPDATE RECRUITER REGISTER / SUBSCRIPTION
+  Future updateRecruiterSubscription({
+    required Map<String, dynamic> updateData,
+  }) async {
+    try {
+      final header = await AppApiHeader.recFormDataHeader();
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+
+      final formData = FormData.fromMap(updateData);
+
+      Response response = await client!
+          .put(
+            AppApiUrls.recruiterUpdateProfile,
+            data: formData,
+            options: Options(headers: header),
+          )
+          .timeout(const Duration(seconds: 60));
+
+      responseStatus = response.statusCode!;
+      return response.data;
+    } on DioException catch (error) {
+      if (error.response != null) {
+        responseStatus = error.response!.statusCode ?? 500;
+        return error.response!.data;
+      } else {
+        responseStatus = 500;
+        return {
+          "success": false,
+          "message": error.message ?? "Connection error",
+        };
       }
     }
   }

@@ -111,7 +111,7 @@ class NewRecruiterReviewController extends GetxController {
       'recname': fullName,
       'recemail': email,
       'recmobileno': mobile,
-      'recmobilenocode': '+91',
+      'recmobilenocode': combinedData['countryCode'] ?? '+91',
       'recdesignation': designation,
       if (combinedData['referralCode'] != null &&
           combinedData['referralCode'].toString().isNotEmpty)
@@ -183,8 +183,8 @@ class NewRecruiterReviewController extends GetxController {
           isError: false,
         );
 
-        // Step 4 will be the Choose Plan screen — navigate to it
-        Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+        // Step 4: Choose Plan screen — navigate to it
+        Get.offNamed(AppRoutes.newRecruiterChoosePlanScreen);
       } else {
         AppFunctions.apiErrorHandling(
           getResponseCode(),

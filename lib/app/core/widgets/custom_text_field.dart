@@ -67,7 +67,7 @@ class CustomTextField extends StatelessWidget {
             onChanged: onChanged,
             // 3. Pass it down to the underlying TextFormField
             onFieldSubmitted: onFieldSubmitted,
-            maxLength: isNumberKeyboard ? 10 : maxLength,
+            maxLength: (maxLength != 3000) ? maxLength : (isNumberKeyboard ? 10 : maxLength),
             keyboardType: isNumberKeyboard
                 ? TextInputType.number
                 : TextInputType.visiblePassword,
