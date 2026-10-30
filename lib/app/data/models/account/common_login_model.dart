@@ -3,19 +3,25 @@ class CommonLoginOtpModel {
   String? message;
   String? userType;
   String? otpNumber;
+  String? countryCode;
 
   CommonLoginOtpModel({
     this.success,
     this.message,
     this.userType,
     this.otpNumber,
+    this.countryCode,
   });
 
   CommonLoginOtpModel.fromJson(Map<String, dynamic> json) {
-    success = json["success"] ?? false;
+    success = json["success"] ??
+        (json["otp"] != null ||
+            (json["message"]?.toString().toLowerCase().contains("successfully") ==
+                true));
     message = json["message"] ?? "";
     userType = json["userType"] ?? "";
     otpNumber = json["otp"]?.toString() ?? "";
+    countryCode = json["countryCode"]?.toString() ?? "";
   }
 }
 

@@ -13,12 +13,13 @@ class RecruiterLoginModel {
 
   factory RecruiterLoginModel.fromJson(Map<String, dynamic> json) {
     return RecruiterLoginModel(
-      success: json["success"],
+      success: json["success"] ??
+          (json["rectoken"] != null || json["recToken"] != null),
       message: json["message"],
       recruiter: json["recruiter"] != null
           ? Recruiter.fromJson(json["recruiter"])
           : null,
-      recToken: json["rectoken"],
+      recToken: json["rectoken"] ?? json["recToken"],
     );
   }
 
@@ -59,10 +60,16 @@ class Recruiter {
       coordinatorId: json["coordinatorid"],
       recruiterName: json["recname"],
       recruiterMobileNo: json["recmobileno"],
-      recruiterCreditId: json["recruiterCreditId"],
+      recruiterCreditId: json["recruiterCreditId"] is Map
+          ? (json["recruiterCreditId"]["_id"] ??
+                  json["recruiterCreditId"]["id"])
+              ?.toString()
+          : json["recruiterCreditId"]?.toString(),
 
       // Supports both old and new API
-      id: json["id"] is String ? json["id"] : null,
+      id: json["id"] is String
+          ? json["id"]
+          : (json["_id"] is String ? json["_id"] : null),
 
       recruiterInfo: json["id"] is Map<String, dynamic>
           ? RecruiterCompany.fromJson(json["id"])

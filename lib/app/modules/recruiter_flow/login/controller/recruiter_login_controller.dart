@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/coordinator_data_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_login_model.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_login_provider.dart';
 
@@ -16,6 +16,42 @@ class RecruiterLoginController extends GetxController {
   final seconds = 30.obs;
   final canResend = false.obs;
   Timer? _timer;
+
+  // ================= COUNTRY CODE =================
+  final selectedCountryCode = '+91'.obs;
+  final selectedCountryFlag = '🇮🇳'.obs;
+  final selectedCountryName = 'India'.obs;
+
+  void setCountryCode(String code, String flag, String name) {
+    if (selectedCountryCode.value != code) {
+      selectedCountryCode.value = code;
+      selectedCountryFlag.value = flag;
+      selectedCountryName.value = name;
+      otpSent = false;
+      otp.value = '';
+    }
+  }
+
+  String? validateMobileNumber(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return "Mobile number is required";
+    }
+
+    final m = value.trim();
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(m)) {
+      return "Only numbers are allowed";
+    }
+
+    if (selectedCountryCode.value == "+91") {
+      return AppFunctions.validateIndianMobile(m);
+    } else {
+      if (m.length < 7 || m.length > 15) {
+        return "Please enter a valid phone number (7-15 digits)";
+      }
+    }
+    return null;
+  }
 
   // ================= INPUT =================
   final mobile = ''.obs;
@@ -73,6 +109,7 @@ class RecruiterLoginController extends GetxController {
       loginOtpLoading = true;
       commonPostModel = await recruiterLoginProvider!.postLoginOtp(
         mobileNumber: mobileNumber,
+        countryCode: selectedCountryCode.value,
       );
       if (getResponseCode() == 200 || getResponseCode() == 201) {
         otpSent = true;
@@ -109,10 +146,11 @@ class RecruiterLoginController extends GetxController {
     try {
       loginVerifyLoading = true;
       recruiterLoginModel = await recruiterLoginProvider!.loginVerifyOtp(
-          mobileNumber: mobileNumber,
-          otpNumber: otpNumber,
-          userType: userType,
-          fcmToken: fcmToken
+        mobileNumber: mobileNumber,
+        otpNumber: otpNumber,
+        userType: userType,
+        fcmToken: fcmToken,
+        countryCode: selectedCountryCode.value,
       );
       loginVerifyLoading = false;
     } catch (err) {

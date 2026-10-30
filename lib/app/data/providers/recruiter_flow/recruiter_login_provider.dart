@@ -9,7 +9,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/recruiter_login_mode
 class RecruiterLoginProvider {
   final Dio? client;
 
-  RecruiterLoginProvider({@required this.client});
+  RecruiterLoginProvider({required this.client});
 
   // Response Code
 
@@ -19,59 +19,78 @@ class RecruiterLoginProvider {
 
   set responseStatus(int value) => _responseStatus = value;
 
-  Future postLoginOtp({required String mobileNumber}) async {
-    try {
-      client!.interceptors.add(
-        LogInterceptor(responseBody: true, requestBody: true),
-      );
-
-      Response response = await client!
-          .post(AppApiUrls.sendLoginOtp, data: {"mobile": mobileNumber})
-          .timeout(const Duration(seconds: 60));
-      responseStatus = response.statusCode!;
-      return CommonLoginOtpModel.fromJson(response.data);
-    } on DioException catch (error) {
-      responseStatus = error.response!.statusCode!;
-      if (error.type == DioExceptionType.connectionTimeout) {
-        return CommonLoginOtpModel.fromJson(error.response!.data);
-      } else {
-        return CommonLoginOtpModel.fromJson(error.response!.data);
-      }
-    }
-  }
-
-  Future loginVerifyOtp({
+  Future postLoginOtp({
     required String mobileNumber,
-    required String otpNumber,
-    required String userType,
-    required String fcmToken,
+    String countryCode = '+91',
   }) async {
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
       );
 
+      final Map<String, dynamic> body = {
+        "mobile": mobileNumber,
+        "userType": null,
+        "studentmobilenocode": countryCode,
+      };
+
+      Response response = await client!
+          .post(AppApiUrls.sendLoginOtp, data: body)
+          .timeout(const Duration(seconds: 60));
+      responseStatus = response.statusCode!;
+      return CommonLoginOtpModel.fromJson(response.data);
+    } on DioException catch (error) {
+      responseStatus = error.response?.statusCode ?? 500;
+      if (error.response?.data != null &&
+          error.response!.data is Map<String, dynamic>) {
+        return CommonLoginOtpModel.fromJson(error.response!.data);
+      }
+      return CommonLoginOtpModel(
+        success: false,
+        message: error.message ?? "Connection error",
+      );
+    }
+  }
+
+  Future loginVerifyOtp({
+    required String mobileNumber,
+    required String otpNumber,
+    String userType = "recruiter",
+    required String fcmToken,
+    String countryCode = '+91',
+  }) async {
+    try {
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+
+      final Map<String, dynamic> body = {
+        "mobile": mobileNumber,
+        "otp": otpNumber,
+        "userType": userType,
+        "studentmobilenocode": countryCode,
+        if (fcmToken.isNotEmpty) "fcmToken": fcmToken,
+      };
+
       Response response = await client!
           .post(
-        AppApiUrls.verifyLoginOtp,
-        data: {
-          "mobile": mobileNumber,
-          "otp": otpNumber,
-          "userType": userType,
-          "fcmToken": fcmToken,
-        },
-      )
+            AppApiUrls.verifyLoginOtp,
+            data: body,
+          )
           .timeout(const Duration(seconds: 60));
       responseStatus = response.statusCode!;
       debugPrint(response.data.toString(), wrapWidth: 3000);
       return RecruiterLoginModel.fromJson(response.data);
     } on DioException catch (error) {
-      responseStatus = error.response!.statusCode!;
-      if (error.type == DioExceptionType.connectionTimeout) {
-        return RecruiterLoginModel.fromJson(error.response!.data);
-      } else {
+      responseStatus = error.response?.statusCode ?? 500;
+      if (error.response?.data != null &&
+          error.response!.data is Map<String, dynamic>) {
         return RecruiterLoginModel.fromJson(error.response!.data);
       }
+      return RecruiterLoginModel(
+        success: false,
+        message: error.message ?? "Connection error",
+      );
     }
   }
 
