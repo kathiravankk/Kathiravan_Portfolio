@@ -1316,7 +1316,7 @@ class _NewRecruiterCompanyInfoScreenState
                                       )
                                     : null,
                                 onTap: () {
-                                  controller.selectedIndustry.value = item;
+                                  controller.selectIndustry(item);
                                   Get.back();
                                 },
                               );

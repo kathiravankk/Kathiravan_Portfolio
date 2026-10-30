@@ -4,7 +4,9 @@ import 'package:internsharks/app/core/utils/app_api_header.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/company_document_extracted_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_subscription_order_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_subscription_plan_model.dart';
 
 class RecruiterRegisterProvider {
@@ -319,6 +321,105 @@ class RecruiterRegisterProvider {
           "success": false,
           "message": error.message ?? "Connection error",
         };
+      }
+    }
+  }
+
+  // GET RECRUITER PROFILE BY ID
+  Future<RecruiterProfileModel> fetchRecruiterProfile({
+    required String recruiterId,
+  }) async {
+    try {
+      final header = await AppApiHeader.recruiterHeader();
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+
+      Response response = await client!
+          .post(
+            AppApiUrls.getRecruiterProfile,
+            data: {"id": recruiterId},
+            options: Options(headers: header),
+          )
+          .timeout(const Duration(seconds: 30));
+
+      responseStatus = response.statusCode!;
+      return RecruiterProfileModel.fromJson(response.data);
+    } on DioException catch (error) {
+      if (error.response != null) {
+        responseStatus = error.response!.statusCode ?? 500;
+        return RecruiterProfileModel.fromJson(error.response!.data);
+      } else {
+        responseStatus = 500;
+        return RecruiterProfileModel(success: false);
+      }
+    }
+  }
+
+  // CREATE RECRUITER SUBSCRIPTION PAYMENT ORDER
+  Future<RecruiterSubscriptionOrderModel> createSubscriptionOrder({
+    required String subscriptionId,
+  }) async {
+    try {
+      final header = await AppApiHeader.recruiterHeader();
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+
+      Response response = await client!
+          .post(
+            AppApiUrls.createSubscriptionOrder,
+            data: {"subscriptionId": subscriptionId},
+            options: Options(headers: header),
+          )
+          .timeout(const Duration(seconds: 45));
+
+      responseStatus = response.statusCode!;
+      return RecruiterSubscriptionOrderModel.fromJson(response.data);
+    } on DioException catch (error) {
+      if (error.response != null) {
+        responseStatus = error.response!.statusCode ?? 500;
+        return RecruiterSubscriptionOrderModel.fromJson(error.response!.data);
+      } else {
+        responseStatus = 500;
+        return RecruiterSubscriptionOrderModel(
+          success: false,
+          message: error.message ?? "Connection error",
+        );
+      }
+    }
+  }
+
+  // VERIFY RECRUITER SUBSCRIPTION PAYMENT
+  Future<RecruiterSubscriptionVerifyModel> verifySubscriptionPayment({
+    required String orderId,
+  }) async {
+    try {
+      final header = await AppApiHeader.recruiterHeader();
+      client!.interceptors.add(
+        LogInterceptor(responseBody: true, requestBody: true),
+      );
+
+      Response response = await client!
+          .post(
+            AppApiUrls.verifySubscriptionPayment,
+            data: {"orderId": orderId},
+            options: Options(headers: header),
+          )
+          .timeout(const Duration(seconds: 45));
+
+      responseStatus = response.statusCode!;
+      return RecruiterSubscriptionVerifyModel.fromJson(response.data);
+    } on DioException catch (error) {
+      if (error.response != null) {
+        responseStatus = error.response!.statusCode ?? 500;
+        return RecruiterSubscriptionVerifyModel.fromJson(error.response!.data);
+      } else {
+        responseStatus = 500;
+        return RecruiterSubscriptionVerifyModel(
+          success: false,
+          message: error.message ?? "Connection error",
+        );
       }
     }
   }

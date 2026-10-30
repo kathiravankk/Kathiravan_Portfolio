@@ -102,7 +102,7 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                   automaticallyImplyLeading: false,
                   backgroundColor: AppColors.transparentColor,
                   title: Row(
-                    spacing: 15,
+                    //spacing: 15,
                     children: [
                       GestureDetector(
                         onTap: widget.onProfileTap,
@@ -110,59 +110,103 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                           radius: 20,
                           backgroundColor: AppColors.whiteColor,
                           backgroundImage: NetworkImage(
-                            homeController.profileModel.recruiterData!=null?homeController.profileModel.recruiterData!.recCompanyLogo ?? "":"",
+                            homeController.profileModel.recruiterData != null
+                                ? homeController
+                                          .profileModel
+                                          .recruiterData!
+                                          .recCompanyLogo ??
+                                      ""
+                                : "",
                           ),
                         ),
                       ),
-                      Flexible(
-                        child: Text(
-                          homeController.profileModel.recruiterData!=null?homeController.profileModel.recruiterData!.recName ?? "":"",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: AppStyles.customTextStyle(
-                            size: 18,
-                            weight: FontWeight.w700,
-                            color: AppColors.secondaryColor,
-                          ),
+                      const SizedBox(width: 10),
+                      Text(
+                        homeController.profileModel.recruiterData != null
+                            ? homeController
+                                      .profileModel
+                                      .recruiterData!
+                                      .recName ??
+                                  ""
+                            : "",
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: AppStyles.customTextStyle(
+                          size: 18,
+                          weight: FontWeight.w700,
+                          color: AppColors.secondaryColor,
                         ),
                       ),
                       const Spacer(),
-                      ProfileWidgets.creditContainer(
-                        creditCount:
-                            ((homeController.profileModel.recruiterData!=null?homeController
-                                    .profileModel.recruiterData!
-                                    .recruiterCreditId!
-                                    .freeCredits ??
-                                0:0) +
-                            (homeController.profileModel.recruiterData!=null?homeController
-                                    .profileModel.recruiterData!
-                                    .recruiterCreditId!
-                                    .balance ??
-                                0:0)),
-                        viewFunc: () {
-                          AppFunctions.navigateScreen(
-                            context,
-                            AppRoutes.recruiterCreditPlanScreen,
-                            arguments: {
-                              "creditBalance": homeController.profileModel.recruiterData!=null?homeController
-                                  .profileModel.recruiterData!
-                                  .recruiterCreditId!
-                                  .balance??0 :0,
-                              "creditId": homeController.profileModel.recruiterData!=null?homeController
-                                  .profileModel.recruiterData!
-                                  .recruiterCreditId!
-                                  .id??"":"",
-                            },
-                          );
-                        },
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.recruiterNotificationScreen);
-                        },
-                        icon: Icon(
-                          CupertinoIcons.bell,
-                          color: AppColors.secondaryColor,
+
+                      Flexible(
+                        child: Row(
+                          children: [
+                            ProfileWidgets.creditContainer(
+                              creditCount:
+                                  ((homeController.profileModel.recruiterData !=
+                                          null
+                                      ? homeController
+                                                .profileModel
+                                                .recruiterData!
+                                                .recruiterCreditId!
+                                                .freeCredits ??
+                                            0
+                                      : 0) +
+                                  (homeController.profileModel.recruiterData !=
+                                          null
+                                      ? homeController
+                                                .profileModel
+                                                .recruiterData!
+                                                .recruiterCreditId!
+                                                .balance ??
+                                            0
+                                      : 0)),
+                              viewFunc: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.recruiterCreditPlanScreen,
+                                  arguments: {
+                                    "creditBalance":
+                                        homeController
+                                                .profileModel
+                                                .recruiterData !=
+                                            null
+                                        ? homeController
+                                                  .profileModel
+                                                  .recruiterData!
+                                                  .recruiterCreditId!
+                                                  .balance ??
+                                              0
+                                        : 0,
+                                    "creditId":
+                                        homeController
+                                                .profileModel
+                                                .recruiterData !=
+                                            null
+                                        ? homeController
+                                                  .profileModel
+                                                  .recruiterData!
+                                                  .recruiterCreditId!
+                                                  .id ??
+                                              ""
+                                        : "",
+                                  },
+                                );
+                              },
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                Get.toNamed(
+                                  AppRoutes.recruiterNotificationScreen,
+                                );
+                              },
+                              icon: Icon(
+                                CupertinoIcons.bell,
+                                color: AppColors.secondaryColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -228,18 +272,25 @@ class RecruiterHomeScreenState extends State<RecruiterHomeScreen> {
                                   homeController.filteredStudents.refresh();
                                 },
                                 requestFunc: () {
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
                                     Get.dialog(
-                                      SelectInternshipDialog(studentId: student.id ?? ""),
+                                      SelectInternshipDialog(
+                                        studentId: student.id ?? "",
+                                      ),
                                       barrierDismissible: true,
                                     );
                                   });
                                 },
                                 studentName: student.studName ?? "",
                                 studentProfile: student.studProfile ?? "",
-                                studentDegree: student.studentdegree ?? "No Degree Specified",
+                                studentDegree:
+                                    student.studentdegree ??
+                                    "No Degree Specified",
                                 studentCollegeName:
-                                    student.studentcollegename ?? "No College Specified",
+                                    student.studentcollegename ??
+                                    "No College Specified",
                                 studentDepartment:
                                     student.studentfieldofstudy ?? "",
                                 isVerified: student.isVerified ?? false,

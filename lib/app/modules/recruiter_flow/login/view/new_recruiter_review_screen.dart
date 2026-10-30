@@ -23,13 +23,18 @@ class NewRecruiterReviewScreen extends StatelessWidget {
         ),
       ),
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+        ),
         backgroundColor: AppColors.transparentColor,
         body: SafeArea(
           child: Column(
             children: [
-              /// TOP BAR
-              _buildTopBar(),
-
               /// SCROLLABLE CONTENT
               Expanded(
                 child: SingleChildScrollView(
@@ -66,37 +71,6 @@ class NewRecruiterReviewScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  // ─── TOP BAR ────────────────────────────────────────────────────
-  Widget _buildTopBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F1726),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: const Color(0xFF1E293B),
-                  width: 1,
-                ),
-              ),
-              child: const Icon(
-                CupertinoIcons.back,
-                color: AppColors.whiteColor,
-                size: 18,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

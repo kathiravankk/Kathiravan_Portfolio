@@ -4,6 +4,7 @@ import 'package:get/get.dart' hide MultipartFile;
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_register_model.dart';
+import 'package:internsharks/app/data/providers/dashboard_provider.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_register_provider.dart';
 import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/routes/app_pages.dart';
@@ -102,9 +103,60 @@ class NewRecruiterReviewController extends GetxController {
     return {};
   }
 
+  // ─── RESOLVE INDUSTRY TYPE ID (ObjectId) ────────────────────────
+  Future<String> _resolveIndustryTypeId() async {
+    // 1. If industryTypeId is passed in combinedData and is a valid 24-char hex ObjectId
+    final idCandidate = combinedData['industryTypeId']?.toString().trim() ?? '';
+    if (idCandidate.isNotEmpty &&
+        RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(idCandidate)) {
+      return idCandidate;
+    }
+
+    // 2. If industryType itself is already a 24-char hex ObjectId
+    final nameOrId = industryType.trim();
+    if (nameOrId.isNotEmpty &&
+        RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(nameOrId)) {
+      return nameOrId;
+    }
+
+    // 3. Information Technology exact ObjectId lookup
+    final lowerName = nameOrId.toLowerCase();
+    if (lowerName.contains('information') ||
+        lowerName.contains('technology') ||
+        lowerName == 'it') {
+      return '68fb2b06d513c9bec54195ff';
+    }
+
+    // 4. Match from backend Category list
+    try {
+      final dashboardProvider = DashboardProvider(client: Dio());
+      final res = await dashboardProvider.fetchCategoryList();
+      final list = res.categoryList ?? [];
+      final matched = list.firstWhereOrNull(
+        (c) {
+          final cName = (c.categoryName ?? '').toLowerCase().trim();
+          return cName == lowerName ||
+              lowerName.contains(cName) ||
+              cName.contains(lowerName);
+        },
+      );
+      if (matched != null &&
+          matched.categoryId != null &&
+          RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(matched.categoryId!)) {
+        return matched.categoryId!;
+      }
+    } catch (e) {
+      debugPrint('[ReviewController] Error resolving category ID: $e');
+    }
+
+    // 5. Safe fallback to Information Technology ObjectId
+    return '68fb2b06d513c9bec54195ff';
+  }
+
   // ─── BUILD REGISTER PAYLOAD ─────────────────────────────────────
   Future<Map<String, dynamic>> _buildRegisterPayload() async {
     final fcmToken = await LocalStorageService.getFcmToken() ?? '';
+    final resolvedIndustryId = await _resolveIndustryTypeId();
 
     return {
       'fcmToken': fcmToken,
@@ -122,7 +174,7 @@ class NewRecruiterReviewController extends GetxController {
       'reccompanyaddress': companyAddress,
       'reccompanypincode': companyPincode,
       'reccompanywebsite': companyWebsite,
-      'reccompanyindustrytype': industryType,
+      'reccompanyindustrytype': resolvedIndustryId,
       'reccompanysize': numberOfEmployees,
       'employee_range': employeeRange,
       'reccompanydescription': companyDescription,

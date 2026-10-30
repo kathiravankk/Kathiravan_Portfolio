@@ -22,12 +22,20 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
         ),
       ),
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.transparentColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, size: 25, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+        ),
         backgroundColor: AppColors.transparentColor,
         body: SafeArea(
           child: Column(
             children: [
               /// TOP BAR (Back button + Step 4 of 4)
-              _buildTopBar(),
+              //_buildTopBar(),
 
               /// SCROLLABLE CONTENT
               Expanded(
@@ -107,10 +115,7 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF0F1726),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: const Color(0xFF1E293B),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFF1E293B), width: 1),
               ),
               child: const Icon(
                 CupertinoIcons.back,
@@ -388,19 +393,17 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF0A1622),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: const Color(0xFF142434),
-            width: 1,
-          ),
+          border: Border.all(color: const Color(0xFF142434), width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: cycles.map((cycleKey) {
             final isSelected =
                 controller.selectedBillingCycle.value.toLowerCase() ==
-                    cycleKey.toLowerCase();
+                cycleKey.toLowerCase();
             final title = _getCycleDisplayName(cycleKey);
-            final hasBadge = cycleKey.toLowerCase().contains('year') ||
+            final hasBadge =
+                cycleKey.toLowerCase().contains('year') ||
                 cycleKey.toLowerCase().contains('annual');
 
             return GestureDetector(
@@ -441,7 +444,9 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
                               : const Color(0xFF072F32),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: const Color(0xFF00E5FF).withValues(alpha: 0.5),
+                            color: const Color(
+                              0xFF00E5FF,
+                            ).withValues(alpha: 0.5),
                             width: 0.8,
                           ),
                         ),
@@ -470,7 +475,9 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
     final plans = List<RecruiterSubscriptionPlanData>.from(controller.planList);
 
     // If API didn't include "Scale", add it as a fallback plan matching screenshot
-    final hasScale = plans.any((p) => p.name?.toLowerCase().contains('scale') == true);
+    final hasScale = plans.any(
+      (p) => p.name?.toLowerCase().contains('scale') == true,
+    );
     if (!hasScale) {
       plans.add(
         RecruiterSubscriptionPlanData(
@@ -522,7 +529,8 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
     final selectedCycle = controller.selectedBillingCycle.value;
 
     // Check if Growth / Popular
-    final isPopular = planName.toLowerCase().contains('growth') ||
+    final isPopular =
+        planName.toLowerCase().contains('growth') ||
         planName.toLowerCase().contains('popular');
 
     // Visual attributes per plan
@@ -769,10 +777,7 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF0C1724),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF162534),
-          width: 1.0,
-        ),
+        border: Border.all(color: const Color(0xFF162534), width: 1.0),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -920,10 +925,7 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF0A1520),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFF142434),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFF142434), width: 1),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -961,8 +963,10 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
         ),
       ),
       child: Obx(() {
-        final isEnabled = controller.isContinueEnabled;
+        final isPaymentLoading = controller.isPaymentLoading.value;
         final isSkipLoading = controller.isSkipLoading.value;
+        final isEnabled =
+            controller.isContinueEnabled && !isPaymentLoading && !isSkipLoading;
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -974,18 +978,20 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
-                gradient: isEnabled
+                gradient: isEnabled || isPaymentLoading
                     ? const LinearGradient(
                         colors: [Color(0xFF00F2FE), Color(0xFF4FACFE)],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       )
                     : null,
-                color: isEnabled ? null : const Color(0xFF152230),
-                border: isEnabled
+                color: (isEnabled || isPaymentLoading)
+                    ? null
+                    : const Color(0xFF152230),
+                border: (isEnabled || isPaymentLoading)
                     ? null
                     : Border.all(color: const Color(0xFF1E3547), width: 1),
-                boxShadow: isEnabled
+                boxShadow: (isEnabled || isPaymentLoading)
                     ? [
                         BoxShadow(
                           color: const Color(0xFF00E5FF).withValues(alpha: 0.3),
@@ -1003,16 +1009,25 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
                       ? () => controller.onContinueToPayment()
                       : null,
                   child: Center(
-                    child: Text(
-                      'Continue to Payment',
-                      style: AppStyles.customTextStyle(
-                        size: 16,
-                        color: isEnabled
-                            ? AppColors.blackColor
-                            : const Color(0xFF64748B),
-                        weight: FontWeight.w700,
-                      ),
-                    ),
+                    child: isPaymentLoading
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CupertinoActivityIndicator(
+                              radius: 10,
+                              color: AppColors.blackColor,
+                            ),
+                          )
+                        : Text(
+                            'Continue to Payment',
+                            style: AppStyles.customTextStyle(
+                              size: 16,
+                              color: isEnabled
+                                  ? AppColors.blackColor
+                                  : const Color(0xFF64748B),
+                              weight: FontWeight.w700,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -1022,7 +1037,9 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
 
             /// "Skip For Now" Text Button
             GestureDetector(
-              onTap: isSkipLoading ? null : () => controller.skipForNow(),
+              onTap: (isSkipLoading || isPaymentLoading)
+                  ? null
+                  : () => controller.skipForNow(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Center(
@@ -1081,7 +1098,8 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
           ? plan.coordinatorlimit!
           : 2;
       final liveInt = plan.internshipLimit ?? 3;
-      final activeInt = plan.activeInternLimit != null && plan.activeInternLimit! > 5
+      final activeInt =
+          plan.activeInternLimit != null && plan.activeInternLimit! > 5
           ? plan.activeInternLimit!
           : 15;
       final credits = cycleObj?.creditLimit ?? 500;
@@ -1098,7 +1116,8 @@ class NewRecruiterChoosePlanScreen extends StatelessWidget {
           ? plan.coordinatorlimit!
           : 5;
       final liveInt = plan.internshipLimit ?? 10;
-      final activeInt = plan.activeInternLimit != null && plan.activeInternLimit! > 5
+      final activeInt =
+          plan.activeInternLimit != null && plan.activeInternLimit! > 5
           ? plan.activeInternLimit!
           : 50;
       final credits = cycleObj?.creditLimit ?? 1000;

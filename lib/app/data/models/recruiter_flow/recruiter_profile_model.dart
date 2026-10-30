@@ -40,6 +40,7 @@ class RecruiterProfileData {
   String? updatedAt;
   String? referCode;
   int? vId;
+  String? subscriptionId;
 
   RecruiterProfileData({
     this.id,
@@ -69,6 +70,7 @@ class RecruiterProfileData {
     this.updatedAt,
     this.vId,
     this.referCode,
+    this.subscriptionId,
   });
 
   RecruiterProfileData.fromJson(Map<String, dynamic> json) {
@@ -104,6 +106,13 @@ class RecruiterProfileData {
     fcmTokens = json['fcmTokens'] != null
         ? List<dynamic>.from(json['fcmTokens'])
         : [];
+
+    subscriptionId = json['subscriptionId'] != null
+        ? (json['subscriptionId'] is Map
+            ? (json['subscriptionId']['_id'] ?? json['subscriptionId']['id'])
+                ?.toString()
+            : json['subscriptionId'].toString())
+        : null;
 
     isActive = json['isActive'] ?? false;
     deletedAt = json['deletedAt'] ?? "";

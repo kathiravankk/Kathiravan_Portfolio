@@ -7,6 +7,7 @@ import 'package:get/get.dart' hide MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
+import 'package:internsharks/app/data/models/home/category_list_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/company_document_extracted_model.dart';
 import 'package:internsharks/app/data/providers/dashboard_provider.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_register_provider.dart';
@@ -60,7 +61,9 @@ class NewRecruiterCompanyInfoController extends GetxController {
 
   // ─── DROPDOWNS & SELECTORS ──────────────────────────────────────
   final selectedIndustry = RxnString();
+  final selectedIndustryId = RxnString();
   final industryList = <String>[].obs;
+  final categoryObjects = <CategoryListData>[].obs;
 
   final selectedEmployeeCount = RxnString();
   final List<String> employeeCountOptions = [
@@ -135,15 +138,49 @@ class NewRecruiterCompanyInfoController extends GetxController {
       final categoryListModel = await _dashboardProvider.fetchCategoryList();
       final code = _dashboardProvider.responseStatus;
       if (code == 200 || code == 201) {
-        industryList.value = (categoryListModel.categoryList ?? [])
-            .map((category) => category.categoryName!)
+        final list = categoryListModel.categoryList ?? [];
+        categoryObjects.value = list;
+        industryList.value = list
+            .map((category) => category.categoryName ?? "")
+            .where((name) => name.isNotEmpty)
             .toList();
+
+        // If industry was already selected (e.g. from document extraction), update industryId
+        if (selectedIndustry.value != null &&
+            selectedIndustry.value!.isNotEmpty) {
+          updateIndustryIdFromName(selectedIndustry.value!);
+        }
       } else {
         AppFunctions.apiErrorHandling(code, "Could not load industry list");
       }
     } catch (error) {
       // Silently fail — industry list is optional during registration
       debugPrint("[IndustryList] Failed to fetch: $error");
+    }
+  }
+
+  void selectIndustry(String name) {
+    selectedIndustry.value = name;
+    updateIndustryIdFromName(name);
+  }
+
+  void updateIndustryIdFromName(String name) {
+    final lower = name.toLowerCase().trim();
+    final matched = categoryObjects.firstWhereOrNull(
+      (c) =>
+          (c.categoryName ?? '').toLowerCase().trim() == lower ||
+          lower.contains((c.categoryName ?? '').toLowerCase().trim()) ||
+          (c.categoryName ?? '').toLowerCase().trim().contains(lower),
+    );
+
+    if (matched != null &&
+        matched.categoryId != null &&
+        matched.categoryId!.isNotEmpty) {
+      selectedIndustryId.value = matched.categoryId;
+    } else if (lower.contains('information') ||
+        lower.contains('technology') ||
+        lower == 'it') {
+      selectedIndustryId.value = '68fb2b06d513c9bec54195ff';
     }
   }
 
@@ -282,13 +319,14 @@ class NewRecruiterCompanyInfoController extends GetxController {
               ind.toLowerCase().contains(extractedInd),
         );
         if (matched != null) {
-          selectedIndustry.value = matched;
+          selectIndustry(matched);
         } else {
           // Add or set if industry not in list
           selectedIndustry.value = info.industryType;
           if (!industryList.contains(info.industryType!)) {
             industryList.add(info.industryType!);
           }
+          updateIndustryIdFromName(info.industryType!);
         }
       }
     }
@@ -495,6 +533,13 @@ class NewRecruiterCompanyInfoController extends GetxController {
       "companyPincode": pinCodeController.text.trim(),
       "companyWebsite": companyWebsiteController.text.trim(),
       "industryType": selectedIndustry.value,
+      "industryTypeId": selectedIndustryId.value?.isNotEmpty == true
+          ? selectedIndustryId.value
+          : ((selectedIndustry.value ?? '').toLowerCase().contains('technology') ||
+                  (selectedIndustry.value ?? '').toLowerCase().contains('information') ||
+                  (selectedIndustry.value ?? '').toLowerCase() == 'it'
+              ? '68fb2b06d513c9bec54195ff'
+              : selectedIndustryId.value),
       "numberOfEmployees": selectedEmployeeCount.value,
       "employeeRange": employeeRangeController.text.trim(),
       "companyDescription": companyDescriptionController.text.trim(),
