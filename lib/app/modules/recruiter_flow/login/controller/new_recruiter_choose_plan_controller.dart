@@ -87,7 +87,14 @@ class NewRecruiterChoosePlanController extends GetxController {
   Future<void> fetchPlans() async {
     try {
       isLoading.value = true;
-      final result = await recruiterRegisterProvider.fetchSubscriptionPlans();
+      final String recruiterId =
+          (Get.arguments is Map ? Get.arguments['id'] : null) ??
+          await LocalStorageService.getRecruiterId() ??
+          '';
+
+      final result = await recruiterRegisterProvider.fetchSubscriptionPlans(
+        recruiterId: recruiterId,
+      );
 
       if (result.success == true &&
           result.data != null &&

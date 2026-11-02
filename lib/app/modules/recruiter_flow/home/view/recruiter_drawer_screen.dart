@@ -218,6 +218,16 @@ class _RecruiterDrawerScreenState extends State<RecruiterDrawerScreen> {
                                 );
                               },
                             ),
+                            CardWidgets.settingsTile(
+                              icon: Icons.wind_power_outlined,
+                              title: "Upgrade Subscription",
+                              onTap: () {
+                                AppFunctions.navigateScreen(
+                                  context,
+                                  AppRoutes.upgradeSubscriptionScreen,
+                                );
+                              },
+                            ),
                             if (userType.isEmpty || userType.toLowerCase() == "recruiter") ...[
                               CardWidgets.settingsTile(
                                 icon: Icons.people_alt_outlined,

@@ -107,6 +107,7 @@ class AppRoutes {
   static const newRecruiterCompanyInfoScreen = "/newRecruiterCompanyInfoScreen";
   static const newRecruiterReviewScreen = "/newRecruiterReviewScreen";
   static const newRecruiterChoosePlanScreen = "/newRecruiterChoosePlanScreen";
+  static const upgradeSubscriptionScreen = "/upgradeSubscriptionScreen";
 
 }
 

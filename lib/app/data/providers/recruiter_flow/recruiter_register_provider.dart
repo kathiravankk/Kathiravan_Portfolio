@@ -262,15 +262,23 @@ class RecruiterRegisterProvider {
   }
 
   // GET RECRUITER SUBSCRIPTION PLANS
-  Future<RecruiterSubscriptionPlanModel> fetchSubscriptionPlans() async {
+  Future<RecruiterSubscriptionPlanModel> fetchSubscriptionPlans({
+    String? recruiterId,
+  }) async {
     try {
       client!.interceptors.add(
         LogInterceptor(responseBody: true, requestBody: true),
       );
 
+      final queryParams = <String, dynamic>{
+        if (recruiterId != null && recruiterId.isNotEmpty)
+          'recruiterId': recruiterId,
+      };
+
       Response response = await client!
           .get(
             AppApiUrls.getRecruiterSubscriptionPlans,
+            queryParameters: queryParams.isNotEmpty ? queryParams : null,
           )
           .timeout(const Duration(seconds: 30));
       responseStatus = response.statusCode!;

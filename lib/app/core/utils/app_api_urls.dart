@@ -137,6 +137,10 @@ class AppApiUrls {
       "${baseUrl}recruitersubscriptionplan/create-subscription-order";
   static String verifySubscriptionPayment =
       "${baseUrl}recruitersubscriptionplan/verify-subscription-payment";
+  static String upgradeSubscriptionOrder =
+      "${baseUrl}recruitersubscriptionplan/subscription/upgrade/order";
+  static String upgradeSubscriptionVerify =
+      "${baseUrl}recruitersubscriptionplan/subscription/upgrade/verify";
   static String getRecruiterProfile = "${baseUrl}recruiter/getrecruiterbyid";
   static String getAllStudentsList = "${baseUrl}student/getallstudentdetail";
   static String getShortlistedStudents = "${baseUrl}favorite/getfavorites";

@@ -101,6 +101,8 @@ import 'package:internsharks/app/modules/recruiter_flow/login/binding/new_recrui
 import 'package:internsharks/app/modules/recruiter_flow/login/view/new_recruiter_review_screen.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/binding/new_recruiter_choose_plan_binding.dart';
 import 'package:internsharks/app/modules/recruiter_flow/login/view/new_recruiter_choose_plan_screen.dart';
+import 'package:internsharks/app/modules/recruiter_flow/subscription/binding/upgrade_subscription_binding.dart';
+import 'package:internsharks/app/modules/recruiter_flow/subscription/view/upgrade_subscription_screen.dart';
 
 part 'app_routes.dart';
 
@@ -506,6 +508,11 @@ class AppPages {
       name: AppRoutes.newRecruiterChoosePlanScreen,
       page: () => const NewRecruiterChoosePlanScreen(),
       bindings: [NewRecruiterChoosePlanBinding()],
+    ),
+    appPage(
+      name: AppRoutes.upgradeSubscriptionScreen,
+      page: () => const UpgradeSubscriptionScreen(),
+      bindings: [UpgradeSubscriptionBinding()],
     ),
   ];
 }
