@@ -11,6 +11,7 @@ import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/i
 import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
+import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
@@ -1103,12 +1104,15 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
 
   void _openStipendCashfreeCheckout(CreateStipendOrderModel orderData) {
     try {
-      // Your API response sample doesn't include an "environment" field —
-      // default to PRODUCTION here, or wire this to your app's env config
-      // the same way BuyCreditScreen does if the field exists on the model.
+      final CFEnvironment environment =
+          (orderData.environment?.toUpperCase() == 'SANDBOX' ||
+                  (orderData.environment == null && AppApiUrls.isDevEnvironment))
+              ? CFEnvironment.SANDBOX
+              : CFEnvironment.PRODUCTION;
 
-      final CFEnvironment environment = CFEnvironment.PRODUCTION;
-      //final CFEnvironment environment = CFEnvironment.SANDBOX;
+      debugPrint(
+        '[Cashfree Stipend] Launching checkout for orderId: ${orderData.orderId} in env: $environment',
+      );
 
       final session = CFSessionBuilder()
           .setEnvironment(environment)

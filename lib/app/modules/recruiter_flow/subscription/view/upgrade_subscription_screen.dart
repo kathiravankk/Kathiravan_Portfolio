@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
@@ -33,7 +34,7 @@ class UpgradeSubscriptionScreen extends StatelessWidget {
             'Upgrade Subscription',
             style: AppStyles.customTextStyle(
               size: 18,
-              color: AppColors.whiteColor,
+              color: AppColors.secondaryColor,
               weight: FontWeight.w700,
             ),
           ),
@@ -62,15 +63,7 @@ class UpgradeSubscriptionScreen extends StatelessWidget {
                       /// PLANS LIST
                       Obx(() {
                         if (controller.isLoading.value) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 60),
-                              child: CupertinoActivityIndicator(
-                                radius: 14,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                          );
+                          return AppAlertUtils.customLoader();
                         }
 
                         return Column(
@@ -647,6 +640,8 @@ class UpgradeSubscriptionScreen extends StatelessWidget {
           final name = controller.selectedPlanName.value.toLowerCase();
           if (name.contains('explore')) {
             buttonText = 'Choose Launch, Growth, or Scale';
+          } else if (controller.isCurrentPlanAndCycleSelected) {
+            buttonText = 'Current Active Plan';
           } else {
             buttonText = 'Select a Plan to Upgrade';
           }

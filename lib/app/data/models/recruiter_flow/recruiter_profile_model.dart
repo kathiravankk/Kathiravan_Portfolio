@@ -1,14 +1,31 @@
 class RecruiterProfileModel {
   bool? success;
   RecruiterProfileData? recruiterData;
+  List<RecruiterReviewItem>? reviews;
 
-  RecruiterProfileModel({this.recruiterData, this.success});
+  RecruiterProfileModel({this.recruiterData, this.success, this.reviews});
 
   RecruiterProfileModel.fromJson(Map<String, dynamic> json) {
     success = json["success"] ?? false;
     recruiterData = json['data'] != null
         ? RecruiterProfileData.fromJson(json['data'])
         : null;
+
+    if (json['reviews'] != null && json['reviews'] is List) {
+      reviews = (json['reviews'] as List)
+          .map((v) => RecruiterReviewItem.fromJson(
+              v is Map<String, dynamic> ? v : Map<String, dynamic>.from(v)))
+          .toList();
+    } else if (json['data'] != null &&
+        json['data']['reviews'] != null &&
+        json['data']['reviews'] is List) {
+      reviews = (json['data']['reviews'] as List)
+          .map((v) => RecruiterReviewItem.fromJson(
+              v is Map<String, dynamic> ? v : Map<String, dynamic>.from(v)))
+          .toList();
+    } else if (recruiterData?.reviews != null) {
+      reviews = recruiterData!.reviews;
+    }
   }
 }
 
@@ -41,6 +58,7 @@ class RecruiterProfileData {
   String? referCode;
   int? vId;
   String? subscriptionId;
+  List<RecruiterReviewItem>? reviews;
 
   RecruiterProfileData({
     this.id,
@@ -71,6 +89,7 @@ class RecruiterProfileData {
     this.vId,
     this.referCode,
     this.subscriptionId,
+    this.reviews,
   });
 
   RecruiterProfileData.fromJson(Map<String, dynamic> json) {
@@ -119,6 +138,13 @@ class RecruiterProfileData {
     createdAt = json['createdAt'] ?? "";
     updatedAt = json['updatedAt'] ?? "";
     vId = json['__v'] ?? 0;
+
+    if (json['reviews'] != null && json['reviews'] is List) {
+      reviews = (json['reviews'] as List)
+          .map((v) => RecruiterReviewItem.fromJson(
+              v is Map<String, dynamic> ? v : Map<String, dynamic>.from(v)))
+          .toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -201,5 +227,76 @@ class RecruiterCredit {
       'totalUsed': totalUsed,
       '__v': v,
     };
+  }
+}
+
+class RecruiterReviewItem {
+  final String? id;
+  final String? review;
+  final dynamic rating;
+  final String? studentId;
+  final String? studentName;
+  final String? studentEmail;
+  final String? studentProfile;
+  final String? jobRole;
+  final String? companyName;
+  final String? createdAt;
+  final String? updatedAt;
+
+  RecruiterReviewItem({
+    this.id,
+    this.review,
+    this.rating,
+    this.studentId,
+    this.studentName,
+    this.studentEmail,
+    this.studentProfile,
+    this.jobRole,
+    this.companyName,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory RecruiterReviewItem.fromJson(Map<String, dynamic> json) {
+    final student = json['student'] is Map
+        ? Map<String, dynamic>.from(json['student'])
+        : null;
+    final job = json['job'] is Map
+        ? Map<String, dynamic>.from(json['job'])
+        : null;
+
+    return RecruiterReviewItem(
+      id: (json['_id'] ?? json['id'])?.toString(),
+      review: (json['review'] ?? json['feedback'] ?? json['comment'])?.toString(),
+      rating: json['rating'],
+      studentId: (student != null
+              ? (student['_id'] ?? student['id'])
+              : json['studentId'])
+          ?.toString(),
+      studentName: (student != null
+              ? (student['studname'] ?? student['name'] ?? student['studentName'])
+              : json['studentName'])
+          ?.toString(),
+      studentEmail: (student != null
+              ? (student['studemail'] ?? student['email'])
+              : json['studentEmail'])
+          ?.toString(),
+      studentProfile: (student != null
+              ? (student['studprofile'] ??
+                  student['profile'] ??
+                  student['studentProfile'])
+              : json['studentProfile'])
+          ?.toString(),
+      jobRole: (job != null
+              ? (job['roletype'] ?? job['title'] ?? job['role'])
+              : json['jobRole'])
+          ?.toString(),
+      companyName: (job != null
+              ? (job['companyname'] ?? job['companyName'])
+              : json['companyName'])
+          ?.toString(),
+      createdAt: json['createdAt']?.toString(),
+      updatedAt: json['updatedAt']?.toString(),
+    );
   }
 }

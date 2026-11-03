@@ -10,6 +10,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_placement_result_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
@@ -1048,6 +1049,126 @@ class RecruiterHomeController extends GetxController {
     } finally {
       deleteCoordinatorLoading = false;
     }
+  }
+
+  // ── RECRUITER INTERVIEWS ──────────────────────────────────────────────
+  final RxList<RecruiterResultItem> interviewList = <RecruiterResultItem>[].obs;
+  final RxBool interviewLoading = false.obs;
+  final RxBool interviewLoadingMore = false.obs;
+  final RxInt interviewPage = 1.obs;
+  final RxInt interviewTotalPages = 1.obs;
+  final RxInt interviewTotal = 0.obs;
+  final RxString selectedInterviewStatus = "".obs;
+
+  Future<void> fetchInterviews({
+    bool isLoadMore = false,
+    String? status,
+  }) async {
+    if (isLoadMore) {
+      if (interviewLoadingMore.value ||
+          interviewPage.value >= interviewTotalPages.value) {
+        return;
+      }
+      interviewLoadingMore.value = true;
+    } else {
+      interviewLoading.value = true;
+      interviewPage.value = 1;
+    }
+
+    try {
+      final queryStatus = status ?? selectedInterviewStatus.value;
+      final targetPage = isLoadMore ? interviewPage.value + 1 : 1;
+
+      final result = await recruiterHomeProvider!.fetchRecruiterInterviews(
+        page: targetPage,
+        limit: 12,
+        status: queryStatus.isNotEmpty ? queryStatus : null,
+      );
+
+      final statusCode = getResponseCode();
+      if (statusCode == 200 || statusCode == 201) {
+        interviewTotalPages.value = result.pagination?.totalPages ?? 1;
+        interviewTotal.value = result.pagination?.total ?? (result.data?.length ?? 0);
+
+        if (isLoadMore) {
+          interviewPage.value = targetPage;
+          interviewList.addAll(result.data ?? []);
+        } else {
+          interviewPage.value = 1;
+          interviewList.assignAll(result.data ?? []);
+        }
+      }
+    } catch (e) {
+      debugPrint('[fetchInterviews] Error: $e');
+    } finally {
+      interviewLoading.value = false;
+      interviewLoadingMore.value = false;
+    }
+  }
+
+  void filterInterviewsByStatus(String status) {
+    selectedInterviewStatus.value = status;
+    fetchInterviews(isLoadMore: false, status: status);
+  }
+
+  // ── RECRUITER PLACEMENTS ──────────────────────────────────────────────
+  final RxList<RecruiterResultItem> placementList = <RecruiterResultItem>[].obs;
+  final RxBool placementLoading = false.obs;
+  final RxBool placementLoadingMore = false.obs;
+  final RxInt placementPage = 1.obs;
+  final RxInt placementTotalPages = 1.obs;
+  final RxInt placementTotal = 0.obs;
+  final RxString selectedPlacementStatus = "".obs;
+
+  Future<void> fetchPlacements({
+    bool isLoadMore = false,
+    String? status,
+  }) async {
+    if (isLoadMore) {
+      if (placementLoadingMore.value ||
+          placementPage.value >= placementTotalPages.value) {
+        return;
+      }
+      placementLoadingMore.value = true;
+    } else {
+      placementLoading.value = true;
+      placementPage.value = 1;
+    }
+
+    try {
+      final queryStatus = status ?? selectedPlacementStatus.value;
+      final targetPage = isLoadMore ? placementPage.value + 1 : 1;
+
+      final result = await recruiterHomeProvider!.fetchRecruiterPlacements(
+        page: targetPage,
+        limit: 12,
+        status: queryStatus.isNotEmpty ? queryStatus : null,
+      );
+
+      final statusCode = getResponseCode();
+      if (statusCode == 200 || statusCode == 201) {
+        placementTotalPages.value = result.pagination?.totalPages ?? 1;
+        placementTotal.value = result.pagination?.total ?? (result.data?.length ?? 0);
+
+        if (isLoadMore) {
+          placementPage.value = targetPage;
+          placementList.addAll(result.data ?? []);
+        } else {
+          placementPage.value = 1;
+          placementList.assignAll(result.data ?? []);
+        }
+      }
+    } catch (e) {
+      debugPrint('[fetchPlacements] Error: $e');
+    } finally {
+      placementLoading.value = false;
+      placementLoadingMore.value = false;
+    }
+  }
+
+  void filterPlacementsByStatus(String status) {
+    selectedPlacementStatus.value = status;
+    fetchPlacements(isLoadMore: false, status: status);
   }
 }
 

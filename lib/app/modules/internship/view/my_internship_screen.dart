@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
+import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -200,6 +201,7 @@ class MyInternshipScreenState extends State<MyInternshipScreen> {
       openCashFreeCheckout(
         orderId: orderData.orderId ?? "",
         paymentSessionId: orderData.paymentSessionId ?? "",
+        environment: orderData.environment,
       );
     } else {
       AppFunctions.apiErrorHandling(
@@ -212,12 +214,21 @@ class MyInternshipScreenState extends State<MyInternshipScreen> {
   void openCashFreeCheckout({
     required String orderId,
     required String paymentSessionId,
+    String? environment,
   }) {
     try {
+      final CFEnvironment cfEnv =
+          (environment?.toUpperCase() == 'SANDBOX' ||
+                  (environment == null && AppApiUrls.isDevEnvironment))
+              ? CFEnvironment.SANDBOX
+              : CFEnvironment.PRODUCTION;
+
+      debugPrint(
+        '[Cashfree Internship Fee] Launching checkout for orderId: $orderId in env: $cfEnv',
+      );
+
       final session = CFSessionBuilder()
-          .setEnvironment(
-            CFEnvironment.SANDBOX,
-          ) // Need to change to  PRODUCTION for live
+          .setEnvironment(cfEnv)
           .setOrderId(orderId)
           .setPaymentSessionId(paymentSessionId)
           .build();

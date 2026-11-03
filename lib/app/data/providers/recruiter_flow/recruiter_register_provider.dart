@@ -366,7 +366,9 @@ class RecruiterRegisterProvider {
 
   // CREATE RECRUITER SUBSCRIPTION PAYMENT ORDER
   Future<RecruiterSubscriptionOrderModel> createSubscriptionOrder({
-    required String subscriptionId,
+    String? subscriptionId,
+    String? planId,
+    String? billingCycle,
   }) async {
     try {
       final header = await AppApiHeader.recruiterHeader();
@@ -374,10 +376,20 @@ class RecruiterRegisterProvider {
         LogInterceptor(responseBody: true, requestBody: true),
       );
 
+      final body = <String, dynamic>{
+        if (subscriptionId != null && subscriptionId.isNotEmpty)
+          "subscriptionId": subscriptionId,
+        if (planId != null && planId.isNotEmpty) "planId": planId,
+        if (billingCycle != null && billingCycle.isNotEmpty)
+          "billingCycle": billingCycle,
+      };
+
+      debugPrint('★★★ Calling createSubscriptionOrder: $body ★★★');
+
       Response response = await client!
           .post(
             AppApiUrls.createSubscriptionOrder,
-            data: {"subscriptionId": subscriptionId},
+            data: body,
             options: Options(headers: header),
           )
           .timeout(const Duration(seconds: 45));

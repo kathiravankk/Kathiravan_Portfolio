@@ -10,6 +10,7 @@ import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_subscription_order_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_subscription_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/upgrade_subscription_model.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/upgrade_subscription_provider.dart';
@@ -51,17 +52,118 @@ class UpgradeSubscriptionController extends GetxController {
   final Rx<RecruiterSubscriptionPlanData?> selectedPlan =
       Rx<RecruiterSubscriptionPlanData?>(null);
 
+  // Active / Current Subscription from API (selectedPlan)
+  final Rx<RecruiterSelectedPlanData?> currentSubscription =
+      Rx<RecruiterSelectedPlanData?>(null);
+
+  // Tracks whether the active checkout session is for create-order or upgrade-order
+  final RxBool isUsingCreateOrderFlow = false.obs;
+
   // Latest Order Data from /upgrade/order
   final Rx<UpgradeSubscriptionOrderData?> latestOrderData =
       Rx<UpgradeSubscriptionOrderData?>(null);
 
-  /// Only enabled when choosing a paid plan (NOT Explore / Free)
+  // Latest Create Order Data (when using create-order flow)
+  final Rx<RecruiterSubscriptionOrderData?> latestCreateOrderData =
+      Rx<RecruiterSubscriptionOrderData?>(null);
+
+  /// Checks whether the user has currently selected their active subscription plan & cycle,
+  /// which will be disabled UNTIL:
+  /// - They choose another billing cycle, OR
+  /// - The next billing date or subscription end date comes, OR
+  /// - "subscriptionStatus" is not 'active'.
+  bool get isCurrentPlanAndCycleActive {
+    final cur = currentSubscription.value;
+    if (cur == null) return false;
+
+    // 1. Must be the same plan
+    final plan = selectedPlan.value;
+    final bool isSamePlan = (plan != null && plan.id == cur.planId) ||
+        (selectedPlanName.value.trim().toLowerCase() ==
+            (cur.planName ?? '').trim().toLowerCase());
+    if (!isSamePlan) return false;
+
+    // 2. Must be the same billing cycle (if user chooses another billing cycle, it will NOT disable -> returns false)
+    final selectedCycle = selectedBillingCycle.value.trim().toLowerCase();
+    final curCycle = (cur.billingCycle ?? '').trim().toLowerCase();
+    if (_normalizeCycle(selectedCycle) != _normalizeCycle(curCycle)) {
+      return false;
+    }
+
+    // 3. Enable only if "subscriptionStatus" is not 'active'
+    final bool isActiveStatus =
+        (cur.subscriptionStatus ?? '').trim().toLowerCase() == 'active';
+    if (!isActiveStatus) {
+      return false; // Status is not active -> enable
+    }
+
+    // 4. Enable only if the next billing date or subscription end date comes
+    DateTime? effectiveEndDate;
+    if (cur.subscriptionEndDate != null &&
+        cur.subscriptionEndDate!.trim().isNotEmpty) {
+      effectiveEndDate = DateTime.tryParse(cur.subscriptionEndDate!.trim());
+    }
+    if (cur.nextBillingDate != null &&
+        cur.nextBillingDate!.trim().isNotEmpty) {
+      final nextDate = DateTime.tryParse(cur.nextBillingDate!.trim());
+      if (nextDate != null) {
+        if (effectiveEndDate == null || nextDate.isBefore(effectiveEndDate)) {
+          effectiveEndDate = nextDate;
+        }
+      }
+    }
+
+    if (effectiveEndDate != null) {
+      final nowUtc = DateTime.now().toUtc();
+      final endUtc = effectiveEndDate.toUtc();
+      // If next billing date or subscription end date comes (now >= end date),
+      // it enables -> return false (not disabled)
+      if (!nowUtc.isBefore(endUtc)) {
+        return false;
+      }
+    }
+
+    // Active plan with same billing cycle, status is 'active', and end date has not arrived yet -> disabled!
+    return true;
+  }
+
+  bool get isCurrentPlanAndCycleSelected => isCurrentPlanAndCycleActive;
+
+  /// Checks whether the selected plan is the same as the active subscription plan
+  bool get isSamePlanSelected {
+    final cur = currentSubscription.value;
+    if (cur == null) return false;
+
+    final plan = selectedPlan.value;
+    return (plan != null && plan.id == cur.planId) ||
+        (selectedPlanName.value.trim().toLowerCase() ==
+            (cur.planName ?? '').trim().toLowerCase());
+  }
+
+  String _normalizeCycle(String cycle) {
+    final c = cycle.toLowerCase().trim();
+    if (c == 'monthly' || c == '1month' || c == 'month') return 'monthly';
+    if (c == '3months' || c == '3month' || c == 'quarterly') return '3months';
+    if (c == '6months' || c == '6month' || c == 'halfyearly') return '6months';
+    if (c == 'yearly' || c == 'annual' || c == '1year' || c == 'year') {
+      return 'yearly';
+    }
+    return c;
+  }
+
+  /// Only enabled when choosing a paid plan (NOT Explore / Free),
+  /// and disabled if currently selected plan and billing cycle match the active subscription.
   bool get isContinueEnabled {
     final name = selectedPlanName.value.toLowerCase().trim();
     if (name.contains('explore') || name.isEmpty) return false;
     final plan = selectedPlan.value;
     if (plan == null) return false;
     if (plan.billingCycles == null || plan.billingCycles!.isEmpty) return false;
+
+    // Requirement 6 & 8: If the subscription plan and billing cycle is same from selectedPlan,
+    // then the buy button will disable!
+    if (isCurrentPlanAndCycleSelected) return false;
+
     return true;
   }
 
@@ -102,6 +204,16 @@ class UpgradeSubscriptionController extends GetxController {
       final result = await provider.fetchSubscriptionPlans(
         recruiterId: recruiterId,
       );
+
+      if (result.selectedPlan != null) {
+        currentSubscription.value = result.selectedPlan;
+        debugPrint(
+          '[UpgradePlans] Recruiter selectedPlan: '
+          'planName=${result.selectedPlan?.planName}, '
+          'cycle=${result.selectedPlan?.billingCycle}, '
+          'status=${result.selectedPlan?.subscriptionStatus}',
+        );
+      }
 
       if (result.success == true &&
           result.data != null &&
@@ -157,14 +269,41 @@ class UpgradeSubscriptionController extends GetxController {
 
         planList.value = sorted;
 
-        // Auto-select Growth if present, otherwise first paid plan or first item
-        final growthPlan = planList.firstWhereOrNull(
-          (p) => p.name?.toLowerCase().contains('growth') == true,
-        );
-        if (growthPlan != null) {
-          selectPlan(growthPlan);
-        } else if (planList.isNotEmpty) {
-          selectPlan(planList.first);
+        // If recruiter has an active plan in selectedPlan, pre-select it and its cycle
+        final cur = currentSubscription.value;
+        RecruiterSubscriptionPlanData? matchingPlan;
+        if (cur != null) {
+          matchingPlan = planList.firstWhereOrNull(
+            (p) =>
+                (p.id != null && p.id == cur.planId) ||
+                (p.name != null &&
+                    p.name!.trim().toLowerCase() ==
+                        (cur.planName ?? '').trim().toLowerCase()),
+          );
+        }
+
+        if (matchingPlan != null) {
+          selectPlan(matchingPlan);
+          if (cur?.billingCycle != null &&
+              cur!.billingCycle!.trim().isNotEmpty) {
+            final cycleName = cur.billingCycle!.trim().toLowerCase();
+            final matchingCycle = availableCycles.firstWhereOrNull(
+              (c) => _normalizeCycle(c) == _normalizeCycle(cycleName),
+            );
+            if (matchingCycle != null) {
+              selectedBillingCycle.value = matchingCycle;
+            }
+          }
+        } else {
+          // Auto-select Growth if present, otherwise first paid plan or first item
+          final growthPlan = planList.firstWhereOrNull(
+            (p) => p.name?.toLowerCase().contains('growth') == true,
+          );
+          if (growthPlan != null) {
+            selectPlan(growthPlan);
+          } else if (planList.isNotEmpty) {
+            selectPlan(planList.first);
+          }
         }
       } else {
         AppAlertUtils.showToast(
@@ -208,16 +347,26 @@ class UpgradeSubscriptionController extends GetxController {
 
   /// Continue to Payment:
   /// 1. Validate chosen plan and cycle
-  /// 2. Call POST /api/recruitersubscriptionplan/subscription/upgrade/order
-  /// 3. Open Cashfree Web Checkout
+  /// 2. If same plan with changed billing cycle, OR subscriptionStatus is active:
+  ///    Call create-subscription-order & verify-subscription-payment
+  /// 3. If changed subscription plan AND subscriptionStatus is not in 'active' status:
+  ///    Call subscription/upgrade/order & subscription/upgrade/verify
   Future<void> onContinueToPayment(BuildContext context) async {
     if (isPaymentLoading.value) return; // Prevent double taps
 
     if (!isContinueEnabled) {
-      AppAlertUtils.showToast(
-        message: 'Please choose a paid plan (Launch, Growth, or Scale) to upgrade.',
-        isError: true,
-      );
+      if (isCurrentPlanAndCycleSelected) {
+        AppAlertUtils.showToast(
+          message: 'You already have this plan and billing cycle active.',
+          isError: true,
+        );
+      } else {
+        AppAlertUtils.showToast(
+          message:
+              'Please choose a paid plan (Launch, Growth, or Scale) to upgrade.',
+          isError: true,
+        );
+      }
       return;
     }
 
@@ -242,29 +391,85 @@ class UpgradeSubscriptionController extends GetxController {
     try {
       isPaymentLoading.value = true;
 
-      final result = await provider.createUpgradeOrder(
-        newPlanId: plan.id ?? '',
-        billingCycle: selectedBillingCycle.value,
-      );
+      // Requirement 6:
+      // "Only call the upgarde subscription API for create upgrade/verify upgrade API
+      // when if the user change the subscription plan and 'subscriptionStatus' is not in 'active' status from the selectedPlan"
+      final bool isPlanChanged = !isSamePlanSelected;
+      final bool isStatusNotActive =
+          currentSubscription.value?.subscriptionStatus?.toLowerCase() != 'active';
 
-      if (result.success != true ||
-          result.data == null ||
-          result.data!.orderId == null ||
-          result.data!.orderId!.isEmpty ||
-          result.data!.paymentSessionId == null ||
-          result.data!.paymentSessionId!.isEmpty) {
-        isPaymentLoading.value = false;
-        AppAlertUtils.showToast(
-          message: result.message?.isNotEmpty == true
-              ? result.message!
-              : 'Failed to create upgrade order. Please try again.',
-          isError: true,
+      final bool shouldCallUpgradeApi = isPlanChanged && isStatusNotActive;
+
+      isUsingCreateOrderFlow.value = !shouldCallUpgradeApi;
+
+      if (shouldCallUpgradeApi) {
+        debugPrint(
+          '★★★ Calling createUpgradeOrder (plan changed and subscriptionStatus is not active) ★★★',
         );
-        return;
-      }
 
-      latestOrderData.value = result.data;
-      openCashFreeCheckout(result.data!);
+        final result = await provider.createUpgradeOrder(
+          newPlanId: plan.id ?? '',
+          billingCycle: selectedBillingCycle.value,
+        );
+
+        if (result.success != true ||
+            result.data == null ||
+            result.data!.orderId == null ||
+            result.data!.orderId!.isEmpty ||
+            result.data!.paymentSessionId == null ||
+            result.data!.paymentSessionId!.isEmpty) {
+          isPaymentLoading.value = false;
+          AppAlertUtils.showToast(
+            message: result.message?.isNotEmpty == true
+                ? result.message!
+                : 'Failed to create upgrade order. Please try again.',
+            isError: true,
+          );
+          return;
+        }
+
+        latestOrderData.value = result.data;
+        openCashFreeCheckout(
+          orderId: result.data!.orderId!,
+          paymentSessionId: result.data!.paymentSessionId!,
+          environment: result.data!.environment,
+        );
+      } else {
+        // Calling create-subscription-order
+        // (when user changes billing cycle for same plan, or when plan changed with active status)
+        debugPrint(
+          '★★★ Calling createSubscriptionOrder (same plan changed cycle or active subscription) ★★★',
+        );
+
+        final result = await provider.createSubscriptionOrder(
+          planId: plan.id ?? '',
+          billingCycle: selectedBillingCycle.value,
+          subscriptionId: currentSubscription.value?.id,
+        );
+
+        if (result.success != true ||
+            result.data == null ||
+            result.data!.orderId == null ||
+            result.data!.orderId!.isEmpty ||
+            result.data!.paymentSessionId == null ||
+            result.data!.paymentSessionId!.isEmpty) {
+          isPaymentLoading.value = false;
+          AppAlertUtils.showToast(
+            message: result.message?.isNotEmpty == true
+                ? result.message!
+                : 'Failed to create payment order. Please try again.',
+            isError: true,
+          );
+          return;
+        }
+
+        latestCreateOrderData.value = result.data;
+        openCashFreeCheckout(
+          orderId: result.data!.orderId!,
+          paymentSessionId: result.data!.paymentSessionId!,
+          environment: result.data!.environment,
+        );
+      }
     } catch (e) {
       isPaymentLoading.value = false;
       debugPrint('[onContinueToPayment] Exception: $e');
@@ -276,23 +481,26 @@ class UpgradeSubscriptionController extends GetxController {
   }
 
   /// Launch Cashfree Web Checkout sheet
-  void openCashFreeCheckout(UpgradeSubscriptionOrderData orderData) {
+  void openCashFreeCheckout({
+    required String orderId,
+    required String paymentSessionId,
+    String? environment,
+  }) {
     try {
-      final CFEnvironment environment =
-          (orderData.environment?.toUpperCase() == 'SANDBOX' ||
-                  (orderData.environment == null &&
-                      AppApiUrls.baseUrl.contains('dev.')))
+      final CFEnvironment cfEnv =
+          (environment?.toUpperCase() == 'SANDBOX' ||
+                  (environment == null && AppApiUrls.isDevEnvironment))
               ? CFEnvironment.SANDBOX
               : CFEnvironment.PRODUCTION;
 
       debugPrint(
-        '[Cashfree Upgrade] Launching checkout for orderId: ${orderData.orderId} in env: $environment',
+        '[Cashfree] Launching checkout for orderId: $orderId in env: $cfEnv',
       );
 
       final session = CFSessionBuilder()
-          .setEnvironment(environment)
-          .setOrderId(orderData.orderId!)
-          .setPaymentSessionId(orderData.paymentSessionId!)
+          .setEnvironment(cfEnv)
+          .setOrderId(orderId)
+          .setPaymentSessionId(paymentSessionId)
           .build();
 
       final dropPayment = CFWebCheckoutPaymentBuilder()
@@ -319,46 +527,75 @@ class UpgradeSubscriptionController extends GetxController {
   Future<void> handlePaymentSuccess(String orderId) async {
     try {
       AppAlertUtils.showToast(
-        message: 'Verifying upgrade payment…',
+        message: 'Verifying payment…',
         isError: false,
       );
 
-      final verifyResult = await provider.verifyUpgradePayment(orderId: orderId);
+      if (isUsingCreateOrderFlow.value) {
+        final verifyResult =
+            await provider.verifySubscriptionPayment(orderId: orderId);
 
-      isPaymentLoading.value = false;
+        isPaymentLoading.value = false;
 
-      if (verifyResult.success == true) {
-        // Refresh recruiter profile in background if RecruiterHomeController is available
-        try {
-          if (Get.isRegistered<RecruiterHomeController>()) {
-            final recId = await LocalStorageService.getRecruiterId();
-            if (recId != null && recId.isNotEmpty) {
-              Get.find<RecruiterHomeController>().getRecruiterProfileData(
-                recruiterId: recId,
-              );
-            }
+        if (verifyResult.success == true) {
+          final walletId = verifyResult.data?.wallet?.id;
+          if (walletId != null && walletId.isNotEmpty) {
+            await LocalStorageService.saveRecruiterCreditId(creditId: walletId);
           }
-        } catch (_) {}
 
-        // Show upgrade success alert dialog matching app theme
-        final order = latestOrderData.value;
-        showUpgradeSuccessDialog(
-          newPlanName: order?.newPlanName ?? selectedPlanName.value,
-          oldPlanName: order?.oldPlanName,
-          billingCycle: order?.billingCycle ?? selectedBillingCycle.value,
-          orderId: orderId,
-          amount: order?.finalPrice,
-          message: verifyResult.message?.isNotEmpty == true
-              ? verifyResult.message!
-              : 'Subscription upgraded successfully!',
-        );
+          _refreshProfile();
+
+          final createOrder = latestCreateOrderData.value;
+          showUpgradeSuccessDialog(
+            newPlanName: createOrder?.planName ?? selectedPlanName.value,
+            oldPlanName: currentSubscription.value?.planName,
+            billingCycle:
+                createOrder?.billingCycle ?? selectedBillingCycle.value,
+            orderId: orderId,
+            amount: createOrder?.amount is num
+                ? (createOrder?.amount as num)
+                : num.tryParse(createOrder?.amount?.toString() ?? ''),
+            message: verifyResult.message?.isNotEmpty == true
+                ? verifyResult.message!
+                : 'Subscription activated successfully!',
+          );
+        } else {
+          AppAlertUtils.showToast(
+            message: verifyResult.message?.isNotEmpty == true
+                ? verifyResult.message!
+                : 'Payment verification failed. Please contact support.',
+            isError: true,
+          );
+        }
       } else {
-        AppAlertUtils.showToast(
-          message: verifyResult.message?.isNotEmpty == true
-              ? verifyResult.message!
-              : 'Payment verification failed. Please contact support.',
-          isError: true,
-        );
+        final verifyResult =
+            await provider.verifyUpgradePayment(orderId: orderId);
+
+        isPaymentLoading.value = false;
+
+        if (verifyResult.success == true) {
+          _refreshProfile();
+
+          final order = latestOrderData.value;
+          showUpgradeSuccessDialog(
+            newPlanName: order?.newPlanName ?? selectedPlanName.value,
+            oldPlanName:
+                order?.oldPlanName ?? currentSubscription.value?.planName,
+            billingCycle: order?.billingCycle ?? selectedBillingCycle.value,
+            orderId: orderId,
+            amount: order?.finalPrice,
+            message: verifyResult.message?.isNotEmpty == true
+                ? verifyResult.message!
+                : 'Subscription upgraded successfully!',
+          );
+        } else {
+          AppAlertUtils.showToast(
+            message: verifyResult.message?.isNotEmpty == true
+                ? verifyResult.message!
+                : 'Payment verification failed. Please contact support.',
+            isError: true,
+          );
+        }
       }
     } catch (e) {
       isPaymentLoading.value = false;
@@ -368,6 +605,19 @@ class UpgradeSubscriptionController extends GetxController {
         isError: true,
       );
     }
+  }
+
+  Future<void> _refreshProfile() async {
+    try {
+      if (Get.isRegistered<RecruiterHomeController>()) {
+        final recId = await LocalStorageService.getRecruiterId();
+        if (recId != null && recId.isNotEmpty) {
+          Get.find<RecruiterHomeController>().getRecruiterProfileData(
+            recruiterId: recId,
+          );
+        }
+      }
+    } catch (_) {}
   }
 
   /// Handle failure reported by Cashfree SDK

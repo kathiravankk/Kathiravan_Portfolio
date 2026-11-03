@@ -4,12 +4,14 @@ class CreateStipendOrderModel {
     this.message,
     this.paymentSessionId,
     this.orderId,
+    this.environment,
   });
 
   final bool? success;
   final String? message;
   final String? paymentSessionId;
   final String? orderId;
+  final String? environment;
 
   factory CreateStipendOrderModel.fromJson(
       Map<String, dynamic> json) {
@@ -18,6 +20,7 @@ class CreateStipendOrderModel {
       message: json["message"]??"",
       paymentSessionId: json["paymentSessionId"]??"",
       orderId: json["orderId"]??"",
+      environment: json["environment"]?.toString(),
     );
   }
 
@@ -27,6 +30,7 @@ class CreateStipendOrderModel {
       "message": message,
       "paymentSessionId": paymentSessionId,
       "orderId": orderId,
+      "environment": environment,
     };
   }
 }

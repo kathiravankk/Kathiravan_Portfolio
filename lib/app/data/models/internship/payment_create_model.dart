@@ -3,12 +3,14 @@ class PaymentCreateModel {
   String? message;
   String? orderId;
   String? paymentSessionId;
+  String? environment;
 
   PaymentCreateModel({
     this.success,
     this.message,
     this.orderId,
     this.paymentSessionId,
+    this.environment,
   });
 
   factory PaymentCreateModel.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class PaymentCreateModel {
       message: json["message"] ?? "",
       orderId: json["orderId"] ?? "",
       paymentSessionId: json["paymentSessionId"] ?? "",
+      environment: json["environment"]?.toString(),
     );
   }
 
@@ -26,6 +29,7 @@ class PaymentCreateModel {
       "message": message,
       "orderId": orderId,
       "paymentSessionId": paymentSessionId,
+      "environment": environment,
     };
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
+import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
@@ -160,11 +161,16 @@ class _StudentBuyCreditScreenState extends State<StudentBuyCreditScreen> {
   /// Step 2 – Launch the Cashfree Web Checkout sheet.
   void openCashFreeCheckout(OrderCreateCreditModel orderData) {
     try {
-      // Determine environment from the order response (fallback: SANDBOX)
+      // Determine environment dynamically from orderData or baseUrl
       final CFEnvironment environment =
-          (orderData.environment?.toUpperCase() == "SANDBOX")
-          ? CFEnvironment.SANDBOX
-          : CFEnvironment.PRODUCTION;
+          (orderData.environment?.toUpperCase() == "SANDBOX" ||
+                  (orderData.environment == null && AppApiUrls.isDevEnvironment))
+              ? CFEnvironment.SANDBOX
+              : CFEnvironment.PRODUCTION;
+
+      debugPrint(
+        '[Cashfree Student Credit] Launching checkout for orderId: ${orderData.orderId} in env: $environment',
+      );
 
       final session = CFSessionBuilder()
           .setEnvironment(environment)

@@ -12,6 +12,7 @@ import 'package:internsharks/app/data/models/recruiter_flow/intern_profile_model
 import 'package:internsharks/app/data/models/recruiter_flow/intern_student_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_credits_plan_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_payment_history_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/recruiter_placement_result_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_profile_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_transaction_history_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/shortlisted_students_data_model.dart';
@@ -505,6 +506,68 @@ class RecruiterHomeProvider {
       responseStatus = err.response?.statusCode ?? 500;
       if (err.response?.data != null) {
         return CommonLoginOtpModel.fromJson(err.response!.data);
+      }
+      rethrow;
+    }
+  }
+
+  // GET RECRUITER INTERVIEWS
+  Future<RecruiterPlacementResultModel> fetchRecruiterInterviews({
+    required int page,
+    required int limit,
+    String? status,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      final url = AppApiUrls.getRecruiterInterviews(
+        page: page,
+        limit: limit,
+        status: status,
+      );
+      Response response = await client!.get(
+        url,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterPlacementResultModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null) {
+        return RecruiterPlacementResultModel.fromJson(err.response!.data);
+      }
+      rethrow;
+    }
+  }
+
+  // GET RECRUITER PLACEMENTS
+  Future<RecruiterPlacementResultModel> fetchRecruiterPlacements({
+    required int page,
+    required int limit,
+    String? status,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      final url = AppApiUrls.getRecruiterPlacements(
+        page: page,
+        limit: limit,
+        status: status,
+      );
+      Response response = await client!.get(
+        url,
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return RecruiterPlacementResultModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null) {
+        return RecruiterPlacementResultModel.fromJson(err.response!.data);
       }
       rethrow;
     }

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
+import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
@@ -575,6 +576,7 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
       openCashFreeCheckout(
         orderId: orderData.orderId ?? "",
         paymentSessionId: orderData.paymentSessionId ?? "",
+        environment: orderData.environment,
       );
     } else {
       AppFunctions.apiErrorHandling(
@@ -587,12 +589,21 @@ class _ApplicationStatusScreenState extends State<ApplicationStatusScreen> {
   void openCashFreeCheckout({
     required String orderId,
     required String paymentSessionId,
+    String? environment,
   }) {
     try {
+      final CFEnvironment cfEnv =
+          (environment?.toUpperCase() == 'SANDBOX' ||
+                  (environment == null && AppApiUrls.isDevEnvironment))
+              ? CFEnvironment.SANDBOX
+              : CFEnvironment.PRODUCTION;
+
+      debugPrint(
+        '[Cashfree Application] Launching checkout for orderId: $orderId in env: $cfEnv',
+      );
+
       final session = CFSessionBuilder()
-          .setEnvironment(
-            CFEnvironment.PRODUCTION,
-          ) // need to make PRODUCTION for live
+          .setEnvironment(cfEnv)
           .setOrderId(orderId)
           .setPaymentSessionId(paymentSessionId)
           .build();

@@ -7,6 +7,9 @@ import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
 import 'package:get/get.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
+import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_styles.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_subscription_order_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/recruiter_subscription_plan_model.dart';
 import 'package:internsharks/app/data/providers/recruiter_flow/recruiter_register_provider.dart';
@@ -200,10 +203,9 @@ class NewRecruiterChoosePlanController extends GetxController {
   // ── CASHFREE PAYMENT FLOW ──────────────────────────────────────────────────
 
   /// Continue to Payment:
-  /// 1. Fetch Recruiter Profile to get recruiter ID
-  /// 2. Update recruiter register via PUT API with selected plan details
-  /// 3. Create Cashfree subscription payment order
-  /// 4. Launch Cashfree PG checkout
+  /// 1. Validate chosen plan and cycle
+  /// 2. Directly create Cashfree subscription payment order (without calling recruiterregisterupdate)
+  /// 3. Launch Cashfree PG checkout
   Future<void> onContinueToPayment() async {
     if (isPaymentLoading.value) return; // Prevent double taps
 
@@ -236,104 +238,15 @@ class NewRecruiterChoosePlanController extends GetxController {
     try {
       isPaymentLoading.value = true;
 
-      // 1. Get recruiterId from arguments or local storage
-      String recruiterId = (Get.arguments is Map ? Get.arguments['id'] : null) ??
-          await LocalStorageService.getRecruiterId() ??
-          '';
-
-      // 2. Fetch Recruiter Profile from API (POST /api/recruiter/getrecruiterbyid)
-      if (recruiterId.isNotEmpty) {
-        final profileRes = await recruiterRegisterProvider.fetchRecruiterProfile(
-          recruiterId: recruiterId,
-        );
-        if (profileRes.recruiterData?.id != null &&
-            profileRes.recruiterData!.id!.isNotEmpty) {
-          recruiterId = profileRes.recruiterData!.id!;
-        }
-      }
-
-      if (recruiterId.isEmpty) {
-        isPaymentLoading.value = false;
-        AppAlertUtils.showToast(
-          message: 'Recruiter session not found. Please log in again.',
-          isError: true,
-        );
-        return;
-      }
-
-      // 3. Call Recruiter Register Update API (PUT Form-Data)
-      // Exactly required fields:
-      // planId, billingCycle, billingCycleId, subscription_plan_id, subscriptionPlan, id, recruiterId
-      final Map<String, dynamic> updatePayload = {
-        'planId': plan.id ?? '',
-        'billingCycle': selectedBillingCycle.value,
-        'billingCycleId': cycleObj.id ?? '',
-        'subscription_plan_id': plan.id ?? '',
-        'subscriptionPlan': plan.id ?? '',
-        'id': recruiterId,
-        'recruiterId': recruiterId,
-      };
-
-      debugPrint('★★★ Calling recruiterregisterupdate before payment: $updatePayload ★★★');
-
-      final updateResult =
-          await recruiterRegisterProvider.updateRecruiterSubscription(
-        updateData: updatePayload,
+      debugPrint(
+        '★★★ Creating subscription order for planId: ${plan.id}, cycle: ${selectedBillingCycle.value} ★★★',
       );
 
-      debugPrint('★★★ recruiterregisterupdate response: $updateResult ★★★');
-
-      // 4. Extract subscriptionId from update response
-      String subscriptionId = '';
-      if (updateResult is Map) {
-        if (updateResult['subscriptionId'] != null) {
-          subscriptionId = updateResult['subscriptionId'].toString();
-        } else if (updateResult['recruiter'] != null &&
-            updateResult['recruiter'] is Map &&
-            updateResult['recruiter']['subscriptionId'] != null) {
-          final s = updateResult['recruiter']['subscriptionId'];
-          subscriptionId = (s is Map ? (s['_id'] ?? s['id']) : s).toString();
-        } else if (updateResult['subscription'] != null &&
-            updateResult['subscription'] is Map) {
-          final s = updateResult['subscription'];
-          subscriptionId = (s['_id'] ?? s['id'] ?? '').toString();
-        } else if (updateResult['data'] != null &&
-            updateResult['data'] is Map) {
-          final d = updateResult['data'];
-          if (d['subscriptionId'] != null) {
-            subscriptionId = d['subscriptionId'].toString();
-          } else if (d['subscription'] != null && d['subscription'] is Map) {
-            subscriptionId =
-                (d['subscription']['_id'] ?? d['subscription']['id'] ?? '')
-                    .toString();
-          }
-        }
-      }
-
-      // Fallback: If subscriptionId is not directly in update response, fetch from profile API
-      if (subscriptionId.isEmpty) {
-        final profileCheck =
-            await recruiterRegisterProvider.fetchRecruiterProfile(
-          recruiterId: recruiterId,
-        );
-        subscriptionId = profileCheck.recruiterData?.subscriptionId ?? '';
-      }
-
-      if (subscriptionId.isEmpty) {
-        isPaymentLoading.value = false;
-        AppAlertUtils.showToast(
-          message: 'Failed to initiate subscription. Please try again.',
-          isError: true,
-        );
-        return;
-      }
-
-      debugPrint('★★★ Creating subscription order for subscriptionId: $subscriptionId ★★★');
-
-      // 5. Create Payment Order API (POST /api/recruitersubscriptionplan/create-subscription-order)
+      // Create Payment Order API directly (POST /api/recruitersubscriptionplan/create-subscription-order)
       final orderResult =
           await recruiterRegisterProvider.createSubscriptionOrder(
-        subscriptionId: subscriptionId,
+        planId: plan.id,
+        billingCycle: selectedBillingCycle.value,
       );
 
       if (orderResult.success != true ||
@@ -352,7 +265,7 @@ class NewRecruiterChoosePlanController extends GetxController {
         return;
       }
 
-      // 6. Launch Cashfree PG Checkout
+      // Launch Cashfree PG Checkout
       openCashFreeCheckout(orderResult.data!);
     } catch (e) {
       isPaymentLoading.value = false;
@@ -370,7 +283,7 @@ class NewRecruiterChoosePlanController extends GetxController {
       final CFEnvironment environment =
           (orderData.environment?.toUpperCase() == 'SANDBOX' ||
                   (orderData.environment == null &&
-                      AppApiUrls.baseUrl.contains('dev.')))
+                      AppApiUrls.isDevEnvironment))
               ? CFEnvironment.SANDBOX
               : CFEnvironment.PRODUCTION;
 
@@ -424,15 +337,15 @@ class NewRecruiterChoosePlanController extends GetxController {
           await LocalStorageService.saveRecruiterCreditId(creditId: walletId);
         }
 
-        AppAlertUtils.showToast(
+        // Show payment success dialog, then navigate to dashboard
+        showPaymentSuccessDialog(
+          planName: selectedPlanName.value,
+          billingCycle: selectedBillingCycle.value,
+          orderId: orderId,
           message: verifyResult.message?.isNotEmpty == true
               ? verifyResult.message!
-              : 'Subscription activated successfully! 🎉',
-          isError: false,
+              : 'Subscription activated successfully! Welcome to InternSharks.',
         );
-
-        // Navigate to recruiter dashboard with no back stack
-        Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
       } else {
         AppAlertUtils.showToast(
           message: verifyResult.message?.isNotEmpty == true
@@ -460,75 +373,271 @@ class NewRecruiterChoosePlanController extends GetxController {
     );
   }
 
-  // Skip For Now button pressed (Updates recruiter subscription to Explore/Free via PUT API)
-  Future<void> skipForNow() async {
+  /// Show payment success alert dialog before going to dashboard
+  void showPaymentSuccessDialog({
+    required String planName,
+    required String billingCycle,
+    required String orderId,
+    required String message,
+  }) {
+    final context = Get.context;
+    if (context == null) {
+      Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFF1E3547), width: 1),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          contentPadding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF00E5FF), Color(0xFF00B0FF)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF00E5FF).withValues(alpha: 0.35),
+                      blurRadius: 16,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: AppColors.blackColor,
+                  size: 36,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Payment Successful!',
+                style: AppStyles.customTextStyle(
+                  size: 20,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 13,
+                  color: const Color(0xFF94A3B8),
+                  weight: FontWeight.w400,
+                  lineSpace: 1.3,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0A1622),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color(0xFF162534),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    _buildDialogRow(
+                      'Plan',
+                      planName,
+                      valueColor: const Color(0xFF00E5FF),
+                      isBold: true,
+                    ),
+                    const SizedBox(height: 6),
+                    _buildDialogRow(
+                      'Billing Cycle',
+                      _formatBillingCycle(billingCycle),
+                    ),
+                    const SizedBox(height: 6),
+                    _buildDialogRow('Order ID', orderId, isSmall: true),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 22),
+              CustomButtonWidget(
+                height: 44,
+                buttonText: 'Go to Dashboard',
+                buttonFunction: () {
+                  Get.back();
+                  Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Skip For Now button pressed:
+  /// Directly shows alert dialog notifying that basic plan is chosen automatically,
+  /// and navigates to recruiter dashboard WITHOUT calling any API.
+  void skipForNow() {
     if (isPaymentLoading.value || isSkipLoading.value) return;
+    showSkipWelcomeDialog();
+  }
 
-    try {
-      isSkipLoading.value = true;
+  /// Show alert dialog notifying basic plan is chosen automatically and welcoming to Internsharks
+  void showSkipWelcomeDialog() {
+    final context = Get.context;
+    if (context == null) {
+      Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+      return;
+    }
 
-      // Recruiter ID from local storage or args
-      final recruiterId = (Get.arguments is Map ? Get.arguments['id'] : null) ??
-          await LocalStorageService.getRecruiterId() ??
-          '';
-
-      // Find Explore (free) plan
-      final explorePlan = planList.firstWhereOrNull(
-        (p) => p.name?.toLowerCase().contains('explore') == true,
-      );
-      final planId = explorePlan?.id ?? '6adaf3ff0a711f8f7940a716';
-
-      final Map<String, dynamic> payload = {
-        'planId': planId,
-        'billingCycle': 'free',
-        'subscription_plan_id': planId,
-        'subscriptionPlan': planId,
-        'id': recruiterId,
-        'recruiterId': recruiterId,
-      };
-
-      debugPrint('★★★ Skip For Now Payload: $payload ★★★');
-
-      final result = await recruiterRegisterProvider.updateRecruiterSubscription(
-        updateData: payload,
-      );
-
-      isSkipLoading.value = false;
-
-      debugPrint('★★★ Update Subscription Response: $result ★★★');
-
-      if (result != null && result['success'] == true) {
-        // Save updated credit ID if provided
-        if (result['recruiter'] != null &&
-            result['recruiter']['recruiterCreditId'] != null) {
-          await LocalStorageService.saveRecruiterCreditId(
-            creditId: result['recruiter']['recruiterCreditId'].toString(),
-          );
-        }
-
-        AppAlertUtils.showToast(
-          message: result['message'] ?? 'Recruiter profile updated successfully',
-          isError: false,
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.fieldBgColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFF1E3547), width: 1),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          contentPadding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF00E5FF), Color(0xFF00B0FF)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF00E5FF).withValues(alpha: 0.35),
+                      blurRadius: 16,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: AppColors.blackColor,
+                  size: 36,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Welcome to Internsharks!',
+                style: AppStyles.customTextStyle(
+                  size: 20,
+                  color: AppColors.whiteColor,
+                  weight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Basic plan has been chosen automatically, but you can upgrade it anytime later.\nWelcome to Internsharks!',
+                textAlign: TextAlign.center,
+                style: AppStyles.customTextStyle(
+                  size: 13.5,
+                  color: const Color(0xFF94A3B8),
+                  weight: FontWeight.w400,
+                  lineSpace: 1.3,
+                ),
+              ),
+              const SizedBox(height: 22),
+              CustomButtonWidget(
+                height: 44,
+                buttonText: 'Go to Dashboard',
+                buttonFunction: () {
+                  Get.back();
+                  Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
+                },
+              ),
+            ],
+          ),
         );
+      },
+    );
+  }
 
-        // Navigate to recruiter dashboard with no back navigation
-        Get.offAllNamed(AppRoutes.recruiterDashboardScreen);
-      } else {
-        final msg = result != null && result['message'] != null
-            ? result['message'].toString()
-            : 'Failed to update subscription. Please try again.';
-        AppAlertUtils.showToast(
-          message: msg,
-          isError: true,
-        );
-      }
-    } catch (e) {
-      isSkipLoading.value = false;
-      debugPrint('[SkipForNow] Error: $e');
-      AppAlertUtils.showToast(
-        message: 'Something went wrong. Please try again.',
-        isError: true,
-      );
+  Widget _buildDialogRow(
+    String label,
+    String value, {
+    Color valueColor = AppColors.whiteColor,
+    bool isBold = false,
+    bool isSmall = false,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: AppStyles.customTextStyle(
+            size: isSmall ? 11 : 12,
+            color: const Color(0xFF94A3B8),
+            weight: FontWeight.w400,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            overflow: TextOverflow.ellipsis,
+            style: AppStyles.customTextStyle(
+              size: isSmall ? 11 : 13,
+              color: valueColor,
+              weight: isBold ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatBillingCycle(String cycle) {
+    switch (cycle.toLowerCase()) {
+      case 'monthly':
+        return 'Monthly';
+      case '3months':
+        return '3 Months';
+      case '6months':
+        return '6 Months';
+      case 'yearly':
+      case 'annual':
+        return 'Yearly';
+      default:
+        return cycle.capitalizeFirst ?? cycle;
     }
   }
 }

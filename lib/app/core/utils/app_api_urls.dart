@@ -7,6 +7,11 @@ class AppApiUrls {
   static const String devServer = "https://fulupo.selfietoons.com/";
   static const String prodServer = "https://fulupo.selfietoons.com/";
 
+  // ENVIRONMENT DETECTORS (corresponds dynamically with baseUrl)
+  static bool get isDevEnvironment =>
+      baseUrl.contains("dev.") || baseUrl.contains("selfietoons");
+  static bool get isProdEnvironment => !isDevEnvironment;
+
   // LOGIN URLS
   static const String sendLoginOtp = "${baseUrl}stulogin/request-mobile-otp";
   static const String verifyLoginOtp = "${baseUrl}stulogin/verify-mobile-otp";
@@ -142,6 +147,28 @@ class AppApiUrls {
   static String upgradeSubscriptionVerify =
       "${baseUrl}recruitersubscriptionplan/subscription/upgrade/verify";
   static String getRecruiterProfile = "${baseUrl}recruiter/getrecruiterbyid";
+  static String getRecruiterInterviews({
+    required int page,
+    required int limit,
+    String? status,
+  }) {
+    String url = "${baseUrl}recruiter-result/interviews?page=$page&limit=$limit";
+    if (status != null && status.isNotEmpty) {
+      url += "&status=$status";
+    }
+    return url;
+  }
+  static String getRecruiterPlacements({
+    required int page,
+    required int limit,
+    String? status,
+  }) {
+    String url = "${baseUrl}recruiter-result/placements?page=$page&limit=$limit";
+    if (status != null && status.isNotEmpty) {
+      url += "&status=$status";
+    }
+    return url;
+  }
   static String getAllStudentsList = "${baseUrl}student/getallstudentdetail";
   static String getShortlistedStudents = "${baseUrl}favorite/getfavorites";
   static String addToShortlistedStudents = "${baseUrl}favorite/add";

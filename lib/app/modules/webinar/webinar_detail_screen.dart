@@ -139,7 +139,7 @@ class _WebinarDetailScreenState extends State<WebinarDetailScreen> {
     try {
       final CFEnvironment environment =
           (environmentStr?.toUpperCase() == "SANDBOX" ||
-                  (environmentStr == null && AppApiUrls.baseUrl.contains("dev.")))
+                  (environmentStr == null && AppApiUrls.isDevEnvironment))
               ? CFEnvironment.SANDBOX
               : CFEnvironment.PRODUCTION;
 

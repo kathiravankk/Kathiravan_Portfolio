@@ -3,12 +3,14 @@ class RecruiterSubscriptionPlanModel {
   final String? message;
   final int? count;
   final List<RecruiterSubscriptionPlanData>? data;
+  final RecruiterSelectedPlanData? selectedPlan;
 
   RecruiterSubscriptionPlanModel({
     this.success,
     this.message,
     this.count,
     this.data,
+    this.selectedPlan,
   });
 
   factory RecruiterSubscriptionPlanModel.fromJson(Map<String, dynamic> json) {
@@ -27,6 +29,12 @@ class RecruiterSubscriptionPlanModel {
                 ),
               ),
             ),
+      selectedPlan: json['selectedPlan'] != null &&
+              json['selectedPlan'] is Map<String, dynamic>
+          ? RecruiterSelectedPlanData.fromJson(
+              json['selectedPlan'] as Map<String, dynamic>,
+            )
+          : null,
     );
   }
 
@@ -35,6 +43,115 @@ class RecruiterSubscriptionPlanModel {
         'message': message,
         'count': count,
         'data': data?.map((e) => e.toJson()).toList(),
+        'selectedPlan': selectedPlan?.toJson(),
+      };
+}
+
+class RecruiterSelectedPlanData {
+  final String? id;
+  final String? recruiterId;
+  final String? planId;
+  final String? planName;
+  final String? billingCycle;
+  final String? subscriptionStartDate;
+  final String? subscriptionEndDate;
+  final String? nextBillingDate;
+  final String? subscriptionStatus;
+  final String? paymentStatus;
+  final bool? autoRenew;
+  final num? seatLimit;
+  final num? internshipLimit;
+  final num? activeInternLimit;
+  final num? coordinatorlimit;
+  final num? creditLimit;
+  final num? price;
+  final bool? renewalReminderSent;
+  final String? createdAt;
+  final String? updatedAt;
+  final int? v;
+  final String? orderId;
+  final String? paymentId;
+
+  RecruiterSelectedPlanData({
+    this.id,
+    this.recruiterId,
+    this.planId,
+    this.planName,
+    this.billingCycle,
+    this.subscriptionStartDate,
+    this.subscriptionEndDate,
+    this.nextBillingDate,
+    this.subscriptionStatus,
+    this.paymentStatus,
+    this.autoRenew,
+    this.seatLimit,
+    this.internshipLimit,
+    this.activeInternLimit,
+    this.coordinatorlimit,
+    this.creditLimit,
+    this.price,
+    this.renewalReminderSent,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+    this.orderId,
+    this.paymentId,
+  });
+
+  factory RecruiterSelectedPlanData.fromJson(Map<String, dynamic> json) {
+    return RecruiterSelectedPlanData(
+      id: (json['_id'] ?? json['id'])?.toString(),
+      recruiterId: json['recruiterId']?.toString(),
+      planId: json['planId']?.toString(),
+      planName: json['planName']?.toString(),
+      billingCycle: json['billingCycle']?.toString(),
+      subscriptionStartDate: json['subscriptionStartDate']?.toString(),
+      subscriptionEndDate: json['subscriptionEndDate']?.toString(),
+      nextBillingDate: json['nextBillingDate']?.toString(),
+      subscriptionStatus: json['subscriptionStatus']?.toString(),
+      paymentStatus: json['paymentStatus']?.toString(),
+      autoRenew: json['autoRenew'] as bool?,
+      seatLimit: json['seatLimit'] as num?,
+      internshipLimit: json['internshipLimit'] as num?,
+      activeInternLimit: json['activeInternLimit'] as num?,
+      coordinatorlimit: json['coordinatorlimit'] as num?,
+      creditLimit: json['creditLimit'] as num?,
+      price: json['price'] as num?,
+      renewalReminderSent: json['renewalReminderSent'] as bool?,
+      createdAt: json['createdAt']?.toString(),
+      updatedAt: json['updatedAt']?.toString(),
+      v: json['__v'] is int
+          ? json['__v'] as int
+          : int.tryParse(json['__v']?.toString() ?? ''),
+      orderId: json['orderId']?.toString(),
+      paymentId: json['paymentId']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        '_id': id,
+        'recruiterId': recruiterId,
+        'planId': planId,
+        'planName': planName,
+        'billingCycle': billingCycle,
+        'subscriptionStartDate': subscriptionStartDate,
+        'subscriptionEndDate': subscriptionEndDate,
+        'nextBillingDate': nextBillingDate,
+        'subscriptionStatus': subscriptionStatus,
+        'paymentStatus': paymentStatus,
+        'autoRenew': autoRenew,
+        'seatLimit': seatLimit,
+        'internshipLimit': internshipLimit,
+        'activeInternLimit': activeInternLimit,
+        'coordinatorlimit': coordinatorlimit,
+        'creditLimit': creditLimit,
+        'price': price,
+        'renewalReminderSent': renewalReminderSent,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt,
+        '__v': v,
+        'orderId': orderId,
+        'paymentId': paymentId,
       };
 }
 
