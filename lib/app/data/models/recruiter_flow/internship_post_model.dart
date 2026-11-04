@@ -1,18 +1,44 @@
 class InternshipPostModel {
+  final bool? success;
   final String? message;
+  final String? statusFilter;
   final int? count;
+  final int? total;
+  final int? totalPages;
+  final int? currentPage;
+  final int? limit;
   final List<PostData>? jobs;
 
   InternshipPostModel({
+    this.success,
     this.message,
+    this.statusFilter,
     this.count,
+    this.total,
+    this.totalPages,
+    this.currentPage,
+    this.limit,
     this.jobs,
   });
 
   factory InternshipPostModel.fromJson(Map<String, dynamic> json) {
     return InternshipPostModel(
+      success: json['success'] ?? false,
       message: json['message'],
+      statusFilter: json['statusFilter'],
       count: json['count'],
+      total: json['total'] is num
+          ? (json['total'] as num).toInt()
+          : int.tryParse(json['total']?.toString() ?? '0'),
+      totalPages: json['totalPages'] is num
+          ? (json['totalPages'] as num).toInt()
+          : int.tryParse(json['totalPages']?.toString() ?? '1'),
+      currentPage: json['currentPage'] is num
+          ? (json['currentPage'] as num).toInt()
+          : int.tryParse(json['currentPage']?.toString() ?? '1'),
+      limit: json['limit'] is num
+          ? (json['limit'] as num).toInt()
+          : int.tryParse(json['limit']?.toString() ?? '12'),
       jobs: json['jobs'] != null
           ? List<PostData>.from(
           json['jobs'].map((e) => PostData.fromJson(e)))
@@ -21,8 +47,14 @@ class InternshipPostModel {
   }
 
   Map<String, dynamic> toJson() => {
+    'success': success,
     'message': message,
+    'statusFilter': statusFilter,
     'count': count,
+    'total': total,
+    'totalPages': totalPages,
+    'currentPage': currentPage,
+    'limit': limit,
     'jobs': jobs?.map((e) => e.toJson()).toList(),
   };
 }
@@ -63,6 +95,10 @@ class PostData {
   final String? createdAt;
   final String? updatedAt;
   final int? v;
+  final bool? isActive;
+  final dynamic status;
+  final bool? isDeleted;
+  final int? views;
 
   PostData({
     this.internshipNameCoordinator,
@@ -100,7 +136,18 @@ class PostData {
     this.internshipMobileCoordinator,
     this.internshipCoordinator,
     this.v,
+    this.isActive,
+    this.status,
+    this.isDeleted,
+    this.views,
   });
+
+  /// Helper: returns true when the job is currently active
+  bool get isJobActive {
+    if (isActive == true) return true;
+    if (status == true || status == 'true' || status == 1) return true;
+    return false;
+  }
 
   factory PostData.fromJson(Map<String, dynamic> json) {
     // Parse nested internshipCoordinator object
@@ -158,6 +205,16 @@ class PostData {
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",
       v: json['__v'] ?? 0,
+      isActive: json['isActive'] is bool
+          ? json['isActive']
+          : (json['isActive']?.toString().toLowerCase() == 'true'),
+      status: json['status'],
+      isDeleted: json['isDeleted'] is bool
+          ? json['isDeleted']
+          : (json['isDeleted']?.toString().toLowerCase() == 'true'),
+      views: json['views'] is num
+          ? (json['views'] as num).toInt()
+          : int.tryParse(json['views']?.toString() ?? '0') ?? 0,
     );
   }
 
@@ -189,6 +246,10 @@ class PostData {
     'internpositions': internPositions,
     'filledpositions': filledPositions,
     'syllabusdata': syllabusData,
+    'isActive': isActive,
+    'status': status,
+    'isDeleted': isDeleted,
+    'views': views,
     'createdAt': createdAt,
     'updatedAt': updatedAt,
     '__v': v,

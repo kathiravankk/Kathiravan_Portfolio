@@ -245,6 +245,7 @@ class AppAlertUtils {
                         onConfirm?.call();
                       },
                       buttonText: confirmText,
+                      bgColor: isDestructive ? const Color(0xFFEF4444) : null,
                       //width: 130,
                       height: 38,
                     ),

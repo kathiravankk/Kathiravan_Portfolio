@@ -140,6 +140,23 @@ class UpgradeSubscriptionController extends GetxController {
             (cur.planName ?? '').trim().toLowerCase());
   }
 
+  /// Checks whether a given plan is the recruiter's active subscription plan
+  bool isPlanActive(RecruiterSubscriptionPlanData plan) {
+    final cur = currentSubscription.value;
+    if (cur == null) return false;
+
+    final planName = (plan.name ?? '').trim().toLowerCase();
+    final curPlanName = (cur.planName ?? '').trim().toLowerCase();
+
+    final bool isSamePlan = (plan.id != null && plan.id == cur.planId) ||
+        (planName.isNotEmpty && planName == curPlanName);
+
+    if (!isSamePlan) return false;
+
+    final status = (cur.subscriptionStatus ?? 'active').trim().toLowerCase();
+    return status == 'active';
+  }
+
   String _normalizeCycle(String cycle) {
     final c = cycle.toLowerCase().trim();
     if (c == 'monthly' || c == '1month' || c == 'month') return 'monthly';

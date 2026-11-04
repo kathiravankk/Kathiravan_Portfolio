@@ -282,6 +282,9 @@ class UpgradeSubscriptionScreen extends StatelessWidget {
     final isSelected = controller.isPlanSelected(plan);
     final selectedCycle = controller.selectedBillingCycle.value;
 
+    // Check if Active Plan
+    final isActivePlan = controller.isPlanActive(plan);
+
     // Check if Growth / Popular
     final isPopular =
         planName.toLowerCase().contains('growth') ||
@@ -309,6 +312,8 @@ class UpgradeSubscriptionScreen extends StatelessWidget {
     // Dynamic features based on selected cycle
     final features = _getFeaturesForPlan(plan, selectedCycle);
 
+    final hasTopTag = isActivePlan || isPopular;
+
     return GestureDetector(
       onTap: () => controller.selectPlan(plan),
       child: Container(
@@ -335,33 +340,59 @@ class UpgradeSubscriptionScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// MOST POPULAR TAG (if applicable)
-            if (isPopular)
+            /// ACTIVE / RECOMMENDED TAGS (if applicable)
+            if (hasTopTag)
               Padding(
                 padding: const EdgeInsets.only(left: 14, top: 12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 3.5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF00E5FF),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'RECOMMENDED',
-                    style: AppStyles.customTextStyle(
-                      size: 9.5,
-                      color: AppColors.blackColor,
-                      weight: FontWeight.w800,
-                    ),
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isActivePlan)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 3.5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'ACTIVE',
+                          style: AppStyles.customTextStyle(
+                            size: 9.5,
+                            color: AppColors.blackColor,
+                            weight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    if (isActivePlan && isPopular) const SizedBox(width: 6),
+                    if (isPopular)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 3.5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00E5FF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'RECOMMENDED',
+                          style: AppStyles.customTextStyle(
+                            size: 9.5,
+                            color: AppColors.blackColor,
+                            weight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
 
             /// CARD CONTENT ROW
             Padding(
-              padding: EdgeInsets.fromLTRB(14, isPopular ? 10 : 14, 14, 14),
+              padding: EdgeInsets.fromLTRB(14, hasTopTag ? 10 : 14, 14, 14),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

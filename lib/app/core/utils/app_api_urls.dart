@@ -177,6 +177,16 @@ class AppApiUrls {
       "${baseUrl}recruiter/recruiterregisterupdate";
   static String getPostedInternships(String recruiterId) =>
       "${baseUrl}jobpost/jobs/$recruiterId";
+  static String getPostedInternshipsFiltered({
+    required String status,
+    required int page,
+    int limit = 12,
+  }) =>
+      "${baseUrl}jobpost/jobs?status=$status&page=$page&limit=$limit";
+  static String updateJobStatus(String jobId) =>
+      "${baseUrl}jobpost/jobs/$jobId";
+  static String deletePostedInternship(String jobId) =>
+      "${baseUrl}jobpost/deletejob/$jobId";
   static String getJobApplicants(String jobId, String status) =>
       "${baseUrl}getjob/jobs/$jobId?status=$status";
   static String getInternStudentProfile(String jobId) =>

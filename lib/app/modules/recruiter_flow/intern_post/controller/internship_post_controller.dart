@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/ai_chat_response_model.dart';
 import 'package:internsharks/app/data/models/recruiter_flow/applicants_list_model.dart';
@@ -48,10 +50,166 @@ class InternshipPostController extends GetxController {
       internPostModel = await internshipPostProvider!.fetchPostedInternships(
         recruiterId: recruiterId,
       );
+      postedJobsList.assignAll(internPostModel.jobs ?? []);
+      totalJobsCount.value = internPostModel.jobs?.length ?? 0;
       internPostLoading = false;
     } catch (err) {
       internPostLoading = false;
       rethrow;
+    }
+  }
+
+  // ── FILTERED POSTED INTERNSHIPS (ALL, ACTIVE, INACTIVE) & PAGINATION ──
+  final RxString selectedStatusTab = 'all'.obs; // 'all', 'active', 'inactive'
+  final RxList<PostData> postedJobsList = <PostData>[].obs;
+  final RxBool isLoadMoreLoading = false.obs;
+  final RxInt currentPage = 1.obs;
+  final RxInt totalPages = 1.obs;
+  final RxInt totalJobsCount = 0.obs;
+  final RxBool isUpdatingStatus = false.obs;
+
+  Future<void> getPostedInternshipsFiltered({
+    String? status,
+    int page = 1,
+    bool isLoadMore = false,
+  }) async {
+    final queryStatus = status ?? selectedStatusTab.value;
+    if (isLoadMore) {
+      if (isLoadMoreLoading.value || currentPage.value >= totalPages.value) {
+        return;
+      }
+      isLoadMoreLoading.value = true;
+    } else {
+      internPostLoading = true;
+      currentPage.value = 1;
+    }
+
+    try {
+      final targetPage = isLoadMore ? currentPage.value + 1 : page;
+      final result =
+          await internshipPostProvider!.fetchPostedInternshipsFiltered(
+        status: queryStatus,
+        page: targetPage,
+        limit: 12,
+      );
+
+      internPostModel = result;
+      totalPages.value = result.totalPages ?? 1;
+      totalJobsCount.value =
+          result.total ?? result.count ?? (result.jobs?.length ?? 0);
+
+      if (isLoadMore) {
+        currentPage.value = targetPage;
+        postedJobsList.addAll(result.jobs ?? []);
+      } else {
+        currentPage.value = 1;
+        postedJobsList.assignAll(result.jobs ?? []);
+      }
+    } catch (e) {
+      debugPrint('[getPostedInternshipsFiltered] Error: $e');
+    } finally {
+      internPostLoading = false;
+      isLoadMoreLoading.value = false;
+    }
+  }
+
+  void filterByStatus(String status) {
+    selectedStatusTab.value = status;
+    getPostedInternshipsFiltered(status: status, page: 1, isLoadMore: false);
+  }
+
+  Future<void> loadMorePostedInternships() async {
+    await getPostedInternshipsFiltered(
+      status: selectedStatusTab.value,
+      isLoadMore: true,
+    );
+  }
+
+  Future<bool> toggleJobStatus({
+    required String jobId,
+    required bool makeActive,
+  }) async {
+    try {
+      isUpdatingStatus.value = true;
+      final result = await internshipPostProvider!.updateJobStatus(
+        jobId: jobId,
+        makeActive: makeActive,
+      );
+
+      final statusCode = getResponseCode();
+      if (statusCode == 200 || statusCode == 201) {
+        AppAlertUtils.showToast(
+          message: result['message']?.toString() ??
+              (makeActive
+                  ? "Internship activated successfully"
+                  : "Internship deactivated successfully"),
+          isError: false,
+        );
+        // Refresh the current list to reflect updated counts and status filter
+        await getPostedInternshipsFiltered(
+          status: selectedStatusTab.value,
+          page: 1,
+          isLoadMore: false,
+        );
+        return true;
+      } else {
+        AppAlertUtils.showToast(
+          message: result['message']?.toString() ?? "Failed to update status",
+          isError: true,
+        );
+        return false;
+      }
+    } catch (e) {
+      AppAlertUtils.showToast(
+        message: "Something went wrong: $e",
+        isError: true,
+      );
+      return false;
+    } finally {
+      isUpdatingStatus.value = false;
+    }
+  }
+
+  // DELETE POSTED INTERNSHIP (SOFT DELETE)
+  final RxBool isDeletingJob = false.obs;
+
+  Future<bool> deletePostedInternship({required String jobId}) async {
+    try {
+      isDeletingJob.value = true;
+      final result = await internshipPostProvider!.deletePostedInternship(
+        jobId: jobId,
+      );
+
+      final statusCode = getResponseCode();
+      if (statusCode == 200 || statusCode == 201) {
+        AppAlertUtils.showToast(
+          message: result['message']?.toString() ??
+              "Job soft deleted successfully",
+          isError: false,
+        );
+        // Refresh the current list to reflect updated counts and status filter
+        await getPostedInternshipsFiltered(
+          status: selectedStatusTab.value,
+          page: 1,
+          isLoadMore: false,
+        );
+        return true;
+      } else {
+        AppAlertUtils.showToast(
+          message:
+              result['message']?.toString() ?? "Failed to delete internship",
+          isError: true,
+        );
+        return false;
+      }
+    } catch (e) {
+      AppAlertUtils.showToast(
+        message: "Something went wrong: $e",
+        isError: true,
+      );
+      return false;
+    } finally {
+      isDeletingJob.value = false;
     }
   }
 

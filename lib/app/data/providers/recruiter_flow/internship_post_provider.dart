@@ -55,6 +55,94 @@ class InternshipPostProvider {
     }
   }
 
+  // GET FILTERED POSTED INTERNSHIPS (WITH STATUS & PAGINATION)
+  Future<InternshipPostModel> fetchPostedInternshipsFiltered({
+    required String status,
+    required int page,
+    int limit = 12,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.get(
+        AppApiUrls.getPostedInternshipsFiltered(
+          status: status,
+          page: page,
+          limit: limit,
+        ),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return InternshipPostModel.fromJson(response.data);
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null && err.response!.data is Map) {
+        return InternshipPostModel.fromJson(
+            Map<String, dynamic>.from(err.response!.data));
+      }
+      rethrow;
+    }
+  }
+
+  // UPDATE JOB STATUS (ACTIVE / INACTIVE)
+  Future<Map<String, dynamic>> updateJobStatus({
+    required String jobId,
+    required bool makeActive,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.put(
+        AppApiUrls.updateJobStatus(jobId),
+        options: Options(headers: header),
+        data: {
+          "status": makeActive,
+          "isActive": makeActive,
+        },
+      );
+      responseStatus = response.statusCode!;
+      return response.data is Map<String, dynamic>
+          ? response.data as Map<String, dynamic>
+          : {"message": "Job updated successfully", "success": true};
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null && err.response!.data is Map) {
+        return Map<String, dynamic>.from(err.response!.data);
+      }
+      return {"message": "Failed to update job status", "success": false};
+    }
+  }
+
+  // DELETE POSTED INTERNSHIP (SOFT DELETE)
+  Future<Map<String, dynamic>> deletePostedInternship({
+    required String jobId,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.delete(
+        AppApiUrls.deletePostedInternship(jobId),
+        options: Options(headers: header),
+      );
+      responseStatus = response.statusCode!;
+      return response.data is Map<String, dynamic>
+          ? response.data as Map<String, dynamic>
+          : {"message": "Job soft deleted successfully", "success": true};
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null && err.response!.data is Map) {
+        return Map<String, dynamic>.from(err.response!.data);
+      }
+      return {"message": "Failed to delete job", "success": false};
+    }
+  }
+
   // GET APPLICANTS
   Future<ApplicantsListModel> fetchApplicants({
     required String jobId,

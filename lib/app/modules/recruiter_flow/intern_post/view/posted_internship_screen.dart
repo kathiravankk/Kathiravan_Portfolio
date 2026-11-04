@@ -21,39 +21,44 @@ class PostedInternshipScreen extends StatefulWidget {
 class PostedInternshipScreenState extends State<PostedInternshipScreen> {
   final InternshipPostController postController =
       Get.find<InternshipPostController>();
+  final ScrollController _scrollController = ScrollController();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getInternshipData();
-  // }
-
-  Future<void> refreshData() async {
-    await getInternshipData();
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshData();
+    });
   }
 
-  String? recruiterId = "";
+  void _onScroll() {
+    if (_scrollController.hasClients &&
+        _scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200) {
+      if (!postController.isLoadMoreLoading.value &&
+          postController.currentPage.value < postController.totalPages.value) {
+        postController.loadMorePostedInternships();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> refreshData() async {
+    await postController.getPostedInternshipsFiltered(
+      status: postController.selectedStatusTab.value,
+      page: 1,
+      isLoadMore: false,
+    );
+  }
 
   Future<void> getInternshipData() async {
-    recruiterId = await LocalStorageService.getRecruiterId();
-    try {
-      await postController.getPostedInternships(recruiterId: recruiterId!);
-      if (postController.getResponseCode() == 200 ||
-          postController.getResponseCode() == 201) {
-      } else {
-        AppFunctions.apiErrorHandling(
-          postController.getResponseCode(),
-          postController.internPostModel.message ??
-              "Something went wrong!, Try again later",
-        );
-      }
-    } catch (error) {
-      AppFunctions.apiErrorHandling(
-        postController.getResponseCode(),
-        postController.internPostModel.message ??
-            "Something went wrong!, Try again later",
-      );
-    }
+    await refreshData();
   }
 
   @override
@@ -70,61 +75,82 @@ class PostedInternshipScreenState extends State<PostedInternshipScreen> {
         appBar: _buildAppBar(),
         body: SafeArea(
           child: Obx(() {
-            if (postController.internPostLoading) {
-              return AppAlertUtils.customLoader();
-            }
+            final count = postController.totalJobsCount.value;
+            final jobs = postController.postedJobsList;
+            final isLoading = postController.internPostLoading;
 
-            final jobs = postController.internPostModel.jobs;
-
-            if (jobs?.isEmpty ?? true) {
-              return _buildEmptyState();
-            }
-
-            // Count active jobs (noOfPosition > 0)
-            final activeCount = jobs!
-                .where((j) => (j.noOfPosition ?? 0) > 0)
-                .length;
-
-            return RefreshIndicator(
-              backgroundColor: AppColors.appBgColor_2,
-              color: AppColors.primaryColor,
-              onRefresh: () async {
-                await getInternshipData();
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Header area ──────────────────────────────────────
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "My Posting",
-                          style: AppStyles.customTextStyle(
-                            size: 18,
-                            color: AppColors.whiteColor,
-                            weight: FontWeight.w700,
-                          ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Header area ──────────────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "My Posting",
+                        style: AppStyles.customTextStyle(
+                          size: 18,
+                          color: AppColors.whiteColor,
+                          weight: FontWeight.w700,
                         ),
-                        _activeChip(activeCount),
-                      ],
-                    ),
+                      ),
+                      _activeChip(count),
+                    ],
                   ),
+                ),
 
-                  // ── Job list ─────────────────────────────────────────
-                  Expanded(
-                    child: ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
-                      itemCount: jobs.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 16),
-                      itemBuilder: (context, index) =>
-                          _JobCard(job: jobs[index]),
-                    ),
-                  ),
-                ],
-              ),
+                // ── Status Filter Tabs (All / Active / Inactive) ───────
+                _buildStatusTabs(),
+
+                // ── Main Content Area ─────────────────────────────────
+                Expanded(
+                  child: isLoading
+                      ? AppAlertUtils.customLoader()
+                      : (jobs.isEmpty
+                          ? RefreshIndicator(
+                              backgroundColor: AppColors.appBgColor_2,
+                              color: AppColors.primaryColor,
+                              onRefresh: refreshData,
+                              child: SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  child: _buildEmptyState(),
+                                ),
+                              ),
+                            )
+                          : RefreshIndicator(
+                              backgroundColor: AppColors.appBgColor_2,
+                              color: AppColors.primaryColor,
+                              onRefresh: refreshData,
+                              child: ListView.separated(
+                                controller: _scrollController,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 8, 16, 120),
+                                itemCount: jobs.length +
+                                    (postController.currentPage.value <
+                                                postController
+                                                    .totalPages.value ||
+                                            postController
+                                                .isLoadMoreLoading.value
+                                        ? 1
+                                        : 0),
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 16),
+                                itemBuilder: (context, index) {
+                                  if (index == jobs.length) {
+                                    return _buildLoadMoreWidget();
+                                  }
+                                  return _JobCard(job: jobs[index]);
+                                },
+                              ),
+                            )),
+                ),
+              ],
             );
           }),
         ),
@@ -184,27 +210,139 @@ class PostedInternshipScreenState extends State<PostedInternshipScreen> {
     );
   }
 
+  // ── Status Filter Tabs ─────────────────────────────────────────────────────
+  Widget _buildStatusTabs() {
+    final tabs = [
+      {'label': 'All', 'status': 'all'},
+      {'label': 'Active', 'status': 'active'},
+      {'label': 'Inactive', 'status': 'inactive'},
+    ];
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A2E).withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+      child: Row(
+        children: tabs.map((tab) {
+          final isSelected =
+              postController.selectedStatusTab.value == tab['status'];
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                if (!isSelected) {
+                  postController.filterByStatus(tab['status']!);
+                }
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color:
+                      isSelected ? AppColors.primaryColor : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  tab['label']!,
+                  style: AppStyles.customTextStyle(
+                    size: 13,
+                    color: isSelected ? Colors.black : AppColors.greyTextColor,
+                    weight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   // ── Active chip ────────────────────────────────────────────────────────────
   Widget _activeChip(int count) {
+    final status = postController.selectedStatusTab.value;
+    final label = status == 'active'
+        ? 'ACTIVE'
+        : (status == 'inactive' ? 'INACTIVE' : 'POSTINGS');
+    final color = status == 'inactive'
+        ? const Color(0xFFEF4444)
+        : AppColors.secondaryColor;
+    final textColor = status == 'inactive' ? Colors.white : Colors.black;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.secondaryColor,
+        color: color,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        "${count.toString().padLeft(2, '0')} ACTIVE",
+        "${count.toString().padLeft(2, '0')} $label",
         style: AppStyles.customTextStyle(
           size: 12,
-          color: Colors.black,
+          color: textColor,
           weight: FontWeight.w700,
         ),
       ),
     );
   }
 
+  // ── Load more indicator ────────────────────────────────────────────────────
+  Widget _buildLoadMoreWidget() {
+    if (postController.isLoadMoreLoading.value) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: AppColors.primaryColor,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (postController.currentPage.value < postController.totalPages.value) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: TextButton.icon(
+            onPressed: () => postController.loadMorePostedInternships(),
+            icon: const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: AppColors.primaryColor,
+              size: 20,
+            ),
+            label: Text(
+              "Load More Internships (${postController.postedJobsList.length} of ${postController.totalJobsCount.value})",
+              style: AppStyles.customTextStyle(
+                size: 13,
+                color: AppColors.primaryColor,
+                weight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
   // ── Empty state ────────────────────────────────────────────────────────────
   Widget _buildEmptyState() {
+    final status = postController.selectedStatusTab.value;
+    final message = status == 'active'
+        ? "No active internships found"
+        : (status == 'inactive'
+            ? "No inactive internships found"
+            : "No internships posted yet");
+
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -216,7 +354,7 @@ class PostedInternshipScreenState extends State<PostedInternshipScreen> {
             color: AppColors.secondaryColor,
           ),
           Text(
-            "No internships posted yet",
+            message,
             style: AppStyles.customTextStyle(
               size: 16,
               color: AppColors.whiteColor,
@@ -224,7 +362,9 @@ class PostedInternshipScreenState extends State<PostedInternshipScreen> {
             ),
           ),
           Text(
-            "Tap the '+' button below to post your first internship",
+            status == 'all'
+                ? "Tap the '+' button below to post your first internship"
+                : "Switch tabs to view other internships",
             textAlign: TextAlign.center,
             style: AppStyles.customTextStyle(
               size: 13,
@@ -267,19 +407,29 @@ class _JobCard extends StatelessWidget {
                 CompanyLogo(logoUrl: job.companyLogo),
                 const SizedBox(width: 12),
 
-                // Company name + role
+                // Company name + role + status badge
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
+                    spacing: 6,
                     children: [
-                      Text(
-                        job.companyName ?? "—",
-                        style: AppStyles.customTextStyle(
-                          size: 16,
-                          color: AppColors.whiteColor,
-                          weight: FontWeight.w700,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              job.companyName ?? "—",
+                              style: AppStyles.customTextStyle(
+                                size: 15,
+                                color: AppColors.whiteColor,
+                                weight: FontWeight.w700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          _buildStatusBadge(job.isJobActive),
+                        ],
                       ),
                       Row(
                         spacing: 5,
@@ -623,24 +773,161 @@ class _JobCard extends StatelessWidget {
                     }
                   : () {},
             ),
-            // ListTile(
-            //   leading: const Icon(
-            //     CupertinoIcons.trash,
-            //     color: Colors.redAccent,
-            //   ),
-            //   title: Text(
-            //     "Delete Internship",
-            //     style: AppStyles.customTextStyle(
-            //       size: 14,
-            //       color: Colors.redAccent,
-            //       weight: FontWeight.w500,
-            //     ),
-            //   ),
-            //   onTap: () => Get.back(),
-            // ),
+            ListTile(
+              leading: Icon(
+                job.isJobActive
+                    ? Icons.pause_circle_outline_rounded
+                    : Icons.play_circle_outline_rounded,
+                color: job.isJobActive
+                    ? const Color(0xFFEF4444)
+                    : const Color(0xFF10B981),
+              ),
+              title: Text(
+                job.isJobActive ? "In-Active" : "Active",
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  color: job.isJobActive
+                      ? const Color(0xFFEF4444)
+                      : const Color(0xFF10B981),
+                  weight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                job.isJobActive
+                    ? "Hide this posting from students"
+                    : "Make this posting active for applicants",
+                style: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.greyTextColor,
+                ),
+              ),
+              onTap: () {
+                Get.back();
+                _showStatusToggleDialog(context, job.isJobActive);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                CupertinoIcons.trash,
+                color: Color(0xFFEF4444),
+              ),
+              title: Text(
+                "Delete",
+                style: AppStyles.customTextStyle(
+                  size: 14,
+                  color: const Color(0xFFEF4444),
+                  weight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                "Permanently remove this posting",
+                style: AppStyles.customTextStyle(
+                  size: 12,
+                  color: AppColors.greyTextColor,
+                ),
+              ),
+              onTap: () {
+                Get.back();
+                _showDeleteDialog(context);
+              },
+            ),
             const SizedBox(height: 8),
           ],
         ),
+      ),
+    );
+  }
+
+  // ── Status toggle confirmation dialog ──────────────────────────────────────
+  void _showStatusToggleDialog(BuildContext context, bool currentActive) {
+    final willBeActive = !currentActive;
+    final actionName = willBeActive ? "Active" : "In-Active";
+
+    AppAlertUtils.showAppAlert(
+      context: context,
+      title: "Mark as $actionName",
+      content: willBeActive
+          ? "Are you sure you want to activate this internship? Students will be able to see and apply for it."
+          : "Are you sure you want to mark this internship as In-Active? Students will no longer see or apply for it.",
+      confirmText: actionName,
+      cancelText: "Cancel",
+      isDestructive: !willBeActive,
+      onConfirm: () {
+        final postController = Get.find<InternshipPostController>();
+        postController.toggleJobStatus(
+          jobId: job.id ?? "",
+          makeActive: willBeActive,
+        );
+      },
+    );
+  }
+
+  // ── Delete confirmation dialog ─────────────────────────────────────────────
+  void _showDeleteDialog(BuildContext context) {
+    final roleName = (job.roleType != null && job.roleType!.trim().isNotEmpty)
+        ? job.roleType!.trim()
+        : (job.companyName ?? "this post");
+
+    AppAlertUtils.showAppAlert(
+      context: context,
+      title: "Delete Internship",
+      content:
+          'Are you sure you want to delete "$roleName"? This action cannot be undone and will permanently remove this post.',
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      isDestructive: true,
+      onConfirm: () {
+        final postController = Get.find<InternshipPostController>();
+        postController.deletePostedInternship(
+          jobId: job.id ?? "",
+        );
+      },
+    );
+  }
+
+  // ── Status Badge ───────────────────────────────────────────────────────────
+  Widget _buildStatusBadge(bool isActive) {
+    final Color badgeColor =
+        isActive ? const Color(0xFF10B981) : const Color(0xFFEF4444);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: badgeColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: badgeColor.withValues(alpha: 0.4),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: badgeColor,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: badgeColor.withValues(alpha: 0.7),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 5),
+          Text(
+            isActive ? "ACTIVE" : "IN-ACTIVE",
+            style: AppStyles.customTextStyle(
+              size: 10,
+              color: badgeColor,
+              weight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }
