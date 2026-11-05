@@ -3,19 +3,72 @@ class InternTestResultModel {
     this.success,
     this.message,
     this.testData,
+    this.isInterview,
+    this.interviewDetails,
+    this.isPlacement,
+    this.placementDetails,
   });
 
   final bool? success;
   final String? message;
   final InternTestResultData? testData;
+  final bool? isInterview;
+  final InterviewDecisionDetails? interviewDetails;
+  final bool? isPlacement;
+  final PlacementDecisionDetails? placementDetails;
 
   factory InternTestResultModel.fromJson(Map<String, dynamic> json) {
+    final data = json["data"] is Map<String, dynamic>
+        ? json["data"] as Map<String, dynamic>
+        : null;
+
+    Map<String, dynamic>? interviewMap = json["interviewDetails"] is Map<String, dynamic>
+        ? json["interviewDetails"] as Map<String, dynamic>
+        : (data?["interviewDetails"] is Map<String, dynamic>
+            ? data!["interviewDetails"] as Map<String, dynamic>
+            : null);
+
+    Map<String, dynamic>? placementMap = json["placementDetails"] is Map<String, dynamic>
+        ? json["placementDetails"] as Map<String, dynamic>
+        : (data?["placementDetails"] is Map<String, dynamic>
+            ? data!["placementDetails"] as Map<String, dynamic>
+            : null);
+
+    // If backend returns placement details under interviewDetails key
+    if (placementMap == null &&
+        interviewMap != null &&
+        interviewMap["type"]?.toString().toLowerCase() == "placement") {
+      placementMap = interviewMap;
+      interviewMap = null;
+    } else if (interviewMap == null &&
+        placementMap != null &&
+        placementMap["type"]?.toString().toLowerCase() == "interview") {
+      interviewMap = placementMap;
+      placementMap = null;
+    }
+
+    final isPlacementDecision = placementMap != null ||
+        json["isPlacement"] == true ||
+        data?["isPlacement"] == true;
+    final isInterviewDecision = !isPlacementDecision &&
+        (interviewMap != null ||
+            json["isInterview"] == true ||
+            data?["isInterview"] == true);
+
     return InternTestResultModel(
       success: json["success"],
       message: json["message"],
-      testData: json["data"] == null
+      testData: data == null
           ? null
-          : InternTestResultData.fromJson(json["data"]),
+          : InternTestResultData.fromJson(data),
+      isInterview: isInterviewDecision,
+      interviewDetails: interviewMap == null
+          ? null
+          : InterviewDecisionDetails.fromJson(interviewMap),
+      isPlacement: isPlacementDecision,
+      placementDetails: placementMap == null
+          ? null
+          : PlacementDecisionDetails.fromJson(placementMap),
     );
   }
 }
@@ -25,13 +78,46 @@ class InternTestResultData {
     this.testResult,
     this.weeklyReport,
     this.isCertificate,
+    this.isInterview,
+    this.interviewDetails,
+    this.isPlacement,
+    this.placementDetails,
   });
 
   final TestResult? testResult;
   final WeeklyReport? weeklyReport;
   final bool? isCertificate;
+  final bool? isInterview;
+  final InterviewDecisionDetails? interviewDetails;
+  final bool? isPlacement;
+  final PlacementDecisionDetails? placementDetails;
 
   factory InternTestResultData.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic>? interviewMap = json["interviewDetails"] is Map<String, dynamic>
+        ? json["interviewDetails"] as Map<String, dynamic>
+        : null;
+
+    Map<String, dynamic>? placementMap = json["placementDetails"] is Map<String, dynamic>
+        ? json["placementDetails"] as Map<String, dynamic>
+        : null;
+
+    if (placementMap == null &&
+        interviewMap != null &&
+        interviewMap["type"]?.toString().toLowerCase() == "placement") {
+      placementMap = interviewMap;
+      interviewMap = null;
+    } else if (interviewMap == null &&
+        placementMap != null &&
+        placementMap["type"]?.toString().toLowerCase() == "interview") {
+      interviewMap = placementMap;
+      placementMap = null;
+    }
+
+    final isPlacementDecision =
+        placementMap != null || json["isPlacement"] == true;
+    final isInterviewDecision = !isPlacementDecision &&
+        (interviewMap != null || json["isInterview"] == true);
+
     return InternTestResultData(
       testResult: json["testresult"] == null
           ? null
@@ -40,6 +126,14 @@ class InternTestResultData {
           ? null
           : WeeklyReport.fromJson(json["weeklyreport"]),
       isCertificate: json["iscertificate"],
+      isInterview: isInterviewDecision,
+      interviewDetails: interviewMap == null
+          ? null
+          : InterviewDecisionDetails.fromJson(interviewMap),
+      isPlacement: isPlacementDecision,
+      placementDetails: placementMap == null
+          ? null
+          : PlacementDecisionDetails.fromJson(placementMap),
     );
   }
 }
@@ -105,12 +199,14 @@ class Job {
     this.roleType,
     this.internshipStipend,
     this.fee,
+    this.companyname,
   });
 
   final String? id;
   final String? roleType;
   final String? internshipStipend;
   final String? fee;
+  final String? companyname;
 
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
@@ -118,6 +214,7 @@ class Job {
       roleType: json["roletype"],
       internshipStipend: json["internshipstipend"],
       fee: json["fee"],
+      companyname: json["companyname"] ?? json["companyName"],
     );
   }
 }
@@ -298,6 +395,171 @@ class DailyProgress {
       status: json["status"],
       completedAt: DateTime.tryParse(json["completedAt"] ?? ""),
       id: json["_id"],
+    );
+  }
+}
+
+class InterviewDecisionDetails {
+  final String? id;
+  final String? decisionId;
+  final String? type;
+  final String? interviewStatus;
+  final String? interviewDate;
+  final String? interviewTime;
+  final String? interviewMode;
+  final String? interviewRound;
+  final String? meetingLinkOrLocation;
+  final String? interviewerName;
+  final String? contactEmail;
+  final String? interviewInstructions;
+  final String? companyName;
+  final String? jobTitle;
+  final String? offerLetter;
+  final RecruiterDecisionInfo? recruiter;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  InterviewDecisionDetails({
+    this.id,
+    this.decisionId,
+    this.type,
+    this.interviewStatus,
+    this.interviewDate,
+    this.interviewTime,
+    this.interviewMode,
+    this.interviewRound,
+    this.meetingLinkOrLocation,
+    this.interviewerName,
+    this.contactEmail,
+    this.interviewInstructions,
+    this.companyName,
+    this.jobTitle,
+    this.offerLetter,
+    this.recruiter,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory InterviewDecisionDetails.fromJson(Map<String, dynamic> json) {
+    return InterviewDecisionDetails(
+      id: json["_id"]?.toString(),
+      decisionId: json["decisionId"]?.toString(),
+      type: json["type"]?.toString(),
+      interviewStatus: json["interviewStatus"]?.toString(),
+      interviewDate: json["interviewDate"]?.toString(),
+      interviewTime: json["interviewTime"]?.toString(),
+      interviewMode: json["interviewMode"]?.toString(),
+      interviewRound: json["interviewRound"]?.toString(),
+      meetingLinkOrLocation: json["meetingLinkOrLocation"]?.toString(),
+      interviewerName: json["interviewerName"]?.toString(),
+      contactEmail: json["contactEmail"]?.toString(),
+      interviewInstructions: json["interviewInstructions"]?.toString(),
+      companyName: json["companyName"]?.toString(),
+      jobTitle: json["jobTitle"]?.toString(),
+      offerLetter: json["offerLetter"]?.toString(),
+      recruiter: json["recruiter"] is Map<String, dynamic>
+          ? RecruiterDecisionInfo.fromJson(json["recruiter"])
+          : null,
+      createdAt: json["createdAt"] != null
+          ? DateTime.tryParse(json["createdAt"].toString())
+          : null,
+      updatedAt: json["updatedAt"] != null
+          ? DateTime.tryParse(json["updatedAt"].toString())
+          : null,
+    );
+  }
+}
+
+class PlacementDecisionDetails {
+  final String? id;
+  final String? decisionId;
+  final String? type;
+  final String? status;
+  final String? jobTitle;
+  final String? companyName;
+  final String? employmentType;
+  final String? workMode;
+  final String? joiningDate;
+  final String? jobLocation;
+  final String? annualSalary;
+  final String? offerLetter;
+  final String? placementNotes;
+  final RecruiterDecisionInfo? recruiter;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  PlacementDecisionDetails({
+    this.id,
+    this.decisionId,
+    this.type,
+    this.status,
+    this.jobTitle,
+    this.companyName,
+    this.employmentType,
+    this.workMode,
+    this.joiningDate,
+    this.jobLocation,
+    this.annualSalary,
+    this.offerLetter,
+    this.placementNotes,
+    this.recruiter,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory PlacementDecisionDetails.fromJson(Map<String, dynamic> json) {
+    return PlacementDecisionDetails(
+      id: json["_id"]?.toString(),
+      decisionId: json["decisionId"]?.toString(),
+      type: json["type"]?.toString(),
+      status: json["status"]?.toString() ?? json["interviewStatus"]?.toString(),
+      jobTitle: json["jobTitle"]?.toString(),
+      companyName: json["companyName"]?.toString(),
+      employmentType: json["employmentType"]?.toString(),
+      workMode: json["workMode"]?.toString(),
+      joiningDate: json["joiningDate"]?.toString(),
+      jobLocation: json["jobLocation"]?.toString(),
+      annualSalary: json["annualSalary"]?.toString(),
+      offerLetter: json["offerLetter"]?.toString(),
+      placementNotes: json["placementNotes"]?.toString(),
+      recruiter: json["recruiter"] is Map<String, dynamic>
+          ? RecruiterDecisionInfo.fromJson(json["recruiter"])
+          : null,
+      createdAt: json["createdAt"] != null
+          ? DateTime.tryParse(json["createdAt"].toString())
+          : null,
+      updatedAt: json["updatedAt"] != null
+          ? DateTime.tryParse(json["updatedAt"].toString())
+          : null,
+    );
+  }
+}
+
+class RecruiterDecisionInfo {
+  final String? id;
+  final String? recName;
+  final String? recEmail;
+  final String? recMobileNo;
+  final String? recCompanyName;
+  final String? recCompanyEmail;
+
+  RecruiterDecisionInfo({
+    this.id,
+    this.recName,
+    this.recEmail,
+    this.recMobileNo,
+    this.recCompanyName,
+    this.recCompanyEmail,
+  });
+
+  factory RecruiterDecisionInfo.fromJson(Map<String, dynamic> json) {
+    return RecruiterDecisionInfo(
+      id: json["_id"]?.toString(),
+      recName: json["recname"]?.toString(),
+      recEmail: json["recemail"]?.toString(),
+      recMobileNo: json["recmobileno"]?.toString(),
+      recCompanyName: json["reccompanyname"]?.toString(),
+      recCompanyEmail: json["reccompanyemail"]?.toString(),
     );
   }
 }

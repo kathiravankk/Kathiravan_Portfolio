@@ -290,6 +290,66 @@ class RecruiterHomeProvider {
       return InternTestResultModel.fromJson(err.response!.data);
     }
   }
+
+  // SUBMIT HIRING DECISION - INTERVIEW (JSON)
+  Future<Map<String, dynamic>> submitInterviewDecision({
+    required Map<String, dynamic> data,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recruiterHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.submitHiringDecision,
+        options: Options(headers: header),
+        data: data,
+      );
+      responseStatus = response.statusCode!;
+      return response.data is Map<String, dynamic>
+          ? response.data as Map<String, dynamic>
+          : {"success": true, "message": "Interview decision recorded successfully."};
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null && err.response!.data is Map) {
+        return Map<String, dynamic>.from(err.response!.data);
+      }
+      return {
+        "success": false,
+        "message": err.message ?? "Failed to submit interview decision"
+      };
+    }
+  }
+
+  // SUBMIT HIRING DECISION - PLACEMENT (FORM-DATA)
+  Future<Map<String, dynamic>> submitPlacementDecision({
+    required FormData payloadFormData,
+  }) async {
+    Map<String, dynamic> header = await AppApiHeader.recFormDataHeader();
+    try {
+      client!.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
+      Response response = await client!.post(
+        AppApiUrls.submitHiringDecision,
+        options: Options(headers: header),
+        data: payloadFormData,
+      );
+      responseStatus = response.statusCode!;
+      return response.data is Map<String, dynamic>
+          ? response.data as Map<String, dynamic>
+          : {"success": true, "message": "Placement decision recorded successfully."};
+    } on DioException catch (err) {
+      responseStatus = err.response?.statusCode ?? 500;
+      if (err.response?.data != null && err.response!.data is Map) {
+        return Map<String, dynamic>.from(err.response!.data);
+      }
+      return {
+        "success": false,
+        "message": err.message ?? "Failed to submit placement decision"
+      };
+    }
+  }
   // GET RECRUITER CREDITS PLANS
 
   Future<RecruiterCreditsPlansModel> fetchRecruiterCreditPlans() async {

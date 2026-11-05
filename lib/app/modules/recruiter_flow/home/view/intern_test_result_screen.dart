@@ -1,26 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internsharks/app/core/utils/app_functions.dart';
-import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
-import 'package:internsharks/app/core/widgets/issue_certificate_dialog.dart';
-import 'package:internsharks/app/core/widgets/stipend_payment_dialog.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/intern_test_result_model.dart';
-import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
-import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
-import 'package:internsharks/app/routes/app_pages.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:internsharks/app/core/utils/app_alert_utils.dart';
 import 'package:internsharks/app/core/utils/app_api_urls.dart';
 import 'package:internsharks/app/core/utils/app_colors.dart';
+import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/core/widgets/custom_button_widget.dart';
+import 'package:internsharks/app/core/widgets/issue_certificate_dialog.dart';
+import 'package:internsharks/app/core/widgets/stipend_payment_dialog.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/create_stipend_order_model.dart';
+import 'package:internsharks/app/data/models/recruiter_flow/intern_test_result_model.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/widgets/candidate_decision_cards.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/widgets/candidate_hiring_decision_form.dart';
+import 'package:internsharks/app/modules/recruiter_flow/home/widgets/intern_test_result_cards.dart';
+import 'package:internsharks/app/modules/recruiter_flow/intern_post/controller/internship_post_controller.dart';
+import 'package:internsharks/app/routes/app_pages.dart';
 import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
 import 'package:flutter_cashfree_pg_sdk/api/cfpayment/cfwebcheckoutpayment.dart';
 import 'package:flutter_cashfree_pg_sdk/api/cfpaymentgateway/cfpaymentgatewayservice.dart';
 import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 import 'package:flutter_cashfree_pg_sdk/utils/cfexceptions.dart';
-import 'package:internsharks/app/data/models/recruiter_flow/create_stipend_order_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InternTestResultScreen extends StatefulWidget {
   const InternTestResultScreen({super.key});
@@ -36,8 +39,16 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
       Get.find<InternshipPostController>();
   InternTestResultData? _internData;
   final CFPaymentGatewayService cfPaymentGatewayService =
-  CFPaymentGatewayService();
+      CFPaymentGatewayService();
   bool _isStipendPaymentProcessing = false;
+
+  int _selectedTabIndex = 0; // 0: Test Result, 1: Hiring Decision
+
+  String studentId = "";
+  String jobId = "";
+  String jobType = "";
+  bool showPaymentRow = false;
+  bool showStipendDialog = false;
 
   @override
   void initState() {
@@ -51,20 +62,16 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
 
   void _initCashFreeCallbacks() {
     cfPaymentGatewayService.setCallback(
-          (orderId) async {
+      (orderId) async {
         debugPrint('[Cashfree] Stipend payment success: $orderId');
         await _handleStipendPaymentSuccess(orderId);
       },
-          (orderId, error) {
+      (orderId, error) {
         debugPrint('[Cashfree] Stipend payment failed: $orderId | $error');
         _handleStipendPaymentFailure(orderId.toString(), error);
       },
     );
   }
-
-  String studentId = "";
-  String jobId = "";
-  String jobType = "";
 
   Future<void> getTestResult() async {
     try {
@@ -73,9 +80,11 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
           homeController.getResponseCode() == 201) {
         setState(() {
           _internData = homeController.testResultModel.testData;
-          jobType = _internData!.testResult!.job!.internshipStipend != "N/A"
+          final stipend = _internData?.testResult?.job?.internshipStipend;
+          final fee = _internData?.testResult?.job?.fee;
+          jobType = (stipend != null && stipend != "N/A" && stipend.isNotEmpty)
               ? "STIPEND"
-              : _internData!.testResult!.job!.fee != "0"
+              : (fee != null && fee != "0" && fee.isNotEmpty)
               ? "FEES"
               : "FREE";
         });
@@ -98,35 +107,33 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
 
   Future<void> getStudentProfileData() async {
     try {
-      await applicationController.getInternStudentProfile(
-        jobId: jobId,
-        studentId: studentId,
-      );
-      if (applicationController.getResponseCode() == 200 ||
-          applicationController.getResponseCode() == 201) {
-        // setState(() {
-        //   studentData = applicationController.internStudentProfileModel;
-        // });
-      } else {
+      await applicationController.getStudentProfile(studentId: studentId);
+      if (applicationController.getResponseCode() != 200 &&
+          applicationController.getResponseCode() != 201) {
         AppFunctions.apiErrorHandling(
           applicationController.getResponseCode(),
-          "Something went wrong!, Try again later",
+          "Something went wrong, Try again later!",
         );
       }
     } catch (error) {
       AppFunctions.apiErrorHandling(
         applicationController.getResponseCode(),
-        "Something went wrong!, Try again later",
+        "Something went wrong, Try again later!",
       );
     }
   }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // BUILD SCREEN
+  // ─────────────────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: AppColors.primaryBackground,
         image: DecorationImage(
-          image: AssetImage(AssetImages.appBackgroundImg),
+          image: AssetImage(AssetImages.dashBoardBackground),
           fit: BoxFit.cover,
         ),
       ),
@@ -158,39 +165,63 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _profileHeader(),
-                              _scoreAndRatingRow(),
-                              _dailyProgressCard(),
-                              if ((_internData?.weeklyReport?.internProjectLink ?? [])
-                                  .isNotEmpty)
-                                _projectLinkCard(),
-                              Text(
-                                "Answer Review",
-                                style: AppStyles.customTextStyle(
-                                  size: 18,
-                                  color: AppColors.whiteColor,
-                                  weight: FontWeight.w700,
+                              _buildTabBar(),
+                              if (_selectedTabIndex == 0) ...[
+                                ScoreAndRatingRow(
+                                  score: _internData?.testResult
+                                      ?.testResultDetails?.score,
+                                  stars: _internData?.testResult
+                                          ?.testResultDetails?.stars ??
+                                      0,
                                 ),
-                              ),
-                              ..._answerReviewCards(),
-
-                              if (showPaymentRow == true) _paymentStatusCard(),
+                                DailyProgressCard(
+                                  progress: _internData?.weeklyReport
+                                          ?.dailyProgress ??
+                                      [],
+                                ),
+                                if ((_internData?.weeklyReport
+                                            ?.internProjectLink ??
+                                        [])
+                                    .isNotEmpty)
+                                  ProjectLinkCard(
+                                    links: List<String>.from(
+                                      _internData!.weeklyReport!
+                                          .internProjectLink!,
+                                    ),
+                                  ),
+                                Text(
+                                  "Answer Review",
+                                  style: AppStyles.customTextStyle(
+                                    size: 18,
+                                    color: AppColors.whiteColor,
+                                    weight: FontWeight.w700,
+                                  ),
+                                ),
+                                ..._answerReviewCards(),
+                                if (showPaymentRow == true)
+                                  PaymentStatusCard(
+                                    fee: _internData
+                                        ?.testResult?.job?.fee,
+                                    updatedAt: _internData
+                                        ?.testResult?.updatedAt,
+                                  ),
+                              ] else ...[
+                                _buildHiringDecisionSection(),
+                              ],
                             ],
                           ),
                         ),
                       ),
-                floatingActionButton: _internData == null
-                    ? null
-                    : _certificateButton(),
+                floatingActionButton:
+                    (_internData == null || _selectedTabIndex != 0)
+                        ? null
+                        : _certificateButton(),
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerFloat,
               ),
       ),
     );
   }
-
-  // ─────────────────────────────────────────
-  // APP BAR
-  // ─────────────────────────────────────────
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
@@ -214,10 +245,6 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
       ),
     );
   }
-
-  // ─────────────────────────────────────────
-  // PROFILE HEADER
-  // ─────────────────────────────────────────
 
   Widget _profileHeader() {
     final status = _internData?.weeklyReport?.status ?? "";
@@ -277,17 +304,17 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isCompleted ? Icons.check_circle_outline : Icons.timelapse,
-            size: 12,
+            isCompleted ? Icons.check_circle : Icons.pending,
+            size: 14,
             color: isCompleted
                 ? AppColors.correctText
                 : AppColors.lightTextColor,
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 5),
           Text(
-            status,
+            status.toUpperCase(),
             style: AppStyles.customTextStyle(
-              size: 11,
+              size: 10,
               color: isCompleted
                   ? AppColors.correctText
                   : AppColors.lightTextColor,
@@ -299,358 +326,9 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
     );
   }
 
-  // ─────────────────────────────────────────
-  // SCORE + RATING
-  // ─────────────────────────────────────────
-
-  Widget _scoreAndRatingRow() {
-    final score = _internData?.testResult?.testResultDetails?.score;
-    final stars = _internData?.testResult?.testResultDetails?.stars ?? 0;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 18),
-      decoration: BoxDecoration(
-        color: AppColors.contColor2,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.contBorderColor2),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    "SCORE",
-                    style: AppStyles.customTextStyle(
-                      size: 11,
-                      color: AppColors.pathLightTextColor,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "${score ?? 0}",
-                    style: AppStyles.customTextStyle(
-                      size: 30,
-                      color: AppColors.secondaryColor,
-                      weight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            VerticalDivider(
-              color: AppColors.contBorderColor2,
-              thickness: 1,
-              width: 1,
-              indent: 6,
-              endIndent: 6,
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    "RATING",
-                    style: AppStyles.customTextStyle(
-                      size: 11,
-                      color: AppColors.pathLightTextColor,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  _starRow(stars),
-                  const SizedBox(height: 4),
-                  Text(
-                    "${stars.toStringAsFixed(1)} / 5.0",
-                    style: AppStyles.customTextStyle(
-                      size: 12,
-                      color: AppColors.whiteColor,
-                      weight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _starRow(double rating) {
-    final filled = rating.round().clamp(0, 5);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(5, (i) {
-        return Icon(
-          i < filled ? Icons.star_rounded : Icons.star_border_rounded,
-          color: AppColors.secondaryColor,
-          size: 18,
-        );
-      }),
-    );
-  }
-
-  // ─────────────────────────────────────────
-  // DAILY PROGRESS
-  // ─────────────────────────────────────────
-
-  Widget _dailyProgressCard() {
-    final progress = _internData?.weeklyReport?.dailyProgress ?? [];
-
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: AppColors.contColor2,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.contBorderColor2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.access_time_rounded,
-                size: 16,
-                color: AppColors.primaryColor,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "Daily Progress",
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          if (progress.isEmpty)
-            Text(
-              "No daily progress recorded yet.",
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: AppColors.lightTextColor,
-                weight: FontWeight.w300,
-              ),
-            )
-          else ...[
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "DAY",
-                    style: AppStyles.customTextStyle(
-                      size: 10,
-                      color: AppColors.lightTextColor,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    "STATUS",
-                    textAlign: TextAlign.center,
-                    style: AppStyles.customTextStyle(
-                      size: 10,
-                      color: AppColors.lightTextColor,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "DATE",
-                    textAlign: TextAlign.right,
-                    style: AppStyles.customTextStyle(
-                      size: 10,
-                      color: AppColors.lightTextColor,
-                      weight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            ...progress.map((p) => _dailyProgressRow(p)),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _dailyProgressRow(DailyProgress progress) {
-    final isCompleted = (progress.status ?? "").toLowerCase() == "completed";
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              "Day ${progress.dayNumber ?? "-"}",
-              style: AppStyles.customTextStyle(
-                size: 12,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 10,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isCompleted
-                          ? AppColors.correctBg
-                          : AppColors.disableContColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      (progress.status ?? "Pending").toUpperCase(),
-                      style: AppStyles.customTextStyle(
-                        size: 9,
-                        color: isCompleted
-                            ? AppColors.correctText
-                            : AppColors.lightTextColor,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () async {
-                      final uri = Uri.tryParse(progress.driveLink!);
-                      if (uri != null && await canLaunchUrl(uri)) {
-                        await launchUrl(
-                          uri,
-                          mode: LaunchMode.externalApplication,
-                        );
-                      } else {
-                        AppAlertUtils.showToast(
-                          message: "Couldn't open this link",
-                          isError: true,
-                        );
-                      }
-                    },
-                    child: Icon(
-                      CupertinoIcons.link,
-                      color: AppColors.primaryColor,
-                      size: 15,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              _formatDate(progress.completedAt),
-              textAlign: TextAlign.right,
-              style: AppStyles.customTextStyle(
-                size: 11,
-                color: AppColors.lightTextColor,
-                weight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(DateTime? date) {
-    if (date == null) return "-";
-    String two(int n) => n.toString().padLeft(2, "0");
-    return "${two(date.day)}-${two(date.month)}-${date.year.toString().substring(2)}";
-  }
-
-  // ─────────────────────────────────────────
-  // INTERN PROJECT LINK
-  // ─────────────────────────────────────────
-
-  Widget _projectLinkCard() {
-    final links = _internData?.weeklyReport?.internProjectLink ?? [];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.contColor2,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.contBorderColor2, width: 1),
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(CupertinoIcons.link, size: 16, color: AppColors.whiteColor),
-              const SizedBox(width: 8),
-              Text(
-                "Intern Project Link",
-                style: AppStyles.customTextStyle(
-                  size: 13,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ...links.map(
-            (url) => Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: GestureDetector(
-                onTap: () async {
-                  final uri = Uri.tryParse(url);
-                  if (uri != null && await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  } else {
-                    AppAlertUtils.showToast(
-                      message: "Couldn't open this link",
-                      isError: true,
-                    );
-                  }
-                },
-                child: Text(
-                  url,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppStyles.customTextStyle(
-                    size: 12,
-                    color: AppColors.blueTextColor,
-                    weight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ─────────────────────────────────────────
-  // ANSWER REVIEW
-  // ─────────────────────────────────────────
-
   List<Widget> _answerReviewCards() {
-    final answers = _internData?.testResult?.testResultDetails?.correctAnswer ?? [];
+    final answers =
+        _internData?.testResult?.testResultDetails?.correctAnswer ?? [];
 
     if (answers.isEmpty) {
       return [
@@ -668,302 +346,10 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
     return List.generate(answers.length, (index) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 10),
-        child: _questionCard(answers[index], index),
+        child: QuestionReviewCard(data: answers[index], index: index),
       );
     });
   }
-
-  Widget _questionCard(CorrectAnswer data, int index) {
-    final isSkipped = data.selectAnswer == null || data.selectAnswer == "";
-    final isCorrect = !isSkipped && data.answer == data.selectAnswer;
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: isCorrect ? AppColors.correctBorder : AppColors.inCorrectBorder,
-      ),
-      padding: const EdgeInsets.only(left: 5),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.contColor2,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.contBorderColor2),
-        ),
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 10,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "QUESTION ${(index + 1).toString().padLeft(2, "0")}",
-                  style: AppStyles.customTextStyle(
-                    size: 10,
-                    color: AppColors.contLightText,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSkipped
-                        ? AppColors.disableContColor
-                        : (isCorrect
-                              ? AppColors.correctBg
-                              : AppColors.inCorrectBg),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    isSkipped
-                        ? "SKIPPED"
-                        : (isCorrect ? "CORRECT" : "INCORRECT"),
-                    style: AppStyles.customTextStyle(
-                      size: 10,
-                      color: isSkipped
-                          ? AppColors.lightTextColor
-                          : (isCorrect
-                                ? AppColors.correctText
-                                : AppColors.inCorrectText),
-                      weight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              data.question ?? "",
-              style: AppStyles.customTextStyle(
-                size: 14,
-                color: AppColors.whiteColor,
-                lineSpace: 1.3,
-                weight: FontWeight.w500,
-              ),
-            ),
-            if (!isSkipped)
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: isCorrect
-                      ? AppColors.correctBg
-                      : AppColors.inCorrectBg,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: isCorrect
-                        ? AppColors.correctBorder
-                        : AppColors.inCorrectBorder,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 6,
-                  children: [
-                    Text(
-                      "YOUR ANSWER",
-                      style: AppStyles.customTextStyle(
-                        size: 10,
-                        color: isCorrect
-                            ? AppColors.correctText
-                            : AppColors.inCorrectText,
-                        weight: FontWeight.w400,
-                      ),
-                    ),
-                    Text(
-                      _resolveAnswerText(data, data.selectAnswer) ?? "",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            if (!isCorrect)
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.correctBg,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.correctBorder),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 6,
-                  children: [
-                    Text(
-                      "CORRECT ANSWER",
-                      style: AppStyles.customTextStyle(
-                        size: 10,
-                        color: AppColors.correctText,
-                        weight: FontWeight.w400,
-                      ),
-                    ),
-                    Text(
-                      _resolveAnswerText(data, data.answer) ??
-                          data.correctAnswer ??
-                          "",
-                      style: AppStyles.customTextStyle(
-                        size: 12,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String? _resolveAnswerText(CorrectAnswer data, String? key) {
-    if (key == null || key.isEmpty) return null;
-    final options = data.options;
-    if (options == null) return key;
-
-    switch (key) {
-      case "A":
-        return options.a ?? key;
-      case "B":
-        return options.b ?? key;
-      case "C":
-        return options.c ?? key;
-      case "D":
-        return options.d ?? key;
-      default:
-        return key; // already full text
-    }
-  }
-
-  // ─────────────────────────────────────────
-  // PAYMENT STATUS (optional — see PaymentInfo doc comment above)
-  // ─────────────────────────────────────────
-
-  Widget _paymentStatusCard() {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: AppColors.contColor2,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.correctBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.credit_card_rounded,
-                size: 16,
-                color: AppColors.correctText,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "Payment Status",
-                style: AppStyles.customTextStyle(
-                  size: 14,
-                  color: AppColors.whiteColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _paymentField(
-                  "Amount",
-                  "₹${_internData!.testResult!.job!.fee}",
-                ),
-              ),
-              Expanded(
-                child: _paymentField(
-                  "Status",
-                  null,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.correctBg,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      "Paid",
-                      style: AppStyles.customTextStyle(
-                        size: 10,
-                        color: AppColors.correctText,
-                        weight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: _paymentField(
-                  "Paid On",
-                  AppFunctions.formatIsoDate(
-                    _internData!.testResult!.updatedAt!.toString(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          // const SizedBox(height: 14),
-          // Divider(color: AppColors.contBorderColor2, height: 1),
-          // const SizedBox(height: 14),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: _paymentField("Transaction ID", payment.transactionId),
-          //     ),
-          //     Expanded(
-          //       child: _paymentField("Payment Method", payment.paymentMethod),
-          //     ),
-          //   ],
-          // ),
-        ],
-      ),
-    );
-  }
-
-  Widget _paymentField(String label, String? value, {Widget? child}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: AppStyles.customTextStyle(
-            size: 10,
-            color: AppColors.lightTextColor,
-            weight: FontWeight.w400,
-          ),
-        ),
-        const SizedBox(height: 6),
-        child ??
-            Text(
-              value ?? "-",
-              style: AppStyles.customTextStyle(
-                size: 13,
-                color: AppColors.whiteColor,
-                weight: FontWeight.w600,
-              ),
-            ),
-      ],
-    );
-  }
-
-  // ─────────────────────────────────────────
-  // GENERATE CERTIFICATE CTA
-  // ─────────────────────────────────────────
 
   Widget _certificateButton() {
     final alreadyIssued = _internData?.isCertificate == true;
@@ -1004,9 +390,6 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
     );
   }
 
-  bool showPaymentRow = false;
-  bool showStipendDialog = false;
-
   Future<void> checkStipendStatus() async {
     try {
       await applicationController.checkStipendStatus(
@@ -1016,18 +399,17 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
       if (applicationController.getResponseCode() == 200 ||
           applicationController.getResponseCode() == 201) {
         if ((applicationController.statusCheckModel.message ==
-            "Fee payment completed for this job") &&
+                "Fee payment completed for this job") &&
             jobType == "FEES") {
           setState(() => showPaymentRow = true);
         } else if ((applicationController.statusCheckModel.message ==
-            "Stipend not paid for this job") &&
+                "Stipend not paid for this job") &&
             jobType == "STIPEND") {
           setState(() => showStipendDialog = true);
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) _showStipendPaymentDialog();
           });
         } else {
-          // stipend already paid / no longer pending
           if (mounted) setState(() => showStipendDialog = false);
         }
       } else {
@@ -1044,7 +426,6 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
     }
   }
 
-
   void _showStipendPaymentDialog() {
     showDialog(
       context: context,
@@ -1057,12 +438,13 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
       ),
     );
   }
+
   Future<void> _createStipendOrderAndPay() async {
     if (_isStipendPaymentProcessing) return;
     _isStipendPaymentProcessing = true;
 
     try {
-      Get.back(); // close the alert dialog before opening checkout
+      Get.back();
       AppAlertUtils.showToast(message: "Creating payment order...");
 
       await applicationController.createStipendPaymentOrder(
@@ -1120,7 +502,8 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
           .setPaymentSessionId(orderData.paymentSessionId!)
           .build();
 
-      final dropPayment = CFWebCheckoutPaymentBuilder().setSession(session).build();
+      final dropPayment =
+          CFWebCheckoutPaymentBuilder().setSession(session).build();
 
       cfPaymentGatewayService.doPayment(dropPayment);
     } on CFException catch (e) {
@@ -1129,6 +512,7 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
       AppAlertUtils.showToast(message: "Error opening payment: $e", isError: true);
     }
   }
+
   Future<void> _handleStipendPaymentSuccess(String orderId) async {
     AppAlertUtils.showToast(message: "Verifying your payment…");
 
@@ -1146,13 +530,12 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
           showPaymentRow = false;
         });
       }
-      // Reload the screen — getTestResult() re-runs checkStipendStatus() too
       await getTestResult();
       await getStudentProfileData();
     } else {
       AppAlertUtils.showToast(
         message:
-        "Verification failed. Please contact support with order ID: $orderId",
+            "Verification failed. Please contact support with order ID: $orderId",
         isError: true,
       );
     }
@@ -1212,5 +595,167 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
       AppRoutes.certificateViewScreen,
       arguments: {"jobId": jobId, "studentId": studentId},
     );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // TAB BAR & HIRING DECISION ROUTING
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  Widget _buildTabBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.contColor2,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.contBorderColor2),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildTabItem(
+              index: 0,
+              title: "Test Result",
+              icon: CupertinoIcons.doc_text_fill,
+            ),
+          ),
+          Expanded(
+            child: _buildTabItem(
+              index: 1,
+              title: "Hiring Decision",
+              icon: CupertinoIcons.person_crop_circle_badge_checkmark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabItem({
+    required int index,
+    required String title,
+    required IconData icon,
+  }) {
+    final isSelected = _selectedTabIndex == index;
+    return GestureDetector(
+      onTap: () {
+        if (_selectedTabIndex != index) {
+          setState(() {
+            _selectedTabIndex = index;
+          });
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? Colors.black : AppColors.lightTextColor,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: AppStyles.customTextStyle(
+                size: 13,
+                color: isSelected ? Colors.black : AppColors.lightTextColor,
+                weight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool get _isInterviewSubmitted {
+    final res = homeController.testResultModel;
+    final data = _internData;
+    final details = res.interviewDetails ?? data?.interviewDetails;
+    if (details != null &&
+        (details.type?.toLowerCase() == 'interview' ||
+            (details.interviewRound?.isNotEmpty ?? false) ||
+            (details.meetingLinkOrLocation?.isNotEmpty ?? false))) {
+      return true;
+    }
+    if ((res.isInterview == true || data?.isInterview == true) &&
+        (details?.type?.toLowerCase() != 'placement')) {
+      return details != null;
+    }
+    return false;
+  }
+
+  bool get _isPlacementSubmitted {
+    final res = homeController.testResultModel;
+    final data = _internData;
+    final details = res.placementDetails ?? data?.placementDetails;
+    if (details != null &&
+        (details.type?.toLowerCase() == 'placement' ||
+            (details.jobTitle?.isNotEmpty ?? false) ||
+            (details.annualSalary?.isNotEmpty ?? false))) {
+      return true;
+    }
+    if ((res.isPlacement == true || data?.isPlacement == true) &&
+        (details?.type?.toLowerCase() == 'placement' ||
+            (details?.jobTitle?.isNotEmpty ?? false))) {
+      return true;
+    }
+    return false;
+  }
+
+  Widget _buildHiringDecisionSection() {
+    if (_isPlacementSubmitted) {
+      return PlacementDecisionDetailsCard(
+        details: homeController.testResultModel.placementDetails ??
+            _internData?.placementDetails,
+        fallbackCompanyName: _internData?.testResult?.job?.companyname,
+        onOpenUrl: _openUrl,
+      );
+    }
+
+    if (_isInterviewSubmitted) {
+      return InterviewDecisionDetailsCard(
+        details: homeController.testResultModel.interviewDetails ??
+            _internData?.interviewDetails,
+        fallbackCompanyName: _internData?.testResult?.job?.companyname,
+        onOpenUrl: _openUrl,
+      );
+    }
+
+    return CandidateHiringDecisionForm(
+      studentId: studentId,
+      jobId: jobId,
+      defaultJobTitle: _internData?.testResult?.job?.roleType,
+      onSuccess: () async {
+        await getTestResult();
+        await getStudentProfileData();
+      },
+      onCancel: () {
+        setState(() {
+          _selectedTabIndex = 0;
+        });
+      },
+    );
+  }
+
+  Future<void> _openUrl(String url) async {
+    final cleanUrl = url.trim();
+    final uri = Uri.tryParse(cleanUrl);
+    if (uri != null) {
+      try {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (e) {
+        AppAlertUtils.showToast(
+          message: "Could not open link: $cleanUrl",
+          isError: true,
+        );
+      }
+    }
   }
 }

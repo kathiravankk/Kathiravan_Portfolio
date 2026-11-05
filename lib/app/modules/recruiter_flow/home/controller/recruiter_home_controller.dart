@@ -1,5 +1,6 @@
+import 'package:dio/dio.dart' show FormData, MultipartFile;
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:internsharks/app/data/models/account/common_login_model.dart';
 import 'package:internsharks/app/data/models/home/credit_order_verify_model.dart';
 import 'package:internsharks/app/data/models/home/order_create_credit_model.dart';
@@ -474,6 +475,35 @@ class RecruiterHomeController extends GetxController {
       rethrow;
     } finally {
       studentResultLoading = false;
+    }
+  }
+
+  // HIRING DECISION (INTERVIEW & PLACEMENT)
+  final _hiringDecisionLoading = false.obs;
+  bool get hiringDecisionLoading => _hiringDecisionLoading.value;
+  set hiringDecisionLoading(bool value) => _hiringDecisionLoading.value = value;
+
+  Future<Map<String, dynamic>> submitInterviewDecision({
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      hiringDecisionLoading = true;
+      final res = await recruiterHomeProvider!.submitInterviewDecision(data: data);
+      return res;
+    } finally {
+      hiringDecisionLoading = false;
+    }
+  }
+
+  Future<Map<String, dynamic>> submitPlacementDecision({
+    required FormData payloadFormData,
+  }) async {
+    try {
+      hiringDecisionLoading = true;
+      final res = await recruiterHomeProvider!.submitPlacementDecision(payloadFormData: payloadFormData);
+      return res;
+    } finally {
+      hiringDecisionLoading = false;
     }
   }
 

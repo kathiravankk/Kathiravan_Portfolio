@@ -206,6 +206,7 @@ class AppApiUrls {
       "${baseUrl}syllabus/recruiter/$studentId/$jobId";
   static String getStudentResult(String studentId, String jobId) =>
       "${baseUrl}getresult?jobId=$jobId&studentId=$studentId";
+  static String submitHiringDecision = "${baseUrl}submit-hiring-decision";
   static String getIssuedCertificate(String studentId, String jobId) =>
       "${baseUrl}viewstudentcertificate?jobId=$jobId&studentId=$studentId";
   static String getRecruiterCreditPlans =
