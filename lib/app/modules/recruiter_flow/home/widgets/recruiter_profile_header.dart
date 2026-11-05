@@ -106,17 +106,13 @@ class RecruiterProfileStatRowWidget extends StatelessWidget {
 
   const RecruiterProfileStatRowWidget({super.key, required this.profile});
 
-  static String extractCity(RecCompanyAddress? addr) {
-    if (addr == null) return "—";
-    final registered = addr.registeredAddress?.city;
-    if (registered != null && registered.trim().isNotEmpty) {
-      return registered.trim();
-    }
-    final office = addr.officeAddress?.city;
-    if (office != null && office.trim().isNotEmpty) {
-      return office.trim();
-    }
-    return "—";
+  static String extractCity(String? address) {
+    if (address == null || address.trim().isEmpty) return "—";
+    final parts = address
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty);
+    return parts.isNotEmpty ? parts.last : "—";
   }
 
   @override

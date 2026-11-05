@@ -7,6 +7,7 @@ import 'package:internsharks/app/core/utils/app_colors.dart';
 import 'package:internsharks/app/core/utils/app_functions.dart';
 import 'package:internsharks/app/core/utils/app_styles.dart';
 import 'package:internsharks/app/core/utils/asset_images.dart';
+import 'package:internsharks/app/data/repositories/local_storage_service.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/controller/recruiter_home_controller.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/widgets/recruiter_profile_about_tab.dart';
 import 'package:internsharks/app/modules/recruiter_flow/home/widgets/recruiter_profile_header.dart';
@@ -31,24 +32,23 @@ class _RecruiterProfileScreenState extends State<RecruiterProfileScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getProfile();
-    });
+    getProfileData();
   }
 
-  Future<void> getProfile() async {
+  Future<void> getProfileData() async {
+    final recruiterId = await LocalStorageService.getRecruiterId();
     try {
-      await profileController.getRecruiterProfile();
-      if (profileController.getResponseCode() == 200 ||
-          profileController.getResponseCode() == 201) {
-        // Success
-      } else {
+      await profileController.getRecruiterProfileData(
+        recruiterId: recruiterId ?? "",
+      );
+      if (profileController.getResponseCode() != 200 &&
+          profileController.getResponseCode() != 201) {
         AppFunctions.apiErrorHandling(
           profileController.getResponseCode(),
           "Something went wrong, Try again later!",
         );
       }
-    } catch (error) {
+    } catch (_) {
       AppFunctions.apiErrorHandling(
         profileController.getResponseCode(),
         "Something went wrong, Try again later!",

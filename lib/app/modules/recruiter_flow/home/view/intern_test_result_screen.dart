@@ -107,7 +107,10 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
 
   Future<void> getStudentProfileData() async {
     try {
-      await applicationController.getStudentProfile(studentId: studentId);
+      await applicationController.getInternStudentProfile(
+        jobId: jobId,
+        studentId: studentId,
+      );
       if (applicationController.getResponseCode() != 200 &&
           applicationController.getResponseCode() != 201) {
         AppFunctions.apiErrorHandling(
@@ -131,9 +134,8 @@ class _InternTestResultScreenState extends State<InternTestResultScreen> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primaryBackground,
         image: DecorationImage(
-          image: AssetImage(AssetImages.dashBoardBackground),
+          image: AssetImage(AssetImages.appBackgroundImg),
           fit: BoxFit.cover,
         ),
       ),

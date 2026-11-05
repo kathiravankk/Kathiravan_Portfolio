@@ -147,13 +147,14 @@ class InterviewDecisionDetailsCard extends StatelessWidget {
               value: details!.interviewInstructions!,
             ),
           ],
-          if (details?.recruiter?.name != null) ...[
+          if ((details?.recruiter?.name ?? details?.recruiter?.recName) != null) ...[
             const SizedBox(height: 12),
             _buildInfoRow(
               icon: CupertinoIcons.briefcase,
               label: "Scheduled By",
-              value:
-                  "${details!.recruiter!.name} (${details!.recruiter!.email ?? ''})",
+              value: (details?.recruiter?.email ?? details?.recruiter?.recEmail ?? '').isNotEmpty
+                  ? "${details?.recruiter?.name ?? details?.recruiter?.recName} (${details?.recruiter?.email ?? details?.recruiter?.recEmail})"
+                  : (details?.recruiter?.name ?? details?.recruiter?.recName ?? '—'),
             ),
           ],
           const SizedBox(height: 16),

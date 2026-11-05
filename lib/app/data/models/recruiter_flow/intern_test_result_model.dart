@@ -543,6 +543,10 @@ class RecruiterDecisionInfo {
   final String? recCompanyName;
   final String? recCompanyEmail;
 
+  String? get name => recName;
+  String? get email => recEmail;
+  String? get companyName => recCompanyName;
+
   RecruiterDecisionInfo({
     this.id,
     this.recName,
@@ -554,12 +558,12 @@ class RecruiterDecisionInfo {
 
   factory RecruiterDecisionInfo.fromJson(Map<String, dynamic> json) {
     return RecruiterDecisionInfo(
-      id: json["_id"]?.toString(),
-      recName: json["recname"]?.toString(),
-      recEmail: json["recemail"]?.toString(),
-      recMobileNo: json["recmobileno"]?.toString(),
-      recCompanyName: json["reccompanyname"]?.toString(),
-      recCompanyEmail: json["reccompanyemail"]?.toString(),
+      id: json["_id"]?.toString() ?? json["userId"]?.toString(),
+      recName: json["name"]?.toString() ?? json["recname"]?.toString(),
+      recEmail: json["email"]?.toString() ?? json["recemail"]?.toString(),
+      recMobileNo: json["recmobileno"]?.toString() ?? json["mobileNo"]?.toString(),
+      recCompanyName: json["companyName"]?.toString() ?? json["reccompanyname"]?.toString(),
+      recCompanyEmail: json["companyEmail"]?.toString() ?? json["reccompanyemail"]?.toString(),
     );
   }
 }
